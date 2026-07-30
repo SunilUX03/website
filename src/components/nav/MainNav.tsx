@@ -34,18 +34,52 @@ export function MainNav() {
         <div
           className={clsx(
             "mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 transition-[height] duration-200 md:px-10",
-            scrolled ? "h-14" : "h-16"
+            scrolled ? "h-16" : "h-20"
           )}
         >
-          <a href="/" className="flex items-center" aria-label="TNeGA — Tamil Nadu e-Governance Agency home">
+          <a
+            href="/"
+            className="flex items-center gap-3"
+            aria-label="TNeGA — Tamil Nadu e-Governance Agency home"
+          >
             <Image
-              src="/images/tnega-logo.png"
-              alt="Government of Tamil Nadu emblem and TNeGA — Tamil Nadu e-Governance Agency"
-              width={980}
+              src="/images/tn-emblem.png"
+              alt="Government of Tamil Nadu emblem"
+              width={178}
               height={186}
               priority
-              className="h-9 w-auto md:h-10"
+              className={clsx(
+                "w-auto transition-[height] duration-200",
+                scrolled ? "h-11" : "h-14"
+              )}
             />
+            <span
+              aria-hidden
+              className={clsx(
+                "w-px shrink-0 bg-hairline-strong transition-[height] duration-200",
+                scrolled ? "h-9" : "h-11"
+              )}
+            />
+            <Image
+              src="/images/logos/tnega-mark.png"
+              alt=""
+              aria-hidden
+              width={512}
+              height={512}
+              priority
+              className={clsx(
+                "w-auto shrink-0 transition-[height] duration-200",
+                scrolled ? "h-11" : "h-14"
+              )}
+            />
+            <span className="leading-tight">
+              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)]">
+                TNeGA
+              </span>
+              <span className="type-caption hidden text-[var(--color-muted)] sm:block">
+                Tamil Nadu e-Governance Agency
+              </span>
+            </span>
           </a>
 
           <nav className="hidden items-center gap-7 lg:flex">

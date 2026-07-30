@@ -19,12 +19,12 @@ export function Ecosystem() {
               href={org.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-2 text-center md:min-w-[92px] md:flex-1 md:basis-0"
+              className="group flex flex-col items-center gap-2 text-center md:min-w-[112px] md:flex-1 md:basis-0"
             >
-              <span className="relative flex h-11 w-11 items-center justify-center grayscale transition-all duration-200 group-hover:grayscale-0 md:h-9 md:w-9">
+              <span className="relative flex h-16 w-16 items-center justify-center grayscale transition-all duration-200 group-hover:grayscale-0 md:h-14 md:w-14">
                 <Image src={org.logo} alt="" aria-hidden width={96} height={96} className="h-full w-full object-contain" />
               </span>
-              <span className="type-caption text-[var(--color-muted)] transition-colors group-hover:text-ink md:text-[11px] md:leading-tight">
+              <span className="type-caption text-[var(--color-muted)] transition-colors group-hover:text-ink md:text-xs md:leading-tight">
                 {org.name}
               </span>
             </a>

@@ -15,7 +15,7 @@ export function LeadershipCard({ name, title, photo, quote, role }: LeadershipCa
   return (
     <div
       className={clsx(
-        "card-feature flex flex-1 items-center gap-3 !p-3",
+        "card-feature flex shrink-0 items-center gap-3 !p-3",
         isPrimary ? "min-w-[240px]" : "min-w-[210px] opacity-95"
       )}
     >
@@ -27,7 +27,9 @@ export function LeadershipCard({ name, title, photo, quote, role }: LeadershipCa
       >
         <Image src={photo} alt={name} fill sizes="64px" className="object-cover" />
       </div>
-      <div className="min-w-0">
+      {/* No min-w-0/flex-1 here — that combination lets nowrap text overflow
+          past the card edge instead of the card growing to fit it. */}
+      <div className="shrink-0">
         <p
           className={clsx(
             "whitespace-nowrap text-ink",
@@ -36,8 +38,8 @@ export function LeadershipCard({ name, title, photo, quote, role }: LeadershipCa
         >
           {name}
         </p>
-        <p className="type-caption text-[var(--color-muted)]">{title}</p>
-        {quote && <p className="type-body-sm mt-1 text-[var(--color-body)]">&ldquo;{quote}&rdquo;</p>}
+        <p className="type-caption whitespace-nowrap text-[var(--color-muted)]">{title}</p>
+        {quote && <p className="type-body-sm mt-1 max-w-[32ch] whitespace-normal text-[var(--color-body)]">&ldquo;{quote}&rdquo;</p>}
       </div>
     </div>
   );

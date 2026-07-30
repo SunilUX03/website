@@ -65,14 +65,15 @@ export function Leadership() {
             {leadership.map((leader) => (
               <div
                 key={leader.name}
-                className="card-hover-lift flex w-[220px] shrink-0 snap-start flex-col items-center gap-4 rounded-xl border border-hairline bg-surface-card p-6 text-center"
+                className="card-hover-lift flex min-w-[180px] max-w-[260px] shrink-0 snap-start flex-col items-center gap-4 rounded-xl border border-hairline bg-surface-card p-6 text-center"
               >
-                <div className="voice-icon-circular relative h-20 w-20 overflow-hidden">
+                <div className="voice-icon-circular relative h-20 w-20 shrink-0 overflow-hidden">
                   <Image src={leader.photo} alt={leader.name} fill sizes="80px" className="object-cover" />
                 </div>
                 <div>
                   <p className="type-title-sm text-ink">{leader.name}</p>
-                  <p className="type-body-sm mt-1 text-[var(--color-muted)]">{leader.title}</p>
+                  <p className="type-body-strong mt-1 text-ink">{leader.designation}</p>
+                  <p className="type-body-sm mt-1 text-[var(--color-muted)]">{leader.department}</p>
                 </div>
               </div>
             ))}

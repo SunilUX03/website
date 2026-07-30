@@ -12,6 +12,7 @@ import { SocialMedia } from "@/components/sections/SocialMedia";
 import { Ecosystem } from "@/components/sections/Ecosystem";
 import { ReachUs } from "@/components/sections/ReachUs";
 import { Footer } from "@/components/sections/Footer";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 export default function Home() {
   return (
@@ -32,6 +33,7 @@ export default function Home() {
         <ReachUs />
       </main>
       <Footer />
+      <ScrollToTop />
     </>
   );
 }

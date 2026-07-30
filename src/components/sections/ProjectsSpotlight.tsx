@@ -13,21 +13,40 @@ type Project = (typeof projects)[number];
 function SpotlightContent({ project, active }: { project: Project; active: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12">
+      {/* Full-bleed mood scrim — sets overall tone, doesn't need to
+          guarantee contrast on its own (the panel below does that). */}
       <div
+        aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to top, rgba(12,10,9,0.85) 0%, rgba(12,10,9,0.45) 45%, rgba(12,10,9,0) 75%)",
+            "linear-gradient(to top, rgba(12,10,9,0.75) 0%, rgba(12,10,9,0.4) 55%, rgba(12,10,9,0.05) 100%)",
         }}
       />
-      <div className="relative max-w-2xl text-white">
+      {/* Soft ambient glow anchored behind the text, so contrast holds
+          regardless of what's in the photo (even a white/light background) —
+          a frosted, blurred panel rather than a hard box. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%]"
+        style={{
+          background:
+            "radial-gradient(120% 100% at 20% 100%, rgba(12,10,9,0.55) 0%, rgba(12,10,9,0.32) 45%, rgba(12,10,9,0) 80%)",
+        }}
+      />
+
+      <div className="relative max-w-2xl rounded-2xl p-5 text-white backdrop-blur-md backdrop-brightness-[0.85] md:p-6">
         {"badge" in project && project.badge && (
           <span className="badge-pill mb-3 bg-white/15 text-white backdrop-blur-sm">
             {project.badge}
           </span>
         )}
-        <h3 className="type-display-sm mb-2">{project.name}</h3>
-        <p className="type-body-md mb-5 text-white/85">{project.description}</p>
+        <h3 className="type-display-sm mb-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
+          {project.name}
+        </h3>
+        <p className="type-body-md mb-5 text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.4)]">
+          {project.description}
+        </p>
 
         <div className="mb-6 flex flex-wrap gap-x-8 gap-y-3">
           {project.stats.map((stat) => (

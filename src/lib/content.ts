@@ -254,12 +254,14 @@ export const projects = [
 export const leadership = [
   {
     name: "Thiru Pradeep Yadav, IAS",
-    title: "Additional Chief Secretary, IT & Digital Services Department, GoTN",
+    designation: "Additional Chief Secretary",
+    department: "IT & Digital Services Department, GoTN",
     photo: "/images/leaders/pradeep-yadav.png",
   },
   {
     name: "Dr. Alby John Varghese, IAS",
-    title: "CEO, TNeGA",
+    designation: "Chief Executive Officer",
+    department: "Tamil Nadu e-Governance Agency (TNeGA)",
     photo: "/images/leaders/alby-john-varghese.png",
   },
 ];
