@@ -1,0 +1,240 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { projects } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { CountUp } from "@/components/ui/CountUp";
+import { useReducedMotion } from "@/lib/hooks";
+
+type Project = (typeof projects)[number];
+
+function SpotlightContent({ project, active }: { project: Project; active: boolean }) {
+  return (
+    <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(12,10,9,0.85) 0%, rgba(12,10,9,0.45) 45%, rgba(12,10,9,0) 75%)",
+        }}
+      />
+      <div className="relative max-w-2xl text-white">
+        {"badge" in project && project.badge && (
+          <span className="badge-pill mb-3 bg-white/15 text-white backdrop-blur-sm">
+            {project.badge}
+          </span>
+        )}
+        <h3 className="type-display-sm mb-2">{project.name}</h3>
+        <p className="type-body-md mb-5 text-white/85">{project.description}</p>
+
+        <div className="mb-6 flex flex-wrap gap-x-8 gap-y-3">
+          {project.stats.map((stat) => (
+            <div key={stat.label}>
+              <p className="type-display-sm">
+                <CountUp value={stat.value} suffix={stat.suffix} start={active} duration={1100} />
+              </p>
+              <p className="type-caption-uppercase text-white/70">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          {project.ctas.map((cta, i) => (
+            <a
+              key={cta.label}
+              href={cta.href}
+              className={i === 0 ? "type-button btn-primary" : "type-button btn-outline !border-white/60 !text-white hover:!bg-white/10"}
+            >
+              {cta.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DesktopSpotlight() {
+  const [active, setActive] = useState(0);
+  const reducedMotion = useReducedMotion();
+
+  const go = (dir: 1 | -1) => {
+    setActive((prev) => (prev + dir + projects.length) % projects.length);
+  };
+
+  return (
+    <div className="relative hidden h-[640px] w-full overflow-hidden rounded-xl md:block">
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={active}
+          className="absolute inset-0"
+          initial={{ opacity: reducedMotion ? 1 : 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.6, ease: "easeInOut" }}
+        >
+          <ImagePlaceholder
+            label={projects[active].imageLabel}
+            gradient={projects[active].gradient}
+            aspect="aspect-auto"
+            className="h-full w-full"
+            labelPosition="top"
+          />
+          <SpotlightContent project={projects[active]} active={true} />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* dash-dot indicator — bottom-left corner */}
+      <div className="absolute bottom-6 left-6 z-10 flex gap-1.5">
+        {projects.map((p, i) => (
+          <button
+            key={p.slug}
+            type="button"
+            onClick={() => setActive(i)}
+            aria-label={`Go to ${p.name}`}
+            aria-current={i === active}
+            className={`h-1 rounded-full transition-all duration-300 ${
+              i === active ? "w-6 bg-white" : "w-2 bg-white/45 hover:bg-white/70"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* prev/next — bottom-right corner */}
+      <div className="absolute bottom-6 right-6 z-10 flex gap-2">
+        <button
+          type="button"
+          onClick={() => go(-1)}
+          aria-label="Previous project"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25"
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          onClick={() => go(1)}
+          aria-label="Next project"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25"
+        >
+          →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const STORY_DURATION = 4000;
+
+function MobileSpotlight() {
+  const reducedMotion = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [interactionPaused, setInteractionPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const rafRef = useRef(0);
+  const startRef = useRef(0);
+
+  useEffect(() => {
+    if (reducedMotion || interactionPaused) return;
+    startRef.current = performance.now();
+    setProgress(0);
+
+    const tick = (time: number) => {
+      const elapsed = time - startRef.current;
+      const pct = Math.min((elapsed / STORY_DURATION) * 100, 100);
+      setProgress(pct);
+      if (pct >= 100) {
+        setActive((a) => (a + 1) % projects.length);
+      } else {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, interactionPaused, reducedMotion]);
+
+  const pauseAutoAdvance = () => setInteractionPaused(true);
+
+  const goTo = (index: number) => {
+    pauseAutoAdvance();
+    setActive((index + projects.length) % projects.length);
+    setProgress(0);
+  };
+
+  return (
+    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl md:hidden">
+      <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
+        {projects.map((p, i) => (
+          <div key={p.slug} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/30">
+            <div
+              className="h-full bg-white"
+              style={{
+                width: `${i < active || reducedMotion ? 100 : i === active ? progress : 0}%`,
+                transition: reducedMotion ? "none" : undefined,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      <ImagePlaceholder
+        label={projects[active].imageLabel}
+        gradient={projects[active].gradient}
+        aspect="aspect-auto"
+        className="h-full w-full"
+        labelPosition="top"
+      />
+      <SpotlightContent project={projects[active]} active={true} />
+
+      {/* tap zones */}
+      <button
+        type="button"
+        aria-label="Previous project"
+        className="absolute inset-y-0 left-0 z-10 w-1/2"
+        onClick={() => goTo(active - 1)}
+      />
+      <button
+        type="button"
+        aria-label="Next project"
+        className="absolute inset-y-0 right-0 z-10 w-1/2"
+        onClick={() => goTo(active + 1)}
+      />
+
+      <div
+        className="absolute inset-0 z-0"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current === null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (Math.abs(dx) > 40) {
+            goTo(active + (dx < 0 ? 1 : -1));
+          }
+          touchStartX.current = null;
+        }}
+      />
+    </div>
+  );
+}
+
+export function ProjectsSpotlight() {
+  return (
+    <section className="bg-canvas">
+      <Container className="py-xxl md:py-section">
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
+          Projects Spotlight
+        </p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
+          Platforms serving citizens across Tamil Nadu
+        </h2>
+
+        <DesktopSpotlight />
+        <MobileSpotlight />
+      </Container>
+    </section>
+  );
+}
