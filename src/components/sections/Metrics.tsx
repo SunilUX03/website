@@ -34,7 +34,7 @@ export function Metrics() {
 
         <div ref={ref} className="metrics-grid grid grid-cols-2 md:grid-cols-3">
           {metrics.map((metric, i) => (
-            <div key={metric.label} className="metrics-grid-item px-0 py-4 md:px-6 md:py-6">
+            <div key={metric.label} className="metrics-grid-item px-4 py-4 md:px-6 md:py-6">
               <p className="type-display-sm text-ink">
                 <CountUp
                   value={metric.value}

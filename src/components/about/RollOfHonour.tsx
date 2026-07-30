@@ -28,10 +28,15 @@ function TimelineEntry({
         isRight ? "md:ml-auto md:pl-10" : "md:mr-auto md:pr-10"
       )}
     >
+      {/* Dot sits at the vertical center of the FIRST line only (a fixed
+          28px from the card top: 16px padding + half the first line's
+          24px height) — a constant regardless of how many lines follow,
+          so it stays aligned to the spine even though some cards (the
+          confirmed CEO entry) show 3 lines and the rest show just 1. */}
       <span
         aria-hidden
         className={clsx(
-          "absolute top-5 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas",
+          "absolute top-7 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas",
           "left-[11px] md:left-auto",
           isRight ? "md:-left-[5px]" : "md:-right-[5px]"
         )}
@@ -47,9 +52,11 @@ function TimelineEntry({
         {entry.name && (
           <p className="type-caption text-[var(--color-muted)]">{entry.designation}</p>
         )}
-        <p className="type-caption-uppercase mt-1 text-[var(--color-primary-blue)]">
-          {entry.range}
-        </p>
+        {entry.range && (
+          <p className="type-caption-uppercase mt-1 text-[var(--color-primary-blue)]">
+            {entry.range}
+          </p>
+        )}
       </motion.div>
     </div>
   );
@@ -74,7 +81,7 @@ export function RollOfHonour() {
           />
           <div className="flex flex-col gap-6">
             {visible.map((entry, i) => (
-              <TimelineEntry key={entry.range} entry={entry} index={i} reducedMotion={reducedMotion} />
+              <TimelineEntry key={i} entry={entry} index={i} reducedMotion={reducedMotion} />
             ))}
           </div>
 
@@ -86,7 +93,7 @@ export function RollOfHonour() {
               <div className="flex flex-col gap-6 pt-6">
                 {rest.map((entry, i) => (
                   <TimelineEntry
-                    key={entry.range}
+                    key={VISIBLE_COUNT + i}
                     entry={entry}
                     index={VISIBLE_COUNT + i}
                     reducedMotion={reducedMotion}

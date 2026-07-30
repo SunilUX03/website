@@ -6,11 +6,11 @@ import { ecosystemRings, ecosystemCenter } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 import { useIsDesktop } from "@/lib/hooks";
 
-const NODE_SIZE = 108;
-const HUB_SIZE = 140;
+const NODE_SIZE = 116;
+const HUB_SIZE = 150;
 const HUB_RADIUS = HUB_SIZE / 2;
-const RING_GAP = 46;
-const EDGE_MARGIN = 20;
+const RING_GAP = 56;
+const EDGE_MARGIN = 28;
 // The golden angle (~137.5°) spreads consecutive-index nodes far apart in
 // angle even though their ring radii are also consecutive — plain even
 // spacing (360°/7) put radius-adjacent nodes at the same bearing as each
@@ -56,7 +56,7 @@ function EcosystemRingsDesktop() {
     : 0;
 
   return (
-    <div ref={containerRef} className="relative mx-auto h-[600px] w-full max-w-[720px]">
+    <div ref={containerRef} className="relative mx-auto h-[680px] w-full max-w-[860px]">
       {size.width > 0 && (
         <>
           <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>

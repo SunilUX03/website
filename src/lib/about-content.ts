@@ -169,37 +169,22 @@ export const team = [
 ];
 
 // Board composition (names, designations, photos, bios) has not been
-// supplied yet — generic role cards with curated stock photography stand
-// in, per the same never-fabricate-a-name / never-show-"Pending" policy.
+// supplied yet. Per explicit feedback, this no longer invents personal-
+// sounding bio text for these anonymous placeholder cards — the flip
+// side just says plainly that the profile is pending, rather than
+// presenting made-up biographical claims as if they were real.
 export const boardOfDirectors = [
-  {
-    photo: pexelsPhoto(STOCK.handshakeFormal, 320, 320),
-    bio: "Provides strategic oversight and policy direction to guide TNeGA's digital governance mission.",
-  },
-  {
-    photo: pexelsPhoto(STOCK.developer, 320, 320),
-    bio: "Brings deep public-sector governance experience to the Board's strategic decisions.",
-  },
-  {
-    photo: pexelsPhoto(STOCK.itTechnician, 320, 320),
-    bio: "Advises on technology strategy and large-scale digital infrastructure programmes.",
-  },
-  {
-    photo: pexelsPhoto(STOCK.womanPhone, 320, 320),
-    bio: "Guides financial oversight and ensures accountable use of public digital investment.",
-  },
-  {
-    photo: pexelsPhoto(STOCK.ruralWomanPhone, 320, 320),
-    bio: "Represents citizen and departmental interests in the Board's governance decisions.",
-  },
-  {
-    photo: pexelsPhoto(STOCK.programmer, 320, 320),
-    bio: "Supports TNeGA's innovation agenda across AI, blockchain and emerging technologies.",
-  },
-].map((member, i) => ({
-  ...member,
+  pexelsPhoto(STOCK.handshakeFormal, 320, 320),
+  pexelsPhoto(STOCK.developer, 320, 320),
+  pexelsPhoto(STOCK.itTechnician, 320, 320),
+  pexelsPhoto(STOCK.womanPhone, 320, 320),
+  pexelsPhoto(STOCK.ruralWomanPhone, 320, 320),
+  pexelsPhoto(STOCK.programmer, 320, 320),
+].map((photo, i) => ({
+  photo,
   role: "Board Member",
   department: "Governing Board, TNeGA",
+  bio: "Full profile to be published once confirmed.",
   key: `board-${i}`,
 }));
 
@@ -234,32 +219,33 @@ export const awards = [
 
 // The build spec asks for 19 historical Director/CEO entries "from the
 // existing About page content" — no such source exists anywhere in this
-// project. Per an explicit design-review decision, this timeline uses
-// designation + tenure only for unconfirmed historical entries (never a
-// fabricated personal name) and reuses the one name we do have confirmed
+// project, and no specific tenure years for them do either. Per explicit
+// feedback, this timeline shows designation only for the 18 unconfirmed
+// historical entries — no fabricated personal name AND no fabricated
+// date range — and reuses the one name and tenure we do have confirmed
 // — the current CEO, already named in `teamCeo` above — for the present
 // entry. Ordered most-recent-first (index 0 = present).
 export const rollOfHonour = [
-  { range: "2023 – Present", designation: "Director / CEO", name: teamCeo.name },
-  { range: "2022 – 2023", designation: "Chief Executive Officer" },
-  { range: "2021 – 2022", designation: "Chief Executive Officer" },
-  { range: "2021 – 2021", designation: "Chief Executive Officer" },
-  { range: "2020 – 2021", designation: "Chief Executive Officer" },
-  { range: "2019 – 2020", designation: "Chief Executive Officer" },
-  { range: "2018 – 2019", designation: "Director" },
-  { range: "2017 – 2018", designation: "Director" },
-  { range: "2016 – 2017", designation: "Director" },
-  { range: "2015 – 2016", designation: "Director" },
-  { range: "2014 – 2015", designation: "Director" },
-  { range: "2013 – 2014", designation: "Director" },
-  { range: "2012 – 2013", designation: "Director" },
-  { range: "2011 – 2012", designation: "Director" },
-  { range: "2010 – 2011", designation: "Director" },
-  { range: "2009 – 2010", designation: "Director" },
-  { range: "2008 – 2009", designation: "Director" },
-  { range: "2007 – 2008", designation: "Director" },
-  { range: "2006 – 2007", designation: "Director" },
-];
+  { designation: "Director / CEO", name: teamCeo.name, range: "2023 – Present" },
+  { designation: "Chief Executive Officer" },
+  { designation: "Chief Executive Officer" },
+  { designation: "Chief Executive Officer" },
+  { designation: "Chief Executive Officer" },
+  { designation: "Chief Executive Officer" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+  { designation: "Director" },
+] as { designation: string; name?: string; range?: string }[];
 
 export const connectWithUs = {
   email: "tnega@tn.gov.in",

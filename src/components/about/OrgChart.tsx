@@ -111,8 +111,20 @@ export function OrgChart() {
               style={{ left: "12.5%", right: "12.5%" }}
             />
             <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
-              {orgChart.level2.map((node) => (
+              {orgChart.level2.map((node, i) => (
                 <div key={node.label} className="relative flex flex-col items-center">
+                  {/* Mobile single-column stack: a short connector chaining
+                      each card to the one above it (the CEO trunk above
+                      already leads into the first card). Only meaningful
+                      while cards are truly stacked in one column — the
+                      sm:2-col / lg:4-col layouts get their own connectors
+                      instead. */}
+                  {i > 0 && (
+                    <div
+                      aria-hidden
+                      className="absolute -top-4 h-4 w-px bg-hairline-strong sm:hidden"
+                    />
+                  )}
                   <div
                     aria-hidden
                     className="absolute -top-8 hidden h-8 w-px bg-hairline-strong lg:block"

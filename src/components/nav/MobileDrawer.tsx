@@ -68,7 +68,7 @@ export function MobileDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed inset-y-0 right-0 z-[70] w-[85%] max-w-sm overflow-y-auto bg-canvas p-6 shadow-2xl lg:hidden"
+            className="fixed inset-y-0 right-0 z-[70] w-[85%] max-w-[384px] overflow-y-auto bg-canvas p-6 shadow-2xl lg:hidden"
             role="dialog"
             aria-modal="true"
           >

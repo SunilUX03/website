@@ -7,23 +7,19 @@ import { whatWeDo } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 import { useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
-// Node footprint used to keep the radial layout from ever overlapping —
-// both the card's own half-width/half-height (so it can't clip the
-// container edge) and, crucially, the chord distance between two
-// *adjacent* nodes at 60° apart (which is why the radius floor below is
-// driven by NODE_WIDTH, not just container size — too small a radius was
-// the actual cause of the "crammed 2x2 grid" bug, since adjacent nodes'
-// centers end up only `radius` apart at a 60° spacing).
 const NODE_WIDTH = 168;
-const NODE_MARGIN = 100; // half the card's approx rendered footprint
 const HUB_SIZE = 128;
 const HUB_RADIUS = HUB_SIZE / 2;
 const EDGE_MARGIN = 24;
-const MAX_RADIUS = 300;
+// Extra clearance beyond the bare minimum, so cards never look like
+// they're just barely avoiding each other.
+const GAP_BUFFER = 48;
 
 function WhatWeDoOrbit() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const [cardHeight, setCardHeight] = useState(0);
   const [hovered, setHovered] = useState<number | null>(null);
   const reducedMotion = useReducedMotion();
 
@@ -37,17 +33,37 @@ function WhatWeDoOrbit() {
     return () => ro.disconnect();
   }, []);
 
+  // Card height is driven purely by content at a fixed NODE_WIDTH, so it
+  // doesn't change with container size — measure it once after mount
+  // (real content, since a hardcoded height estimate was wrong before and
+  // caused nodes to overlap) rather than guessing.
+  useLayoutEffect(() => {
+    const heights = cardRefs.current
+      .filter((el): el is HTMLDivElement => el !== null)
+      .map((el) => el.getBoundingClientRect().height);
+    if (heights.length) setCardHeight(Math.max(...heights));
+  }, []);
+
   const cx = size.width / 2;
   const cy = size.height / 2;
   const count = whatWeDo.length;
-  // Bound the radius against the container's actual measured size (not a
-  // guess) so nodes and connecting lines can never spill past the frame —
-  // and never end up closer to each other than their own footprint either.
-  const maxRadius = Math.max(0, Math.min(cx, cy) - NODE_MARGIN - EDGE_MARGIN);
-  const radius = Math.min(maxRadius, MAX_RADIUS);
+  // In a 6-node hexagon, two of the six adjacent-node pairs sit directly
+  // above/below one another (angularly 60° apart but purely vertical),
+  // so THEIR separation is exactly `radius`, and it has to clear the full
+  // card height (not just its width) to avoid overlapping — a chord/width
+  // calculation alone isn't enough once cards are taller than they are
+  // wide, which is what actually caused the visible overlap bug here.
+  const verticalPairFloor = cardHeight > 0 ? cardHeight + GAP_BUFFER : 0;
+  const nodeHalfExtent = Math.max(NODE_WIDTH, cardHeight) / 2;
+  const containerCeiling = Math.max(0, Math.min(cx, cy) - nodeHalfExtent - EDGE_MARGIN);
+  // Prefer filling the available space (up to a sane cap so the diagram
+  // doesn't sprawl on very wide screens); if the container is ever too
+  // small to clear the vertical-pair floor, avoiding overlap wins over
+  // staying inside the edge margin.
+  const radius = Math.min(Math.max(containerCeiling, verticalPairFloor), 280);
 
   return (
-    <div ref={containerRef} className="relative mx-auto h-[720px] w-full max-w-[840px]">
+    <div ref={containerRef} className="relative mx-auto h-[760px] w-full max-w-[840px]">
       {size.width > 0 && (
         <>
           <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
@@ -115,12 +131,15 @@ function WhatWeDoOrbit() {
                 style={{ left: x, top: y, width: NODE_WIDTH, transform: "translate(-50%, -50%)" }}
               >
                 <div
+                  ref={(el) => {
+                    cardRefs.current[i] = el;
+                  }}
                   className={clsx(
                     "card-feature overflow-hidden text-center transition-all duration-200 !p-0",
                     isHovered && "scale-[1.04] border-[var(--color-primary-blue)] shadow-[0_10px_24px_rgba(0,0,0,0.12)]"
                   )}
                 >
-                  <div className="relative h-16 w-full overflow-hidden">
+                  <div className="relative h-20 w-full overflow-hidden">
                     <Image
                       src={item.image}
                       alt=""
@@ -153,12 +172,12 @@ function WhatWeDoGrid() {
     <div className="grid grid-cols-2 gap-4">
       {whatWeDo.map((item) => (
         <div key={item.title} className="card-feature overflow-hidden text-center !p-0">
-          <div className="relative h-20 w-full overflow-hidden">
+          <div className="relative h-28 w-full overflow-hidden">
             <Image src={item.image} alt="" fill sizes="50vw" className="object-cover" />
           </div>
           <div className="p-4">
             <p className="type-title-sm mb-1 text-ink">{item.title}</p>
-            <p className="type-caption text-[var(--color-muted)]">{item.description}</p>
+            <p className="type-caption line-clamp-4 text-[var(--color-muted)]">{item.description}</p>
           </div>
         </div>
       ))}

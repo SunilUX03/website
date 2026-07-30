@@ -26,7 +26,7 @@ function BoardCard({ member }: { member: (typeof boardOfDirectors)[number] }) {
     >
       <div className={clsx("board-flip-inner", flipped && "is-flipped")}>
         <div className="board-flip-face card-feature flex flex-col items-center justify-center gap-3 !p-4 text-center">
-          <div className="voice-icon-circular relative h-20 w-20 overflow-hidden">
+          <div className="relative h-24 w-20 overflow-hidden rounded-lg">
             <Image src={member.photo} alt="" fill sizes="80px" className="object-cover" />
           </div>
           <div>
