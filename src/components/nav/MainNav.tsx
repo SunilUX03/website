@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import clsx from "clsx";
 import { nav } from "@/lib/content";
 import { NavDropdown, DropdownLink } from "./NavDropdown";
@@ -36,13 +37,15 @@ export function MainNav() {
             scrolled ? "h-14" : "h-16"
           )}
         >
-          <a href="/" className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="inline-block h-8 w-8 shrink-0 rounded-full border border-hairline-strong bg-[var(--color-surface-strong)]"
-              title="Tamil Nadu State emblem (placeholder)"
+          <a href="/" className="flex items-center" aria-label="TNeGA — Tamil Nadu e-Governance Agency home">
+            <Image
+              src="/images/tnega-logo.png"
+              alt="Government of Tamil Nadu emblem and TNeGA — Tamil Nadu e-Governance Agency"
+              width={980}
+              height={186}
+              priority
+              className="h-9 w-auto md:h-10"
             />
-            <span className="type-title-md leading-none text-ink">TNeGA</span>
           </a>
 
           <nav className="hidden items-center gap-7 lg:flex">

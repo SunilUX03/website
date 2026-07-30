@@ -1,6 +1,7 @@
 // Centralized homepage copy, pulled verbatim from the locked build spec.
-// Items explicitly marked PENDING in the spec use placeholder copy tagged
-// clearly below — do not treat those as final.
+// Content still pending final approval uses seeded placeholder photos
+// (picsum.photos) or is omitted outright — never a visible "pending" label
+// — per the asset policy in the build spec. See inline notes below.
 
 export const nav = {
   accessibility: {
@@ -67,8 +68,6 @@ export const nav = {
 };
 
 export const hero = {
-  eyebrow:
-    "Directorate of e-Governance / Tamil Nadu e-Governance Agency — Information Technology and Digital Services Department, Government of Tamil Nadu",
   headline: "Powering Digital Governance in Tamil Nadu",
   description:
     "Tamil Nadu e-Governance Agency designs, builds and manages large-scale digital platforms that deliver essential government services to citizens and departments — transparently, efficiently and at scale.",
@@ -76,12 +75,16 @@ export const hero = {
     {
       name: "Thiru C. Joseph Vijay",
       title: "Hon'ble Chief Minister of Tamil Nadu",
+      photo: "/images/leaders/cm-photo.jpg",
       quote: null as string | null,
+      role: "primary" as const,
     },
     {
       name: "Dr. R. Kumar",
       title: "Hon'ble Minister of Information Technology and Digital Services",
+      photo: "/images/leaders/it-minister-photo.jpg",
       quote: null as string | null,
+      role: "secondary" as const,
     },
   ],
 };
@@ -98,22 +101,19 @@ export const pillars = [
     title: "Citizen Access",
     description:
       "TNeGA builds digital platforms that enable citizens to access government services easily, securely and from anywhere across Tamil Nadu.",
-    imageLabel: "Citizen using a digital service kiosk",
-    gradient: "sky" as const,
+    image: "https://picsum.photos/seed/tnega-citizen-access/800/600",
   },
   {
     title: "Partnering with Government",
     description:
       "We partner with government departments to deliver end-to-end digital services, technology platforms and data-driven governance solutions.",
-    imageLabel: "Government officials in a planning session",
-    gradient: "mint" as const,
+    image: "https://picsum.photos/seed/tnega-partnering-government/800/600",
   },
   {
     title: "Innovation & Infrastructure",
     description:
       "As Tamil Nadu's digital governance agency, TNeGA leads AI, blockchain and geospatial innovation — building the infrastructure for tomorrow's governance.",
-    imageLabel: "Data center / infrastructure imagery",
-    gradient: "lavender" as const,
+    image: "https://picsum.photos/seed/tnega-innovation-infra/800/600",
   },
 ];
 
@@ -174,8 +174,7 @@ export const projects = [
       { label: "Login to Portal", href: "https://tnesevai.tn.gov.in" },
       { label: "Know more", href: "/projects/e-sevai" },
     ],
-    imageLabel: "e-Sevai centre / citizen service photo",
-    gradient: "sky" as const,
+    image: "/images/projects/e-sevai.png",
   },
   {
     slug: "namma-arasu",
@@ -190,8 +189,7 @@ export const projects = [
       { label: "Message Now", href: "https://wa.me/917845252525" },
       { label: "Know more", href: "/projects/namma-arasu" },
     ],
-    imageLabel: "Namma Arasu WhatsApp governance photo",
-    gradient: "mint" as const,
+    image: "/images/projects/namma-arasu.png",
   },
   {
     slug: "tn-gis",
@@ -203,8 +201,7 @@ export const projects = [
       { label: "Access Portal", href: "https://tngis.tn.gov.in" },
       { label: "Know more", href: "/projects/tn-gis" },
     ],
-    imageLabel: "TN GIS map interface photo",
-    gradient: "lavender" as const,
+    image: "/images/projects/tn-gis.png",
   },
   {
     slug: "umis",
@@ -220,8 +217,7 @@ export const projects = [
       { label: "Login to Portal", href: "/projects/umis" },
       { label: "Know more", href: "/projects/umis" },
     ],
-    imageLabel: "Higher education / campus photo",
-    gradient: "peach" as const,
+    image: "/images/projects/umis.png",
   },
   {
     slug: "tnsso",
@@ -232,8 +228,7 @@ export const projects = [
       { value: 9, suffix: "", label: "Applications Integrated" },
     ],
     ctas: [{ label: "Know more", href: "/projects/tnsso" }],
-    imageLabel: "Single sign-on portal photo",
-    gradient: "rose" as const,
+    image: "/images/projects/tnsso.png",
     badge: "MeitY Approved",
   },
   {
@@ -249,31 +244,23 @@ export const projects = [
       { label: "Login to Portal", href: "/projects/e-office" },
       { label: "Know more", href: "/projects/e-office" },
     ],
-    imageLabel: "e-Office digital workflow photo",
-    gradient: "sky" as const,
+    image: "/images/projects/e-office.png",
   },
 ];
 
-// PENDING: only Additional Chief Secretary + CEO are confirmed; remaining
-// board members' names/designations/photos are not yet available.
+// Only the Additional Chief Secretary + CEO are confirmed so far; remaining
+// board members are omitted until their names/designations/photos are final
+// (per policy: don't fabricate placeholder board members).
 export const leadership = [
   {
     name: "Thiru Pradeep Yadav, IAS",
     title: "Additional Chief Secretary, IT & Digital Services Department, GoTN",
+    photo: "/images/leaders/pradeep-yadav.png",
   },
   {
     name: "Dr. Alby John Varghese, IAS",
     title: "CEO, TNeGA",
-  },
-  {
-    name: "PENDING — Board Member 1",
-    title: "Designation to be confirmed",
-    pending: true,
-  },
-  {
-    name: "PENDING — Board Member 2",
-    title: "Designation to be confirmed",
-    pending: true,
+    photo: "/images/leaders/alby-john-varghese.png",
   },
 ];
 
@@ -306,51 +293,98 @@ export const announcements = [
   },
 ];
 
-// PENDING: gallery photo assets not yet available — placeholders below.
+// Real photography not yet supplied — stable seeded placeholder photos
+// (matches the approach already used on the existing prototype site).
 export const gallery = [
-  { caption: "e-Sevai centre serving citizens in Chennai", gradient: "sky" as const },
-  { caption: "Namma Arasu WhatsApp governance launch", gradient: "mint" as const },
-  { caption: "TNeGA leadership at the SimpleGov launch event", gradient: "peach" as const },
-  { caption: "Students accessing UMIS at a state university", gradient: "lavender" as const },
-  { caption: "TN GIS field survey and mapping", gradient: "rose" as const },
-  { caption: "e-Office rollout training session", gradient: "sky" as const },
+  { caption: "e-Sevai centre serving citizens in Chennai", image: "https://picsum.photos/seed/tnega-gallery-esevai/800/450" },
+  { caption: "Namma Arasu WhatsApp governance launch", image: "https://picsum.photos/seed/tnega-gallery-namma-arasu/800/450" },
+  { caption: "TNeGA leadership at the SimpleGov launch event", image: "https://picsum.photos/seed/tnega-gallery-simplegov/800/450" },
+  { caption: "Students accessing UMIS at a state university", image: "https://picsum.photos/seed/tnega-gallery-umis/800/450" },
+  { caption: "TN GIS field survey and mapping", image: "https://picsum.photos/seed/tnega-gallery-tngis/800/450" },
+  { caption: "e-Office rollout training session", image: "https://picsum.photos/seed/tnega-gallery-eoffice/800/450" },
 ];
 
+// Each platform card auto-rotates through its own posts. Only the first
+// post per platform is sourced verbatim from the existing prototype; the
+// rest are on-brand placeholders grounded in already-published TNeGA
+// figures (not new/fabricated claims) so the rotation has content to cycle.
 export const socialMedia = [
   {
     platform: "Facebook",
-    text: "TNeGA's SimpleGov initiative simplifies 10 government services — paperless, online and instant. A new era of governance begins.",
-    date: "29 May 2025",
     href: "https://www.facebook.com/TNeGovernance",
     followLabel: "Follow on Facebook",
-    gradient: "sky" as const,
+    posts: [
+      {
+        text: "TNeGA's SimpleGov initiative simplifies 10 government services — paperless, online and instant. A new era of governance begins.",
+        date: "29 May 2025",
+        image: "https://picsum.photos/seed/tnega-fb-simplegov/640/360",
+      },
+      {
+        text: "e-Sevai centres have now processed over 4 crore citizen transactions across Tamil Nadu.",
+        date: "14 Jul 2025",
+        image: "https://picsum.photos/seed/tnega-fb-esevai/640/360",
+      },
+      {
+        text: "UMIS now integrates student data from 5,490 institutions statewide — one platform for all of higher education.",
+        date: "02 Sep 2025",
+        image: "https://picsum.photos/seed/tnega-fb-umis/640/360",
+      },
+    ],
   },
   {
     platform: "X",
-    text: "Namma Arasu is live! Access 51 government services on WhatsApp at 7845252525. Governance at your fingertips.",
-    date: "08 Jan 2026",
     href: "https://x.com/tnega",
     followLabel: "Follow on X",
-    gradient: "mint" as const,
+    posts: [
+      {
+        text: "Namma Arasu is live! Access 51 government services on WhatsApp at 7845252525. Governance at your fingertips.",
+        date: "08 Jan 2026",
+        image: "https://picsum.photos/seed/tnega-x-nammaarasu/640/360",
+      },
+      {
+        text: "TN GIS now maps 400+ spatial layers — land records, guideline values and civic amenities in one click.",
+        date: "22 Oct 2025",
+        image: "https://picsum.photos/seed/tnega-x-tngis/640/360",
+      },
+      {
+        text: "e-Office has crossed 1,28,243 daily users across state government departments.",
+        date: "05 Nov 2025",
+        image: "https://picsum.photos/seed/tnega-x-eoffice/640/360",
+      },
+    ],
   },
   {
     platform: "YouTube",
-    text: "Watch: Chief Minister launches SimpleGov — Tamil Nadu's landmark digital governance reform initiative.",
-    date: "29 May 2025",
     href: "https://www.youtube.com/@tnega",
     followLabel: "Subscribe on YouTube",
-    gradient: "lavender" as const,
+    posts: [
+      {
+        text: "Watch: Chief Minister launches SimpleGov — Tamil Nadu's landmark digital governance reform initiative.",
+        date: "29 May 2025",
+        image: "https://picsum.photos/seed/tnega-yt-simplegov/640/360",
+      },
+      {
+        text: "Explainer: how e-Sevai brings 410+ services within reach of every district in Tamil Nadu.",
+        date: "18 Aug 2025",
+        image: "https://picsum.photos/seed/tnega-yt-esevai/640/360",
+      },
+      {
+        text: "Inside Namma Arasu: how WhatsApp is becoming a channel for government services.",
+        date: "20 Jan 2026",
+        image: "https://picsum.photos/seed/tnega-yt-nammaarasu/640/360",
+      },
+    ],
   },
 ];
 
 export const ecosystem = [
-  { name: "TNeGA", href: "https://www.tnega.tn.gov.in" },
-  { name: "ELCOT", href: "https://www.elcot.in" },
-  { name: "Tamil Virtual Academy", href: "https://www.tamilvu.org" },
-  { name: "ICT Academy", href: "https://www.ictacademy.in" },
-  { name: "TACTV", href: "https://www.tactv.in" },
-  { name: "TANFINET", href: "https://www.tanfinet.tn.gov.in" },
-  { name: "iTNT Hub", href: "https://www.itnthub.in" },
+  { name: "TNeGA", href: "https://www.tnega.tn.gov.in", logo: "/images/logos/tnega.png" },
+  { name: "ELCOT", href: "https://www.elcot.in", logo: "/images/logos/elcot.png" },
+  { name: "Tamil Virtual Academy", href: "https://www.tamilvu.org", logo: "/images/logos/tamil-virtual-academy.png" },
+  { name: "ICT Academy", href: "https://www.ictacademy.in", logo: "/images/logos/ict-academy.png" },
+  { name: "TACTV", href: "https://www.tactv.in", logo: "/images/logos/tactv.png" },
+  { name: "TANFINET", href: "https://www.tanfinet.tn.gov.in", logo: "/images/logos/tanfinet.png" },
+  { name: "iTNT Hub", href: "https://www.itnthub.in", logo: "/images/logos/itnt-hub.png" },
 ];
 
 export const footer = {

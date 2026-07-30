@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { pillars } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
-import { useReducedMotion } from "@/lib/hooks";
+import { PhotoTile } from "@/components/ui/PhotoTile";
+import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
 
 function PillarCard({
   pillar,
@@ -19,9 +19,9 @@ function PillarCard({
   return (
     <div className={`card-feature group overflow-hidden !p-0 ${className ?? ""}`} style={style}>
       <div className="overflow-hidden">
-        <ImagePlaceholder
-          label={pillar.imageLabel}
-          gradient={pillar.gradient}
+        <PhotoTile
+          src={pillar.image}
+          alt={pillar.title}
           aspect="aspect-[4/3]"
           className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
         />
@@ -36,7 +36,7 @@ function PillarCard({
 
 function PillarCardsDesktop() {
   return (
-    <div className="hidden grid-cols-3 gap-6 md:grid">
+    <div className="grid grid-cols-3 gap-6">
       {pillars.map((pillar, i) => (
         <motion.div
           key={pillar.title}
@@ -58,13 +58,17 @@ function lerp(a: number, b: number, t: number) {
 
 function PillarCardsMobileStatic() {
   return (
-    <div className="flex flex-col gap-6 md:hidden">
+    <div className="flex flex-col gap-6">
       {pillars.map((pillar) => (
         <PillarCard key={pillar.title} pillar={pillar} />
       ))}
     </div>
   );
 }
+
+// Extra translateY (in addition to the recede offset) so stacked cards
+// never appear flush/touching, even at the very start/end of the range.
+const GAP_PX = 20;
 
 function PillarCardsMobileAnimated() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -92,14 +96,21 @@ function PillarCardsMobileAnimated() {
 
   const card3Y = lerp(100, 0, phase2);
 
+  // Each stacked layer reserves GAP_PX of padding top+bottom around its
+  // card, so adjacent cards can never end up perfectly flush/touching —
+  // there's always a canvas-colored gap between them, independent of the
+  // scroll-driven transform math above.
+  const slotPadding = { paddingTop: GAP_PX / 2, paddingBottom: GAP_PX / 2 } as const;
+
   return (
-    <div ref={containerRef} className="relative md:hidden" style={{ height: "220vh" }}>
+    <div ref={containerRef} className="relative" style={{ height: "220vh" }}>
       <div className="sticky top-20 h-[62vh] w-full overflow-visible">
         <div
           className="absolute inset-0"
           style={{
             transform: `translateY(${card1Y}%) scale(${card1Scale})`,
             opacity: card1Opacity,
+            ...slotPadding,
           }}
         >
           <PillarCard pillar={pillars[0]} className="h-full" />
@@ -111,11 +122,15 @@ function PillarCardsMobileAnimated() {
               progress <= 0.5 ? 1 : card2Scale
             })`,
             opacity: progress <= 0.5 ? 1 : card2Opacity,
+            ...slotPadding,
           }}
         >
           <PillarCard pillar={pillars[1]} className="h-full" />
         </div>
-        <div className="absolute inset-0" style={{ transform: `translateY(${card3Y}%)` }}>
+        <div
+          className="absolute inset-0"
+          style={{ transform: `translateY(${card3Y}%)`, ...slotPadding }}
+        >
           <PillarCard pillar={pillars[2]} className="h-full" />
         </div>
       </div>
@@ -129,6 +144,8 @@ function PillarCardsMobile() {
 }
 
 export function PillarCards() {
+  const isDesktop = useIsDesktop();
+
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
@@ -139,8 +156,10 @@ export function PillarCards() {
           How TNeGA powers governance across Tamil Nadu
         </h2>
 
-        <PillarCardsDesktop />
-        <PillarCardsMobile />
+        {/* isDesktop is null until mounted — render nothing that first tick
+            so desktop/mobile variants are never both in the DOM at once. */}
+        {isDesktop === true && <PillarCardsDesktop />}
+        {isDesktop === false && <PillarCardsMobile />}
       </Container>
     </section>
   );

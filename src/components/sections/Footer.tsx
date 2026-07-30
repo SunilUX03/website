@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { footer, ecosystem } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { formatIndianNumber } from "@/lib/format";
@@ -26,13 +27,13 @@ export function Footer() {
     <footer className="border-t border-hairline bg-canvas">
       <Container className="grid grid-cols-1 gap-10 py-xxl md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-8">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="h-9 w-9 rounded-full border border-hairline-strong bg-surface-strong"
-            />
-            <span className="type-title-md text-ink">TNeGA</span>
-          </div>
+          <Image
+            src="/images/tnega-logo.png"
+            alt="Government of Tamil Nadu emblem and TNeGA — Tamil Nadu e-Governance Agency"
+            width={980}
+            height={186}
+            className="h-9 w-auto"
+          />
           <p className="type-body-sm text-[var(--color-body)]">{footer.description}</p>
           <p className="type-body-sm text-[var(--color-body)]">{footer.address}</p>
           <p className="type-body-sm text-[var(--color-body)]">
@@ -96,9 +97,15 @@ export function Footer() {
                   href={org.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="type-caption flex h-12 items-center justify-center rounded-md border border-hairline px-2 text-center text-[var(--color-body)] hover:border-hairline-strong hover:text-ink"
+                  className="flex h-14 items-center justify-center rounded-md border border-hairline p-2 hover:border-hairline-strong"
                 >
-                  {org.name}
+                  <Image
+                    src={org.logo}
+                    alt={org.name}
+                    width={96}
+                    height={96}
+                    className="h-full w-full object-contain"
+                  />
                 </a>
               ))}
           </div>
@@ -116,12 +123,6 @@ export function Footer() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 md:justify-end">
-            <span
-              className="type-caption rounded border border-dashed border-hairline-strong px-2 py-1 text-[var(--color-muted)]"
-              title="Certifying body details pending"
-            >
-              Certified Quality Website (pending)
-            </span>
             <span className="type-caption rounded border border-hairline-strong px-2 py-1 text-[var(--color-muted)]">
               WCAG 2.1 AA
             </span>
@@ -129,10 +130,6 @@ export function Footer() {
               W3C
             </span>
           </div>
-
-          <p className="type-body-sm text-[var(--color-muted)]">
-            Web Information Manager: <span title="Name/contact pending">pending</span>
-          </p>
 
           <p className="type-body-sm text-[var(--color-muted)]">Last Updated: {BUILD_DATE}</p>
 

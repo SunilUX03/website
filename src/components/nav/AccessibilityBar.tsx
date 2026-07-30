@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { nav } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 
@@ -13,10 +14,13 @@ export function AccessibilityBar() {
     <div className="w-full border-b border-hairline bg-canvas">
       <Container className="flex h-9 items-center justify-between gap-4 text-[13px]">
         <div className="flex items-center gap-2 truncate text-[var(--color-muted)]">
-          <span
+          <Image
+            src="/images/tn-emblem.png"
+            alt=""
             aria-hidden
-            className="inline-block h-4 w-4 shrink-0 rounded-full bg-[var(--color-surface-strong)] border border-hairline-strong"
-            title="Government of Tamil Nadu emblem (placeholder)"
+            width={178}
+            height={186}
+            className="h-5 w-auto shrink-0"
           />
           <span className="truncate">{nav.accessibility.govLabel}</span>
         </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ecosystem } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 
@@ -9,16 +10,23 @@ export function Ecosystem() {
           Our Ecosystem
         </p>
 
-        <div className="grid grid-cols-3 place-items-center gap-x-6 gap-y-8 sm:grid-cols-4 md:flex md:flex-wrap md:justify-between md:gap-8">
+        {/* Desktop: single row, no wrap — shrinks to fit, scrolls as a
+            fallback before ever wrapping. Mobile: wrapped grid. */}
+        <div className="grid grid-cols-3 place-items-center gap-x-4 gap-y-8 sm:grid-cols-4 md:flex md:flex-nowrap md:items-center md:justify-between md:gap-3 md:overflow-x-auto">
           {ecosystem.map((org) => (
             <a
               key={org.name}
               href={org.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="type-body-sm flex h-16 w-full items-center justify-center rounded-lg border border-hairline px-4 text-center text-[var(--color-muted)] grayscale transition-all duration-200 hover:text-ink hover:grayscale-0 md:w-auto md:min-w-[140px] md:border-0"
+              className="group flex flex-col items-center gap-2 text-center md:min-w-[92px] md:flex-1 md:basis-0"
             >
-              {org.name}
+              <span className="relative flex h-11 w-11 items-center justify-center grayscale transition-all duration-200 group-hover:grayscale-0 md:h-9 md:w-9">
+                <Image src={org.logo} alt="" aria-hidden width={96} height={96} className="h-full w-full object-contain" />
+              </span>
+              <span className="type-caption text-[var(--color-muted)] transition-colors group-hover:text-ink md:text-[11px] md:leading-tight">
+                {org.name}
+              </span>
             </a>
           ))}
         </div>

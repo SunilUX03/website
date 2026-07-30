@@ -1,11 +1,5 @@
-"use client";
-
 import { ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
-import { CountUp } from "@/components/ui/CountUp";
-import { useInViewOnce } from "@/lib/hooks";
-
-const OPEN_ROLES = 12;
 
 function ReachUsPanel({
   eyebrow,
@@ -40,12 +34,10 @@ function ReachUsPanel({
 }
 
 export function ReachUs() {
-  const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.4 });
-
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
-        <div ref={ref} className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ReachUsPanel
             eyebrow="Support"
             title="Reach Us"
@@ -65,12 +57,7 @@ export function ReachUs() {
           />
           <ReachUsPanel
             eyebrow="Careers"
-            title={
-              <>
-                <CountUp value={OPEN_ROLES} start={inView} duration={900} /> open roles right now
-                &nbsp;→
-              </>
-            }
+            title="Current Openings"
             description="Join TNeGA and help build the digital infrastructure powering governance across Tamil Nadu."
             ctaLabel="View Openings"
             href="/about/careers"

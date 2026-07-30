@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { projects } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { PhotoTile } from "@/components/ui/PhotoTile";
 import { CountUp } from "@/components/ui/CountUp";
-import { useReducedMotion } from "@/lib/hooks";
+import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
 
 type Project = (typeof projects)[number];
 
@@ -65,7 +65,7 @@ function DesktopSpotlight() {
   };
 
   return (
-    <div className="relative hidden h-[640px] w-full overflow-hidden rounded-xl md:block">
+    <div className="relative h-[640px] w-full overflow-hidden rounded-xl">
       <AnimatePresence initial={false}>
         <motion.div
           key={active}
@@ -75,12 +75,13 @@ function DesktopSpotlight() {
           exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0 : 0.6, ease: "easeInOut" }}
         >
-          <ImagePlaceholder
-            label={projects[active].imageLabel}
-            gradient={projects[active].gradient}
+          <PhotoTile
+            src={projects[active].image}
+            alt={projects[active].name}
             aspect="aspect-auto"
             className="h-full w-full"
-            labelPosition="top"
+            sizes="100vw"
+            priority
           />
           <SpotlightContent project={projects[active]} active={true} />
         </motion.div>
@@ -165,7 +166,7 @@ function MobileSpotlight() {
   };
 
   return (
-    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl md:hidden">
+    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
       <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
         {projects.map((p, i) => (
           <div key={p.slug} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/30">
@@ -180,12 +181,13 @@ function MobileSpotlight() {
         ))}
       </div>
 
-      <ImagePlaceholder
-        label={projects[active].imageLabel}
-        gradient={projects[active].gradient}
+      <PhotoTile
+        src={projects[active].image}
+        alt={projects[active].name}
         aspect="aspect-auto"
         className="h-full w-full"
-        labelPosition="top"
+        sizes="100vw"
+        priority
       />
       <SpotlightContent project={projects[active]} active={true} />
 
@@ -222,6 +224,8 @@ function MobileSpotlight() {
 }
 
 export function ProjectsSpotlight() {
+  const isDesktop = useIsDesktop();
+
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
@@ -232,8 +236,8 @@ export function ProjectsSpotlight() {
           Platforms serving citizens across Tamil Nadu
         </h2>
 
-        <DesktopSpotlight />
-        <MobileSpotlight />
+        {isDesktop === true && <DesktopSpotlight />}
+        {isDesktop === false && <MobileSpotlight />}
       </Container>
     </section>
   );

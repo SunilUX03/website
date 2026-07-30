@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { easeOutCubic, formatIndianNumber } from "@/lib/format";
 import { useReducedMotion } from "@/lib/hooks";
 
@@ -17,6 +17,13 @@ interface CountUpProps {
 /**
  * Animates 0 -> value with an eased-out curve once `start` becomes true.
  * Only the digits animate; prefix/suffix render statically throughout.
+ *
+ * No "has it already run" ref guard here on purpose — that pattern breaks
+ * under React StrictMode's dev-mode double-effect-invocation (the first
+ * invocation's cleanup cancels the timer, then the ref would block the
+ * second invocation from ever restarting it, leaving the count frozen at
+ * 0). Relying only on the effect's own cleanup to cancel a stale run is
+ * the idiomatic, StrictMode-safe way to do this.
  */
 export function CountUp({
   value,
@@ -29,11 +36,9 @@ export function CountUp({
 }: CountUpProps) {
   const reducedMotion = useReducedMotion();
   const [display, setDisplay] = useState(0);
-  const hasRun = useRef(false);
 
   useEffect(() => {
-    if (!start || hasRun.current) return;
-    hasRun.current = true;
+    if (!start) return;
 
     if (reducedMotion) {
       setDisplay(value);

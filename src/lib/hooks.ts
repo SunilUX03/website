@@ -17,6 +17,26 @@ export function useReducedMotion(): boolean {
   return reduced;
 }
 
+/**
+ * Reports whether the viewport is at/above `breakpoint`, via matchMedia
+ * (not CSS visibility). Returns null until mounted — callers should render
+ * nothing (or a single skeleton) for that first tick so a desktop/mobile
+ * variant pair is never both present in the DOM at once, even briefly.
+ */
+export function useIsDesktop(breakpoint = 768): boolean | null {
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${breakpoint}px)`);
+    setIsDesktop(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [breakpoint]);
+
+  return isDesktop;
+}
+
 /** Fires `onEnter` once, the first time the element scrolls into view. */
 export function useInViewOnce<T extends HTMLElement>(
   options: IntersectionObserverInit = { threshold: 0.3 }
