@@ -128,7 +128,7 @@ export function SocialMedia() {
     <section className="relative overflow-hidden bg-canvas-soft">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-20 top-0 h-[360px] w-[360px] rounded-full blur-3xl"
+        className="orb-drift-a pointer-events-none absolute -left-20 top-0 h-[360px] w-[360px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-rose) 0%, transparent 70%)",
           opacity: 0.4,
@@ -136,7 +136,7 @@ export function SocialMedia() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-24 bottom-0 h-[320px] w-[320px] rounded-full blur-3xl"
+        className="orb-drift-b pointer-events-none absolute -right-24 bottom-0 h-[320px] w-[320px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-sky) 0%, transparent 70%)",
           opacity: 0.4,

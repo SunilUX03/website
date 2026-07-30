@@ -22,7 +22,7 @@ export function Ecosystem() {
               rel="noopener noreferrer"
               className="group flex flex-col items-center gap-3 text-center md:shrink-0"
             >
-              <span className="relative flex h-20 w-20 items-center justify-center grayscale transition-all duration-200 group-hover:grayscale-0 md:h-24 md:w-24">
+              <span className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-hairline bg-surface-card p-3 grayscale transition-all duration-200 group-hover:border-hairline-strong group-hover:grayscale-0 md:h-24 md:w-24 md:p-4">
                 <Image src={org.logo} alt="" aria-hidden width={192} height={192} className="h-full w-full object-contain" />
               </span>
               <span className="type-caption text-[var(--color-muted)] transition-colors group-hover:text-ink md:text-[15px]">

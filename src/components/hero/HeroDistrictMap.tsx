@@ -3,10 +3,15 @@
 import { useId, useState } from "react";
 import Image from "next/image";
 import { TN_DISTRICTS, TN_MAP_VIEWBOX } from "@/lib/tn-districts";
+import { pexelsPhoto, DISTRICT_PHOTO_POOL } from "@/lib/stock-photos";
 import { useReducedMotion } from "@/lib/hooks";
 
-function slugify(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+// Real, on-theme photography (people + tech, e-Sevai/citizen-service style
+// scenes, students, elders, IT/infrastructure) cycled across the 30
+// districts rather than one random image per district.
+function districtPhotoUrl(districtIndex: number) {
+  const id = DISTRICT_PHOTO_POOL[districtIndex % DISTRICT_PHOTO_POOL.length];
+  return pexelsPhoto(id, 240, 180);
 }
 
 export function HeroDistrictMap({ className }: { className?: string }) {
@@ -19,7 +24,8 @@ export function HeroDistrictMap({ className }: { className?: string }) {
   const glowId = `districtGlow-${uid}`;
   const sheenId = `sheenGradient-${uid}`;
 
-  const activeDistrict = TN_DISTRICTS.find((d) => d.name === active) ?? null;
+  const activeDistrictIndex = TN_DISTRICTS.findIndex((d) => d.name === active);
+  const activeDistrict = activeDistrictIndex >= 0 ? TN_DISTRICTS[activeDistrictIndex] : null;
 
   return (
     <div className={className}>
@@ -104,7 +110,7 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         >
           <div className="relative aspect-[4/3] w-full">
             <Image
-              src={`https://picsum.photos/seed/tnega-district-${slugify(activeDistrict.name)}/240/180`}
+              src={districtPhotoUrl(activeDistrictIndex)}
               alt={`Representative photo for ${activeDistrict.name} district`}
               fill
               sizes="180px"

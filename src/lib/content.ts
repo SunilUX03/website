@@ -1,7 +1,10 @@
 // Centralized homepage copy, pulled verbatim from the locked build spec.
-// Content still pending final approval uses seeded placeholder photos
-// (picsum.photos) or is omitted outright — never a visible "pending" label
-// — per the asset policy in the build spec. See inline notes below.
+// Content still pending final approval uses real, content-appropriate
+// curated stock photography (see lib/stock-photos.ts) or is omitted
+// outright — never a visible "pending" label — per the asset policy in
+// the build spec. See inline notes below.
+
+import { pexelsPhoto, STOCK } from "./stock-photos";
 
 export const nav = {
   accessibility: {
@@ -101,19 +104,19 @@ export const pillars = [
     title: "Citizen Access",
     description:
       "TNeGA builds digital platforms that enable citizens to access government services easily, securely and from anywhere across Tamil Nadu.",
-    image: "https://picsum.photos/seed/tnega-citizen-access/800/600",
+    image: pexelsPhoto(STOCK.womanPhone, 800, 600),
   },
   {
     title: "Partnering with Government",
     description:
       "We partner with government departments to deliver end-to-end digital services, technology platforms and data-driven governance solutions.",
-    image: "https://picsum.photos/seed/tnega-partnering-government/800/600",
+    image: pexelsPhoto(STOCK.handshakeLeaders, 800, 600),
   },
   {
     title: "Innovation & Infrastructure",
     description:
       "As Tamil Nadu's digital governance agency, TNeGA leads AI, blockchain and geospatial innovation — building the infrastructure for tomorrow's governance.",
-    image: "https://picsum.photos/seed/tnega-innovation-infra/800/600",
+    image: pexelsPhoto(STOCK.dataCenter, 800, 600),
   },
 ];
 
@@ -131,37 +134,37 @@ export const categories = [
     title: "Software Development",
     description:
       "Design and build secure, scalable digital systems for government services and departmental platforms.",
-    image: "https://picsum.photos/seed/tnega-cat-software-dev/700/500",
+    image: pexelsPhoto(STOCK.developer, 700, 500),
   },
   {
     title: "Security Audit",
     description:
       "Assess government applications for security risks and regulatory compliance through CERT-In empanelled agencies.",
-    image: "https://picsum.photos/seed/tnega-cat-security-audit/700/500",
+    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
   },
   {
     title: "IT Procurement",
     description:
       "End-to-end technology procurement support for government departments — transparent, standards-compliant and efficient.",
-    image: "https://picsum.photos/seed/tnega-cat-it-procurement/700/500",
+    image: pexelsPhoto(STOCK.handshakeCloseup, 700, 500),
   },
   {
     title: "UX Audit",
     description:
       "Improve the usability and accessibility of government applications to ensure citizens and officers can use them with ease.",
-    image: "https://picsum.photos/seed/tnega-cat-ux-audit/700/500",
+    image: pexelsPhoto(STOCK.attentiveGroup, 700, 500),
   },
   {
     title: "Capacity Building",
     description:
       "Enable departments through ICT training, workshops, seminars and digital skill development programs statewide.",
-    image: "https://picsum.photos/seed/tnega-cat-capacity-building/700/500",
+    image: pexelsPhoto(STOCK.workshopGroup, 700, 500),
   },
   {
     title: "AI & Emerging Tech",
     description:
       "Lead Tamil Nadu's adoption of AI, blockchain, GIS and IoT for next-generation governance solutions.",
-    image: "https://picsum.photos/seed/tnega-cat-ai-emerging-tech/700/500",
+    image: pexelsPhoto(STOCK.programmer, 700, 500),
   },
 ];
 
@@ -301,15 +304,16 @@ export const announcements = [
   },
 ];
 
-// Real photography not yet supplied — stable seeded placeholder photos
-// (matches the approach already used on the existing prototype site).
+// Real photography not yet supplied — real, content-appropriate curated
+// stock photos stand in (see lib/stock-photos.ts), matching each caption's
+// actual subject rather than a random image.
 export const gallery = [
-  { caption: "e-Sevai centre serving citizens in Chennai", image: "https://picsum.photos/seed/tnega-gallery-esevai/800/450" },
-  { caption: "Namma Arasu WhatsApp governance launch", image: "https://picsum.photos/seed/tnega-gallery-namma-arasu/800/450" },
-  { caption: "TNeGA leadership at the SimpleGov launch event", image: "https://picsum.photos/seed/tnega-gallery-simplegov/800/450" },
-  { caption: "Students accessing UMIS at a state university", image: "https://picsum.photos/seed/tnega-gallery-umis/800/450" },
-  { caption: "TN GIS field survey and mapping", image: "https://picsum.photos/seed/tnega-gallery-tngis/800/450" },
-  { caption: "e-Office rollout training session", image: "https://picsum.photos/seed/tnega-gallery-eoffice/800/450" },
+  { caption: "e-Sevai centre serving citizens in Chennai", image: pexelsPhoto(STOCK.ruralWomanPhone, 800, 450) },
+  { caption: "Namma Arasu WhatsApp governance launch", image: pexelsPhoto(STOCK.womanPhone, 800, 450) },
+  { caption: "TNeGA leadership at the SimpleGov launch event", image: pexelsPhoto(STOCK.handshakeLeaders, 800, 450) },
+  { caption: "Students accessing UMIS at a state university", image: pexelsPhoto(STOCK.studentLaptop, 800, 450) },
+  { caption: "TN GIS field survey and mapping", image: pexelsPhoto(STOCK.networkRack, 800, 450) },
+  { caption: "e-Office rollout training session", image: pexelsPhoto(STOCK.workshopGroup, 800, 450) },
 ];
 
 // Each platform card auto-rotates through posts fetched from

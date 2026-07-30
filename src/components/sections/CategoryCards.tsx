@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
-import { SectionMotif } from "@/components/ui/SectionMotif";
 import { useIsDesktop } from "@/lib/hooks";
 
 type Category = (typeof categories)[number];
@@ -55,9 +53,13 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
               <h3 className="type-title-md line-clamp-2 text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
                 {cat.title}
               </h3>
+              {/* Always visible now — hover still widens the card (more
+                  breathing room, up to 4 lines) but the description is
+                  never hidden behind a hover requirement. */}
               <p
-                className="type-body-sm mt-2 line-clamp-3 max-w-[46ch] text-white/90 transition-opacity duration-300 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]"
-                style={{ opacity: isHovered ? 1 : 0 }}
+                className={`type-body-sm mt-2 max-w-[46ch] text-white/90 transition-all duration-300 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] ${
+                  isHovered ? "line-clamp-4" : "line-clamp-2"
+                }`}
               >
                 {cat.description}
               </p>
@@ -70,40 +72,13 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
 }
 
 function CategoryMobileItem({ cat }: { cat: Category }) {
-  const [open, setOpen] = useState(false);
   return (
     <div className="card-feature relative overflow-hidden !p-0">
       <PhotoTile src={cat.image} alt="" aspect="aspect-[16/9]" className="w-full" />
       <div className="p-5">
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          className="flex w-full items-center justify-between text-left"
-        >
-          <h3 className="type-title-md text-ink">{cat.title}</h3>
-          <span
-            className={`ml-3 shrink-0 text-ink transition-transform duration-200 ${
-              open ? "rotate-45" : ""
-            }`}
-            aria-hidden
-          >
-            +
-          </span>
-        </button>
-        <AnimatePresence initial={false}>
-          {open && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="overflow-hidden"
-            >
-              <p className="type-body-sm pt-3 text-[var(--color-body)]">{cat.description}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <h3 className="type-title-md text-ink">{cat.title}</h3>
+        {/* Always visible — no tap-to-expand gate hiding the description. */}
+        <p className="type-body-sm mt-2 text-[var(--color-body)]">{cat.description}</p>
       </div>
     </div>
   );
@@ -115,9 +90,8 @@ export function CategoryCards() {
   const rowB = categories.slice(3, 6);
 
   return (
-    <section className="relative overflow-hidden bg-canvas">
-      <SectionMotif className="opacity-[0.14]" />
-      <Container className="relative py-xxl md:py-section">
+    <section className="bg-canvas">
+      <Container className="py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           What We Bring to the Table
         </p>

@@ -298,6 +298,27 @@
   }
 }
 
+/* Slow ambient drift for the soft gradient orbs behind Metrics/Social
+   Media/Reach Us — very gentle, long-period movement so the color feels
+   quietly alive rather than static. Reduced-motion freezes it via the
+   global rule above (animation-duration forced to ~0). */
+@keyframes orb-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -24px) scale(1.08); }
+  66% { transform: translate(-18px, 18px) scale(0.96); }
+}
+@keyframes orb-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-26px, 20px) scale(0.95); }
+  66% { transform: translate(20px, -16px) scale(1.06); }
+}
+.orb-drift-a {
+  animation: orb-drift-a 34s ease-in-out infinite;
+}
+.orb-drift-b {
+  animation: orb-drift-b 40s ease-in-out infinite;
+}
+
 /* The UX4G accessibility widget auto-injects its own floating trigger
    button; we drive it from our own nav "Accessibility" control instead so
    there's a single visible entry point, not two. The widget's real button

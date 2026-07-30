@@ -97,7 +97,7 @@ export function Footer() {
                   href={org.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-20 items-center justify-center rounded-md border border-hairline p-2 hover:border-hairline-strong"
+                  className="flex h-20 items-center justify-center rounded-2xl border border-hairline p-2 transition-colors hover:border-hairline-strong"
                 >
                   <Image
                     src={org.logo}

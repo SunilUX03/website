@@ -11,8 +11,8 @@ interface Node {
   r: number;
 }
 
-const LINK_DISTANCE = 150;
-const PROXIMITY_RADIUS = 140;
+const LINK_DISTANCE = 190;
+const PROXIMITY_RADIUS = 170;
 const PULSE_LIFETIME = 900; // ms
 
 /**
@@ -45,13 +45,16 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
 
     const seedNodes = () => {
       const area = width * height;
-      const count = Math.max(18, Math.min(56, Math.round(area / 10000)));
+      // Denser, better-connected field — every node should realistically
+      // have a few neighbours within LINK_DISTANCE rather than sitting
+      // isolated.
+      const count = Math.max(50, Math.min(140, Math.round(area / 4500)));
       nodes = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.12,
-        r: 1.3 + Math.random() * 1.1,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
+        r: 1.1 + Math.random() * 1,
       }));
     };
 
@@ -147,7 +150,7 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
                 brighten = Math.max(brighten, (1 - dPulse / PROXIMITY_RADIUS) * (1 - age));
               }
             }
-            const alpha = 0.08 + brighten * 0.32;
+            const alpha = 0.06 + brighten * 0.45;
             ctx.strokeStyle = `rgba(29, 63, 143, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -170,10 +173,10 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
             brighten = Math.max(brighten, (1 - dPulse / PROXIMITY_RADIUS) * (1 - age));
           }
         }
-        const alpha = 0.22 + brighten * 0.55;
+        const alpha = 0.18 + brighten * 0.65;
         ctx.fillStyle = `rgba(29, 63, 143, ${alpha})`;
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r + brighten * 1.4, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, n.r + brighten * 1.6, 0, Math.PI * 2);
         ctx.fill();
       }
 

@@ -12,7 +12,7 @@ export function Metrics() {
     <section className="relative overflow-hidden bg-canvas-soft">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-24 top-0 h-[380px] w-[380px] rounded-full blur-3xl"
+        className="orb-drift-a pointer-events-none absolute -left-24 top-0 h-[380px] w-[380px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-mint) 0%, transparent 70%)",
           opacity: 0.45,
@@ -20,7 +20,7 @@ export function Metrics() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-24 bottom-0 h-[340px] w-[340px] rounded-full blur-3xl"
+        className="orb-drift-b pointer-events-none absolute -right-24 bottom-0 h-[340px] w-[340px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-lavender) 0%, transparent 70%)",
           opacity: 0.45,

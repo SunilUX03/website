@@ -1,21 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
+import clsx from "clsx";
 import { nav } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { AccessibilityIcon, ExternalLinkArrow } from "./icons";
 
-function openAccessibilityWidget() {
-  // The UX4G widget auto-injects its own floating trigger button with this
-  // id; it doesn't expose a JS API, so we drive it by clicking its real
-  // button (hidden visually via CSS — see globals.css) rather than
-  // showing two separate accessibility entry points.
-  document.getElementById("uw-widget-custom-trigger")?.click();
+function isWidgetPanelOpen() {
+  const panel = document.getElementById("uw-main");
+  if (!panel) return false;
+  // The widget slides #uw-main to right:0 when open, right:-530px (off
+  // canvas) when closed — no class or event to hook, so we read this.
+  return getComputedStyle(panel).right === "0px";
+}
+
+function toggleAccessibilityWidget() {
+  if (isWidgetPanelOpen()) {
+    // Confirmed the widget's own close button (.uwaw-close) doesn't
+    // actually close the panel either — that's a bug in the third-party
+    // script itself (cdn.ux4g.gov.in), not our integration. Since we
+    // can't fix their code, we force it closed directly the same way the
+    // widget itself closes it (sliding #uw-main back off-canvas).
+    const panel = document.getElementById("uw-main");
+    if (panel) panel.style.right = "-530px";
+  } else {
+    document.getElementById("uw-widget-custom-trigger")?.click();
+  }
 }
 
 export function AccessibilityBar() {
   const [lang, setLang] = useState<"ta" | "en">("en");
+  const [widgetOpen, setWidgetOpen] = useState(false);
+
+  useEffect(() => {
+    // The widget has no open/close event, so watch #uw-main's inline
+    // style (how it actually signals open vs. closed) to keep our own
+    // trigger's active color in sync.
+    const observer = new MutationObserver(() => setWidgetOpen(isWidgetPanelOpen()));
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["style"],
+      subtree: true,
+    });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="w-full border-b border-hairline bg-canvas">
@@ -39,8 +68,12 @@ export function AccessibilityBar() {
           <span aria-hidden className="h-3 w-px bg-hairline-strong" />
           <button
             type="button"
-            onClick={openAccessibilityWidget}
-            className="flex items-center gap-1.5 hover:text-ink"
+            onClick={toggleAccessibilityWidget}
+            aria-pressed={widgetOpen}
+            className={clsx(
+              "flex items-center gap-1.5 transition-colors",
+              widgetOpen ? "text-[var(--color-primary-blue)]" : "hover:text-ink"
+            )}
           >
             <AccessibilityIcon className="h-4 w-4" />
             Accessibility
@@ -58,8 +91,14 @@ export function AccessibilityBar() {
         {/* Mobile: collapse to one icon */}
         <button
           type="button"
-          onClick={openAccessibilityWidget}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-hairline-strong text-[var(--color-muted)] sm:hidden"
+          onClick={toggleAccessibilityWidget}
+          aria-pressed={widgetOpen}
+          className={clsx(
+            "flex h-6 w-6 items-center justify-center rounded-full border transition-colors sm:hidden",
+            widgetOpen
+              ? "border-[var(--color-primary-blue)] text-[var(--color-primary-blue)]"
+              : "border-hairline-strong text-[var(--color-muted)]"
+          )}
           aria-label="Accessibility options"
         >
           <AccessibilityIcon className="h-3.5 w-3.5" />

@@ -19,6 +19,29 @@ export function Hero() {
     >
       <HeroDotCursor targetRef={heroRef} />
 
+      {/* Cinematic depth backdrop — a soft cool "spotlight" glow pooled
+          behind where the district map sits (drawing the eye there and
+          giving the blue districts/nodes more pop against the canvas),
+          plus a very light vignette at the outer edges for framing. Pure
+          CSS, sits behind the node-graph and the map — neither of those
+          is touched. */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse 900px 720px at 72% 46%, rgba(29,63,143,0.09) 0%, rgba(168,200,232,0.06) 42%, transparent 72%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 58%, rgba(12,10,9,0.05) 100%)",
+        }}
+      />
+
       {/* Ambient node-graph background, restored per feedback — spans the
           whole hero, behind everything else (including the district map,
           which is unchanged and layered on top of this). */}

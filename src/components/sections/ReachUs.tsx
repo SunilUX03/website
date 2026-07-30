@@ -36,22 +36,24 @@ function ReachUsPanel({
 export function ReachUs() {
   return (
     <section className="relative overflow-hidden bg-canvas-soft">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-16 top-1/2 h-[300px] w-[300px] -translate-y-1/2 rounded-full blur-3xl"
-        style={{
-          background: "radial-gradient(circle, var(--color-gradient-lavender) 0%, transparent 70%)",
-          opacity: 0.4,
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-16 top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full blur-3xl"
-        style={{
-          background: "radial-gradient(circle, var(--color-gradient-peach) 0%, transparent 70%)",
-          opacity: 0.4,
-        }}
-      />
+      <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 -translate-y-1/2">
+        <div
+          className="orb-drift-a h-[300px] w-[300px] rounded-full blur-3xl"
+          style={{
+            background: "radial-gradient(circle, var(--color-gradient-lavender) 0%, transparent 70%)",
+            opacity: 0.4,
+          }}
+        />
+      </div>
+      <div aria-hidden className="pointer-events-none absolute -right-16 top-1/2 -translate-y-1/2">
+        <div
+          className="orb-drift-b h-[280px] w-[280px] rounded-full blur-3xl"
+          style={{
+            background: "radial-gradient(circle, var(--color-gradient-peach) 0%, transparent 70%)",
+            opacity: 0.4,
+          }}
+        />
+      </div>
       <Container className="relative py-xxl md:py-section">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ReachUsPanel

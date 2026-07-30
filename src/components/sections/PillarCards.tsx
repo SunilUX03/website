@@ -5,7 +5,6 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { pillars } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
-import { SectionMotif } from "@/components/ui/SectionMotif";
 import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
 
 function PillarCard({
@@ -148,9 +147,8 @@ export function PillarCards() {
   const isDesktop = useIsDesktop();
 
   return (
-    <section className="relative overflow-hidden bg-canvas-soft">
-      <SectionMotif className="opacity-[0.16]" />
-      <Container className="relative py-xxl md:py-section">
+    <section className="bg-canvas-soft">
+      <Container className="py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           Enabling Digital Governance
         </p>
