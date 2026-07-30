@@ -32,7 +32,7 @@ export function Footer() {
             alt="Government of Tamil Nadu emblem and TNeGA — Tamil Nadu e-Governance Agency"
             width={980}
             height={186}
-            className="h-9 w-auto"
+            className="h-14 w-auto"
           />
           <p className="type-body-sm text-[var(--color-body)]">{footer.description}</p>
           <p className="type-body-sm text-[var(--color-body)]">{footer.address}</p>
@@ -88,7 +88,7 @@ export function Footer() {
 
         <div>
           <p className="type-title-sm mb-4 text-ink">Ecosystem</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {ecosystem
               .filter((org) => org.name !== "TNeGA")
               .map((org) => (
@@ -97,13 +97,13 @@ export function Footer() {
                   href={org.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-14 items-center justify-center rounded-md border border-hairline p-2 hover:border-hairline-strong"
+                  className="flex h-20 items-center justify-center rounded-md border border-hairline p-2 hover:border-hairline-strong"
                 >
                   <Image
                     src={org.logo}
                     alt={org.name}
-                    width={96}
-                    height={96}
+                    width={192}
+                    height={192}
                     className="h-full w-full object-contain"
                   />
                 </a>

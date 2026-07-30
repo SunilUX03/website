@@ -1,14 +1,26 @@
+"use client";
+
+import { useRef } from "react";
 import { hero } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { LeadershipCard } from "./LeadershipCard";
-import { HeroMapVisual } from "./HeroMapVisual";
+import { HeroDistrictMap } from "./HeroDistrictMap";
+import { HeroDotCursor } from "./HeroDotCursor";
 
 export function Hero() {
+  const heroRef = useRef<HTMLElement | null>(null);
+
   return (
-    <section className="relative overflow-hidden bg-canvas" id="main-content">
-      {/* Mobile: visual sits behind the text column at reduced opacity */}
+    <section
+      ref={heroRef as React.RefObject<HTMLElement>}
+      className="relative overflow-hidden bg-canvas"
+      id="main-content"
+    >
+      <HeroDotCursor targetRef={heroRef} />
+
+      {/* Mobile: map sits behind the text column at reduced opacity */}
       <div className="absolute inset-0 opacity-[0.32] lg:hidden" aria-hidden>
-        <HeroMapVisual className="relative h-full w-full" />
+        <HeroDistrictMap className="relative h-full w-full" />
       </div>
 
       <Container className="relative py-xxl md:py-section">
@@ -37,9 +49,9 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right column — desktop-only interactive visual panel */}
-          <div className="relative hidden h-[520px] lg:block">
-            <HeroMapVisual className="relative h-full w-full" />
+          {/* Right column — desktop-only interactive district map */}
+          <div className="relative hidden h-[560px] lg:block">
+            <HeroDistrictMap className="relative h-full w-full" />
           </div>
         </div>
       </Container>

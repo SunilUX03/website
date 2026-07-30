@@ -8,6 +8,10 @@ interface NavDropdownProps {
   label: string;
   panel: ReactNode;
   panelClassName?: string;
+  /** "right" anchors the panel's right edge to the trigger's right edge
+   * instead of left-to-left — needed for wide multi-column panels near
+   * the right side of the nav so they don't overflow the viewport. */
+  align?: "left" | "right";
 }
 
 /**
@@ -15,7 +19,7 @@ interface NavDropdownProps {
  * trigger into the panel doesn't dismiss it). Also opens on click/tap so
  * touch and keyboard users get the same behavior.
  */
-export function NavDropdown({ label, panel, panelClassName }: NavDropdownProps) {
+export function NavDropdown({ label, panel, panelClassName, align = "left" }: NavDropdownProps) {
   const [open, setOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
@@ -60,9 +64,9 @@ export function NavDropdown({ label, panel, panelClassName }: NavDropdownProps) 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className={`absolute left-0 top-full z-40 mt-1 rounded-xl border border-hairline bg-surface-card shadow-[0_4px_16px_rgba(0,0,0,0.08)] ${
-              panelClassName ?? "min-w-[220px] p-2"
-            }`}
+            className={`absolute top-full z-40 mt-1 max-w-[95vw] rounded-xl border border-hairline bg-surface-card shadow-[0_4px_16px_rgba(0,0,0,0.08)] ${
+              align === "right" ? "right-0" : "left-0"
+            } ${panelClassName ?? "min-w-[220px] p-2"}`}
           >
             {panel}
           </motion.div>

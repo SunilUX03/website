@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
+import { PhotoTile } from "@/components/ui/PhotoTile";
+import { useIsDesktop } from "@/lib/hooks";
 
 type Category = (typeof categories)[number];
 
@@ -21,18 +23,38 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
             style={{ flexGrow: grow, flexBasis: 0 }}
-            className="card-feature h-64 min-w-0 overflow-hidden transition-[flex-grow] duration-[400ms] ease-out"
+            className="card-feature relative h-64 min-w-0 overflow-hidden !p-0 transition-[flex-grow] duration-[400ms] ease-out"
           >
-            <p className="type-caption-uppercase mb-4 text-[var(--color-muted)]">
-              {String(offset + i + 1).padStart(2, "0")}
-            </p>
-            <h3 className="type-title-md whitespace-nowrap text-ink">{cat.title}</h3>
-            <p
-              className="type-body-sm mt-2 max-w-[46ch] text-[var(--color-body)] transition-opacity duration-300"
-              style={{ opacity: isHovered ? 1 : 0 }}
-            >
-              {cat.description}
-            </p>
+            <PhotoTile
+              src={cat.image}
+              alt=""
+              aspect="aspect-auto"
+              className="absolute inset-0 h-full w-full"
+              sizes="(min-width: 768px) 33vw, 100vw"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(12,10,9,0.82) 0%, rgba(12,10,9,0.5) 45%, rgba(12,10,9,0.15) 100%)",
+              }}
+            />
+            <div className="relative flex h-full flex-col justify-end p-6 text-white">
+              <p className="type-caption-uppercase mb-2 text-white/70">
+                {String(offset + i + 1).padStart(2, "0")}
+              </p>
+              {/* Squeezed-card fix: title wraps up to 2 lines instead of
+                  nowrap-overflowing, and clips cleanly if it still doesn't
+                  fit rather than spilling past the card frame. */}
+              <h3 className="type-title-md line-clamp-2 text-white">{cat.title}</h3>
+              <p
+                className="type-body-sm mt-2 line-clamp-3 max-w-[46ch] text-white/85 transition-opacity duration-300"
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                {cat.description}
+              </p>
+            </div>
           </div>
         );
       })}
@@ -43,41 +65,45 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
 function CategoryMobileItem({ cat }: { cat: Category }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="card-feature overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="flex w-full items-center justify-between text-left"
-      >
-        <h3 className="type-title-md text-ink">{cat.title}</h3>
-        <span
-          className={`ml-3 shrink-0 text-ink transition-transform duration-200 ${
-            open ? "rotate-45" : ""
-          }`}
-          aria-hidden
+    <div className="card-feature relative overflow-hidden !p-0">
+      <PhotoTile src={cat.image} alt="" aspect="aspect-[16/9]" className="w-full" />
+      <div className="p-5">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="flex w-full items-center justify-between text-left"
         >
-          +
-        </span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="overflow-hidden"
+          <h3 className="type-title-md text-ink">{cat.title}</h3>
+          <span
+            className={`ml-3 shrink-0 text-ink transition-transform duration-200 ${
+              open ? "rotate-45" : ""
+            }`}
+            aria-hidden
           >
-            <p className="type-body-sm pt-3 text-[var(--color-body)]">{cat.description}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            +
+          </span>
+        </button>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <p className="type-body-sm pt-3 text-[var(--color-body)]">{cat.description}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
 
 export function CategoryCards() {
+  const isDesktop = useIsDesktop();
   const rowA = categories.slice(0, 3);
   const rowB = categories.slice(3, 6);
 
@@ -89,16 +115,23 @@ export function CategoryCards() {
         </p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Projects &amp; Services</h2>
 
-        <div className="hidden flex-col gap-4 md:flex">
-          <CategoryDesktopRow items={rowA} offset={0} />
-          <CategoryDesktopRow items={rowB} offset={3} />
-        </div>
+        {/* isDesktop is null until mounted — render nothing that first tick
+            so desktop/mobile variants (and their background images) are
+            never both in the DOM at once. */}
+        {isDesktop === true && (
+          <div className="flex flex-col gap-4">
+            <CategoryDesktopRow items={rowA} offset={0} />
+            <CategoryDesktopRow items={rowB} offset={3} />
+          </div>
+        )}
 
-        <div className="flex flex-col gap-4 md:hidden">
-          {categories.map((cat) => (
-            <CategoryMobileItem key={cat.title} cat={cat} />
-          ))}
-        </div>
+        {isDesktop === false && (
+          <div className="flex flex-col gap-4">
+            {categories.map((cat) => (
+              <CategoryMobileItem key={cat.title} cat={cat} />
+            ))}
+          </div>
+        )}
       </Container>
     </section>
   );

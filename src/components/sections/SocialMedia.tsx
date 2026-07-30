@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { socialMedia } from "@/lib/content";
+import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { useReducedMotion } from "@/lib/hooks";
@@ -11,23 +12,54 @@ const ROTATE_MS = 4500;
 
 function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
   const reducedMotion = useReducedMotion();
+  const [posts, setPosts] = useState<SocialPost[] | null>(null);
   const [active, setActive] = useState(0);
   const paused = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Fetched from our own API route (currently seed data — see
+  // src/lib/social-seed-data.ts) rather than imported directly, so wiring
+  // up the real Graph/X/YouTube APIs later is a server-side change only.
   useEffect(() => {
-    if (reducedMotion) return;
+    let cancelled = false;
+    fetch(platform.apiPath)
+      .then((res) => res.json())
+      .then((data: { posts: SocialPost[] }) => {
+        if (!cancelled) setPosts(data.posts);
+      })
+      .catch(() => {
+        if (!cancelled) setPosts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [platform.apiPath]);
+
+  useEffect(() => {
+    if (reducedMotion || !posts || posts.length === 0) return;
     timerRef.current = setInterval(() => {
       if (!paused.current) {
-        setActive((a) => (a + 1) % platform.posts.length);
+        setActive((a) => (a + 1) % posts.length);
       }
     }, ROTATE_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [reducedMotion, platform.posts.length]);
+  }, [reducedMotion, posts]);
 
-  const post = platform.posts[active];
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="card-feature w-[82vw] shrink-0 snap-start overflow-hidden !p-0 md:w-auto">
+        <div className="aspect-[16/9] animate-pulse bg-[var(--color-surface-strong)]" />
+        <div className="space-y-2 p-6">
+          <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--color-surface-strong)]" />
+          <div className="h-4 w-1/2 animate-pulse rounded bg-[var(--color-surface-strong)]" />
+        </div>
+      </div>
+    );
+  }
+
+  const post = posts[active];
 
   return (
     <div
@@ -77,7 +109,7 @@ function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
           </a>
         </div>
         <div className="mt-3 flex gap-1.5">
-          {platform.posts.map((p, i) => (
+          {posts.map((p, i) => (
             <span
               key={p.date}
               className={`h-1 rounded-full transition-all duration-300 ${

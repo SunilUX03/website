@@ -131,31 +131,37 @@ export const categories = [
     title: "Software Development",
     description:
       "Design and build secure, scalable digital systems for government services and departmental platforms.",
+    image: "https://picsum.photos/seed/tnega-cat-software-dev/700/500",
   },
   {
     title: "Security Audit",
     description:
       "Assess government applications for security risks and regulatory compliance through CERT-In empanelled agencies.",
+    image: "https://picsum.photos/seed/tnega-cat-security-audit/700/500",
   },
   {
     title: "IT Procurement",
     description:
       "End-to-end technology procurement support for government departments — transparent, standards-compliant and efficient.",
+    image: "https://picsum.photos/seed/tnega-cat-it-procurement/700/500",
   },
   {
     title: "UX Audit",
     description:
       "Improve the usability and accessibility of government applications to ensure citizens and officers can use them with ease.",
+    image: "https://picsum.photos/seed/tnega-cat-ux-audit/700/500",
   },
   {
     title: "Capacity Building",
     description:
       "Enable departments through ICT training, workshops, seminars and digital skill development programs statewide.",
+    image: "https://picsum.photos/seed/tnega-cat-capacity-building/700/500",
   },
   {
     title: "AI & Emerging Tech",
     description:
       "Lead Tamil Nadu's adoption of AI, blockchain, GIS and IoT for next-generation governance solutions.",
+    image: "https://picsum.photos/seed/tnega-cat-ai-emerging-tech/700/500",
   },
 ];
 
@@ -306,78 +312,30 @@ export const gallery = [
   { caption: "e-Office rollout training session", image: "https://picsum.photos/seed/tnega-gallery-eoffice/800/450" },
 ];
 
-// Each platform card auto-rotates through its own posts. Only the first
-// post per platform is sourced verbatim from the existing prototype; the
-// rest are on-brand placeholders grounded in already-published TNeGA
-// figures (not new/fabricated claims) so the rotation has content to cycle.
+// Each platform card auto-rotates through posts fetched from
+// /api/social/<platform> (server-side, currently seed data — see
+// src/lib/social-seed-data.ts and the route handlers for the real-API
+// swap-in point). Only platform metadata lives here.
 export const socialMedia = [
   {
     platform: "Facebook",
+    apiPath: "/api/social/facebook",
     href: "https://www.facebook.com/TNeGovernance",
     followLabel: "Follow on Facebook",
-    posts: [
-      {
-        text: "TNeGA's SimpleGov initiative simplifies 10 government services — paperless, online and instant. A new era of governance begins.",
-        date: "29 May 2025",
-        image: "https://picsum.photos/seed/tnega-fb-simplegov/640/360",
-      },
-      {
-        text: "e-Sevai centres have now processed over 4 crore citizen transactions across Tamil Nadu.",
-        date: "14 Jul 2025",
-        image: "https://picsum.photos/seed/tnega-fb-esevai/640/360",
-      },
-      {
-        text: "UMIS now integrates student data from 5,490 institutions statewide — one platform for all of higher education.",
-        date: "02 Sep 2025",
-        image: "https://picsum.photos/seed/tnega-fb-umis/640/360",
-      },
-    ],
   },
   {
     platform: "X",
+    apiPath: "/api/social/x",
     href: "https://x.com/tnega",
     followLabel: "Follow on X",
-    posts: [
-      {
-        text: "Namma Arasu is live! Access 51 government services on WhatsApp at 7845252525. Governance at your fingertips.",
-        date: "08 Jan 2026",
-        image: "https://picsum.photos/seed/tnega-x-nammaarasu/640/360",
-      },
-      {
-        text: "TN GIS now maps 400+ spatial layers — land records, guideline values and civic amenities in one click.",
-        date: "22 Oct 2025",
-        image: "https://picsum.photos/seed/tnega-x-tngis/640/360",
-      },
-      {
-        text: "e-Office has crossed 1,28,243 daily users across state government departments.",
-        date: "05 Nov 2025",
-        image: "https://picsum.photos/seed/tnega-x-eoffice/640/360",
-      },
-    ],
   },
   {
     platform: "YouTube",
+    apiPath: "/api/social/youtube",
     href: "https://www.youtube.com/@tnega",
     followLabel: "Subscribe on YouTube",
-    posts: [
-      {
-        text: "Watch: Chief Minister launches SimpleGov — Tamil Nadu's landmark digital governance reform initiative.",
-        date: "29 May 2025",
-        image: "https://picsum.photos/seed/tnega-yt-simplegov/640/360",
-      },
-      {
-        text: "Explainer: how e-Sevai brings 410+ services within reach of every district in Tamil Nadu.",
-        date: "18 Aug 2025",
-        image: "https://picsum.photos/seed/tnega-yt-esevai/640/360",
-      },
-      {
-        text: "Inside Namma Arasu: how WhatsApp is becoming a channel for government services.",
-        date: "20 Jan 2026",
-        image: "https://picsum.photos/seed/tnega-yt-nammaarasu/640/360",
-      },
-    ],
   },
-];
+] as const;
 
 export const ecosystem = [
   { name: "TNeGA", href: "https://www.tnega.tn.gov.in", logo: "/images/logos/tnega.png" },

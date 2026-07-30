@@ -13,45 +13,35 @@ type Project = (typeof projects)[number];
 function SpotlightContent({ project, active }: { project: Project; active: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12">
-      {/* Full-bleed mood scrim — sets overall tone, doesn't need to
-          guarantee contrast on its own (the panel below does that). */}
+      {/* One long, gradual scrim that dissolves into the photo — no boxed
+          panel, no backdrop-blur rectangle, no hard edge anywhere. Stops
+          tuned so it reaches further up than the text block ever does. */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to top, rgba(12,10,9,0.75) 0%, rgba(12,10,9,0.4) 55%, rgba(12,10,9,0.05) 100%)",
-        }}
-      />
-      {/* Soft ambient glow anchored behind the text, so contrast holds
-          regardless of what's in the photo (even a white/light background) —
-          a frosted, blurred panel rather than a hard box. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%]"
-        style={{
-          background:
-            "radial-gradient(120% 100% at 20% 100%, rgba(12,10,9,0.55) 0%, rgba(12,10,9,0.32) 45%, rgba(12,10,9,0) 80%)",
+            "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 25%, rgba(0,0,0,0.28) 50%, rgba(0,0,0,0.08) 72%, transparent 88%)",
         }}
       />
 
-      <div className="relative max-w-2xl rounded-2xl p-5 text-white backdrop-blur-md backdrop-brightness-[0.85] md:p-6">
+      <div className="relative max-w-2xl text-white">
         {"badge" in project && project.badge && (
           <span className="badge-pill mb-3 bg-white/15 text-white backdrop-blur-sm">
             {project.badge}
           </span>
         )}
-        <h3 className="type-display-sm mb-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
+        <h3 className="type-display-sm mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.55)]">
           {project.name}
         </h3>
-        <p className="type-body-md mb-5 text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.4)]">
+        <p className="type-body-md mb-5 text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
           {project.description}
         </p>
 
         <div className="mb-6 flex flex-wrap gap-x-8 gap-y-3">
           {project.stats.map((stat) => (
             <div key={stat.label}>
-              <p className="type-display-sm">
+              <p className="type-display-sm [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
                 <CountUp value={stat.value} suffix={stat.suffix} start={active} duration={1100} />
               </p>
               <p className="type-caption-uppercase text-white/70">{stat.label}</p>
@@ -75,16 +65,34 @@ function SpotlightContent({ project, active }: { project: Project; active: boole
   );
 }
 
+const SLIDE_DURATION_MS = 5000;
+
 function DesktopSpotlight() {
   const [active, setActive] = useState(0);
+  const [hovering, setHovering] = useState(false);
   const reducedMotion = useReducedMotion();
 
   const go = (dir: 1 | -1) => {
     setActive((prev) => (prev + dir + projects.length) % projects.length);
   };
 
+  // Runs continuously the whole time this section is on screen; pauses
+  // only while the cursor is directly over the slide (not on scroll
+  // position — this section doesn't need to be "arrived at" to advance).
+  useEffect(() => {
+    if (reducedMotion || hovering) return;
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % projects.length);
+    }, SLIDE_DURATION_MS);
+    return () => clearInterval(timer);
+  }, [reducedMotion, hovering]);
+
   return (
-    <div className="relative h-[640px] w-full overflow-hidden rounded-xl">
+    <div
+      className="relative h-[640px] w-full overflow-hidden rounded-xl"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
       <AnimatePresence initial={false}>
         <motion.div
           key={active}

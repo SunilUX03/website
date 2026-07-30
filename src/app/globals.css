@@ -297,3 +297,11 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* The UX4G accessibility widget auto-injects its own floating trigger
+   button; we drive it from our own nav "Accessibility" control instead so
+   there's a single visible entry point, not two. The widget's real button
+   stays in the DOM (and still works via .click()) — only hidden visually. */
+#uw-widget-custom-trigger {
+  display: none !important;
+}

@@ -44,6 +44,21 @@ export function MenuIcon({ className }: { className?: string }) {
   );
 }
 
+export function AccessibilityIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <circle cx="12" cy="4.5" r="1.8" fill="currentColor" />
+      <path
+        d="M4 8.5c2.7 1 5.3 1.5 8 1.5s5.3-.5 8-1.5M12 10v10M8.5 20l1.5-6M15.5 20 14 14M8.5 13l1.5-1M15.5 13 14 12"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function CloseIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>

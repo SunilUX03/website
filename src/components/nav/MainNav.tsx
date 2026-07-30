@@ -34,7 +34,7 @@ export function MainNav() {
         <div
           className={clsx(
             "mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 transition-[height] duration-200 md:px-10",
-            scrolled ? "h-16" : "h-20"
+            scrolled ? "h-20" : "h-24"
           )}
         >
           <a
@@ -50,14 +50,14 @@ export function MainNav() {
               priority
               className={clsx(
                 "w-auto transition-[height] duration-200",
-                scrolled ? "h-11" : "h-14"
+                scrolled ? "h-14" : "h-[4.5rem]"
               )}
             />
             <span
               aria-hidden
               className={clsx(
                 "w-px shrink-0 bg-hairline-strong transition-[height] duration-200",
-                scrolled ? "h-9" : "h-11"
+                scrolled ? "h-11" : "h-14"
               )}
             />
             <Image
@@ -69,11 +69,11 @@ export function MainNav() {
               priority
               className={clsx(
                 "w-auto shrink-0 transition-[height] duration-200",
-                scrolled ? "h-11" : "h-14"
+                scrolled ? "h-14" : "h-[4.5rem]"
               )}
             />
             <span className="leading-tight">
-              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)]">
+              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)] md:text-lg">
                 TNeGA
               </span>
               <span className="type-caption hidden text-[var(--color-muted)] sm:block">
@@ -88,8 +88,8 @@ export function MainNav() {
               aria-label="Home"
               aria-current={pathname === "/" ? "page" : undefined}
               className={clsx(
-                "flex items-center rounded-full p-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]",
-                pathname === "/" && "border-b-2 border-[var(--color-primary-blue)]"
+                "flex items-center p-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]",
+                pathname === "/" && "text-[var(--color-primary-blue)]"
               )}
             >
               <HomeIcon className="h-5 w-5" />
@@ -108,7 +108,8 @@ export function MainNav() {
 
             <NavDropdown
               label="Services"
-              panelClassName="grid w-[640px] grid-cols-4 gap-4 p-5"
+              align="right"
+              panelClassName="grid w-[640px] max-w-[90vw] grid-cols-2 gap-4 p-5 sm:grid-cols-4"
               panel={
                 <>
                   {nav.services.map((group) => (
@@ -129,7 +130,8 @@ export function MainNav() {
 
             <NavDropdown
               label="Notifications"
-              panelClassName="grid w-[420px] grid-cols-2 gap-4 p-5"
+              align="right"
+              panelClassName="grid w-[420px] max-w-[90vw] grid-cols-2 gap-4 p-5"
               panel={
                 <>
                   <div>
