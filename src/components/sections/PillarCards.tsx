@@ -149,7 +149,7 @@ export function PillarCards() {
 
   return (
     <section className="relative overflow-hidden bg-canvas-soft">
-      <SectionMotif className="opacity-[0.06]" />
+      <SectionMotif className="opacity-[0.16]" />
       <Container className="relative py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           Enabling Digital Governance

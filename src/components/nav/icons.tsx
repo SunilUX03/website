@@ -44,6 +44,20 @@ export function MenuIcon({ className }: { className?: string }) {
   );
 }
 
+export function ExternalLinkArrow({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden>
+      <path
+        d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function AccessibilityIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>

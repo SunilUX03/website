@@ -1,27 +1,32 @@
 "use client";
 
-import { ReactNode, useState, useId } from "react";
+import { ReactNode, useLayoutEffect, useRef, useState, useId } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDownIcon } from "./icons";
+
+const VIEWPORT_MARGIN = 12;
 
 interface NavDropdownProps {
   label: string;
   panel: ReactNode;
   panelClassName?: string;
-  /** "right" anchors the panel's right edge to the trigger's right edge
-   * instead of left-to-left — needed for wide multi-column panels near
-   * the right side of the nav so they don't overflow the viewport. */
-  align?: "left" | "right";
 }
 
 /**
  * Desktop: opens on hover (with a small close-delay so moving from the
  * trigger into the panel doesn't dismiss it). Also opens on click/tap so
  * touch and keyboard users get the same behavior.
+ *
+ * The panel is centered under the trigger label (not left/right-anchored)
+ * — its position is measured after mount and clamped to the viewport so
+ * wide panels never overflow, while still centering whenever there's room.
  */
-export function NavDropdown({ label, panel, panelClassName, align = "left" }: NavDropdownProps) {
+export function NavDropdown({ label, panel, panelClassName }: NavDropdownProps) {
   const [open, setOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [leftPx, setLeftPx] = useState<number | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const id = useId();
 
   const scheduleClose = () => {
@@ -33,8 +38,34 @@ export function NavDropdown({ label, panel, panelClassName, align = "left" }: Na
     setCloseTimer(null);
   };
 
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    const reposition = () => {
+      const wrapper = wrapperRef.current;
+      const panelEl = panelRef.current;
+      if (!wrapper || !panelEl) return;
+
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const panelWidth = panelEl.offsetWidth;
+
+      const idealAbsoluteLeft = wrapperRect.left + wrapperRect.width / 2 - panelWidth / 2;
+      const clampedAbsoluteLeft = Math.max(
+        VIEWPORT_MARGIN,
+        Math.min(idealAbsoluteLeft, window.innerWidth - panelWidth - VIEWPORT_MARGIN)
+      );
+
+      setLeftPx(clampedAbsoluteLeft - wrapperRect.left);
+    };
+
+    reposition();
+    window.addEventListener("resize", reposition);
+    return () => window.removeEventListener("resize", reposition);
+  }, [open]);
+
   return (
     <div
+      ref={wrapperRef}
       className="relative"
       onMouseEnter={() => {
         cancelClose();
@@ -59,14 +90,21 @@ export function NavDropdown({ label, panel, panelClassName, align = "left" }: Na
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
             id={id}
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
             className={`absolute top-full z-40 mt-1 max-w-[95vw] rounded-xl border border-hairline bg-surface-card shadow-[0_4px_16px_rgba(0,0,0,0.08)] ${
-              align === "right" ? "right-0" : "left-0"
-            } ${panelClassName ?? "min-w-[220px] p-2"}`}
+              panelClassName ?? "min-w-[220px] p-2"
+            }`}
+            style={{
+              // Falls back to centered-via-transform for the one frame
+              // before measurement lands, so it never flashes at left:0.
+              left: leftPx !== null ? `${leftPx}px` : "50%",
+              transform: leftPx !== null ? undefined : "translateX(-50%)",
+            }}
           >
             {panel}
           </motion.div>

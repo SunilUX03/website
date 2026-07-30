@@ -65,7 +65,7 @@ function SpotlightContent({ project, active }: { project: Project; active: boole
   );
 }
 
-const SLIDE_DURATION_MS = 5000;
+const SLIDE_DURATION_MS = 2500;
 
 function DesktopSpotlight() {
   const [active, setActive] = useState(0);

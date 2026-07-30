@@ -3,10 +3,12 @@
 import { useId } from "react";
 
 /**
- * Very low-opacity decorative background pattern combining a tech
- * (circuit-trace) motif with a Tamil kolam-style geometric dot/loop motif.
- * Pure decoration — kept faint enough that it reads as texture, not
- * something a user consciously notices while reading card content on top.
+ * Decorative background pattern combining a tech (circuit-trace) motif
+ * with a Tamil kolam-style geometric dot/loop motif — repeating diamond
+ * petals around a dot grid, echoing traditional kolam line-work, plus
+ * straight circuit traces linking the dots. Pure decoration; opacity is
+ * controlled by the caller via `className` so it can be tuned per
+ * background (needs a touch more on a flat canvas than on a tinted one).
  */
 export function SectionMotif({ className }: { className?: string }) {
   const id = useId();
@@ -19,34 +21,49 @@ export function SectionMotif({ className }: { className?: string }) {
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
     >
       <defs>
-        <pattern id={patternId} width="120" height="120" patternUnits="userSpaceOnUse">
-          {/* kolam-style dot grid with looping curves */}
-          <circle cx="20" cy="20" r="2.2" fill="var(--color-muted-soft)" />
-          <circle cx="100" cy="20" r="2.2" fill="var(--color-muted-soft)" />
-          <circle cx="20" cy="100" r="2.2" fill="var(--color-muted-soft)" />
-          <circle cx="100" cy="100" r="2.2" fill="var(--color-muted-soft)" />
-          <circle cx="60" cy="60" r="2.2" fill="var(--color-muted-soft)" />
+        <pattern id={patternId} width="140" height="140" patternUnits="userSpaceOnUse">
+          {/* kolam-style petal loops around each grid dot */}
+          {[
+            [20, 20],
+            [120, 20],
+            [20, 120],
+            [120, 120],
+            [70, 70],
+          ].map(([cx, cy]) => (
+            <g key={`${cx}-${cy}`}>
+              <circle cx={cx} cy={cy} r="2.6" fill="var(--color-muted)" />
+              <path
+                d={`M${cx},${cy - 16} C${cx + 12},${cy - 12} ${cx + 12},${cy + 12} ${cx},${cy + 16} C${cx - 12},${cy + 12} ${cx - 12},${cy - 12} ${cx},${cy - 16}Z`}
+                fill="none"
+                stroke="var(--color-primary-blue)"
+                strokeWidth="0.9"
+              />
+            </g>
+          ))}
+
+          {/* connecting kolam curves between dots */}
           <path
-            d="M20,20 C45,10 55,45 60,60 C65,75 95,85 100,100"
+            d="M20,20 C45,10 55,45 70,70 C85,95 95,105 120,120"
             fill="none"
-            stroke="var(--color-hairline-strong)"
+            stroke="var(--color-muted)"
             strokeWidth="1"
           />
           <path
-            d="M100,20 C75,30 65,45 60,60 C55,75 45,90 20,100"
+            d="M120,20 C95,30 85,45 70,70 C55,95 45,110 20,120"
             fill="none"
-            stroke="var(--color-hairline-strong)"
+            stroke="var(--color-muted)"
             strokeWidth="1"
           />
-          {/* circuit-trace lines */}
+
+          {/* circuit traces */}
           <path
-            d="M0,60 H35 M85,60 H120 M60,0 V25 M60,95 V120"
+            d="M0,70 H54 M86,70 H140 M70,0 V54 M70,86 V140"
             fill="none"
-            stroke="var(--color-hairline-strong)"
+            stroke="var(--color-primary-blue)"
             strokeWidth="1"
           />
-          <circle cx="35" cy="60" r="1.6" fill="var(--color-hairline-strong)" />
-          <circle cx="85" cy="60" r="1.6" fill="var(--color-hairline-strong)" />
+          <circle cx="54" cy="70" r="1.8" fill="var(--color-primary-blue)" />
+          <circle cx="86" cy="70" r="1.8" fill="var(--color-primary-blue)" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${patternId})`} />

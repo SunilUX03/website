@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { LeadershipCard } from "./LeadershipCard";
 import { HeroDistrictMap } from "./HeroDistrictMap";
 import { HeroDotCursor } from "./HeroDotCursor";
+import { NodeGraphCanvas } from "./NodeGraphCanvas";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
@@ -17,6 +18,13 @@ export function Hero() {
       id="main-content"
     >
       <HeroDotCursor targetRef={heroRef} />
+
+      {/* Ambient node-graph background, restored per feedback — spans the
+          whole hero, behind everything else (including the district map,
+          which is unchanged and layered on top of this). */}
+      <div className="absolute inset-0" aria-hidden>
+        <NodeGraphCanvas className="h-full w-full" />
+      </div>
 
       {/* Mobile: map sits behind the text column at reduced opacity */}
       <div className="absolute inset-0 opacity-[0.32] lg:hidden" aria-hidden>

@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 
 export function Ecosystem() {
   return (
-    <section className="bg-canvas">
+    <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
         <p className="type-caption-uppercase mb-8 text-center text-[var(--color-muted)] md:text-left">
           Our Ecosystem

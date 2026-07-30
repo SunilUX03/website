@@ -4,7 +4,7 @@ import { useState } from "react";
 import Script from "next/script";
 import { nav } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { AccessibilityIcon } from "./icons";
+import { AccessibilityIcon, ExternalLinkArrow } from "./icons";
 
 function openAccessibilityWidget() {
   // The UX4G widget auto-injects its own floating trigger button with this
@@ -26,9 +26,10 @@ export function AccessibilityBar() {
           href="https://www.tn.gov.in/index.php"
           target="_blank"
           rel="noopener noreferrer"
-          className="truncate text-[var(--color-muted)] hover:text-ink"
+          className="flex min-w-0 items-center gap-1 text-[var(--color-muted)] hover:text-ink"
         >
-          {nav.accessibility.govLabel}
+          <span className="truncate">{nav.accessibility.govLabel}</span>
+          <ExternalLinkArrow className="h-3 w-3 shrink-0" />
         </a>
 
         <div className="hidden items-center gap-4 text-[var(--color-muted)] sm:flex">

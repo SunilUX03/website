@@ -125,8 +125,24 @@ function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
 
 export function SocialMedia() {
   return (
-    <section className="bg-canvas">
-      <Container className="py-xxl md:py-section">
+    <section className="relative overflow-hidden bg-canvas-soft">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-20 top-0 h-[360px] w-[360px] rounded-full blur-3xl"
+        style={{
+          background: "radial-gradient(circle, var(--color-gradient-rose) 0%, transparent 70%)",
+          opacity: 0.4,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 bottom-0 h-[320px] w-[320px] rounded-full blur-3xl"
+        style={{
+          background: "radial-gradient(circle, var(--color-gradient-sky) 0%, transparent 70%)",
+          opacity: 0.4,
+        }}
+      />
+      <Container className="relative py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Updates</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">From our social channels</h2>
 

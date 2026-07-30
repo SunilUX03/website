@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
+import { SectionMotif } from "@/components/ui/SectionMotif";
 import { useIsDesktop } from "@/lib/hooks";
 
 type Category = (typeof categories)[number];
@@ -32,12 +33,16 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
               className="absolute inset-0 h-full w-full"
               sizes="(min-width: 768px) 33vw, 100vw"
             />
+            {/* Strong, full-card scrim — these are compact cards, so text
+                needs guaranteed contrast against whatever the photo is,
+                not just a bottom-heavy fade like the larger Spotlight
+                slabs get away with. */}
             <div
               aria-hidden
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(to top, rgba(12,10,9,0.82) 0%, rgba(12,10,9,0.5) 45%, rgba(12,10,9,0.15) 100%)",
+                  "linear-gradient(to top, rgba(12,10,9,0.92) 0%, rgba(12,10,9,0.78) 40%, rgba(12,10,9,0.45) 65%, rgba(12,10,9,0.15) 100%)",
               }}
             />
             <div className="relative flex h-full flex-col justify-end p-6 text-white">
@@ -47,9 +52,11 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
               {/* Squeezed-card fix: title wraps up to 2 lines instead of
                   nowrap-overflowing, and clips cleanly if it still doesn't
                   fit rather than spilling past the card frame. */}
-              <h3 className="type-title-md line-clamp-2 text-white">{cat.title}</h3>
+              <h3 className="type-title-md line-clamp-2 text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+                {cat.title}
+              </h3>
               <p
-                className="type-body-sm mt-2 line-clamp-3 max-w-[46ch] text-white/85 transition-opacity duration-300"
+                className="type-body-sm mt-2 line-clamp-3 max-w-[46ch] text-white/90 transition-opacity duration-300 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]"
                 style={{ opacity: isHovered ? 1 : 0 }}
               >
                 {cat.description}
@@ -108,8 +115,9 @@ export function CategoryCards() {
   const rowB = categories.slice(3, 6);
 
   return (
-    <section className="bg-canvas">
-      <Container className="py-xxl md:py-section">
+    <section className="relative overflow-hidden bg-canvas">
+      <SectionMotif className="opacity-[0.14]" />
+      <Container className="relative py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           What We Bring to the Table
         </p>

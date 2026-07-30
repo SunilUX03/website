@@ -108,7 +108,6 @@ export function MainNav() {
 
             <NavDropdown
               label="Services"
-              align="right"
               panelClassName="grid w-[640px] max-w-[90vw] grid-cols-2 gap-4 p-5 sm:grid-cols-4"
               panel={
                 <>
@@ -130,7 +129,6 @@ export function MainNav() {
 
             <NavDropdown
               label="Notifications"
-              align="right"
               panelClassName="grid w-[420px] max-w-[90vw] grid-cols-2 gap-4 p-5"
               panel={
                 <>
