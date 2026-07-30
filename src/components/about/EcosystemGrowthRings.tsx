@@ -6,10 +6,18 @@ import { ecosystemRings, ecosystemCenter } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 import { useIsDesktop } from "@/lib/hooks";
 
-const NODE_SIZE = 132;
-const HUB_RADIUS = 66;
-const RING_GAP = 44;
-const EDGE_MARGIN = 24;
+const NODE_SIZE = 108;
+const HUB_SIZE = 140;
+const HUB_RADIUS = HUB_SIZE / 2;
+const RING_GAP = 46;
+const EDGE_MARGIN = 20;
+// The golden angle (~137.5°) spreads consecutive-index nodes far apart in
+// angle even though their ring radii are also consecutive — plain even
+// spacing (360°/7) put radius-adjacent nodes at the same bearing as each
+// other, so their (small) radius gap was the only thing separating two
+// full-size node circles and they collided. Golden-angle placement keeps
+// every pair, adjacent or not, comfortably clear of every other.
+const GOLDEN_ANGLE = 137.50776 * (Math.PI / 180);
 
 function EcosystemRingsDesktop() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -34,88 +42,105 @@ function EcosystemRingsDesktop() {
   const maxRadius = Math.max(0, Math.min(cx, cy) - NODE_SIZE / 2 - EDGE_MARGIN);
   const innerStart = Math.min(HUB_RADIUS + RING_GAP, maxRadius);
   const step = count > 1 ? Math.max(0, maxRadius - innerStart) / (count - 1) : 0;
-  const radiusFor = (i: number) => innerStart + step * i;
 
-  const activeOrg = active !== null ? ecosystemRings[active] : null;
+  const positions = ecosystemRings.map((org, i) => {
+    const r = innerStart + step * i;
+    const angle = i * GOLDEN_ANGLE - Math.PI / 2;
+    return { org, r, x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  });
+
+  const activePos = active !== null ? positions[active] : null;
+  const tooltipWidth = 220;
+  const tooltipLeft = activePos
+    ? Math.min(Math.max(activePos.x, tooltipWidth / 2 + 8), size.width - tooltipWidth / 2 - 8)
+    : 0;
 
   return (
-    <div>
-      <div ref={containerRef} className="relative mx-auto h-[560px] w-full max-w-[640px]">
-        {size.width > 0 && (
-          <>
-            <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
-              {ecosystemRings.map((org, i) => (
-                <circle
-                  key={org.name}
-                  cx={cx}
-                  cy={cy}
-                  r={radiusFor(i)}
-                  fill="none"
-                  stroke="var(--color-hairline)"
-                  strokeWidth={1}
-                />
-              ))}
-            </svg>
+    <div ref={containerRef} className="relative mx-auto h-[600px] w-full max-w-[720px]">
+      {size.width > 0 && (
+        <>
+          <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
+            {positions.map(({ org, r }) => (
+              <circle
+                key={org.name}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill="none"
+                stroke="var(--color-hairline)"
+                strokeWidth={1}
+              />
+            ))}
+          </svg>
 
+          <div
+            className="absolute flex items-center justify-center rounded-full bg-ink px-3 text-center text-white"
+            style={{
+              left: cx,
+              top: cy,
+              width: HUB_SIZE,
+              height: HUB_SIZE,
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <p className="type-caption font-medium leading-tight">{ecosystemCenter}</p>
+          </div>
+
+          {positions.map(({ org, x, y }, i) => {
+            const isActive = active === i;
+            return (
+              <button
+                type="button"
+                key={org.name}
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive(null)}
+                onFocus={() => setActive(i)}
+                onBlur={() => setActive(null)}
+                className={clsx(
+                  "absolute flex flex-col items-center justify-center rounded-full border p-2 text-center transition-all duration-200",
+                  isActive
+                    ? "z-10 scale-105 border-[var(--color-primary-blue)] bg-[rgba(29,63,143,0.08)]"
+                    : "border-hairline-strong bg-surface-card"
+                )}
+                style={{
+                  left: x,
+                  top: y,
+                  width: NODE_SIZE,
+                  height: NODE_SIZE,
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                <p className="type-caption font-semibold leading-tight break-words text-ink">
+                  {org.name}
+                </p>
+                <p className="type-caption leading-tight text-[var(--color-muted)]">
+                  Est. {org.year}
+                </p>
+              </button>
+            );
+          })}
+
+          {/* Detail callout anchored directly above the hovered/focused
+              node — not a separate panel elsewhere on the page. */}
+          {activePos && (
             <div
-              className="absolute flex h-[132px] w-[132px] items-center justify-center rounded-full bg-ink px-3 text-center text-white"
-              style={{ left: cx, top: cy, transform: "translate(-50%, -50%)" }}
+              className="pointer-events-none absolute z-20 rounded-xl border border-hairline bg-surface-card px-4 py-3 text-center shadow-[0_10px_28px_rgba(0,0,0,0.12)]"
+              style={{
+                left: tooltipLeft,
+                top: activePos.y - NODE_SIZE / 2 - 12,
+                width: tooltipWidth,
+                transform: "translate(-50%, -100%)",
+              }}
             >
-              <p className="type-caption font-medium leading-tight">{ecosystemCenter}</p>
+              <p className="type-body-strong text-ink">
+                {activePos.org.name}{" "}
+                <span className="type-caption text-[var(--color-muted)]">· Est. {activePos.org.year}</span>
+              </p>
+              <p className="type-caption mt-1 text-[var(--color-body)]">{activePos.org.description}</p>
             </div>
-
-            {ecosystemRings.map((org, i) => {
-              const angle = (Math.PI * 2 * i) / count - Math.PI / 2;
-              const r = radiusFor(i);
-              const x = cx + r * Math.cos(angle);
-              const y = cy + r * Math.sin(angle);
-              const isActive = active === i;
-              return (
-                <button
-                  type="button"
-                  key={org.name}
-                  onMouseEnter={() => setActive(i)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
-                  className={clsx(
-                    "absolute flex flex-col items-center justify-center rounded-full border text-center transition-all duration-200",
-                    isActive
-                      ? "border-[var(--color-primary-blue)] bg-[rgba(29,63,143,0.08)]"
-                      : "border-hairline-strong bg-surface-card"
-                  )}
-                  style={{
-                    left: x,
-                    top: y,
-                    width: NODE_SIZE,
-                    height: NODE_SIZE,
-                    transform: "translate(-50%, -50%)",
-                  }}
-                >
-                  <p className="type-body-strong px-2 text-ink">{org.name}</p>
-                  <p className="type-caption text-[var(--color-muted)]">Est. {org.year}</p>
-                </button>
-              );
-            })}
-          </>
-        )}
-      </div>
-
-      <div className="mx-auto mt-6 max-w-xl rounded-xl border border-hairline bg-surface-card px-6 py-4 text-center">
-        {activeOrg ? (
-          <>
-            <p className="type-body-strong text-ink">
-              {activeOrg.name}{" "}
-              <span className="text-[var(--color-muted)]">· Est. {activeOrg.year}</span>
-            </p>
-            <p className="type-body-sm mt-1 text-[var(--color-body)]">{activeOrg.description}</p>
-          </>
-        ) : (
-          <p className="type-body-sm text-[var(--color-muted)]">
-            Hover or focus an organisation to read more.
-          </p>
-        )}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

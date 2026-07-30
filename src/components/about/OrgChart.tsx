@@ -13,7 +13,7 @@ function OrgChartNode({ node }: { node: Level2Node }) {
   const hasChildren = node.children.length > 0;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex w-full flex-col items-center">
       <div
         role={hasChildren ? "button" : undefined}
         tabIndex={hasChildren ? 0 : undefined}
@@ -30,8 +30,9 @@ function OrgChartNode({ node }: { node: Level2Node }) {
         }
         aria-expanded={hasChildren ? expanded : undefined}
         className={clsx(
-          "card-feature flex w-full max-w-[240px] items-center justify-center gap-2 py-4 text-center",
-          hasChildren && "cursor-pointer outline-none hover:border-[var(--color-primary-blue)] focus-visible:border-[var(--color-primary-blue)]"
+          "card-feature flex h-24 w-full max-w-[240px] items-center justify-center gap-2 px-4 text-center outline-none transition-colors duration-200",
+          "hover:border-[var(--color-primary-blue)] hover:bg-[rgba(29,63,143,0.04)]",
+          hasChildren && "cursor-pointer focus-visible:border-[var(--color-primary-blue)] focus-visible:bg-[rgba(29,63,143,0.04)]"
         )}
       >
         <p className="type-body-strong text-ink">{node.label}</p>
@@ -89,26 +90,37 @@ export function OrgChart() {
         </p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">How TNeGA is organised</h2>
 
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center">
           <div className="card-feature w-full max-w-[280px] border-transparent bg-ink py-5 text-center text-white">
             <p className="type-title-sm font-semibold">{orgChart.level1}</p>
           </div>
 
-          <svg width="16" height="26" viewBox="0 0 16 26" fill="none" aria-hidden>
-            <path d="M8 0v18" stroke="var(--color-hairline-strong)" strokeWidth="1.5" />
-            <path
-              d="M2 16l6 6 6-6"
-              stroke="var(--color-hairline-strong)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          {/* Simple trunk connector below md (single row/stacked cards
+              don't have distinct "columns" to branch to). */}
+          <div aria-hidden className="h-8 w-px bg-hairline-strong lg:hidden" />
 
-          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
-            {orgChart.level2.map((node) => (
-              <OrgChartNode key={node.label} node={node} />
-            ))}
+          {/* Elbow connector at lg+: one trunk down from the CEO card,
+              then a horizontal bar spanning the row, then a vertical drop
+              to each of the 4 Level-2 cards — not a plain "↓" glyph. */}
+          <div aria-hidden className="hidden h-8 w-px bg-hairline-strong lg:block" />
+
+          <div className="relative w-full lg:pt-8">
+            <div
+              aria-hidden
+              className="absolute top-0 hidden h-px bg-hairline-strong lg:block"
+              style={{ left: "12.5%", right: "12.5%" }}
+            />
+            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
+              {orgChart.level2.map((node) => (
+                <div key={node.label} className="relative flex flex-col items-center">
+                  <div
+                    aria-hidden
+                    className="absolute -top-8 hidden h-8 w-px bg-hairline-strong lg:block"
+                  />
+                  <OrgChartNode node={node} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Container>

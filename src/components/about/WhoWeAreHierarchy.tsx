@@ -28,7 +28,7 @@ function HierarchyBox({ label, emphasized }: { label: string; emphasized: boolea
       className={clsx(
         "hierarchy-box w-full rounded-xl border px-6 py-4 text-center outline-none transition-all duration-200",
         emphasized
-          ? "border-transparent bg-ink text-white"
+          ? "hierarchy-box-emphasized border-transparent bg-[var(--color-primary-blue)] text-white"
           : "border-hairline bg-surface-card text-ink"
       )}
     >
@@ -67,9 +67,13 @@ export function WhoWeAreHierarchy() {
           transform: scale(1.03);
           border-color: var(--color-primary-blue);
         }
-        .hierarchy-box:not(.bg-ink):hover,
-        .hierarchy-box:not(.bg-ink):focus-visible {
+        .hierarchy-box:not(.hierarchy-box-emphasized):hover,
+        .hierarchy-box:not(.hierarchy-box-emphasized):focus-visible {
           background-color: rgba(29, 63, 143, 0.06);
+        }
+        .hierarchy-box-emphasized:hover,
+        .hierarchy-box-emphasized:focus-visible {
+          background-color: var(--color-primary-blue-active);
         }
       `}</style>
     </section>

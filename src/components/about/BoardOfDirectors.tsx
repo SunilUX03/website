@@ -11,7 +11,7 @@ function BoardCard({ member }: { member: (typeof boardOfDirectors)[number] }) {
 
   return (
     <div
-      className="board-flip-card"
+      className="board-flip-card w-[calc(50%-8px)] lg:w-[calc(25%-12px)]"
       role="button"
       tabIndex={0}
       onMouseEnter={() => setFlipped(true)}
@@ -49,7 +49,11 @@ export function BoardOfDirectors() {
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Board of Directors</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Governing TNeGA&apos;s mission</h2>
 
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {/* flex-wrap + justify-center (not a grid) so an incomplete final
+            row — whenever the member count isn't a clean multiple of the
+            column count — centers instead of left-aligning with trailing
+            empty cells. */}
+        <div className="flex flex-wrap justify-center gap-4">
           {boardOfDirectors.map((member) => (
             <BoardCard key={member.key} member={member} />
           ))}
