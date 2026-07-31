@@ -28,6 +28,13 @@ function ServiceGridDesktop({ items }: { items: readonly ServiceItem[] }) {
   );
 }
 
+// Nav (scrolled height, matches its `top-20`) + this page's own sticky tab
+// bar (py-5 padding + the 40px btn height + border) sit above the mobile
+// card stack, so it needs to stick below *both* — not just the nav, like
+// Home/About's (only) sticky layer.
+const NAV_HEIGHT_PX = 80;
+const TAB_BAR_HEIGHT_PX = 81;
+
 // Same card-stack-scroll interaction as Home's PillarCards / About's Awards,
 // generalized to N items — see StackedScrollCards.
 function ServiceGridMobile({ items }: { items: readonly ServiceItem[] }) {
@@ -36,6 +43,7 @@ function ServiceGridMobile({ items }: { items: readonly ServiceItem[] }) {
       items={items as ServiceItem[]}
       getKey={(item) => item.name + item.stats}
       renderCard={(item, className) => <ServiceItemCard item={item} className={className} />}
+      topPx={NAV_HEIGHT_PX + TAB_BAR_HEIGHT_PX}
     />
   );
 }
@@ -95,7 +103,10 @@ export function ServicesTabs() {
 
   return (
     <section className="bg-canvas">
-      <div className="sticky top-20 z-40 border-b border-hairline bg-canvas">
+      {/* Shadow (not just an opaque bg) so this reads as a floating layer
+          above the cards it scrolls over, instead of looking flush/stuck
+          onto whatever row happens to be scrolled underneath it. */}
+      <div className="sticky top-20 z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         <Container>
           <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
             {TABS.map((tab) => (
