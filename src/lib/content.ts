@@ -17,41 +17,29 @@ export const nav = {
     { label: "Ecosystem", href: "/about#ecosystem" },
     { label: "Careers", href: "/about/careers" },
   ],
+  // Mirrors the 2-section model on /services (Citizen Services, and Govt
+  // Digital Services = the old Digital Services + Projects + Technologies
+  // categories, merged). Individual item labels link to their section on
+  // that page rather than fabricated per-service routes that don't exist.
   services: [
     {
       category: "Citizen Services",
       items: [
-        { label: "e-Sevai", href: "/services/citizen/e-sevai" },
-        { label: "Namma Arasu", href: "/services/citizen/namma-arasu" },
-        { label: "KMUT", href: "/services/citizen/kmut" },
+        { label: "e-Sevai", href: "/services#citizen-services" },
+        { label: "Namma Arasu", href: "/services#citizen-services" },
+        { label: "UMIS", href: "/services#citizen-services" },
+        { label: "TNSSO", href: "/services#citizen-services" },
+        { label: "View all Citizen Services", href: "/services#citizen-services" },
       ],
     },
     {
-      category: "Digital Services",
+      category: "Govt Digital Services",
       items: [
-        { label: "DEP / e-Gov / G2G (incl. login)", href: "/services/digital/g2g" },
-        { label: "SMS", href: "/services/digital/sms" },
-        { label: "e-Office", href: "/services/digital/e-office" },
-        { label: "SFDB", href: "/services/digital/sfdb" },
-        { label: "Software Security Audit", href: "/services/digital/security-audit" },
-      ],
-    },
-    {
-      category: "Projects",
-      items: [
-        { label: "UMIS", href: "/projects/umis" },
-        { label: "TNSSP", href: "/projects/tnssp" },
-        { label: "TNSSO", href: "/projects/tnsso" },
-        { label: "TN GIS", href: "/projects/tn-gis" },
-        { label: "TN Grains", href: "/projects/tn-grains" },
-      ],
-    },
-    {
-      category: "Technologies",
-      items: [
-        { label: "Geospatial", href: "/technologies/geospatial" },
-        { label: "Blockchain", href: "/technologies/blockchain" },
-        { label: "AI/ML", href: "/technologies/ai-ml" },
+        { label: "e-Office", href: "/services#govt-digital-services" },
+        { label: "TNGIS", href: "/services#govt-digital-services" },
+        { label: "SFDB", href: "/services#govt-digital-services" },
+        { label: "Software Security Audit", href: "/services#govt-digital-services" },
+        { label: "View all Govt Digital Services", href: "/services#govt-digital-services" },
       ],
     },
   ],
