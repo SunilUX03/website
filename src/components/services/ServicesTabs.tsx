@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { citizenServices, govtDigitalServices, ServiceItem } from "@/lib/services-content";
 import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
-import { useReducedMotion } from "@/lib/hooks";
+import { StackedScrollCards } from "@/components/ui/StackedScrollCards";
+import { useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
 const TABS = [
   { id: "citizen-services", label: "Citizen Services", items: citizenServices },
@@ -17,13 +18,25 @@ function isTabId(value: string): value is TabId {
   return TABS.some((tab) => tab.id === value);
 }
 
-function ServiceGrid({ items }: { items: readonly ServiceItem[] }) {
+function ServiceGridDesktop({ items }: { items: readonly ServiceItem[] }) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <div className="grid grid-cols-3 gap-6">
       {items.map((item) => (
         <ServiceItemCard key={item.name + item.stats} item={item} />
       ))}
     </div>
+  );
+}
+
+// Same card-stack-scroll interaction as Home's PillarCards / About's Awards,
+// generalized to N items — see StackedScrollCards.
+function ServiceGridMobile({ items }: { items: readonly ServiceItem[] }) {
+  return (
+    <StackedScrollCards
+      items={items as ServiceItem[]}
+      getKey={(item) => item.name + item.stats}
+      renderCard={(item, className) => <ServiceItemCard item={item} className={className} />}
+    />
   );
 }
 
@@ -39,6 +52,7 @@ export function ServicesTabs() {
   const [displayed, setDisplayed] = useState<TabId>("citizen-services");
   const [fading, setFading] = useState(false);
   const reducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop();
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -81,7 +95,7 @@ export function ServicesTabs() {
 
   return (
     <section className="bg-canvas">
-      <div className="sticky top-20 z-40 border-b border-hairline bg-canvas/95 backdrop-blur-sm">
+      <div className="sticky top-20 z-40 border-b border-hairline bg-canvas">
         <Container>
           <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
             {TABS.map((tab) => (
@@ -110,7 +124,8 @@ export function ServicesTabs() {
             transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
           }}
         >
-          <ServiceGrid items={displayedTab.items} />
+          {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
+          {isDesktop === false && <ServiceGridMobile items={displayedTab.items} />}
         </div>
       </Container>
     </section>

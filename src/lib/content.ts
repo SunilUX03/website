@@ -17,31 +17,11 @@ export const nav = {
     { label: "Ecosystem", href: "/about#ecosystem" },
     { label: "Careers", href: "/about/careers" },
   ],
-  // Mirrors the 2-section model on /services (Citizen Services, and Govt
-  // Digital Services = the old Digital Services + Projects + Technologies
-  // categories, merged). Individual item labels link to their section on
-  // that page rather than fabricated per-service routes that don't exist.
+  // Mirrors the 2-section model on /services: just the 2 sections
+  // themselves as direct links, not a sub-menu of individual services.
   services: [
-    {
-      category: "Citizen Services",
-      items: [
-        { label: "e-Sevai", href: "/services#citizen-services" },
-        { label: "Namma Arasu", href: "/services#citizen-services" },
-        { label: "UMIS", href: "/services#citizen-services" },
-        { label: "TNSSO", href: "/services#citizen-services" },
-        { label: "View all Citizen Services", href: "/services#citizen-services" },
-      ],
-    },
-    {
-      category: "Govt Digital Services",
-      items: [
-        { label: "e-Office", href: "/services#govt-digital-services" },
-        { label: "TNGIS", href: "/services#govt-digital-services" },
-        { label: "SFDB", href: "/services#govt-digital-services" },
-        { label: "Software Security Audit", href: "/services#govt-digital-services" },
-        { label: "View all Govt Digital Services", href: "/services#govt-digital-services" },
-      ],
-    },
+    { label: "Citizen Services", href: "/services#citizen-services" },
+    { label: "Govt Digital Services", href: "/services#govt-digital-services" },
   ],
   notifications: {
     updates: [

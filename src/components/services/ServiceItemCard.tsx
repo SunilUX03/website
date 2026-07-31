@@ -1,14 +1,18 @@
 import { ServiceItem } from "@/lib/services-content";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
-export function ServiceItemCard({ item }: { item: ServiceItem }) {
+export function ServiceItemCard({ item, className }: { item: ServiceItem; className?: string }) {
   return (
-    <div className="card-feature group flex h-full flex-col overflow-hidden !p-0">
+    <div className={`card-feature group flex flex-col overflow-hidden !p-0 ${className ?? ""}`}>
       <div className="overflow-hidden">
         <PhotoTile
           src={item.image}
           alt={item.name}
-          aspect="aspect-[4/3]"
+          // 3:2 — close to the reused project images' native ratio (3:2 for
+          // e-Sevai, 17:10 for the rest) so the same source images crop the
+          // same way here as on Home's Spotlight, instead of the tighter
+          // 4:3 crop this used before clipping their edges (QR codes, logos).
+          aspect="aspect-[3/2]"
           className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           sizes="(min-width: 768px) 33vw, 100vw"
         />

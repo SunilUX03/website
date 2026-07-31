@@ -108,22 +108,12 @@ export function MainNav() {
 
             <NavDropdown
               label="Services"
-              panelClassName="grid w-[420px] max-w-[90vw] grid-cols-2 gap-4 p-5"
               panel={
-                <>
-                  {nav.services.map((group) => (
-                    <div key={group.category}>
-                      <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">
-                        {group.category}
-                      </p>
-                      <div className="flex flex-col gap-0.5">
-                        {group.items.map((item) => (
-                          <DropdownLink key={item.href} {...item} />
-                        ))}
-                      </div>
-                    </div>
+                <div className="flex flex-col">
+                  {nav.services.map((item) => (
+                    <DropdownLink key={item.href} {...item} />
                   ))}
-                </>
+                </div>
               }
             />
 

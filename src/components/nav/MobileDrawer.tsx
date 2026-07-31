@@ -101,17 +101,10 @@ export function MobileDrawer({
             </MobileGroup>
 
             <MobileGroup title="Services">
-              {nav.services.map((group) => (
-                <div key={group.category} className="mb-2">
-                  <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">
-                    {group.category}
-                  </p>
-                  {group.items.map((item) => (
-                    <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
+              {nav.services.map((item) => (
+                <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
+                  {item.label}
+                </a>
               ))}
             </MobileGroup>
 
