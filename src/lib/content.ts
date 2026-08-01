@@ -52,7 +52,7 @@ export const hero = {
     },
     {
       name: "Dr. R. Kumar",
-      title: "Hon'ble Minister of Information Technology and Digital Services",
+      title: "Hon'ble Minister of IT&DS",
       photo: "/images/leaders/it-minister-photo.jpg",
       quote: null as string | null,
       role: "secondary" as const,
@@ -105,34 +105,34 @@ export const categories = [
     image: pexelsPhoto(STOCK.developer, 700, 500),
   },
   {
-    title: "Security Audit",
+    title: "UI/UX Designing",
     description:
-      "Assess government applications for security risks and regulatory compliance through CERT-In empanelled agencies.",
-    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
+      "Craft accessible, easy-to-use interfaces so citizens and officers can navigate government services with ease.",
+    image: pexelsPhoto(STOCK.presentation, 700, 500),
   },
   {
-    title: "IT Procurement",
+    title: "AI/ML",
     description:
-      "End-to-end technology procurement support for government departments — transparent, standards-compliant and efficient.",
-    image: pexelsPhoto(STOCK.handshakeCloseup, 700, 500),
-  },
-  {
-    title: "UX Audit",
-    description:
-      "Improve the usability and accessibility of government applications to ensure citizens and officers can use them with ease.",
-    image: pexelsPhoto(STOCK.attentiveGroup, 700, 500),
-  },
-  {
-    title: "Capacity Building",
-    description:
-      "Enable departments through ICT training, workshops, seminars and digital skill development programs statewide.",
-    image: pexelsPhoto(STOCK.workshopGroup, 700, 500),
-  },
-  {
-    title: "AI & Emerging Tech",
-    description:
-      "Lead Tamil Nadu's adoption of AI, blockchain, GIS and IoT for next-generation governance solutions.",
+      "Apply artificial intelligence and machine learning to make governance smarter, faster and more responsive.",
     image: pexelsPhoto(STOCK.programmer, 700, 500),
+  },
+  {
+    title: "Blockchain",
+    description:
+      "Use distributed-ledger technology for tamper-evident records and trusted, transparent government transactions.",
+    image: pexelsPhoto(STOCK.networkRack, 700, 500),
+  },
+  {
+    title: "GIS",
+    description:
+      "Build geospatial platforms mapping land, assets and civic amenities to support data-driven decisions.",
+    image: pexelsPhoto(STOCK.dataCenter, 700, 500),
+  },
+  {
+    title: "Cybersecurity",
+    description:
+      "Protect government applications and citizen data through audits, compliance and CERT-In empanelled security practices.",
+    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
   },
 ];
 
@@ -307,6 +307,12 @@ export const socialMedia = [
     href: "https://www.youtube.com/@tnega",
     followLabel: "Subscribe on YouTube",
   },
+  {
+    platform: "Instagram",
+    apiPath: "/api/social/instagram",
+    href: "https://www.instagram.com/tnega_official",
+    followLabel: "Follow on Instagram",
+  },
 ] as const;
 
 export const ecosystem = [
@@ -323,8 +329,23 @@ export const footer = {
   description: "Powering Digital Governance in Tamil Nadu",
   address:
     "2nd & 7th Floor, PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai — 600 002",
+  // Same address as above, used to build a Google Maps "View Directions" link.
+  mapsHref:
+    "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(
+      "PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai 600002"
+    ),
   phone: "044-4016 4900",
   email: "tnega@tn.gov.in",
+  // Same three platforms as socialMedia below, plus Instagram — kept as a
+  // separate list since the footer only needs name + href, not the full
+  // apiPath/followLabel shape the homepage social cards use.
+  socialLinks: [
+    { label: "Facebook", href: "https://www.facebook.com/TNeGovernance" },
+    { label: "X", href: "https://x.com/tnega" },
+    { label: "YouTube", href: "https://www.youtube.com/@tnega" },
+    { label: "Instagram", href: "https://www.instagram.com/tnega_official" },
+  ],
   quickLinks: [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
@@ -338,5 +359,13 @@ export const footer = {
     { label: "Namma Arasu", href: "/services/citizen/namma-arasu" },
     { label: "TN GIS", href: "/projects/tn-gis" },
     { label: "UMIS", href: "/projects/umis" },
+  ],
+  // Replaces the footer's old "Ecosystem" logo grid column.
+  helpSupport: [
+    { label: "Help", href: "#" },
+    { label: "Feedback", href: "#" },
+    { label: "Terms & Conditions", href: "#" },
+    { label: "Contact Us", href: "/reach-us" },
+    { label: "Site Map", href: "#" },
   ],
 };

@@ -129,20 +129,27 @@ export const ecosystemRings = [
 
 export const ecosystemCenter = "IT & Digital Services Department";
 
+// Real TNeGA reporting hierarchy (5 levels). Rendered as an SVG tree in
+// OrgChart.tsx so the connectors are exact lines rather than fragile
+// div-positioned elbows.
 export const orgChart = {
-  level1: "Chief Executive Officer",
-  level2: [
-    {
-      label: "Head SeMT",
-      children: [{ label: "Centre of Excellence", tags: ["Blockchain", "AI", "IoT", "Drones", "VR/AR"] }],
-    },
-    { label: "Joint CEO", children: [] as { label: string; tags?: string[] }[] },
-    { label: "Sr. Consultants / Consultants", children: [] as { label: string; tags?: string[] }[] },
-    {
-      label: "Financial Advisor / Chief Accounts Officer",
-      children: [{ label: "Accounts" }, { label: "Administration" }],
-    },
+  // Level 1
+  top: ["Chief Executive Officer", "Joint CEO"],
+  // Level 2 — the five Joint Directors plus the GIS Head report to the top.
+  directors: [
+    "Joint Director — Projects",
+    "Joint Director — Operations",
+    "Joint Director — Finance",
+    "Joint Director — Administration",
+    "Joint Director — Technology",
+    "GIS Head",
   ],
+  // Level 3
+  deputies: ["Deputy Collector", "Deputy Collector — Administration"],
+  // Level 4
+  leads: ["Project Managers", "Systems Engineers", "Team Leads"],
+  // Level 5
+  base: "Assistant System Engineers",
 };
 
 // Real, confirmed CEO — reused from the Home page's leadership data.
@@ -156,16 +163,19 @@ export const teamCeo = {
 // only the designation is shown — never a fabricated name, never a
 // visible "Pending" label. See the design-review question resolved for
 // Roll of Honour below for the same principle applied to historical data.
+// NOTE: `name` values here are DUMMY PLACEHOLDERS for layout/demo only —
+// replace with the real officers' names before launch. Designations are
+// the real/structural roles.
 export const team = [
-  { designation: "Joint CEO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
-  { designation: "Joint Director — Projects", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
-  { designation: "Joint Director — Operations", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
-  { designation: "Joint Director — Finance", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
-  { designation: "Joint Director — Administration", photo: pexelsPhoto(STOCK.womanPhone, 320, 320) },
-  { designation: "Deputy Collector — Administration", photo: pexelsPhoto(STOCK.ruralWomanPhone, 320, 320) },
-  { designation: "System Engineer — AI & ML", photo: pexelsPhoto(STOCK.studentLaptop, 320, 320) },
-  { designation: "System Engineer — GIS", photo: pexelsPhoto(STOCK.elderlyManPhone, 320, 320) },
-  { designation: "System Engineer — Infrastructure", photo: pexelsPhoto(STOCK.elderlyWomanPhone, 320, 320) },
+  { name: "Aravind Kumar", designation: "Joint CEO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
+  { name: "Priya Raman", designation: "Joint Director — Projects", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
+  { name: "Karthik Subramanian", designation: "Joint Director — Operations", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
+  { name: "Meena Lakshmi", designation: "Joint Director — Finance", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
+  { name: "Ravi Shankar", designation: "Joint Director — Administration", photo: pexelsPhoto(STOCK.womanPhone, 320, 320) },
+  { name: "Divya Narayanan", designation: "Deputy Collector — Administration", photo: pexelsPhoto(STOCK.ruralWomanPhone, 320, 320) },
+  { name: "Suresh Babu", designation: "System Engineer — AI & ML", photo: pexelsPhoto(STOCK.studentLaptop, 320, 320) },
+  { name: "Anjali Venkatesh", designation: "System Engineer — GIS", photo: pexelsPhoto(STOCK.elderlyManPhone, 320, 320) },
+  { name: "Mohan Raj", designation: "System Engineer — Infrastructure", photo: pexelsPhoto(STOCK.elderlyWomanPhone, 320, 320) },
 ];
 
 // Board composition (names, designations, photos, bios) has not been

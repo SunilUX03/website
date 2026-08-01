@@ -28,17 +28,20 @@ function TimelineEntry({
         isRight ? "md:ml-auto md:pl-10" : "md:mr-auto md:pr-10"
       )}
     >
-      {/* Dot sits at the vertical center of the FIRST line only (a fixed
-          28px from the card top: 16px padding + half the first line's
-          24px height) — a constant regardless of how many lines follow,
-          so it stays aligned to the spine even though some cards (the
-          confirmed CEO entry) show 3 lines and the rest show just 1. */}
+      {/* Dot sits exactly on the spine. Mobile: spine is at left-4 (16px),
+          dot centred on it. Desktop: rows are half-width and the spine is
+          the page centre, i.e. the row's INNER edge — the right edge for
+          left-side rows, the left edge for right-side rows — so the dot
+          pins to that edge and lands on the line, not in the gap. top-7
+          centres it on the card's first text line. */}
       <span
         aria-hidden
         className={clsx(
-          "absolute top-7 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas",
-          "left-[11px] md:left-auto",
-          isRight ? "md:-left-[5px]" : "md:-right-[5px]"
+          "absolute top-7 z-10 h-3 w-3 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas",
+          "left-4 -translate-x-1/2",
+          isRight
+            ? "md:left-0 md:-translate-x-1/2"
+            : "md:left-auto md:right-0 md:translate-x-1/2"
         )}
       />
       <motion.div
@@ -74,7 +77,7 @@ export function RollOfHonour() {
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Roll of Honour</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Leading TNeGA since 2006</h2>
 
-        <div className="relative">
+        <div className="relative overflow-x-clip">
           <div
             aria-hidden
             className="absolute bottom-0 left-4 top-0 w-px bg-hairline-strong md:left-1/2"

@@ -146,7 +146,10 @@ export function MainNav() {
               }
             />
 
-            <a href="/reach-us" className="type-button btn-primary">
+            <a
+              href="/reach-us"
+              className="type-button btn-primary shadow-[0_4px_14px_rgba(29,63,143,0.35)]"
+            >
               Reach us
             </a>
           </nav>

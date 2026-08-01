@@ -15,8 +15,8 @@ export function LeadershipCard({ name, title, photo, quote, role }: LeadershipCa
   return (
     <div
       className={clsx(
-        "card-feature flex shrink-0 items-center gap-3 !p-3",
-        isPrimary ? "min-w-[240px]" : "min-w-[210px] opacity-95"
+        "card-feature flex w-full max-w-full shrink items-center gap-3 !p-3 sm:w-auto",
+        isPrimary ? "sm:min-w-[240px]" : "opacity-95 sm:min-w-[210px]"
       )}
     >
       <div
@@ -27,18 +27,20 @@ export function LeadershipCard({ name, title, photo, quote, role }: LeadershipCa
       >
         <Image src={photo} alt={name} fill sizes="64px" className="object-cover" />
       </div>
-      {/* No min-w-0/flex-1 here — that combination lets nowrap text overflow
-          past the card edge instead of the card growing to fit it. */}
-      <div className="shrink-0">
+      {/* min-w-0 lets the text column shrink inside a width-capped card so
+          a long name truncates instead of pushing the card past the hero
+          frame. Names/titles still prefer nowrap; truncate is the safety
+          net at the narrowest widths. */}
+      <div className="min-w-0">
         <p
           className={clsx(
-            "whitespace-nowrap text-ink",
+            "truncate text-ink",
             isPrimary ? "type-title-sm" : "type-body-strong"
           )}
         >
           {name}
         </p>
-        <p className="type-caption whitespace-nowrap text-[var(--color-muted)]">{title}</p>
+        <p className="type-caption truncate text-[var(--color-muted)]">{title}</p>
         {quote && <p className="type-body-sm mt-1 max-w-[32ch] whitespace-normal text-[var(--color-body)]">&ldquo;{quote}&rdquo;</p>}
       </div>
     </div>

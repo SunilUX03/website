@@ -4,7 +4,7 @@ import { useState } from "react";
 import { categories } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
-import { useIsDesktop } from "@/lib/hooks";
+import { useAutoScroll, useIsDesktop } from "@/lib/hooks";
 
 type Category = (typeof categories)[number];
 
@@ -22,13 +22,13 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
             style={{ flexGrow: grow, flexBasis: 0 }}
-            className="card-feature relative h-64 min-w-0 overflow-hidden !p-0 transition-[flex-grow] duration-[400ms] ease-out"
+            className="card-feature group relative h-64 min-w-0 overflow-hidden !p-0 transition-[flex-grow] duration-[400ms] ease-out"
           >
             <PhotoTile
               src={cat.image}
               alt=""
               aspect="aspect-auto"
-              className="absolute inset-0 h-full w-full"
+              className="absolute inset-0 z-0 h-full w-full"
               sizes="(min-width: 768px) 33vw, 100vw"
             />
             {/* Strong, full-card scrim — these are compact cards, so text
@@ -37,13 +37,13 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
                 slabs get away with. */}
             <div
               aria-hidden
-              className="absolute inset-0"
+              className="absolute inset-0 z-10"
               style={{
                 background:
                   "linear-gradient(to top, rgba(12,10,9,0.92) 0%, rgba(12,10,9,0.78) 40%, rgba(12,10,9,0.45) 65%, rgba(12,10,9,0.15) 100%)",
               }}
             />
-            <div className="relative flex h-full flex-col justify-end p-6 text-white">
+            <div className="absolute inset-0 z-20 flex h-full flex-col justify-end p-6 text-white">
               <p className="type-caption-uppercase mb-2 text-white/70">
                 {String(offset + i + 1).padStart(2, "0")}
               </p>
@@ -53,6 +53,14 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
               <h3 className="type-title-md line-clamp-2 text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
                 {cat.title}
               </h3>
+              {/* Strong underline accent under each heading, per design —
+                  a short primary-blue rule that reads as a deliberate
+                  heading treatment rather than a plain caption. */}
+              <span
+                aria-hidden
+                className="mt-2 block h-[3px] w-10 rounded-full bg-[var(--color-primary-blue)]"
+                style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.35)" }}
+              />
               {/* Always visible now — hover still widens the card (more
                   breathing room, up to 4 lines) but the description is
                   never hidden behind a hover requirement. */}
@@ -73,10 +81,14 @@ function CategoryDesktopRow({ items, offset }: { items: Category[]; offset: numb
 
 function CategoryMobileItem({ cat }: { cat: Category }) {
   return (
-    <div className="card-feature relative overflow-hidden !p-0">
+    <div className="card-feature relative w-[78vw] max-w-[300px] shrink-0 snap-start overflow-hidden !p-0">
       <PhotoTile src={cat.image} alt="" aspect="aspect-[16/9]" className="w-full" />
       <div className="p-5">
         <h3 className="type-title-md text-ink">{cat.title}</h3>
+        <span
+          aria-hidden
+          className="mt-2 block h-[3px] w-10 rounded-full bg-[var(--color-primary-blue)]"
+        />
         {/* Always visible — no tap-to-expand gate hiding the description. */}
         <p className="type-body-sm mt-2 text-[var(--color-body)]">{cat.description}</p>
       </div>
@@ -86,6 +98,7 @@ function CategoryMobileItem({ cat }: { cat: Category }) {
 
 export function CategoryCards() {
   const isDesktop = useIsDesktop();
+  const carouselRef = useAutoScroll<HTMLDivElement>();
   const rowA = categories.slice(0, 3);
   const rowB = categories.slice(3, 6);
 
@@ -93,9 +106,9 @@ export function CategoryCards() {
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
-          What We Bring to the Table
+          What We Work With
         </p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Projects &amp; Services</h2>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">The Tech We Use</h2>
 
         {/* isDesktop is null until mounted — render nothing that first tick
             so desktop/mobile variants (and their background images) are
@@ -108,7 +121,10 @@ export function CategoryCards() {
         )}
 
         {isDesktop === false && (
-          <div className="flex flex-col gap-4">
+          <div
+            ref={carouselRef}
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {categories.map((cat) => (
               <CategoryMobileItem key={cat.title} cat={cat} />
             ))}

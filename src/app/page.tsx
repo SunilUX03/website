@@ -9,7 +9,6 @@ import { Leadership } from "@/components/sections/Leadership";
 import { Announcements } from "@/components/sections/Announcements";
 import { Gallery } from "@/components/sections/Gallery";
 import { SocialMedia } from "@/components/sections/SocialMedia";
-import { Ecosystem } from "@/components/sections/Ecosystem";
 import { ReachUs } from "@/components/sections/ReachUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
@@ -22,14 +21,13 @@ export default function Home() {
         <Hero />
         <Scroller />
         <PillarCards />
-        <Metrics />
         <CategoryCards />
+        <Metrics />
         <ProjectsSpotlight />
         <Leadership />
         <Announcements />
         <Gallery />
         <SocialMedia />
-        <Ecosystem />
         <ReachUs />
       </main>
       <Footer />

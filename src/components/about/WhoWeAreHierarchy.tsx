@@ -62,18 +62,23 @@ export function WhoWeAreHierarchy() {
       </Container>
 
       <style>{`
+        .hierarchy-box {
+          transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+        }
         .hierarchy-box:hover,
         .hierarchy-box:focus-visible {
-          transform: scale(1.03);
+          transform: translateY(-4px);
           border-color: var(--color-primary-blue);
-        }
-        .hierarchy-box:not(.hierarchy-box-emphasized):hover,
-        .hierarchy-box:not(.hierarchy-box-emphasized):focus-visible {
-          background-color: rgba(29, 63, 143, 0.06);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
         }
         .hierarchy-box-emphasized:hover,
         .hierarchy-box-emphasized:focus-visible {
           background-color: var(--color-primary-blue-active);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hierarchy-box { transition: none; }
+          .hierarchy-box:hover,
+          .hierarchy-box:focus-visible { transform: none; }
         }
       `}</style>
     </section>

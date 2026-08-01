@@ -3,8 +3,7 @@ import { TopNav } from "@/components/nav/TopNav";
 import { AboutHero } from "@/components/about/AboutHero";
 import { WhoWeAreHierarchy } from "@/components/about/WhoWeAreHierarchy";
 import { VisionMission } from "@/components/about/VisionMission";
-import { WhatWeDo } from "@/components/about/WhatWeDo";
-import { EcosystemGrowthRings } from "@/components/about/EcosystemGrowthRings";
+import { CategoryCards } from "@/components/sections/CategoryCards";
 import { OrgChart } from "@/components/about/OrgChart";
 import { LeadershipTeam } from "@/components/about/LeadershipTeam";
 import { BoardOfDirectors } from "@/components/about/BoardOfDirectors";
@@ -29,12 +28,11 @@ export default function About() {
         <AboutHero />
         <WhoWeAreHierarchy />
         <VisionMission />
-        <WhatWeDo />
-        <EcosystemGrowthRings />
+        <CategoryCards />
+        <Metrics />
         <OrgChart />
         <LeadershipTeam />
         <BoardOfDirectors />
-        <Metrics />
         <Awards />
         <RollOfHonour />
         <ConnectWithUs />

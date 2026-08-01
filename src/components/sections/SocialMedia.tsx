@@ -6,7 +6,7 @@ import { socialMedia } from "@/lib/content";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
-import { useReducedMotion } from "@/lib/hooks";
+import { useReducedMotion, useAutoScroll } from "@/lib/hooks";
 
 const ROTATE_MS = 4500;
 
@@ -124,6 +124,7 @@ function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
 }
 
 export function SocialMedia() {
+  const carouselRef = useAutoScroll<HTMLDivElement>();
   return (
     <section className="relative overflow-hidden bg-canvas-soft">
       <div
@@ -146,7 +147,10 @@ export function SocialMedia() {
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Updates</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">From our social channels</h2>
 
-        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible">
+        <div
+          ref={carouselRef}
+          className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:overflow-visible"
+        >
           {socialMedia.map((platform) => (
             <SocialCard key={platform.platform} platform={platform} />
           ))}

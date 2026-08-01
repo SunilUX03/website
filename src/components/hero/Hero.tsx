@@ -42,15 +42,15 @@ export function Hero() {
         }}
       />
 
-      {/* Ambient node-graph background, restored per feedback — spans the
-          whole hero, behind everything else (including the district map,
-          which is unchanged and layered on top of this). */}
-      <div className="absolute inset-0" aria-hidden>
+      {/* Ambient node-graph background — spans the whole hero, explicitly
+          the lowest layer (z-0) so its dots/lines never paint over the
+          district map, which sits above it. */}
+      <div className="absolute inset-0 z-0" aria-hidden>
         <NodeGraphCanvas className="h-full w-full" />
       </div>
 
       {/* Mobile: map sits behind the text column at reduced opacity */}
-      <div className="absolute inset-0 opacity-[0.32] lg:hidden" aria-hidden>
+      <div className="absolute inset-0 z-0 opacity-[0.32] lg:hidden" aria-hidden>
         <HeroDistrictMap className="relative h-full w-full" />
       </div>
 
@@ -74,14 +74,19 @@ export function Hero() {
               <a href="/about" className="type-button btn-primary">
                 About us
               </a>
-              <a href="/services" className="type-button btn-outline">
+              <a
+                href="/services"
+                className="type-button btn-outline bg-surface-card shadow-[0_1px_3px_rgba(12,10,9,0.06)] hover:bg-canvas-soft"
+              >
                 View services
               </a>
             </div>
           </div>
 
-          {/* Right column — desktop-only interactive district map */}
-          <div className="relative hidden h-[560px] lg:block">
+          {/* Right column — desktop-only interactive district map, lifted
+              above the node-graph layer so the map (and its hover targets)
+              sit on top of the ambient interactions rather than under. */}
+          <div className="relative z-10 hidden h-[560px] lg:block">
             <HeroDistrictMap className="relative h-full w-full" />
           </div>
         </div>

@@ -56,6 +56,14 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * Math.min(Math.max(t, 0), 1);
 }
 
+// Smooth ease-in-out so a card glides into place and settles, instead of
+// travelling at a constant rate and stopping dead (the "comes too quickly
+// & stops" problem). Applied to every scroll-driven transition below.
+function easeInOut(t: number) {
+  const c = Math.min(Math.max(t, 0), 1);
+  return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2;
+}
+
 function PillarCardsMobileStatic() {
   return (
     <div className="flex flex-col gap-6">
@@ -66,9 +74,26 @@ function PillarCardsMobileStatic() {
   );
 }
 
-// Extra translateY (in addition to the recede offset) so stacked cards
-// never appear flush/touching, even at the very start/end of the range.
-const GAP_PX = 20;
+/**
+ * Mobile card deck.
+ *
+ * As the user scrolls, cards stack like a physical deck: the active card
+ * sits on top, and cards already passed recede *behind and slightly up*
+ * so they stay visible peeking out (you can always see the previous card,
+ * which the earlier version hid). The incoming card eases up from below to
+ * settle on top. Scroll up and the sequence reverses naturally (3 → 2 → 1),
+ * because every transform is a pure function of scroll progress.
+ *
+ * N pillars share one sticky viewport; progress is divided into N-1 equal
+ * segments, one per hand-off between adjacent cards.
+ */
+
+// How far a receded card sits behind the top of the stack, and how much it
+// shrinks / fades — tuned so the previous card clearly peeks out above the
+// active one rather than vanishing.
+const RECEDE_Y = -8; // % upward per level behind
+const RECEDE_SCALE = 0.05; // scale lost per level behind
+const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
 
 function PillarCardsMobileAnimated() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -80,59 +105,86 @@ function PillarCardsMobileAnimated() {
   const [progress, setProgress] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (p) => setProgress(p));
 
-  // Phase 1 (0 -> 0.5): card 2 rises to cover card 1.
-  // Phase 2 (0.5 -> 1): card 3 rises to cover card 2.
-  const phase1 = Math.min(progress, 0.5) / 0.5;
-  const phase2 = Math.max(progress - 0.5, 0) / 0.5;
-
-  const card1Y = lerp(0, -14, phase1);
-  const card1Scale = lerp(1, 0.94, phase1);
-  const card1Opacity = lerp(1, 0.45, phase1);
-
-  const card2EnterY = lerp(100, 0, phase1);
-  const card2RecedeY = lerp(0, -14, phase2);
-  const card2Scale = lerp(1, 0.94, phase2);
-  const card2Opacity = lerp(1, 0.45, phase2);
-
-  const card3Y = lerp(100, 0, phase2);
-
-  // Each stacked layer reserves GAP_PX of padding top+bottom around its
-  // card, so adjacent cards can never end up perfectly flush/touching —
-  // there's always a canvas-colored gap between them, independent of the
-  // scroll-driven transform math above.
-  const slotPadding = { paddingTop: GAP_PX / 2, paddingBottom: GAP_PX / 2 } as const;
+  const count = pillars.length;
+  const segments = Math.max(count - 1, 1);
 
   return (
-    <div ref={containerRef} className="relative" style={{ height: "220vh" }}>
-      <div className="sticky top-20 h-[62vh] w-full overflow-visible">
-        <div
-          className="absolute inset-0"
-          style={{
-            transform: `translateY(${card1Y}%) scale(${card1Scale})`,
-            opacity: card1Opacity,
-            ...slotPadding,
-          }}
-        >
-          <PillarCard pillar={pillars[0]} className="h-full" />
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{
-            transform: `translateY(${progress <= 0.5 ? card2EnterY : card2RecedeY}%) scale(${
-              progress <= 0.5 ? 1 : card2Scale
-            })`,
-            opacity: progress <= 0.5 ? 1 : card2Opacity,
-            ...slotPadding,
-          }}
-        >
-          <PillarCard pillar={pillars[1]} className="h-full" />
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{ transform: `translateY(${card3Y}%)`, ...slotPadding }}
-        >
-          <PillarCard pillar={pillars[2]} className="h-full" />
-        </div>
+    // Taller scroll room per card gives each hand-off space to breathe, so
+    // nothing is rushed. ~150vh per transition.
+    <div
+      ref={containerRef}
+      className="relative"
+      style={{ height: `${100 + segments * 150}vh` }}
+    >
+      <div className="sticky top-20 flex h-[70vh] w-full items-center justify-center overflow-visible">
+        {pillars.map((pillar, i) => {
+          // scrollPos in card-index space: 0 = card 0 active, 1 = card 1
+          // active, … Fractional values are mid hand-off.
+          const scrollPos = progress * segments;
+          // How far this card's "active moment" is from the current scroll
+          // position. Negative = already passed (receded behind);
+          // positive = still waiting below; ~0 = active on top.
+          const delta = i - scrollPos;
+
+          let translateY: number;
+          let scale: number;
+          let opacity: number;
+          let zIndex: number;
+
+          if (delta >= 1) {
+            // Still fully below the deck, waiting off-screen.
+            translateY = 100;
+            scale = 1;
+            opacity = 0;
+            zIndex = 0;
+          } else if (delta > 0) {
+            // Entering: ease up from below (100% → 0%) as delta 1 → 0.
+            const t = easeInOut(1 - delta);
+            translateY = lerp(100, 0, t);
+            scale = 1;
+            opacity = lerp(0, 1, Math.min(t * 1.4, 1));
+            zIndex = 10 + i;
+          } else {
+            // Passed: recede behind and up, staying visible as a peeking
+            // layer. `behind` grows the further back this card is.
+            const behind = -delta; // 0..(count-1)
+            const t = easeInOut(Math.min(behind, 1));
+            translateY = RECEDE_Y * behind;
+            scale = 1 - RECEDE_SCALE * behind;
+            opacity = lerp(1, RECEDE_OPACITY, t);
+            // Cards further back sit lower in the stack.
+            zIndex = 10 - Math.ceil(behind);
+          }
+
+          return (
+            // Outer layer handles ONLY horizontal centering + width
+            // constraint (stable, never animated). The inner layer carries
+            // the scroll-driven vertical transform. Keeping these separate
+            // avoids the earlier bug where an inline `transform` that
+            // re-declared translate(-50%,…) fought the Tailwind centering
+            // classes and pushed the card ~120px off the left edge.
+            <div
+              key={pillar.title}
+              className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center px-5"
+              style={{ zIndex }}
+            >
+              <div
+                className="pointer-events-auto w-full max-w-[360px]"
+                style={{
+                  transform: `translateY(-50%) translateY(${translateY}%) scale(${scale})`,
+                  opacity,
+                  transformOrigin: "center center",
+                  willChange: "transform, opacity",
+                }}
+              >
+                <PillarCard
+                  pillar={pillar}
+                  className="shadow-[0_10px_40px_rgba(12,10,9,0.10)]"
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

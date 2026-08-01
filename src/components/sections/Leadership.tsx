@@ -57,23 +57,27 @@ export function Leadership() {
 
         <div
           ref={viewportRef}
-          className={`flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-            fits ? "justify-center" : "-mx-6 pl-6 pr-0 md:mx-0 md:pl-0 md:pr-6"
+          className={`flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 pl-3 pr-3 [scrollbar-width:none] [scroll-padding-left:0.75rem] [&::-webkit-scrollbar]:hidden ${
+            fits ? "justify-center" : ""
           }`}
         >
           <div ref={trackRef} className="flex gap-5">
             {leadership.map((leader) => (
               <div
                 key={leader.name}
-                className="card-hover-lift flex min-w-[180px] max-w-[260px] shrink-0 snap-start flex-col items-center gap-4 rounded-xl border border-hairline bg-surface-card p-6 text-center"
+                className="card-hover-lift flex min-w-[210px] max-w-[280px] shrink-0 snap-start flex-col items-center gap-4 rounded-xl border border-hairline bg-surface-card px-7 py-6 text-center"
               >
                 <div className="voice-icon-circular relative h-20 w-20 shrink-0 overflow-hidden">
                   <Image src={leader.photo} alt={leader.name} fill sizes="80px" className="object-cover" />
                 </div>
-                <div>
-                  <p className="type-title-sm text-ink">{leader.name}</p>
-                  <p className="type-body-strong mt-1 text-ink">{leader.designation}</p>
-                  <p className="type-body-sm mt-1 text-[var(--color-muted)]">{leader.department}</p>
+                <div className="w-full">
+                  <p className="type-title-sm text-balance text-ink">{leader.name}</p>
+                  <p className="type-body-strong mt-1 text-balance text-ink">
+                    {leader.designation}
+                  </p>
+                  <p className="type-body-sm mt-1 text-balance text-[var(--color-muted)]">
+                    {leader.department}
+                  </p>
                 </div>
               </div>
             ))}

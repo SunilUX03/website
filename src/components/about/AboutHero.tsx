@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { aboutHero } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
+import { AboutHeroGraphic } from "@/components/about/AboutHeroGraphic";
 import { useReducedMotion } from "@/lib/hooks";
 
 function AnimatedHeadline({ text }: { text: string }) {
@@ -72,11 +73,20 @@ export function AboutHero() {
       />
 
       <Container className="relative py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-4 text-[var(--color-muted)]">{aboutHero.eyebrow}</p>
-        <AnimatedHeadline text={aboutHero.headline} />
-        <p className="type-body-md mt-6 max-w-[60ch] text-[var(--color-body)]">
-          {aboutHero.description}
-        </p>
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[54%_46%] lg:gap-8">
+          <div>
+            <p className="type-caption-uppercase mb-4 text-[var(--color-muted)]">
+              {aboutHero.eyebrow}
+            </p>
+            <AnimatedHeadline text={aboutHero.headline} />
+            <p className="type-body-md mt-6 max-w-[60ch] text-[var(--color-body)]">
+              {aboutHero.description}
+            </p>
+          </div>
+          <div className="hidden justify-center lg:flex">
+            <AboutHeroGraphic />
+          </div>
+        </div>
       </Container>
     </section>
   );

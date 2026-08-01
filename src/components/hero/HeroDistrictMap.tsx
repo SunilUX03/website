@@ -1,18 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
-import Image from "next/image";
 import { TN_DISTRICTS, TN_MAP_VIEWBOX } from "@/lib/tn-districts";
-import { pexelsPhoto, DISTRICT_PHOTO_POOL } from "@/lib/stock-photos";
 import { useReducedMotion } from "@/lib/hooks";
-
-// Real, on-theme photography (people + tech, e-Sevai/citizen-service style
-// scenes, students, elders, IT/infrastructure) cycled across the 30
-// districts rather than one random image per district.
-function districtPhotoUrl(districtIndex: number) {
-  const id = DISTRICT_PHOTO_POOL[districtIndex % DISTRICT_PHOTO_POOL.length];
-  return pexelsPhoto(id, 240, 180);
-}
 
 export function HeroDistrictMap({ className }: { className?: string }) {
   const reducedMotion = useReducedMotion();
@@ -24,8 +14,7 @@ export function HeroDistrictMap({ className }: { className?: string }) {
   const glowId = `districtGlow-${uid}`;
   const sheenId = `sheenGradient-${uid}`;
 
-  const activeDistrictIndex = TN_DISTRICTS.findIndex((d) => d.name === active);
-  const activeDistrict = activeDistrictIndex >= 0 ? TN_DISTRICTS[activeDistrictIndex] : null;
+  const activeDistrict = TN_DISTRICTS.find((d) => d.name === active) ?? null;
 
   return (
     <div className={className}>
@@ -35,7 +24,7 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         className="pointer-events-none absolute -right-16 -top-10 h-[420px] w-[420px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-sky) 0%, transparent 70%)",
-          opacity: 0.55,
+          opacity: 0.7,
           animation: reducedMotion ? "none" : "hero-orb-drift 22s ease-in-out infinite",
         }}
       />
@@ -44,7 +33,7 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         className="pointer-events-none absolute -left-10 bottom-0 h-[300px] w-[300px] rounded-full blur-3xl"
         style={{
           background: "radial-gradient(circle, var(--color-gradient-lavender) 0%, transparent 70%)",
-          opacity: 0.4,
+          opacity: 0.55,
           animation: reducedMotion ? "none" : "hero-orb-drift-2 26s ease-in-out infinite",
         }}
       />
@@ -54,6 +43,10 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         className="relative h-full w-full"
         role="img"
         aria-label="Interactive map of Tamil Nadu districts"
+        style={{
+          animation: reducedMotion ? "none" : "hero-map-float 9s ease-in-out infinite",
+          filter: "drop-shadow(0 18px 30px rgba(29,63,143,0.18))",
+        }}
       >
         <defs>
           <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
@@ -81,8 +74,8 @@ export function HeroDistrictMap({ className }: { className?: string }) {
             <path
               key={d.name}
               d={d.path}
-              fill={isActive ? "#1D3F8F" : "#3a63c8"}
-              fillOpacity={isActive ? 0.95 : 0.35}
+              fill={isActive ? "#12275c" : "#2d4fa8"}
+              fillOpacity={isActive ? 0.98 : 0.55}
               stroke="#f5f5f5"
               strokeWidth={1}
               filter={isActive ? `url(#${glowId})` : undefined}
@@ -98,28 +91,32 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         })}
       </svg>
 
-      {/* hover/tap reveal panel */}
+      {/* hover/tap reveal panel — a text card rather than a photo.
+          The prototype's example ("345 e-Sevai centres in <district>")
+          implied a per-district count, but real per-district figures
+          aren't in our dataset and inventing 30 different numbers for a
+          government site isn't acceptable. Instead the card names the
+          district and states what's true statewide (e-Sevai's own
+          published reach), which reads as a genuine "services here"
+          affordance without fabricating local data. Swap in real
+          per-district counts here if/when they're available. */}
       {activeDistrict && (
         <div
-          className="pointer-events-none absolute z-10 w-[180px] overflow-hidden rounded-xl border border-white/60 bg-surface-card shadow-[0_8px_28px_rgba(12,10,9,0.22)]"
+          className="pointer-events-none absolute z-10 w-[210px] overflow-hidden rounded-xl border border-white/60 bg-surface-card shadow-[0_8px_28px_rgba(12,10,9,0.22)]"
           style={{
             left: `${(activeDistrict.cx / TN_MAP_VIEWBOX.width) * 100}%`,
             top: `${(activeDistrict.cy / TN_MAP_VIEWBOX.height) * 100}%`,
             transform: "translate(-50%, -115%)",
           }}
         >
-          <div className="relative aspect-[4/3] w-full">
-            <Image
-              src={districtPhotoUrl(activeDistrictIndex)}
-              alt={`Representative photo for ${activeDistrict.name} district`}
-              fill
-              sizes="180px"
-              className="object-cover"
-            />
+          <div className="px-3 py-2.5">
+            <p className="type-body-strong leading-tight text-ink">
+              {activeDistrict.name}
+            </p>
+            <p className="type-caption mt-0.5 text-[var(--color-body)]">
+              e-Sevai services available across the district
+            </p>
           </div>
-          <p className="type-caption-uppercase px-2 py-1.5 text-center text-ink">
-            {activeDistrict.name}
-          </p>
         </div>
       )}
 
@@ -141,6 +138,10 @@ export function HeroDistrictMap({ className }: { className?: string }) {
           50% { transform: translate(220px, 550px); }
           75% { transform: translate(420px, 380px); }
           100% { transform: translate(180px, 120px); }
+        }
+        @keyframes hero-map-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-14px); }
         }
       `}</style>
     </div>

@@ -12,7 +12,9 @@ interface Node {
 }
 
 const LINK_DISTANCE = 190;
-const PROXIMITY_RADIUS = 170;
+// Wider than the link distance so the cursor lights up a clearly visible
+// cluster of dots + links around it, not just its nearest neighbour.
+const PROXIMITY_RADIUS = 210;
 const PULSE_LIFETIME = 900; // ms
 
 /**
@@ -45,17 +47,36 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
 
     const seedNodes = () => {
       const area = width * height;
-      // Denser, better-connected field — every node should realistically
-      // have a few neighbours within LINK_DISTANCE rather than sitting
-      // isolated.
-      const count = Math.max(50, Math.min(140, Math.round(area / 4500)));
-      nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.1,
-        vy: (Math.random() - 0.5) * 0.1,
-        r: 1.1 + Math.random() * 1,
-      }));
+      // Even distribution: lay the nodes on a grid, then jitter each one
+      // within its own cell. Pure Math.random() placement (the previous
+      // approach) clumps in some regions and leaves bare patches in
+      // others — this keeps the field uniformly spread "all around" while
+      // still looking organic rather than mechanically gridded.
+      const target = Math.max(50, Math.min(140, Math.round(area / 4500)));
+      const aspect = width / Math.max(height, 1);
+      const cols = Math.max(1, Math.round(Math.sqrt(target * aspect)));
+      const rows = Math.max(1, Math.ceil(target / cols));
+      const cellW = width / cols;
+      const cellH = height / rows;
+      // Jitter stays within ~70% of the cell so neighbours never collide
+      // yet the rows/columns don't read as a rigid lattice.
+      const jitterX = cellW * 0.35;
+      const jitterY = cellH * 0.35;
+
+      nodes = [];
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const baseX = (col + 0.5) * cellW;
+          const baseY = (row + 0.5) * cellH;
+          nodes.push({
+            x: baseX + (Math.random() * 2 - 1) * jitterX,
+            y: baseY + (Math.random() * 2 - 1) * jitterY,
+            vx: (Math.random() - 0.5) * 0.1,
+            vy: (Math.random() - 0.5) * 0.1,
+            r: 1.1 + Math.random() * 1,
+          });
+        }
+      }
     };
 
     const resize = () => {
@@ -150,7 +171,7 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
                 brighten = Math.max(brighten, (1 - dPulse / PROXIMITY_RADIUS) * (1 - age));
               }
             }
-            const alpha = 0.06 + brighten * 0.45;
+            const alpha = 0.06 + brighten * 0.6;
             ctx.strokeStyle = `rgba(29, 63, 143, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -173,10 +194,10 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
             brighten = Math.max(brighten, (1 - dPulse / PROXIMITY_RADIUS) * (1 - age));
           }
         }
-        const alpha = 0.18 + brighten * 0.65;
+        const alpha = 0.18 + brighten * 0.78;
         ctx.fillStyle = `rgba(29, 63, 143, ${alpha})`;
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r + brighten * 1.6, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, n.r + brighten * 2.6, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -200,27 +221,33 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
     const handlePointerMove = (e: PointerEvent) => {
       if (reducedMotion) return;
       const rect = canvas.getBoundingClientRect();
-      pointer = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
-    };
-    const handlePointerLeave = () => {
-      pointer.active = false;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      // Only treat the pointer as active while it's actually over the
+      // canvas's box. Listening on window (rather than the canvas itself)
+      // means the highlight still tracks the cursor where the district
+      // map or text column sit on top of the canvas — those overlays no
+      // longer "block" the effect.
+      const inside = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
+      pointer = { x, y, active: inside };
     };
     const handlePointerDown = (e: PointerEvent) => {
       if (reducedMotion) return;
       const rect = canvas.getBoundingClientRect();
-      pulses.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, start: performance.now() });
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (x < 0 || x > rect.width || y < 0 || y > rect.height) return;
+      pulses.push({ x, y, start: performance.now() });
     };
 
-    canvas.addEventListener("pointermove", handlePointerMove);
-    canvas.addEventListener("pointerleave", handlePointerLeave);
-    canvas.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerdown", handlePointerDown);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", handleResize);
-      canvas.removeEventListener("pointermove", handlePointerMove);
-      canvas.removeEventListener("pointerleave", handlePointerLeave);
-      canvas.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
     };
   }, [reducedMotion]);
 

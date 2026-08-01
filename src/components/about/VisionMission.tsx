@@ -26,14 +26,16 @@ export function VisionMission() {
 
       <style>{`
         .vision-mission-card {
-          transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease,
-            background-color 220ms ease;
+          transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
         }
         .vision-mission-card:hover {
-          transform: translateY(-4px);
+          transform: translateY(-6px);
           border-color: var(--color-primary-blue);
-          background-color: rgba(29, 63, 143, 0.04);
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .vision-mission-card { transition: none; }
+          .vision-mission-card:hover { transform: none; }
         }
       `}</style>
     </section>

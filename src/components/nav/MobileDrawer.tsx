@@ -123,7 +123,11 @@ export function MobileDrawer({
               ))}
             </MobileGroup>
 
-            <a href="/reach-us" onClick={onClose} className="type-button btn-primary mt-6 w-full">
+            <a
+              href="/reach-us"
+              onClick={onClose}
+              className="type-button btn-primary mt-6 w-full shadow-[0_4px_14px_rgba(29,63,143,0.35)]"
+            >
               Reach us
             </a>
           </motion.div>

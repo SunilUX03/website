@@ -18,7 +18,10 @@ export interface SocialPost {
   image: string;
 }
 
-export const SOCIAL_SEED: Record<"facebook" | "x" | "youtube", SocialPost[]> = {
+export const SOCIAL_SEED: Record<
+  "facebook" | "x" | "youtube" | "instagram",
+  SocialPost[]
+> = {
   facebook: [
     {
       text: "TNeGA's SimpleGov initiative simplifies 10 government services — paperless, online and instant. A new era of governance begins.",
@@ -68,6 +71,23 @@ export const SOCIAL_SEED: Record<"facebook" | "x" | "youtube", SocialPost[]> = {
       text: "Inside Namma Arasu: how WhatsApp is becoming a channel for government services.",
       date: "20 Jan 2026",
       image: pexelsPhoto(STOCK.elderlyWomanPhone, 640, 360),
+    },
+  ],
+  instagram: [
+    {
+      text: "Behind the scenes at the SimpleGov launch event — 10 services, one paperless platform.",
+      date: "29 May 2025",
+      image: pexelsPhoto(STOCK.presentation, 640, 360),
+    },
+    {
+      text: "TNeGA hosted a workshop on GIS for Smart Governance, bringing district teams together.",
+      date: "May 2025",
+      image: pexelsPhoto(STOCK.workshopGroup, 640, 360),
+    },
+    {
+      text: "Marking 4 crore citizen transactions processed across e-Sevai centres statewide.",
+      date: "Apr 2025",
+      image: pexelsPhoto(STOCK.attentiveGroup, 640, 360),
     },
   ],
 };

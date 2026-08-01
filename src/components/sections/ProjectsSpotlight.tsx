@@ -260,7 +260,7 @@ export function ProjectsSpotlight() {
           Projects Spotlight
         </p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
-          Platforms serving citizens across Tamil Nadu
+          A few projects worth viewing
         </h2>
 
         {isDesktop === true && <DesktopSpotlight />}

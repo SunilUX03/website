@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { footer, ecosystem } from "@/lib/content";
+import { footer } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { formatIndianNumber } from "@/lib/format";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  XIcon,
+  YouTubeIcon,
+} from "@/components/ui/SocialIcons";
 
 const BUILD_DATE = new Date().toLocaleDateString("en-GB", {
   day: "2-digit",
@@ -12,11 +18,31 @@ const BUILD_DATE = new Date().toLocaleDateString("en-GB", {
   year: "numeric",
 });
 
+const SOCIAL_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+  Facebook: FacebookIcon,
+  X: XIcon,
+  YouTube: YouTubeIcon,
+  Instagram: InstagramIcon,
+};
+
 function VisitorCounter() {
   // No real analytics backend wired up yet — deterministic placeholder
   // count so it doesn't reshuffle on every render/hydration.
   const [count] = useState(1731316);
   return <span>{formatIndianNumber(count)}</span>;
+}
+
+function DirectionsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-3.5 w-3.5">
+      <path
+        d="M3 11 20 4l-7 17-2.5-7.5L3 11Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 export function Footer() {
@@ -27,15 +53,50 @@ export function Footer() {
     <footer className="border-t border-hairline bg-canvas">
       <Container className="grid grid-cols-1 gap-10 py-xxl md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-8">
         <div className="flex flex-col gap-4">
-          <Image
-            src="/images/tnega-logo.png"
-            alt="Government of Tamil Nadu emblem and TNeGA — Tamil Nadu e-Governance Agency"
-            width={980}
-            height={186}
-            className="h-14 w-auto"
-          />
+          {/* Identical mark composition to the top nav (MainNav): state
+              emblem + divider + TNeGA icon + text label, so header and
+              footer carry the exact same government identity rather than
+              two different TNeGA logo files. */}
+          <div className="flex items-center gap-3">
+            <Image
+              src="/images/tn-emblem.png"
+              alt="Government of Tamil Nadu emblem"
+              width={178}
+              height={186}
+              className="h-12 w-auto"
+            />
+            <span aria-hidden className="h-11 w-px shrink-0 bg-hairline-strong" />
+            <Image
+              src="/images/logos/tnega-mark.png"
+              alt=""
+              aria-hidden
+              width={512}
+              height={512}
+              className="h-12 w-auto shrink-0"
+            />
+            <span className="leading-tight">
+              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)] md:text-lg">
+                TNeGA
+              </span>
+              <span className="type-caption text-[var(--color-muted)]">
+                Tamil Nadu e-Governance Agency
+              </span>
+            </span>
+          </div>
+
           <p className="type-body-sm text-[var(--color-body)]">{footer.description}</p>
           <p className="type-body-sm text-[var(--color-body)]">{footer.address}</p>
+
+          <a
+            href={footer.mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="type-body-sm inline-flex w-fit items-center gap-1.5 font-medium text-[var(--color-primary-blue)] hover:text-[var(--color-primary-blue-active)]"
+          >
+            <DirectionsIcon />
+            View Directions
+          </a>
+
           <p className="type-body-sm text-[var(--color-body)]">
             <a href={`tel:${footer.phone.replace(/\s|-/g, "")}`} className="hover:text-ink">
               {footer.phone}
@@ -46,17 +107,23 @@ export function Footer() {
               {footer.email}
             </a>
           </p>
+
           <div className="flex gap-3 pt-1">
-            {["Facebook", "X", "YouTube"].map((label) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="voice-icon-circular flex h-8 w-8 items-center justify-center text-[10px] font-medium text-ink"
-              >
-                {label[0]}
-              </a>
-            ))}
+            {footer.socialLinks.map((link) => {
+              const Icon = SOCIAL_ICON[link.label];
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  className="voice-icon-circular flex h-8 w-8 items-center justify-center text-ink"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              );
+            })}
           </div>
         </div>
 
@@ -87,28 +154,16 @@ export function Footer() {
         </div>
 
         <div>
-          <p className="type-title-sm mb-4 text-ink">Ecosystem</p>
-          <div className="grid grid-cols-2 gap-3">
-            {ecosystem
-              .filter((org) => org.name !== "TNeGA")
-              .map((org) => (
-                <a
-                  key={org.name}
-                  href={org.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-20 items-center justify-center rounded-2xl border border-hairline p-2 transition-colors hover:border-hairline-strong"
-                >
-                  <Image
-                    src={org.logo}
-                    alt={org.name}
-                    width={192}
-                    height={192}
-                    className="h-full w-full object-contain"
-                  />
+          <p className="type-title-sm mb-4 text-ink">Help &amp; Support</p>
+          <ul className="flex flex-col gap-2">
+            {footer.helpSupport.map((link) => (
+              <li key={link.label}>
+                <a href={link.href} className="type-body-sm text-[var(--color-body)] hover:text-ink">
+                  {link.label}
                 </a>
-              ))}
-          </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Container>
 
@@ -121,15 +176,6 @@ export function Footer() {
           <p className="type-body-sm text-[var(--color-muted)]">
             Visitors: <VisitorCounter />
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 md:justify-end">
-            <span className="type-caption rounded border border-hairline-strong px-2 py-1 text-[var(--color-muted)]">
-              WCAG 2.1 AA
-            </span>
-            <span className="type-caption rounded border border-hairline-strong px-2 py-1 text-[var(--color-muted)]">
-              W3C
-            </span>
-          </div>
 
           <p className="type-body-sm text-[var(--color-muted)]">Last Updated: {BUILD_DATE}</p>
 
@@ -144,6 +190,17 @@ export function Footer() {
               </a>
             ))}
           </div>
+        </Container>
+
+        <Container className="pb-6 text-center md:text-left">
+          {/* Standard line on Indian government sites naming who's
+              responsible for the site's content — light blue per request,
+              using a shade with enough contrast against the canvas
+              background rather than the very pale sky token used for
+              decorative gradient orbs elsewhere on the site. */}
+          <p className="type-body-sm" style={{ color: "#0284c7" }}>
+            Web Information Manager: Tamil Nadu e-Governance Agency
+          </p>
         </Container>
       </div>
     </footer>

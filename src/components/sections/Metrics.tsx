@@ -26,58 +26,58 @@ export function Metrics() {
           opacity: 0.45,
         }}
       />
+      {/* Central spotlight pooled behind the metric grid, giving the whole
+          section more presence than the two edge orbs alone. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 720px 460px at 50% 55%, rgba(29,63,143,0.08) 0%, transparent 70%)",
+        }}
+      />
 
       <Container className="relative py-xxl md:py-section">
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
           Delivering Digital Governance at State Scale
         </h2>
 
-        <div ref={ref} className="metrics-grid grid grid-cols-2 md:grid-cols-3">
+        <div ref={ref} className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
           {metrics.map((metric, i) => (
-            <div key={metric.label} className="metrics-grid-item px-4 py-4 md:px-6 md:py-6">
-              <p className="type-display-sm text-ink">
-                <CountUp
-                  value={metric.value}
-                  prefix={metric.prefix}
-                  suffix={metric.suffix}
-                  start={inView}
-                  delay={i * 90}
-                />
-              </p>
-              <p className="type-caption-uppercase mt-1 text-[var(--color-muted)]">
-                {metric.label}
-              </p>
+            <div
+              key={metric.label}
+              className="metric-card group relative overflow-hidden rounded-xl border border-hairline bg-surface-card px-4 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)] md:px-6 md:py-7"
+            >
+              {/* Ambient soothing glow that fades in behind the number on
+                  hover — soft primary-tinted radial that sits under the
+                  content, per design. Pointer-events off so it never
+                  interferes; fades via opacity for a smooth reveal. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -inset-6 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 40%, var(--color-gradient-sky) 0%, transparent 70%)",
+                }}
+              />
+              <div className="relative">
+                <p className="type-display-sm text-ink">
+                  <CountUp
+                    value={metric.value}
+                    prefix={metric.prefix}
+                    suffix={metric.suffix}
+                    start={inView}
+                    delay={i * 90}
+                  />
+                </p>
+                <p className="type-caption-uppercase mt-1 text-[var(--color-muted)]">
+                  {metric.label}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </Container>
-
-      <style>{`
-        /* Mobile: 2 columns x 3 rows */
-        .metrics-grid-item:nth-child(n + 3) {
-          border-top: 1px solid var(--color-hairline);
-        }
-        .metrics-grid-item:nth-child(2n) {
-          border-left: 1px solid var(--color-hairline);
-        }
-
-        /* Desktop: 3 columns x 2 rows */
-        @media (min-width: 768px) {
-          .metrics-grid-item:nth-child(n + 3) {
-            border-top: none;
-          }
-          .metrics-grid-item:nth-child(2n) {
-            border-left: none;
-          }
-          .metrics-grid-item:nth-child(n + 4) {
-            border-top: 1px solid var(--color-hairline);
-          }
-          .metrics-grid-item:nth-child(3n + 2),
-          .metrics-grid-item:nth-child(3n) {
-            border-left: 1px solid var(--color-hairline);
-          }
-        }
-      `}</style>
     </section>
   );
 }
