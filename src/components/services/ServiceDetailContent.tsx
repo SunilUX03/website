@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FaqAccordion } from "./FaqAccordion";
 import { ScreenshotCarousel } from "./ScreenshotCarousel";
 import { ServiceItemCard } from "./ServiceItemCard";
+import { CardCarousel } from "@/components/ui/CardCarousel";
 import {
   allServiceItems,
   ServiceItemDetail,
@@ -26,6 +27,12 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "govt-digital-services": "Govt Digital Services",
 };
 
+// 5 placeholder slots (not a real count) so the Success Stories carousel
+// has more than one screen's worth to scroll through even before any
+// stories are published — see service-detail-generator.ts for why this
+// stays "coming soon" rather than generated copy.
+const STORY_PLACEHOLDER_TAGS = ["Milestone", "Update", "Feature", "Community", "Recognition"];
+
 // Same icon across every Key Features card by design (per earlier
 // feedback: "features will have the same icon") — a layered-stack glyph
 // reads as "capability" more clearly than the star it replaced.
@@ -35,6 +42,18 @@ function FeatureIcon({ className }: { className?: string }) {
       <path d="M12 3 3 8l9 5 9-5-9-5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M3 12l9 5 9-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M3 16l9 5 9-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Distinct from FeatureIcon on purpose — this one only ever appears once,
+// on the About section's highlight card, so it reads as a "spotlight" on
+// that specific stat rather than reusing the Key Features glyph.
+function TrendingUpIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M3 17l6-6 4 4 8-8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 7h6v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -72,7 +91,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const steps = generateHowToAccessSteps(item);
   const faqs = generateFaqs(item);
   const screenshotImages = generateScreenshotImages(item);
-  const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 3);
+  const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 8);
 
   return (
     <>
@@ -134,14 +153,34 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               </div>
             </div>
 
-            <PhotoTile
-              src={item.image}
-              alt={item.name}
-              aspect="aspect-[3/2]"
-              className="rounded-xl"
-              sizes="(min-width: 1024px) 45vw, 100vw"
-              priority
-            />
+            {/* A visible tinted frame plus a soft ambient glow behind it —
+                the frame guarantees the "floating" effect reads regardless
+                of the photo's own colors, the glow behind adds depth. */}
+            <div className="relative">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-10 rounded-[2.5rem] opacity-90 blur-3xl"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 30%, var(--color-gradient-sky) 0%, transparent 60%), radial-gradient(circle at 70% 75%, var(--color-gradient-lavender) 0%, transparent 60%)",
+                }}
+              />
+              <div
+                className="relative rounded-2xl p-3"
+                style={{
+                  background: "linear-gradient(135deg, var(--color-surface-strong) 0%, var(--color-canvas-soft) 100%)",
+                }}
+              >
+                <PhotoTile
+                  src={item.image}
+                  alt={item.name}
+                  aspect="aspect-[3/2]"
+                  className="rounded-xl shadow-[0_16px_40px_rgba(12,10,9,0.16)]"
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </Container>
       </section>
@@ -157,23 +196,21 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <p className="type-body-md text-[var(--color-body)]">{item.description}</p>
               <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
             </div>
-            {/* Same treatment as Home's Metrics cards (metric-card): white
-                surface, hairline border, and an ambient blue glow that
-                fades in on hover — for visual consistency across the site
-                instead of the flat dark panel this replaced. */}
-            <div className="group relative overflow-hidden rounded-xl border border-hairline bg-surface-card p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)]">
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -inset-6 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-                style={{
-                  background: "radial-gradient(circle at 50% 40%, var(--color-gradient-sky) 0%, transparent 70%)",
-                }}
-              />
-              <div className="relative">
-                <p className="type-display-sm mb-2 text-[var(--color-primary-blue)]">&ldquo;</p>
-                <p className="type-body-md text-ink">{pullQuote.quote}</p>
-                <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+            {/* Always-on tinted highlight rather than a hover-revealed
+                effect — the earlier hover glow washed out the text right
+                when a reader was trying to read it. Static gradient fill +
+                an icon badge instead of a giant quotation glyph. */}
+            <div
+              className="relative overflow-hidden rounded-xl border border-hairline p-6"
+              style={{
+                background: "linear-gradient(135deg, var(--color-surface-strong) 0%, var(--color-canvas-soft) 100%)",
+              }}
+            >
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-primary-blue)] text-white">
+                <TrendingUpIcon className="h-5 w-5" />
               </div>
+              <p className="type-body-md text-ink">{pullQuote.quote}</p>
+              <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
             </div>
           </div>
         </Container>
@@ -187,7 +224,10 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {features.map((feature) => (
-              <div key={feature.title} className="card-feature">
+              <div
+                key={feature.title}
+                className="card-feature transition-all duration-300 hover:-translate-y-1 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)]"
+              >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary-blue)] text-white">
                   <FeatureIcon className="h-6 w-6" />
                 </div>
@@ -223,9 +263,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <h3 className="type-title-sm mb-4 text-ink">You can use this if</h3>
               <ul className="flex flex-col gap-3">
                 {eligibility.who.map((line) => (
-                  <li key={line} className="type-body-sm flex items-start gap-2.5 text-[var(--color-body)]">
-                    <span className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-[#dcfce7] text-[#15803d]">
-                      <CheckIcon className="h-3 w-3" />
+                  <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#dcfce7] text-[#15803d]">
+                      <CheckIcon className="h-4 w-4" />
                     </span>
                     {line}
                   </li>
@@ -236,9 +276,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <h3 className="type-title-sm mb-4 text-ink">What you&apos;ll need</h3>
               <ul className="flex flex-col gap-3">
                 {eligibility.docs.map((line) => (
-                  <li key={line} className="type-body-sm flex items-start gap-2.5 text-[var(--color-body)]">
-                    <span className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
-                      <DocIcon className="h-3 w-3" />
+                  <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
+                      <DocIcon className="h-4 w-4" />
                     </span>
                     {line}
                   </li>
@@ -305,20 +345,23 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">In the field</p>
           <h2 className="type-display-md mb-10 text-ink">Success stories &amp; coverage</h2>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {[0, 1, 2].map((n) => (
-              <div key={n} className="card-feature">
+          {/* A carousel rather than a fixed grid — this section is meant
+              to grow past 3 cards as real stories get published, without
+              a layout change. */}
+          <CardCarousel>
+            {STORY_PLACEHOLDER_TAGS.map((tag) => (
+              <div key={tag} data-carousel-item className="card-feature w-[280px] shrink-0 snap-start sm:w-[320px]">
                 <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-hairline-strong bg-[var(--color-surface-strong)]">
                   <span className="type-caption text-[var(--color-muted)]">Coming soon</span>
                 </div>
-                <p className="type-caption-uppercase mb-1.5 text-[var(--color-primary-blue)]">Placeholder</p>
+                <p className="type-caption-uppercase mb-1.5 text-[var(--color-primary-blue)]">{tag}</p>
                 <h3 className="type-title-sm mb-1.5 text-ink">Real-world impact, coming soon</h3>
                 <p className="type-body-sm text-[var(--color-muted)]">
                   Success stories and media coverage for {item.name} will be added here as they&apos;re published.
                 </p>
               </div>
             ))}
-          </div>
+          </CardCarousel>
         </Container>
       </section>
 
@@ -338,11 +381,13 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Explore more</p>
             <h2 className="type-display-md mb-10 text-ink">Related {SECTION_LABEL[item.section]}</h2>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <CardCarousel>
               {related.map((sibling) => (
-                <ServiceItemCard key={sibling.slug} item={sibling} />
+                <div key={sibling.slug} data-carousel-item className="w-[300px] shrink-0 snap-start sm:w-[340px]">
+                  <ServiceItemCard item={sibling} />
+                </div>
               ))}
-            </div>
+            </CardCarousel>
           </Container>
         </section>
       )}

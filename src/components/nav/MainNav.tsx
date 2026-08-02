@@ -97,6 +97,7 @@ export function MainNav() {
 
             <NavDropdown
               label="About"
+              href="/about"
               panel={
                 <div className="flex flex-col">
                   {nav.about.map((item) => (
@@ -108,6 +109,7 @@ export function MainNav() {
 
             <NavDropdown
               label="Services"
+              href="/services"
               panel={
                 <div className="flex flex-col">
                   {nav.services.map((item) => (

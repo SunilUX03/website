@@ -8,6 +8,10 @@ const VIEWPORT_MARGIN = 12;
 
 interface NavDropdownProps {
   label: string;
+  /** When set, the label itself navigates there on click — the chevron
+   * stays a separate control so opening the submenu doesn't require
+   * leaving the page first. */
+  href?: string;
   panel: ReactNode;
   panelClassName?: string;
 }
@@ -21,7 +25,7 @@ interface NavDropdownProps {
  * — its position is measured after mount and clamped to the viewport so
  * wide panels never overflow, while still centering whenever there's room.
  */
-export function NavDropdown({ label, panel, panelClassName }: NavDropdownProps) {
+export function NavDropdown({ label, href, panel, panelClassName }: NavDropdownProps) {
   const [open, setOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [leftPx, setLeftPx] = useState<number | null>(null);
@@ -73,20 +77,32 @@ export function NavDropdown({ label, panel, panelClassName }: NavDropdownProps) 
       }}
       onMouseLeave={scheduleClose}
     >
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen((v) => !v)}
-        className="type-nav-link flex items-center gap-1 py-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
-      >
-        {label}
-        <ChevronDownIcon
-          className={`h-3.5 w-3.5 transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+      <div className="flex items-center">
+        {href ? (
+          <a
+            href={href}
+            className="type-nav-link py-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
+          >
+            {label}
+          </a>
+        ) : (
+          <span className="type-nav-link py-2 text-ink">{label}</span>
+        )}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          aria-label={`Toggle ${label} menu`}
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center py-2 pl-1 pr-0.5 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
+        >
+          <ChevronDownIcon
+            className={`h-3.5 w-3.5 transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      </div>
       <AnimatePresence>
         {open && (
           <motion.div

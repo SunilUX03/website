@@ -7,27 +7,42 @@ import { CloseIcon, ChevronDownIcon } from "./icons";
 
 function MobileGroup({
   title,
+  href,
+  onNavigate,
   children,
 }: {
   title: string;
+  /** When set, the title itself navigates there — the chevron is a
+   * separate control so it still expands the submenu in place. */
+  href?: string;
+  onNavigate?: () => void;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-hairline py-2">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="type-title-sm flex w-full items-center justify-between py-2 text-ink"
-      >
-        {title}
-        <ChevronDownIcon
-          className={`h-4 w-4 transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+      <div className="flex w-full items-center justify-between py-2">
+        {href ? (
+          <a href={href} onClick={onNavigate} className="type-title-sm text-ink">
+            {title}
+          </a>
+        ) : (
+          <span className="type-title-sm text-ink">{title}</span>
+        )}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={`Toggle ${title} menu`}
+          className="flex items-center p-1 text-ink"
+        >
+          <ChevronDownIcon
+            className={`h-4 w-4 transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      </div>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
@@ -92,7 +107,7 @@ export function MobileDrawer({
               Home
             </a>
 
-            <MobileGroup title="About">
+            <MobileGroup title="About" href="/about" onNavigate={onClose}>
               {nav.about.map((item) => (
                 <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm py-1.5 text-ink">
                   {item.label}
@@ -100,7 +115,7 @@ export function MobileDrawer({
               ))}
             </MobileGroup>
 
-            <MobileGroup title="Services">
+            <MobileGroup title="Services" href="/services" onNavigate={onClose}>
               {nav.services.map((item) => (
                 <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
