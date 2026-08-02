@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TopNav } from "@/components/nav/TopNav";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ServicesHero } from "@/components/services/ServicesHero";
 import { ServicesTabs } from "@/components/services/ServicesTabs";
 import { Footer } from "@/components/sections/Footer";
@@ -16,6 +17,7 @@ export default function Services() {
     <>
       <TopNav />
       <main className="flex-1">
+        <Breadcrumb items={[{ label: "Services" }]} />
         <ServicesHero />
         <ServicesTabs />
       </main>

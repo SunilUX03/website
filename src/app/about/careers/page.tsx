@@ -3,6 +3,7 @@ import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { CareersGraphic } from "@/components/heroes/CareersGraphic";
 import { JobOpenings } from "@/components/careers/JobOpenings";
 import { HowToApply } from "@/components/careers/HowToApply";
@@ -20,6 +21,7 @@ export default function Careers() {
     <>
       <TopNav />
       <main className="flex-1">
+        <Breadcrumb items={[{ label: "About", href: "/about" }, { label: "Careers" }]} />
         <PageHero {...hero} graphic={<CareersGraphic />} />
         <JobOpenings />
         <HowToApply />

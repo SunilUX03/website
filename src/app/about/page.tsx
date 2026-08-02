@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TopNav } from "@/components/nav/TopNav";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { AboutHero } from "@/components/about/AboutHero";
 import { WhoWeAreHierarchy } from "@/components/about/WhoWeAreHierarchy";
 import { VisionMission } from "@/components/about/VisionMission";
@@ -25,6 +26,7 @@ export default function About() {
     <>
       <TopNav />
       <main className="flex-1">
+        <Breadcrumb items={[{ label: "About" }]} />
         <AboutHero />
         <WhoWeAreHierarchy />
         <VisionMission />

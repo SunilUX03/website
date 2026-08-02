@@ -5,6 +5,7 @@ import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Container } from "@/components/ui/Container";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { announcements } from "@/lib/announcements-content";
 import { announcementDetails, slugOf } from "@/lib/announcement-details";
 
@@ -80,6 +81,14 @@ export default async function AnnouncementPage({ params }: Params) {
       <TopNav />
 
       <main className="flex-1" id="main-content">
+        <Breadcrumb
+          items={[
+            { label: "Notifications" },
+            { label: "Announcements", href: "/notifications/announcements" },
+            { label: announcement.heading },
+          ]}
+        />
+
         {/* Header */}
         <section className="relative overflow-hidden border-b border-hairline bg-canvas">
           <div

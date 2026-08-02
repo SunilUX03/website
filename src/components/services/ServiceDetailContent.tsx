@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { Container } from "@/components/ui/Container";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FaqAccordion } from "./FaqAccordion";
 import { ScreenshotCarousel } from "./ScreenshotCarousel";
+import { ServiceItemCard } from "./ServiceItemCard";
 import {
   allServiceItems,
   ServiceItemDetail,
@@ -24,16 +26,15 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "govt-digital-services": "Govt Digital Services",
 };
 
+// Same icon across every Key Features card by design (per earlier
+// feedback: "features will have the same icon") — a layered-stack glyph
+// reads as "capability" more clearly than the star it replaced.
 function FeatureIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M12 3.5 14.5 9l6 .9-4.3 4.2 1 6-5.2-2.8-5.2 2.8 1-6-4.3-4.2 6-.9z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M12 3 3 8l9 5 9-5-9-5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 12l9 5 9-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 16l9 5 9-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -71,26 +72,16 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const steps = generateHowToAccessSteps(item);
   const faqs = generateFaqs(item);
   const screenshotImages = generateScreenshotImages(item);
-  const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 4);
+  const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 3);
 
   return (
     <>
-      {/* ---------- Breadcrumb ---------- */}
-      <div className="bg-canvas">
-        <Container className="py-md">
-          <nav className="type-body-sm flex items-center gap-1.5 text-[var(--color-muted)]" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-ink">
-              Home
-            </Link>
-            <span aria-hidden>/</span>
-            <Link href={`/services#${item.section}`} className="hover:text-ink">
-              {SECTION_LABEL[item.section]}
-            </Link>
-            <span aria-hidden>/</span>
-            <span className="text-ink">{item.name}</span>
-          </nav>
-        </Container>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: SECTION_LABEL[item.section], href: `/services#${item.section}` },
+          { label: item.name },
+        ]}
+      />
 
       {/* ---------- Hero ---------- */}
       <section className="relative overflow-hidden bg-canvas" id="main-content">
@@ -166,10 +157,23 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <p className="type-body-md text-[var(--color-body)]">{item.description}</p>
               <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
             </div>
-            <div className="card-feature border-l-4 border-l-[var(--color-primary-blue)] !p-6">
-              <p className="type-display-sm mb-2 text-[var(--color-primary-blue)]">&ldquo;</p>
-              <p className="type-body-md text-ink">{pullQuote.quote}</p>
-              <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+            {/* Same treatment as Home's Metrics cards (metric-card): white
+                surface, hairline border, and an ambient blue glow that
+                fades in on hover — for visual consistency across the site
+                instead of the flat dark panel this replaced. */}
+            <div className="group relative overflow-hidden rounded-xl border border-hairline bg-surface-card p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)]">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -inset-6 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+                style={{
+                  background: "radial-gradient(circle at 50% 40%, var(--color-gradient-sky) 0%, transparent 70%)",
+                }}
+              />
+              <div className="relative">
+                <p className="type-display-sm mb-2 text-[var(--color-primary-blue)]">&ldquo;</p>
+                <p className="type-body-md text-ink">{pullQuote.quote}</p>
+                <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+              </div>
             </div>
           </div>
         </Container>
@@ -184,8 +188,8 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {features.map((feature) => (
               <div key={feature.title} className="card-feature">
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
-                  <FeatureIcon className="h-4.5 w-4.5" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary-blue)] text-white">
+                  <FeatureIcon className="h-6 w-6" />
                 </div>
                 <h3 className="type-title-sm mb-1.5 text-ink">{feature.title}</h3>
                 <p className="type-body-sm text-[var(--color-muted)]">{feature.description}</p>
@@ -334,15 +338,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Explore more</p>
             <h2 className="type-display-md mb-10 text-ink">Related {SECTION_LABEL[item.section]}</h2>
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((sibling) => (
-                <Link key={sibling.slug} href={`/services/${sibling.slug}`} className="card-feature hover:border-[var(--color-primary-blue)]">
-                  <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-md bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
-                    <span className="type-caption font-bold">{sibling.name.slice(0, 2)}</span>
-                  </div>
-                  <h3 className="type-title-sm mb-1 text-ink">{sibling.name}</h3>
-                  <p className="type-caption text-[var(--color-muted)]">{sibling.type === "project" ? "Project" : "Service"}</p>
-                </Link>
+                <ServiceItemCard key={sibling.slug} item={sibling} />
               ))}
             </div>
           </Container>

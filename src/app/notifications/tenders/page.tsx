@@ -3,6 +3,7 @@ import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { DocumentTable } from "@/components/documents/DocumentTable";
 import { TendersGraphic } from "@/components/heroes/TendersGraphic";
 import {
@@ -25,6 +26,7 @@ export default function Tenders() {
     <>
       <TopNav />
       <main className="flex-1">
+        <Breadcrumb items={[{ label: "Notifications" }, { label: "Tenders" }]} />
         <PageHero {...hero} graphic={<TendersGraphic />} />
         <DocumentTable
           rows={rows}
