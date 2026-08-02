@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { citizenServices, govtDigitalServices, ServiceItem } from "@/lib/services-content";
 import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
-import { StackedScrollCards } from "@/components/ui/StackedScrollCards";
+import { MobileCardStack } from "@/components/ui/MobileCardStack";
 import { useIsDesktop, useReducedMotion } from "@/lib/hooks";
+import { useElementHeight } from "@/lib/useElementHeight";
 
 const TABS = [
   { id: "citizen-services", label: "Citizen Services", items: citizenServices },
@@ -28,22 +29,15 @@ function ServiceGridDesktop({ items }: { items: readonly ServiceItem[] }) {
   );
 }
 
-// Nav (scrolled height, matches its `top-20`) + this page's own sticky tab
-// bar (py-5 padding + the 40px btn height + border) sit above the mobile
-// card stack, so it needs to stick below *both* — not just the nav, like
-// Home/About's (only) sticky layer.
-const NAV_HEIGHT_PX = 80;
-const TAB_BAR_HEIGHT_PX = 81;
-
-// Same card-stack-scroll interaction as Home's PillarCards / About's Awards,
-// generalized to N items — see StackedScrollCards.
-function ServiceGridMobile({ items }: { items: readonly ServiceItem[] }) {
+// Same card-deck interaction as Home's PillarCards / About's Awards —
+// MobileCardStack is the one shared implementation all three now use.
+function ServiceGridMobile({ items, topPx }: { items: readonly ServiceItem[]; topPx: number }) {
   return (
-    <StackedScrollCards
+    <MobileCardStack
       items={items as ServiceItem[]}
       getKey={(item) => item.name + item.stats}
-      renderCard={(item, className) => <ServiceItemCard item={item} className={className} />}
-      topPx={NAV_HEIGHT_PX + TAB_BAR_HEIGHT_PX}
+      renderCard={(item) => <ServiceItemCard item={item} />}
+      topPx={topPx}
     />
   );
 }
@@ -62,6 +56,27 @@ export function ServicesTabs() {
   const reducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Measured, not guessed: the main nav's height changes on scroll (96px ->
+  // 80px, CSS-transitioned) — a hardcoded "top: 80px" is only ever correct
+  // for one of those two states, which is what let a gap open up between
+  // the nav and this bar while scrolling. Track the nav's *actual* rendered
+  // height (and this bar's own) so the offsets below always match reality.
+  //
+  // Specifically the *sticky* nav element (`header .sticky`), not the whole
+  // `<header>`: header also contains the non-sticky accessibility bar above
+  // it, which scrolls away for real but still counts toward header's own
+  // height — measuring header itself overstates the offset by that much
+  // once scrolled, opening exactly this gap.
+  const [tabBarRef, tabBarHeight] = useElementHeight<HTMLDivElement>(81);
+  const [navHeight, setNavHeight] = useState(80);
+  useEffect(() => {
+    const stickyNav = document.querySelector("header .sticky.z-50");
+    if (!stickyNav) return;
+    const ro = new ResizeObserver((entries) => setNavHeight(entries[0].contentRect.height));
+    ro.observe(stickyNav);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -105,8 +120,14 @@ export function ServicesTabs() {
     <section className="bg-canvas">
       {/* Shadow (not just an opaque bg) so this reads as a floating layer
           above the cards it scrolls over, instead of looking flush/stuck
-          onto whatever row happens to be scrolled underneath it. */}
-      <div className="sticky top-20 z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+          onto whatever row happens to be scrolled underneath it. top is the
+          nav's *measured* current height, not a guess — see the comment
+          above where navHeight is tracked. */}
+      <div
+        ref={tabBarRef}
+        className="sticky z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+        style={{ top: navHeight }}
+      >
         <Container>
           <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
             {TABS.map((tab) => (
@@ -136,7 +157,9 @@ export function ServicesTabs() {
           }}
         >
           {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
-          {isDesktop === false && <ServiceGridMobile items={displayedTab.items} />}
+          {isDesktop === false && (
+            <ServiceGridMobile items={displayedTab.items} topPx={navHeight + tabBarHeight} />
+          )}
         </div>
       </Container>
     </section>

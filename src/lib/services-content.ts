@@ -22,11 +22,14 @@
 
 import { pexelsPhoto, STOCK } from "./stock-photos";
 
-export const servicesHero = {
+export const hero = {
   eyebrow: "What We Build",
-  headline: "Initiatives Powering Tamil Nadu's Digital Future",
-  description:
-    "From citizen-facing portals to department platforms and emerging technology — TNeGA builds, operates and scales digital governance across Tamil Nadu.",
+  heading: "Initiatives Powering Tamil Nadu's Digital Future",
+  body: "From citizen-facing portals to department platforms and emerging technology — TNeGA builds, operates and scales digital governance across Tamil Nadu.",
+  orbs: [
+    { color: "sky", className: "-left-32 -top-20 h-[420px] w-[420px]" },
+    { color: "lavender", className: "-right-24 bottom-0 h-[360px] w-[360px]" },
+  ] as const,
 };
 
 export type ServiceItem = {

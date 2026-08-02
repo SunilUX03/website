@@ -35,17 +35,24 @@ const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
  * prevents the card from drifting off the left edge). Cards size to their
  * own content height — no fixed viewport height stretching them.
  *
- * Used by both Home's PillarCards and About's Awards so the two sections
- * share one identical, verified mechanism.
+ * Used by Home's PillarCards, About's Awards, and Services (ServicesTabs)
+ * so every mobile card grid shares one identical, verified mechanism —
+ * see [[same-card-interaction-standing-rule]].
  */
 export function MobileCardStack<T>({
   items,
   renderCard,
   getKey,
+  topPx = 80,
 }: {
   items: T[];
   renderCard: (item: T) => ReactNode;
   getKey: (item: T, index: number) => string;
+  /** Pixels this sticks below the viewport top. Defaults to 80 (the
+   * scrolled main nav's height). Pages with an extra sticky layer between
+   * the nav and this component (e.g. Services' sticky tab bar) should pass
+   * nav height + that layer's rendered height so this sticks below both. */
+  topPx?: number;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -62,7 +69,10 @@ export function MobileCardStack<T>({
   return (
     // ~150vh of scroll room per hand-off so nothing feels rushed.
     <div ref={containerRef} className="relative" style={{ height: `${100 + segments * 150}vh` }}>
-      <div className="sticky top-20 flex h-[70vh] w-full items-center justify-center overflow-visible">
+      <div
+        className="sticky flex h-[70vh] w-full items-center justify-center overflow-visible"
+        style={{ top: topPx }}
+      >
         {items.map((item, i) => {
           const scrollPos = progress * segments;
           const delta = i - scrollPos;
