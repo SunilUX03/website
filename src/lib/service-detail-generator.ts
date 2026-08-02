@@ -1,18 +1,42 @@
 // Mechanically derives the extra detail-page sections (About's second
 // paragraph, pull quote, expanded features, eligibility, how-to-access
-// steps, FAQ) from each item's already-verified name/description/stats/
-// type/section — never invents a new specific fact (a number, date, fee,
-// or citation) that isn't already in that data. This is why there's no
-// "Success Stories" section: the reference template's version cites real
-// publications (The Hindu, Governance Now, ...) with fabricated stories,
-// which this project's asset policy won't reproduce even as a placeholder.
+// steps, FAQ, carousel images) from each item's already-verified
+// name/description/stats/type/section — never invents a new specific fact
+// (a number, date, fee, or citation) that isn't already in that data. The
+// page's Success Stories section is a "coming soon" placeholder rather
+// than generated copy for the same reason: the reference template's
+// version cites real publications (The Hindu, Governance Now, ...) with
+// fabricated stories, which this project's asset policy won't reproduce.
 
 import { ServiceItemDetail, statsToBullets } from "./services-content";
+import { pexelsPhoto, STOCK } from "./stock-photos";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "citizens",
   "govt-digital-services": "departments",
 };
+
+// Supporting images for the Product Tour carousel — the item's own real
+// photo first, then generic on-theme stock shots from the shared pool
+// (same reuse-across-sections precedent as services-content.ts), never a
+// fabricated "screenshot". Captioned "Illustrative" wherever it's shown.
+const SUPPORTING_IMAGES: Record<ServiceItemDetail["section"], number[]> = {
+  "citizen-services": [STOCK.womanPhone, STOCK.studentLaptop],
+  "govt-digital-services": [STOCK.itTechnician, STOCK.serverRacks],
+};
+
+export interface CarouselImage {
+  src: string;
+  alt: string;
+}
+
+export function generateScreenshotImages(item: ServiceItemDetail): CarouselImage[] {
+  const supporting = SUPPORTING_IMAGES[item.section].map((id, i) => ({
+    src: pexelsPhoto(id, 1200, 675),
+    alt: `${item.name} — illustrative photo ${i + 1}`,
+  }));
+  return [{ src: item.image, alt: `${item.name} interface` }, ...supporting];
+}
 
 export function generateAboutSecondParagraph(item: ServiceItemDetail): string {
   const audience = SECTION_LABEL[item.section];

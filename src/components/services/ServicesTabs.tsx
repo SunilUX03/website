@@ -130,7 +130,7 @@ export function ServicesTabs() {
         </Container>
       </div>
 
-      <Container className="py-xxl md:py-section">
+      <Container className="pb-xxl pt-lg md:pb-section md:pt-xl">
         <div
           id={displayedTab.id}
           role="tabpanel"

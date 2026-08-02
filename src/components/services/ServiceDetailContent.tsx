@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { Container } from "@/components/ui/Container";
 import { FaqAccordion } from "./FaqAccordion";
+import { ScreenshotCarousel } from "./ScreenshotCarousel";
 import {
   allServiceItems,
   ServiceItemDetail,
@@ -14,6 +15,7 @@ import {
   generateEligibility,
   generateHowToAccessSteps,
   generateFaqs,
+  generateScreenshotImages,
 } from "@/lib/service-detail-generator";
 import { footer } from "@/lib/content";
 
@@ -68,6 +70,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const eligibility = generateEligibility(item);
   const steps = generateHowToAccessSteps(item);
   const faqs = generateFaqs(item);
+  const screenshotImages = generateScreenshotImages(item);
   const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 4);
 
   return (
@@ -114,9 +117,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               {bullets.length > 0 && (
                 <div className="mb-6 flex divide-x divide-hairline border-y border-hairline">
                   {bullets.map((stat) => (
-                    <div key={stat} className="flex-1 py-3 pr-4 first:pl-0">
+                    <div key={stat} className="flex flex-1 flex-col gap-1 px-4 py-5 first:pl-0">
                       <p className="type-title-sm text-[var(--color-primary-blue)]">{stat.split(" ")[0]}</p>
-                      <p className="type-caption mt-0.5 text-[var(--color-muted)]">
+                      <p className="type-caption text-[var(--color-muted)]">
                         {stat.split(" ").slice(1).join(" ")}
                       </p>
                     </div>
@@ -163,12 +166,10 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <p className="type-body-md text-[var(--color-body)]">{item.description}</p>
               <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
             </div>
-            <div className="rounded-xl bg-ink p-6 text-white">
-              <p className="type-display-sm mb-2 text-[var(--color-primary-blue)]" style={{ color: "#7fa8e8" }}>
-                &ldquo;
-              </p>
-              <p className="type-body-md text-white/90">{pullQuote.quote}</p>
-              <p className="type-caption mt-4 text-white/60">— {pullQuote.source}</p>
+            <div className="card-feature border-l-4 border-l-[var(--color-primary-blue)] !p-6">
+              <p className="type-display-sm mb-2 text-[var(--color-primary-blue)]">&ldquo;</p>
+              <p className="type-body-md text-ink">{pullQuote.quote}</p>
+              <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
             </div>
           </div>
         </Container>
@@ -200,36 +201,12 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Product tour</p>
           <h2 className="type-display-md mb-10 text-ink">A look at {item.name}</h2>
 
-          <div className="overflow-hidden rounded-xl border border-hairline bg-canvas">
-            <div className="flex items-center gap-1.5 border-b border-hairline bg-[var(--color-surface-strong)] px-4 py-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-hairline-strong)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-hairline-strong)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-hairline-strong)]" />
-              <span className="type-caption ml-3 flex-1 truncate rounded-full border border-hairline bg-canvas px-3 py-1 text-[var(--color-muted)]">
-                {item.accessPortalHref && item.accessPortalHref !== "#" ? item.accessPortalHref : "portal.tn.gov.in"}
-              </span>
-            </div>
-            <PhotoTile src={item.image} alt={`${item.name} interface`} aspect="aspect-[16/8]" sizes="100vw" />
-          </div>
+          <ScreenshotCarousel images={screenshotImages} />
           <p className="type-caption mt-3 text-center text-[var(--color-muted)]">
             Illustrative — production screenshots to be added.
           </p>
         </Container>
       </section>
-
-      {/* ---------- Impact band ---------- */}
-      {bullets.length > 0 && (
-        <section className="bg-ink">
-          <div className="grid grid-cols-1 divide-y divide-white/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-            {bullets.map((stat) => (
-              <div key={stat} className="px-6 py-8 md:px-10">
-                <p className="type-display-sm text-white">{stat.split(" ")[0]}</p>
-                <p className="type-caption mt-1.5 text-white/60">{stat.split(" ").slice(1).join(" ")}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ---------- Eligibility ---------- */}
       <section className="bg-canvas">
@@ -312,6 +289,31 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                 </>
               )}
             </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ---------- Success Stories (placeholder — see service-detail-generator.ts
+          header comment for why this is a "coming soon" placeholder rather
+          than generated copy) ---------- */}
+      <section className="bg-canvas-soft">
+        <Container className="py-xxl">
+          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">In the field</p>
+          <h2 className="type-display-md mb-10 text-ink">Success stories &amp; coverage</h2>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {[0, 1, 2].map((n) => (
+              <div key={n} className="card-feature">
+                <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-hairline-strong bg-[var(--color-surface-strong)]">
+                  <span className="type-caption text-[var(--color-muted)]">Coming soon</span>
+                </div>
+                <p className="type-caption-uppercase mb-1.5 text-[var(--color-primary-blue)]">Placeholder</p>
+                <h3 className="type-title-sm mb-1.5 text-ink">Real-world impact, coming soon</h3>
+                <p className="type-body-sm text-[var(--color-muted)]">
+                  Success stories and media coverage for {item.name} will be added here as they&apos;re published.
+                </p>
+              </div>
+            ))}
           </div>
         </Container>
       </section>
