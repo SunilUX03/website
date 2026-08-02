@@ -3,13 +3,17 @@ import { PhotoTile } from "@/components/ui/PhotoTile";
 
 export function ServiceItemCard({ item, className }: { item: ServiceItem; className?: string }) {
   return (
-    // card-hover-lift so the whole card responds on hover (shadow lift),
-    // not just the image scaling — h-full so every card in a grid row
-    // matches height regardless of description length; the CTA row below
-    // uses mt-auto against that full height so buttons land in the same
-    // place across a row instead of trailing right after a short/long
-    // description.
-    <div className={`card-feature card-hover-lift group flex h-full flex-col overflow-hidden !p-0 ${className ?? ""}`}>
+    // Whole-card hover — noticeably lifts (translateY + real shadow), not
+    // just the image scaling inside it. card-hover-lift's own shadow was
+    // too faint (0.04 alpha) to read as "the card" responding, so this
+    // overrides it with a stronger, visible treatment. h-full so every
+    // card in a grid row matches height regardless of description length;
+    // the CTA row below uses mt-auto against that full height so buttons
+    // land in the same place across a row instead of trailing right after
+    // a short/long description.
+    <div
+      className={`card-feature group flex h-full flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(12,10,9,0.14)] ${className ?? ""}`}
+    >
       <div className="overflow-hidden">
         <PhotoTile
           src={item.image}
@@ -26,7 +30,12 @@ export function ServiceItemCard({ item, className }: { item: ServiceItem; classN
       <div className="flex flex-1 flex-col p-6">
         <h3 className="type-title-md mb-2 text-ink">{item.name}</h3>
         <p className="type-body-sm text-[var(--color-body)]">{item.description}</p>
-        <p className="type-caption mt-4 font-semibold text-[var(--color-primary-blue)]">{item.stats}</p>
+        {/* Lighter than --color-primary-blue (#1d3f8f) on purpose — that
+            read as too dark/heavy for a caption-sized line; this matches
+            the mid-tone blue already used for the "sky" badge tint. */}
+        <p className="type-caption mt-4 font-semibold" style={{ color: "#2f6fb0" }}>
+          {item.stats}
+        </p>
 
         <div className="mt-auto flex flex-wrap gap-3 pt-5">
           {item.accessPortalHref ? (

@@ -50,7 +50,7 @@ const PROJECT_IMG = {
   eOffice: "/images/projects/e-office.png",
 } as const;
 
-export const citizenServices: ServiceItem[] = [
+const citizenServicesRaw: ServiceItem[] = [
   {
     name: "e-Sevai",
     description:
@@ -166,7 +166,7 @@ export const citizenServices: ServiceItem[] = [
   },
 ];
 
-export const govtDigitalServices: ServiceItem[] = [
+const govtDigitalServicesRaw: ServiceItem[] = [
   {
     name: "e-Office",
     description:
@@ -363,3 +363,66 @@ export const govtDigitalServices: ServiceItem[] = [
     knowMoreHref: "#",
   },
 ];
+
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+// GRAINS, TNSSO and Nambikkai Inaiyam each appear in both lists under the
+// same name but with genuinely different citizen-facing vs department-
+// facing copy (see the top-of-file note) — give the govt-list version a
+// distinct slug so both keep their own detail page instead of colliding.
+const DUPLICATE_NAMES = new Set(["GRAINS", "TNSSO", "Nambikkai Inaiyam"]);
+
+export const citizenServices: ServiceItem[] = citizenServicesRaw.map((item) => ({
+  ...item,
+  knowMoreHref: `/services/${slugify(item.name)}`,
+}));
+
+export const govtDigitalServices: ServiceItem[] = govtDigitalServicesRaw.map((item) => ({
+  ...item,
+  knowMoreHref: `/services/${DUPLICATE_NAMES.has(item.name) ? `${slugify(item.name)}-department` : slugify(item.name)}`,
+}));
+
+export type ServiceItemType = "project" | "service";
+
+export interface ServiceItemDetail extends ServiceItem {
+  slug: string;
+  type: ServiceItemType;
+  /** Which tab/list this item is shown under on /services — used for the
+   * detail page's "back to" link and breadcrumb-ish context. */
+  section: "citizen-services" | "govt-digital-services";
+}
+
+function toDetailList(items: ServiceItem[], section: ServiceItemDetail["section"]): ServiceItemDetail[] {
+  return items.map((item) => ({
+    ...item,
+    slug: item.knowMoreHref.replace("/services/", ""),
+    type: item.accessPortalHref ? "project" : "service",
+    section,
+  }));
+}
+
+/** Flat, slug-keyed lookup of all 37 items for the /services/[slug] detail
+ * route — each entry's `type` decides which template (Project vs Service)
+ * it renders with, per the confirmed rule: has an Access Portal -> Project,
+ * Know More only -> Service. */
+export const allServiceItems: ServiceItemDetail[] = [
+  ...toDetailList(citizenServices, "citizen-services"),
+  ...toDetailList(govtDigitalServices, "govt-digital-services"),
+];
+
+export function getServiceItemBySlug(slug: string): ServiceItemDetail | undefined {
+  return allServiceItems.find((item) => item.slug === slug);
+}
+
+/** Splits a " · "-joined stats/metrics line back into individual bullet
+ * points — reused as-is for the detail page's Key Features / Impact list
+ * so that content stays exactly the verified copy already on the card,
+ * never invented. */
+export function statsToBullets(stats: string): string[] {
+  return stats.split("·").map((s) => s.trim()).filter(Boolean);
+}
