@@ -50,11 +50,37 @@ function CpuIcon() {
   );
 }
 
+function CodeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
+      <path d="M8 5 2 12l6 7M16 5l6 7-6 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SparkleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
+      <path
+        d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M19 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Six categories around the map's perimeter (corners + mid-edges) rather
+// than four — kept as pure text/icon labels, never a per-district claim.
 const BADGES: { icon: ReactNode; label: string; className: string; delay: number }[] = [
-  { icon: <ServerIcon />, label: "Cloud Infrastructure", className: "left-0 top-2", delay: 0 },
-  { icon: <WifiIcon />, label: "Statewide Network", className: "right-0 top-16", delay: 1.4 },
-  { icon: <ShieldIcon />, label: "Data Security", className: "left-4 bottom-20", delay: 2.6 },
-  { icon: <CpuIcon />, label: "AI & Analytics", className: "right-4 bottom-4", delay: 0.8 },
+  { icon: <ServerIcon />, label: "Cloud Infrastructure", className: "-left-2 -top-1", delay: 0 },
+  { icon: <WifiIcon />, label: "Statewide Network", className: "-right-2 top-10", delay: 1.4 },
+  { icon: <CodeIcon />, label: "Software Development", className: "-left-10 top-[36%]", delay: 2 },
+  { icon: <SparkleIcon />, label: "AI", className: "-right-6 top-1/2 -translate-y-1/2", delay: 3.2 },
+  { icon: <ShieldIcon />, label: "Data Security", className: "-left-2 bottom-16", delay: 2.6 },
+  { icon: <CpuIcon />, label: "Data Analytics", className: "-right-2 -bottom-1", delay: 0.8 },
 ];
 
 export function HeroTechBadges() {

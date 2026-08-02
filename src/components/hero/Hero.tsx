@@ -45,14 +45,16 @@ export function Hero() {
 
       {/* Ambient node-graph background — spans the whole hero, explicitly
           the lowest layer (z-0) so its dots/lines never paint over the
-          district map, which sits above it. Faded out (via mask, not
-          opacity — keeps the canvas's own drawn alpha intact) toward the
-          right where the map column sits on desktop: it's z-order-correct
-          either way, but the network's lines were visible showing through
-          the map's semi-transparent district fills, reading as clutter
-          "on top of" the map even though technically behind it. */}
+          district map, which sits above it. A radial "hole" mask (not
+          opacity — keeps the canvas's own drawn alpha intact) cuts the
+          network out specifically where the map sits, since its lines
+          were visible showing through the map's semi-transparent district
+          fills. Everywhere else on the right side — including past the
+          map's edges, where the tech badges float — keeps the network
+          fully visible, so the right half doesn't read as "dead" the way
+          a flat left-to-right fade made it look before. */}
       <div
-        className="absolute inset-0 z-0 lg:[mask-image:linear-gradient(to_right,black_0%,black_40%,transparent_75%)] lg:[-webkit-mask-image:linear-gradient(to_right,black_0%,black_40%,transparent_75%)]"
+        className="absolute inset-0 z-0 lg:[mask-image:radial-gradient(ellipse_310px_320px_at_74%_48%,transparent_0%,transparent_55%,black_92%)] lg:[-webkit-mask-image:radial-gradient(ellipse_310px_320px_at_74%_48%,transparent_0%,transparent_55%,black_92%)]"
         aria-hidden
       >
         <NodeGraphCanvas className="h-full w-full" />
