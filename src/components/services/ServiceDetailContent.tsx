@@ -7,16 +7,34 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "govt-digital-services": "Govt Digital Services",
 };
 
-function CheckIcon({ className }: { className?: string }) {
+// One consistent icon per bullet-list "kind" — every Key Features bullet
+// (Project pages) uses the star; every How It Helps bullet (Service pages)
+// uses the growth arrow — rather than a generic checkmark for both.
+function FeatureIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
       <path
-        d="M20 6 9 17l-5-5"
+        d="M12 3.5 14.5 9l6 .9-4.3 4.2 1 6-5.2-2.8-5.2 2.8 1-6-4.3-4.2 6-.9z"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+}
+
+function ImpactIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M3 17l6-6 4 4 8-8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M15 7h6v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -101,7 +119,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                   <ul className="flex flex-col gap-3">
                     {bullets.map((stat) => (
                       <li key={stat} className="type-body-sm flex items-start gap-2.5 text-[var(--color-body)]">
-                        <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary-blue)]" />
+                        <FeatureIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary-blue)]" />
                         {stat}
                       </li>
                     ))}
@@ -132,7 +150,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                   <ul className="flex flex-col gap-3">
                     {bullets.map((stat) => (
                       <li key={stat} className="type-body-sm flex items-start gap-2.5 text-[var(--color-body)]">
-                        <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary-blue)]" />
+                        <ImpactIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary-blue)]" />
                         {stat}
                       </li>
                     ))}

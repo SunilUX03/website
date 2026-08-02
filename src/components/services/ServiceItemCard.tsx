@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ServiceItem } from "@/lib/services-content";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
@@ -12,8 +13,19 @@ export function ServiceItemCard({ item, className }: { item: ServiceItem; classN
     // land in the same place across a row instead of trailing right after
     // a short/long description.
     <div
-      className={`card-feature group flex h-full flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(12,10,9,0.14)] ${className ?? ""}`}
+      className={`card-feature group relative flex h-full flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(12,10,9,0.14)] ${className ?? ""}`}
     >
+      {/* Whole card is a "Know More" target — absolute + z-0 so it sits
+          behind the CTA buttons below (they get their own z-10 stacking
+          context to stay independently clickable) but above the plain
+          image/text, which have no competing stacking of their own and so
+          fall through to this by default CSS rules. */}
+      <Link
+        href={item.knowMoreHref}
+        className="absolute inset-0 z-0"
+        aria-label={`View details about ${item.name}`}
+      />
+
       <div className="overflow-hidden">
         <PhotoTile
           src={item.image}
@@ -37,7 +49,7 @@ export function ServiceItemCard({ item, className }: { item: ServiceItem; classN
           {item.stats}
         </p>
 
-        <div className="mt-auto flex flex-wrap gap-3 pt-5">
+        <div className="relative z-10 mt-auto flex flex-wrap gap-3 pt-5">
           {item.accessPortalHref ? (
             <a href={item.accessPortalHref} className="type-button btn-primary">
               Access Portal

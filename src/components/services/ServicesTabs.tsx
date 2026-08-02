@@ -116,83 +116,55 @@ export function ServicesTabs() {
 
   const displayedTab = TABS.find((tab) => tab.id === displayed) ?? TABS[0];
 
-  const tabBar = (
-    <div
-      ref={tabBarRef}
-      className="z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-    >
-      <Container>
-        <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active === tab.id}
-              onClick={() => selectTab(tab.id)}
-              className={`type-button ${active === tab.id ? "btn-primary" : "btn-outline"}`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </Container>
-    </div>
-  );
-
   return (
     <section className="bg-canvas">
-      {isDesktop === true ? (
-        // Desktop: the bar and the card grid stick together as ONE unit,
-        // with the grid as its own bounded, independently-scrolling panel
-        // beneath the (always-visible) bar — instead of the page scrolling
-        // the grid *past* a sticky bar, which is what let cards end up
-        // visually sliced by the bar mid-row. Standard nested-scroll: the
-        // mouse wheel scrolls the panel first, and only once the panel
-        // hits its own end does scrolling hand off to the page.
-        <div className="sticky z-40" style={{ top: navHeight }}>
-          {tabBar}
-          <div
-            className="overflow-y-auto bg-canvas"
-            style={{ maxHeight: `calc(100vh - ${navHeight + tabBarHeight}px)` }}
-          >
-            <Container className="py-xl">
-              <div
-                id={displayedTab.id}
-                role="tabpanel"
-                className="transition-opacity ease-in-out"
-                style={{
-                  opacity: fading ? 0 : 1,
-                  transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
-                }}
+      {/* Plain sticky bar (not the nested-scroll-panel version tried
+          before — that broke in practice: the section had no extra height
+          for stickiness to engage, so the bar never actually pinned, the
+          footer bled in right after the bounded panel, and keyboard/
+          page-level scrolling bypassed the inner panel entirely). A sticky
+          bar momentarily overlapping whatever scrolls beneath it is
+          inherent to position:sticky — the opaque bg + shadow below keeps
+          that from reading as visually broken. */}
+      <div
+        ref={tabBarRef}
+        className="sticky z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+        style={{ top: navHeight }}
+      >
+        <Container>
+          <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={active === tab.id}
+                onClick={() => selectTab(tab.id)}
+                className={`type-button ${active === tab.id ? "btn-primary" : "btn-outline"}`}
               >
-                <ServiceGridDesktop items={displayedTab.items} />
-              </div>
-            </Container>
+                {tab.label}
+              </button>
+            ))}
           </div>
+        </Container>
+      </div>
+
+      <Container className="py-xxl md:py-section">
+        <div
+          id={displayedTab.id}
+          role="tabpanel"
+          className="transition-opacity ease-in-out"
+          style={{
+            opacity: fading ? 0 : 1,
+            transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
+          }}
+        >
+          {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
+          {isDesktop === false && (
+            <ServiceGridMobile items={displayedTab.items} topPx={navHeight + tabBarHeight} />
+          )}
         </div>
-      ) : (
-        <>
-          <div className="sticky z-40" style={{ top: navHeight }}>
-            {tabBar}
-          </div>
-          <Container className="py-xxl">
-            <div
-              id={displayedTab.id}
-              role="tabpanel"
-              className="transition-opacity ease-in-out"
-              style={{
-                opacity: fading ? 0 : 1,
-                transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
-              }}
-            >
-              {isDesktop === false && (
-                <ServiceGridMobile items={displayedTab.items} topPx={navHeight + tabBarHeight} />
-              )}
-            </div>
-          </Container>
-        </>
-      )}
+      </Container>
     </section>
   );
 }
