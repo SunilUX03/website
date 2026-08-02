@@ -6,7 +6,6 @@ import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
 import { MobileCardStack } from "@/components/ui/MobileCardStack";
 import { useIsDesktop, useReducedMotion } from "@/lib/hooks";
-import { useElementHeight } from "@/lib/useElementHeight";
 
 const TABS = [
   { id: "citizen-services", label: "Citizen Services", items: citizenServices },
@@ -57,18 +56,10 @@ export function ServicesTabs() {
   const isDesktop = useIsDesktop();
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Measured, not guessed: the main nav's height changes on scroll (96px ->
-  // 80px, CSS-transitioned) — a hardcoded "top: 80px" is only ever correct
-  // for one of those two states, which is what let a gap open up between
-  // the nav and this bar while scrolling. Track the nav's *actual* rendered
-  // height (and this bar's own) so the offsets below always match reality.
-  //
-  // Specifically the *sticky* nav element (`header .sticky`), not the whole
-  // `<header>`: header also contains the non-sticky accessibility bar above
-  // it, which scrolls away for real but still counts toward header's own
-  // height — measuring header itself overstates the offset by that much
-  // once scrolled, opening exactly this gap.
-  const [tabBarRef, tabBarHeight] = useElementHeight<HTMLDivElement>(81);
+  // Still tracked (not the tab bar itself anymore — that's no longer
+  // sticky) because MobileCardStack's own internal sticky viewport needs
+  // to know the nav's real height to sit flush below it, same as Home's
+  // PillarCards / About's Awards.
   const [navHeight, setNavHeight] = useState(80);
   useEffect(() => {
     const stickyNav = document.querySelector("header .sticky.z-50");
@@ -118,19 +109,9 @@ export function ServicesTabs() {
 
   return (
     <section className="bg-canvas">
-      {/* Plain sticky bar (not the nested-scroll-panel version tried
-          before — that broke in practice: the section had no extra height
-          for stickiness to engage, so the bar never actually pinned, the
-          footer bled in right after the bounded panel, and keyboard/
-          page-level scrolling bypassed the inner panel entirely). A sticky
-          bar momentarily overlapping whatever scrolls beneath it is
-          inherent to position:sticky — the opaque bg + shadow below keeps
-          that from reading as visually broken. */}
-      <div
-        ref={tabBarRef}
-        className="sticky z-40 border-b border-hairline bg-canvas shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-        style={{ top: navHeight }}
-      >
+      {/* Not sticky — tried twice, caused more problems than it solved
+          (gaps, overlap, footer bleeding in). Just a normal in-flow bar. */}
+      <div className="border-b border-hairline bg-canvas">
         <Container>
           <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
             {TABS.map((tab) => (
@@ -160,9 +141,7 @@ export function ServicesTabs() {
           }}
         >
           {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
-          {isDesktop === false && (
-            <ServiceGridMobile items={displayedTab.items} topPx={navHeight + tabBarHeight} />
-          )}
+          {isDesktop === false && <ServiceGridMobile items={displayedTab.items} topPx={navHeight} />}
         </div>
       </Container>
     </section>
