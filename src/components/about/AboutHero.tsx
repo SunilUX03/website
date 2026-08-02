@@ -11,15 +11,7 @@ function AnimatedHeadline({ text }: { text: string }) {
   const words = text.split(" ");
 
   if (reducedMotion) {
-    return (
-      <h1 className="type-display-mega text-ink">
-        {text}
-        <span
-          aria-hidden
-          className="mt-3 block h-[3px] w-24 rounded-full bg-[var(--color-primary-blue)]"
-        />
-      </h1>
-    );
+    return <h1 className="type-display-mega text-ink">{text}</h1>;
   }
 
   return (
@@ -39,15 +31,6 @@ function AnimatedHeadline({ text }: { text: string }) {
           </motion.span>
         ))}
       </span>
-      <motion.span
-        aria-hidden
-        className="mt-3 block h-[3px] origin-left rounded-full bg-[var(--color-primary-blue)]"
-        style={{ width: "96px" }}
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: words.length * 0.07 + 0.15, ease: "easeOut" }}
-      />
     </h1>
   );
 }

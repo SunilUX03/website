@@ -44,7 +44,7 @@ export function CardCarousel({ children }: { children: ReactNode }) {
         type="button"
         onClick={() => scroll(-1)}
         aria-label="Scroll left"
-        className="absolute left-2 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-surface-card/95 text-ink shadow-[0_4px_12px_rgba(12,10,9,0.14)] transition-colors hover:bg-[var(--color-surface-strong)] md:flex"
+        className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-surface-card/95 text-ink shadow-[0_4px_12px_rgba(12,10,9,0.14)] transition-colors hover:bg-[var(--color-surface-strong)] md:h-10 md:w-10"
       >
         <ChevronIcon direction="left" className="h-4 w-4" />
       </button>
@@ -52,7 +52,7 @@ export function CardCarousel({ children }: { children: ReactNode }) {
         type="button"
         onClick={() => scroll(1)}
         aria-label="Scroll right"
-        className="absolute right-2 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-surface-card/95 text-ink shadow-[0_4px_12px_rgba(12,10,9,0.14)] transition-colors hover:bg-[var(--color-surface-strong)] md:flex"
+        className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-surface-card/95 text-ink shadow-[0_4px_12px_rgba(12,10,9,0.14)] transition-colors hover:bg-[var(--color-surface-strong)] md:h-10 md:w-10"
       >
         <ChevronIcon direction="right" className="h-4 w-4" />
       </button>

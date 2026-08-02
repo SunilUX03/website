@@ -44,6 +44,7 @@ export function MobileCardStack<T>({
   renderCard,
   getKey,
   topPx = 80,
+  deckHeightVh = 70,
 }: {
   items: T[];
   renderCard: (item: T) => ReactNode;
@@ -53,6 +54,11 @@ export function MobileCardStack<T>({
    * the nav and this component (e.g. Services' sticky tab bar) should pass
    * nav height + that layer's rendered height so this sticks below both. */
   topPx?: number;
+  /** Height (as vh) of the sticky deck viewport. Cards center within it, so
+   * a taller value reads as more empty space above the card on first
+   * scroll-into-view — lower this for sections that sit right under a
+   * short heading. Defaults to 70 (Home/Services' original value). */
+  deckHeightVh?: number;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -70,8 +76,8 @@ export function MobileCardStack<T>({
     // ~150vh of scroll room per hand-off so nothing feels rushed.
     <div ref={containerRef} className="relative" style={{ height: `${100 + segments * 150}vh` }}>
       <div
-        className="sticky flex h-[70vh] w-full items-center justify-center overflow-visible"
-        style={{ top: topPx }}
+        className="sticky flex w-full items-center justify-center overflow-visible"
+        style={{ top: topPx, height: `${deckHeightVh}vh` }}
       >
         {items.map((item, i) => {
           const scrollPos = progress * segments;

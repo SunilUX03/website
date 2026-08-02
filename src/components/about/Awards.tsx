@@ -62,6 +62,10 @@ function AwardsMobile() {
       items={awards}
       getKey={(award) => award.title}
       renderCard={(award) => <AwardCard award={award} />}
+      // Shorter than the 70vh default — this section sits right under its
+      // own heading with no extra content above the deck, so the taller
+      // default left a visibly empty band before the first card appeared.
+      deckHeightVh={50}
     />
   );
 }

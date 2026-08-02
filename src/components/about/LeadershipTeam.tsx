@@ -4,14 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { teamCeo, team } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
+import { CardCarousel } from "@/components/ui/CardCarousel";
 import { useInViewOnce, useIsDesktop, useReducedMotion } from "@/lib/hooks";
-
-// Cap the grid to 2 rows below the CEO card at each breakpoint's own
-// column count (4 cols desktop, 2 cols mobile) rather than a single fixed
-// count, so neither layout ever spills into a 3rd, awkward partial row.
-const MAX_ROWS = 2;
-const DESKTOP_COLS = 6;
-const MOBILE_COLS = 2;
 
 function TeamCard({
   member,
@@ -43,13 +37,56 @@ function TeamCard({
       <div className="relative aspect-square w-full">
         <Image src={member.photo} alt="" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
       </div>
-      {/* Name + designation, fixed-height block so every card matches
-          regardless of how many lines the designation wraps to. */}
-      <div className="flex h-[68px] flex-col items-center justify-center px-2 py-2 text-center">
+      {/* min-h (not a fixed h) so a 2-line designation like "Joint
+          Director — Administration" never gets clipped — it just grows
+          the card a little instead of losing its second line. */}
+      <div className="flex min-h-[84px] flex-col items-center justify-center px-2 py-2.5 text-center">
         <p className="type-body-strong line-clamp-1 text-ink">{member.name}</p>
-        <p className="type-caption line-clamp-2 text-[var(--color-muted)]">{member.designation}</p>
+        <p className="type-caption text-[var(--color-muted)]">{member.designation}</p>
       </div>
     </motion.div>
+  );
+}
+
+function DesktopGrid({
+  members,
+  inView,
+  reducedMotion,
+}: {
+  members: typeof team;
+  inView: boolean;
+  reducedMotion: boolean;
+}) {
+  return (
+    // flex-wrap + justify-center (not CSS grid) so a partial last row
+    // centers itself instead of trailing left with empty trailing columns.
+    <div className="flex flex-wrap justify-center gap-3">
+      {members.map((member, i) => (
+        <div key={`${member.name}-${i}`} className="w-[calc(50%-0.375rem)] sm:w-[calc(25%-0.5625rem)] lg:w-[calc(16.6667%-0.625rem)]">
+          <TeamCard member={member} index={i} inView={inView} reducedMotion={reducedMotion} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MobileCarousel({
+  members,
+  inView,
+  reducedMotion,
+}: {
+  members: typeof team;
+  inView: boolean;
+  reducedMotion: boolean;
+}) {
+  return (
+    <CardCarousel>
+      {members.map((member, i) => (
+        <div key={`${member.name}-${i}`} data-carousel-item className="w-[150px] shrink-0 snap-start">
+          <TeamCard member={member} index={i} inView={inView} reducedMotion={reducedMotion} />
+        </div>
+      ))}
+    </CardCarousel>
   );
 }
 
@@ -57,15 +94,10 @@ export function LeadershipTeam() {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.15 });
   const reducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
-  // CEO leads the same grid as the rest of the team, at the same card
-  // size — not a separate oversized hero card above it.
+  // CEO leads the same set as the rest of the team, at the same card size
+  // — not a separate oversized hero card above it. Every member renders;
+  // desktop wraps them, mobile scrolls them — neither silently drops any.
   const allMembers = [{ name: teamCeo.name, designation: teamCeo.designation, photo: teamCeo.photo }, ...team];
-  const visibleTeam =
-    isDesktop === true
-      ? allMembers.slice(0, DESKTOP_COLS * MAX_ROWS)
-      : isDesktop === false
-        ? allMembers.slice(0, MOBILE_COLS * MAX_ROWS)
-        : [];
 
   return (
     <section id="leadership" className="scroll-mt-24 bg-canvas-soft">
@@ -73,19 +105,9 @@ export function LeadershipTeam() {
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Leadership &amp; Team</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">The people behind TNeGA</h2>
 
-        <div
-          ref={ref}
-          className="grid grid-cols-2 gap-3 overflow-x-clip [grid-template-columns:repeat(2,minmax(0,1fr))] sm:[grid-template-columns:repeat(4,minmax(0,1fr))] lg:[grid-template-columns:repeat(6,minmax(0,1fr))]"
-        >
-          {visibleTeam.map((member, i) => (
-            <TeamCard
-              key={`${member.name}-${i}`}
-              member={member}
-              index={i}
-              inView={inView}
-              reducedMotion={reducedMotion}
-            />
-          ))}
+        <div ref={ref}>
+          {isDesktop === true && <DesktopGrid members={allMembers} inView={inView} reducedMotion={reducedMotion} />}
+          {isDesktop === false && <MobileCarousel members={allMembers} inView={inView} reducedMotion={reducedMotion} />}
         </div>
       </Container>
 

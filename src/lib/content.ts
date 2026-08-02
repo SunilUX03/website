@@ -14,7 +14,6 @@ export const nav = {
     { label: "Overview", href: "/about" },
     { label: "Leadership", href: "/about#leadership" },
     { label: "Organisation structure", href: "/about#organisation-structure" },
-    { label: "Ecosystem", href: "/about#ecosystem" },
     { label: "Careers", href: "/about/careers" },
   ],
   // Mirrors the 2-section model on /services: just the 2 sections

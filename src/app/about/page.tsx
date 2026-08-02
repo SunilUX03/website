@@ -11,6 +11,7 @@ import { BoardOfDirectors } from "@/components/about/BoardOfDirectors";
 import { Metrics } from "@/components/sections/Metrics";
 import { Awards } from "@/components/about/Awards";
 import { RollOfHonour } from "@/components/about/RollOfHonour";
+import { JoinUs } from "@/components/about/JoinUs";
 import { ConnectWithUs } from "@/components/about/ConnectWithUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
@@ -37,6 +38,7 @@ export default function About() {
         <BoardOfDirectors />
         <Awards />
         <RollOfHonour />
+        <JoinUs />
         <ConnectWithUs />
       </main>
       <Footer />
