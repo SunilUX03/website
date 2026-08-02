@@ -304,11 +304,11 @@ export function ApplicationForm() {
 
           <p className="type-body-sm mt-base text-center text-[var(--color-muted)]">
             By submitting this form you agree to our{" "}
-            <a href="#" className="text-ink underline underline-offset-2">
+            <a href="/privacy-policy" className="text-ink underline underline-offset-2">
               Privacy Policy
             </a>{" "}
             and{" "}
-            <a href="#" className="text-ink underline underline-offset-2">
+            <a href="/terms-of-use" className="text-ink underline underline-offset-2">
               Terms of Use
             </a>
             .

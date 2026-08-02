@@ -15,7 +15,9 @@ function isWidgetPanelOpen() {
   return getComputedStyle(panel).right === "0px";
 }
 
-function toggleAccessibilityWidget() {
+// Exported so the footer's "Accessibility" link can open the same panel
+// instead of duplicating this logic or pointing at a dead "#" href.
+export function toggleAccessibilityWidget() {
   if (isWidgetPanelOpen()) {
     // Confirmed the widget's own close button (.uwaw-close) doesn't
     // actually close the panel either — that's a bug in the third-party

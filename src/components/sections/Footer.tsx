@@ -11,6 +11,15 @@ import {
   XIcon,
   YouTubeIcon,
 } from "@/components/ui/SocialIcons";
+import { toggleAccessibilityWidget } from "@/components/nav/AccessibilityBar";
+import { WebInfoManagerModal } from "@/components/legal/WebInfoManagerModal";
+
+const BOTTOM_LINKS: { label: string; href?: string }[] = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Disclaimer", href: "/disclaimer" },
+  { label: "Terms of Use", href: "/terms-of-use" },
+  { label: "Accessibility" },
+];
 
 const BUILD_DATE = new Date().toLocaleDateString("en-GB", {
   day: "2-digit",
@@ -48,6 +57,7 @@ function DirectionsIcon() {
 export function Footer() {
   const [year, setYear] = useState(new Date().getFullYear());
   useEffect(() => setYear(new Date().getFullYear()), []);
+  const [webInfoOpen, setWebInfoOpen] = useState(false);
 
   return (
     <footer className="border-t border-hairline bg-canvas">
@@ -180,15 +190,22 @@ export function Footer() {
           <p className="type-body-sm text-[var(--color-muted)]">Last Updated: {BUILD_DATE}</p>
 
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end">
-            {["Privacy Policy", "Disclaimer", "Terms of Use", "Accessibility"].map((label) => (
-              <a
-                key={label}
-                href="#"
-                className="type-body-sm text-[var(--color-muted)] hover:text-ink"
-              >
-                {label}
-              </a>
-            ))}
+            {BOTTOM_LINKS.map((link) =>
+              link.href ? (
+                <a key={link.label} href={link.href} className="type-body-sm text-[var(--color-muted)] hover:text-ink">
+                  {link.label}
+                </a>
+              ) : (
+                <button
+                  key={link.label}
+                  type="button"
+                  onClick={toggleAccessibilityWidget}
+                  className="type-body-sm text-[var(--color-muted)] hover:text-ink"
+                >
+                  {link.label}
+                </button>
+              )
+            )}
           </div>
         </Container>
 
@@ -197,11 +214,20 @@ export function Footer() {
               responsible for the site's content — light blue per request,
               using a shade with enough contrast against the canvas
               background rather than the very pale sky token used for
-              decorative gradient orbs elsewhere on the site. */}
-          <p className="type-body-sm" style={{ color: "#0284c7" }}>
+              decorative gradient orbs elsewhere on the site. Now a real
+              trigger for the Web Information Manager contact modal rather
+              than plain static text. */}
+          <button
+            type="button"
+            onClick={() => setWebInfoOpen(true)}
+            className="type-body-sm underline-offset-2 hover:underline"
+            style={{ color: "#0284c7" }}
+          >
             Web Information Manager: Tamil Nadu e-Governance Agency
-          </p>
+          </button>
         </Container>
+
+        <WebInfoManagerModal open={webInfoOpen} onClose={() => setWebInfoOpen(false)} />
       </div>
     </footer>
   );

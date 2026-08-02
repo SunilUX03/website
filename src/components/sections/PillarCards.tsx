@@ -116,7 +116,10 @@ function PillarCardsMobileAnimated() {
       className="relative"
       style={{ height: `${100 + segments * 150}vh` }}
     >
-      <div className="sticky top-20 flex h-[70vh] w-full items-center justify-center overflow-visible">
+      {/* Shorter than the old 70vh — cards centered in a viewport that
+          tall left a lot of empty space between the heading above and the
+          first card, since the card sits vertically centered within it. */}
+      <div className="sticky top-20 flex h-[52vh] w-full items-center justify-center overflow-visible">
         {pillars.map((pillar, i) => {
           // scrollPos in card-index space: 0 = card 0 active, 1 = card 1
           // active, … Fractional values are mid hand-off.

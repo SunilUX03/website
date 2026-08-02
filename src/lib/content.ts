@@ -47,14 +47,12 @@ export const hero = {
       title: "Hon'ble Chief Minister of Tamil Nadu",
       photo: "/images/leaders/cm-photo.jpg",
       quote: null as string | null,
-      role: "primary" as const,
     },
     {
       name: "Dr. R. Kumar",
       title: "Hon'ble Minister of IT&DS",
       photo: "/images/leaders/it-minister-photo.jpg",
       quote: null as string | null,
-      role: "secondary" as const,
     },
   ],
 };
@@ -361,10 +359,10 @@ export const footer = {
   ],
   // Replaces the footer's old "Ecosystem" logo grid column.
   helpSupport: [
-    { label: "Help", href: "#" },
-    { label: "Feedback", href: "#" },
-    { label: "Terms & Conditions", href: "#" },
+    { label: "Help", href: "/help" },
+    { label: "Feedback", href: "/feedback" },
+    { label: "Terms & Conditions", href: "/terms-conditions" },
     { label: "Contact Us", href: "/reach-us" },
-    { label: "Site Map", href: "#" },
+    { label: "Site Map", href: "/sitemap" },
   ],
 };

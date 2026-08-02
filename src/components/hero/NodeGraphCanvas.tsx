@@ -9,6 +9,14 @@ interface Node {
   vx: number;
   vy: number;
   r: number;
+  // The node's seeded "home" position — pointer proximity displaces it
+  // from here, and a spring pulls it back once the pointer moves away.
+  // Without this, repulsion was one-directional: every pass of the mouse
+  // nudged nodes further from their original even spread and they never
+  // recovered, so the field visibly clumped up the longer a visitor
+  // interacted with the hero.
+  homeX: number;
+  homeY: number;
 }
 
 const LINK_DISTANCE = 190;
@@ -16,6 +24,10 @@ const LINK_DISTANCE = 190;
 // cluster of dots + links around it, not just its nearest neighbour.
 const PROXIMITY_RADIUS = 210;
 const PULSE_LIFETIME = 900; // ms
+// How strongly each node is pulled back toward its seeded "home" position
+// every frame — this is what makes the pointer-repulsion (and idle drift)
+// bounded instead of a permanent, cumulative displacement.
+const SPRING_STRENGTH = 0.025;
 
 /**
  * Ambient dots-and-lines background layer, restored per feedback — this
@@ -68,12 +80,16 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
         for (let col = 0; col < cols; col++) {
           const baseX = (col + 0.5) * cellW;
           const baseY = (row + 0.5) * cellH;
+          const homeX = baseX + (Math.random() * 2 - 1) * jitterX;
+          const homeY = baseY + (Math.random() * 2 - 1) * jitterY;
           nodes.push({
-            x: baseX + (Math.random() * 2 - 1) * jitterX,
-            y: baseY + (Math.random() * 2 - 1) * jitterY,
+            x: homeX,
+            y: homeY,
             vx: (Math.random() - 0.5) * 0.1,
             vy: (Math.random() - 0.5) * 0.1,
             r: 1.1 + Math.random() * 1,
+            homeX,
+            homeY,
           });
         }
       }
@@ -123,8 +139,13 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
       for (const n of nodes) {
         n.x += n.vx;
         n.y += n.vy;
-        if (n.x < 0 || n.x > width) n.vx *= -1;
-        if (n.y < 0 || n.y > height) n.vy *= -1;
+        // Spring back toward the seeded home position — bounds both the
+        // idle drift above and the pointer repulsion below, so the field
+        // always resettles to its original even spread instead of
+        // accumulating a permanent displacement the longer someone
+        // interacts with the hero.
+        n.x += (n.homeX - n.x) * SPRING_STRENGTH;
+        n.y += (n.homeY - n.y) * SPRING_STRENGTH;
         n.x = Math.max(0, Math.min(width, n.x));
         n.y = Math.max(0, Math.min(height, n.y));
       }

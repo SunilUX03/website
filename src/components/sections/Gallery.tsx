@@ -177,7 +177,7 @@ export function Gallery() {
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Gallery</p>
             <h2 className="type-display-lg text-ink">Moments from the field</h2>
           </div>
-          <a href="/gallery" className="type-button btn-outline shrink-0">
+          <a href="/notifications/media-press" className="type-button btn-outline shrink-0">
             View all
           </a>
         </div>

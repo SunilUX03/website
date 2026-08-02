@@ -35,7 +35,7 @@ function ReachUsPanel({
 
 export function ReachUs() {
   return (
-    <section className="relative overflow-hidden bg-canvas-soft">
+    <section className="relative overflow-hidden bg-canvas">
       <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 -translate-y-1/2">
         <div
           className="orb-drift-a h-[300px] w-[300px] rounded-full blur-3xl"
@@ -54,7 +54,7 @@ export function ReachUs() {
           }}
         />
       </div>
-      <Container className="relative py-xxl md:py-section">
+      <Container className="relative pb-xxl pt-lg md:pb-section md:pt-xl">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ReachUsPanel
             eyebrow="Support"

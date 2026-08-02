@@ -7,6 +7,7 @@ import { LeadershipCard } from "./LeadershipCard";
 import { HeroDistrictMap } from "./HeroDistrictMap";
 import { HeroDotCursor } from "./HeroDotCursor";
 import { NodeGraphCanvas } from "./NodeGraphCanvas";
+import { HeroTechBadges } from "./HeroTechBadges";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
@@ -44,8 +45,16 @@ export function Hero() {
 
       {/* Ambient node-graph background — spans the whole hero, explicitly
           the lowest layer (z-0) so its dots/lines never paint over the
-          district map, which sits above it. */}
-      <div className="absolute inset-0 z-0" aria-hidden>
+          district map, which sits above it. Faded out (via mask, not
+          opacity — keeps the canvas's own drawn alpha intact) toward the
+          right where the map column sits on desktop: it's z-order-correct
+          either way, but the network's lines were visible showing through
+          the map's semi-transparent district fills, reading as clutter
+          "on top of" the map even though technically behind it. */}
+      <div
+        className="absolute inset-0 z-0 lg:[mask-image:linear-gradient(to_right,black_0%,black_40%,transparent_75%)] lg:[-webkit-mask-image:linear-gradient(to_right,black_0%,black_40%,transparent_75%)]"
+        aria-hidden
+      >
         <NodeGraphCanvas className="h-full w-full" />
       </div>
 
@@ -88,6 +97,7 @@ export function Hero() {
               sit on top of the ambient interactions rather than under. */}
           <div className="relative z-10 hidden h-[560px] lg:block">
             <HeroDistrictMap className="relative h-full w-full" />
+            <HeroTechBadges />
           </div>
         </div>
       </Container>
