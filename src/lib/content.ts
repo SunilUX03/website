@@ -64,24 +64,55 @@ export const ticker = [
   { type: "cta", text: "e-Sevai Helpline: 1800-42-56000", ctaLabel: "Call now", href: "tel:1800-42-56000" },
 ] as const;
 
+/**
+ * The three "Enabling Digital Governance" bands on Home. Each pairs a
+ * standing description with a carousel of projects.
+ *
+ * `itemNames` reference entries in services-content.ts by name rather than
+ * duplicating their copy — every card here is the same card shown on
+ * /services, so stats and descriptions can never drift between the two
+ * pages. Names are resolved at render (see getServiceItemsByNames), which
+ * throws on a typo instead of silently dropping a card. UMIS appears under
+ * both Citizen Services and Interdepartmental Projects by design — it is
+ * genuinely both.
+ */
 export const pillars = [
   {
     title: "Citizen Services",
     description:
       "TNeGA delivers citizen-centric digital services through secure and accessible platforms, making Government services faster, simpler, and more convenient.",
-    image: pexelsPhoto(STOCK.womanPhone, 800, 600),
+    href: "/services#citizen-services",
+    linkLabel: "View all Citizen Services",
+    itemNames: ["e-Sevai Portal", "Namma Arasu", "TNSSP", "e-Gazette Portal", "UMIS"],
   },
   {
     title: "Interdepartmental Projects",
     description:
       "TNeGA collaborates with Government departments to design, develop, and implement digital solutions that improve governance and service delivery.",
-    image: pexelsPhoto(STOCK.handshakeLeaders, 800, 600),
+    href: "/services#govt-digital-services",
+    linkLabel: "View all Interdepartmental Projects",
+    itemNames: [
+      "TNGIS Tamil Nilam",
+      "UMIS",
+      "GRAINS",
+      "e-Office",
+      "Interdepartmental Technical Consulting",
+    ],
   },
   {
     title: "Services",
     description:
       "TNeGA provides shared digital services including digital identity, DBT, e-Sign, cybersecurity, and technology consulting to support e-Governance across Tamil Nadu.",
-    image: pexelsPhoto(STOCK.dataCenter, 800, 600),
+    href: "/services#govt-digital-services",
+    linkLabel: "View all Services",
+    itemNames: [
+      "Nambikkai Inaiyam",
+      "DBT",
+      "TNSSO",
+      "e-Sign",
+      "SMS & WhatsApp Gateway",
+      "IT Security Audit Framework",
+    ],
   },
 ];
 

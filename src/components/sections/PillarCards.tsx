@@ -1,206 +1,53 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import { pillars } from "@/lib/content";
+import { getServiceItemsByNames } from "@/lib/services-content";
 import { Container } from "@/components/ui/Container";
-import { PhotoTile } from "@/components/ui/PhotoTile";
-import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
+import { FocusCarousel } from "@/components/ui/FocusCarousel";
 
-function PillarCard({
-  pillar,
-  className,
-  style,
-}: {
-  pillar: (typeof pillars)[number];
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <div className={`card-feature group overflow-hidden !p-0 ${className ?? ""}`} style={style}>
-      <div className="overflow-hidden">
-        <PhotoTile
-          src={pillar.image}
-          alt={pillar.title}
-          aspect="aspect-[4/3]"
-          className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-        />
-      </div>
-      <div className="p-6">
-        <h3 className="type-title-md mb-2 text-ink">{pillar.title}</h3>
-        <p className="type-body-sm text-[var(--color-body)]">{pillar.description}</p>
-      </div>
-    </div>
-  );
-}
-
-function PillarCardsDesktop() {
-  return (
-    <div className="grid grid-cols-3 gap-6">
-      {pillars.map((pillar, i) => (
-        <motion.div
-          key={pillar.title}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.5, delay: i * 0.09, ease: "easeOut" }}
-        >
-          <PillarCard pillar={pillar} className="h-full" />
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * Math.min(Math.max(t, 0), 1);
-}
-
-// Smooth ease-in-out so a card glides into place and settles, instead of
-// travelling at a constant rate and stopping dead (the "comes too quickly
-// & stops" problem). Applied to every scroll-driven transition below.
-function easeInOut(t: number) {
-  const c = Math.min(Math.max(t, 0), 1);
-  return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2;
-}
-
-function PillarCardsMobileStatic() {
-  return (
-    <div className="flex flex-col gap-6">
-      {pillars.map((pillar) => (
-        <PillarCard key={pillar.title} pillar={pillar} />
-      ))}
-    </div>
-  );
-}
+type Pillar = (typeof pillars)[number];
 
 /**
- * Mobile card deck.
- *
- * As the user scrolls, cards stack like a physical deck: the active card
- * sits on top, and cards already passed recede *behind and slightly up*
- * so they stay visible peeking out (you can always see the previous card,
- * which the earlier version hid). The incoming card eases up from below to
- * settle on top. Scroll up and the sequence reverses naturally (3 → 2 → 1),
- * because every transform is a pure function of scroll progress.
- *
- * N pillars share one sticky viewport; progress is divided into N-1 equal
- * segments, one per hand-off between adjacent cards.
+ * One "Enabling Digital Governance" band: a standing left panel naming the
+ * theme, and a centred focus-pull carousel of the projects under it. Stacks
+ * to a single column below md, where the panel sits above the carousel.
  */
-
-// How far a receded card sits behind the top of the stack, and how much it
-// shrinks / fades — tuned so the previous card clearly peeks out above the
-// active one rather than vanishing.
-const RECEDE_Y = -8; // % upward per level behind
-const RECEDE_SCALE = 0.05; // scale lost per level behind
-const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
-
-function PillarCardsMobileAnimated() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const [progress, setProgress] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (p) => setProgress(p));
-
-  const count = pillars.length;
-  const segments = Math.max(count - 1, 1);
+function PillarBand({ pillar }: { pillar: Pillar }) {
+  const items = getServiceItemsByNames(pillar.itemNames);
 
   return (
-    // Taller scroll room per card gives each hand-off space to breathe, so
-    // nothing is rushed. ~150vh per transition.
-    <div
-      ref={containerRef}
-      className="relative"
-      style={{ height: `${100 + segments * 150}vh` }}
-    >
-      {/* Shorter than the old 70vh — cards centered in a viewport that
-          tall left a lot of empty space between the heading above and the
-          first card, since the card sits vertically centered within it. */}
-      <div className="sticky top-20 flex h-[52vh] w-full items-center justify-center overflow-visible">
-        {pillars.map((pillar, i) => {
-          // scrollPos in card-index space: 0 = card 0 active, 1 = card 1
-          // active, … Fractional values are mid hand-off.
-          const scrollPos = progress * segments;
-          // How far this card's "active moment" is from the current scroll
-          // position. Negative = already passed (receded behind);
-          // positive = still waiting below; ~0 = active on top.
-          const delta = i - scrollPos;
-
-          let translateY: number;
-          let scale: number;
-          let opacity: number;
-          let zIndex: number;
-
-          if (delta >= 1) {
-            // Still fully below the deck, waiting off-screen.
-            translateY = 100;
-            scale = 1;
-            opacity = 0;
-            zIndex = 0;
-          } else if (delta > 0) {
-            // Entering: ease up from below (100% → 0%) as delta 1 → 0.
-            const t = easeInOut(1 - delta);
-            translateY = lerp(100, 0, t);
-            scale = 1;
-            opacity = lerp(0, 1, Math.min(t * 1.4, 1));
-            zIndex = 10 + i;
-          } else {
-            // Passed: recede behind and up, staying visible as a peeking
-            // layer. `behind` grows the further back this card is.
-            const behind = -delta; // 0..(count-1)
-            const t = easeInOut(Math.min(behind, 1));
-            translateY = RECEDE_Y * behind;
-            scale = 1 - RECEDE_SCALE * behind;
-            opacity = lerp(1, RECEDE_OPACITY, t);
-            // Cards further back sit lower in the stack.
-            zIndex = 10 - Math.ceil(behind);
-          }
-
-          return (
-            // Outer layer handles ONLY horizontal centering + width
-            // constraint (stable, never animated). The inner layer carries
-            // the scroll-driven vertical transform. Keeping these separate
-            // avoids the earlier bug where an inline `transform` that
-            // re-declared translate(-50%,…) fought the Tailwind centering
-            // classes and pushed the card ~120px off the left edge.
-            <div
-              key={pillar.title}
-              className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center px-5"
-              style={{ zIndex }}
-            >
-              <div
-                className="pointer-events-auto w-full max-w-[360px]"
-                style={{
-                  transform: `translateY(-50%) translateY(${translateY}%) scale(${scale})`,
-                  opacity,
-                  transformOrigin: "center center",
-                  willChange: "transform, opacity",
-                }}
-              >
-                <PillarCard
-                  pillar={pillar}
-                  className="shadow-[0_10px_40px_rgba(12,10,9,0.10)]"
-                />
-              </div>
-            </div>
-          );
-        })}
+    <div className="card-feature flex flex-col overflow-hidden !p-0 md:flex-row">
+      <div className="flex flex-col justify-center border-b border-hairline p-6 md:w-[28%] md:shrink-0 md:border-b-0 md:border-r md:p-8">
+        <h3 className="type-title-md text-ink">{pillar.title}</h3>
+        {/* Same short primary-blue rule used as a heading accent elsewhere
+            on the page, so these bands read as part of the same system. */}
+        <span
+          aria-hidden
+          className="mt-2 block h-[3px] w-10 rounded-full bg-[var(--color-primary-blue)]"
+        />
+        <p className="type-body-sm mt-3 text-[var(--color-body)]">{pillar.description}</p>
+        {/* The arrow is joined to the last word with a non-breaking space —
+            the longer labels wrap in this narrow panel and would otherwise
+            orphan it onto a line of its own. aria-label keeps the arrow out
+            of the link's accessible name. */}
+        <Link
+          href={pillar.href}
+          aria-label={pillar.linkLabel}
+          className="type-caption mt-4 font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+        >
+          {pillar.linkLabel}
+          <span aria-hidden>{"\u00A0\u2192"}</span>
+        </Link>
       </div>
+
+      <FocusCarousel items={items} label={pillar.title} />
     </div>
   );
-}
-
-function PillarCardsMobile() {
-  const reducedMotion = useReducedMotion();
-  return reducedMotion ? <PillarCardsMobileStatic /> : <PillarCardsMobileAnimated />;
 }
 
 export function PillarCards() {
-  const isDesktop = useIsDesktop();
-
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
@@ -211,10 +58,19 @@ export function PillarCards() {
           How TNeGA powers governance across Tamil Nadu
         </h2>
 
-        {/* isDesktop is null until mounted — render nothing that first tick
-            so desktop/mobile variants are never both in the DOM at once. */}
-        {isDesktop === true && <PillarCardsDesktop />}
-        {isDesktop === false && <PillarCardsMobile />}
+        <div className="flex flex-col gap-6">
+          {pillars.map((pillar, i) => (
+            <motion.div
+              key={pillar.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.5, delay: i * 0.09, ease: "easeOut" }}
+            >
+              <PillarBand pillar={pillar} />
+            </motion.div>
+          ))}
+        </div>
       </Container>
     </section>
   );
