@@ -50,9 +50,18 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
 
   const [current, setCurrent] = useState(0);
   const [wrapWidth, setWrapWidth] = useState<number | null>(null);
-  const [paused, setPaused] = useState(false);
+  // Hover and focus pauses are tracked separately: sharing one flag let a
+  // pointerleave cancel a focus pause (and vice versa), so whichever fired
+  // last won regardless of whether the other reason still applied.
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
+  // Bumped on every user-driven move so the auto-advance timer restarts from
+  // that moment, instead of firing again a fraction of a second later.
+  const [interactionTick, setInteractionTick] = useState(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [dragging, setDragging] = useState(false);
+
+  const paused = hoverPaused || focusPaused;
 
   const dragStartX = useRef(0);
   // Set once a pointer gesture passes the threshold, so the click it ends with
@@ -66,6 +75,7 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
   const goTo = useCallback(
     (index: number) => {
       setCurrent((index + items.length) % items.length);
+      setInteractionTick((t) => t + 1);
     },
     [items.length]
   );
@@ -89,7 +99,7 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
       setCurrent((prev) => (prev + 1) % items.length);
     }, AUTO_ADVANCE_MS);
     return () => clearInterval(timer);
-  }, [reducedMotion, paused, dragging, items.length]);
+  }, [reducedMotion, paused, dragging, items.length, interactionTick]);
 
   // Drag is tracked on the window so the gesture survives the pointer leaving
   // the carousel mid-swipe.
@@ -141,10 +151,16 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
         // come to us instead of the browser.
         className="relative touch-pan-y select-none overflow-hidden py-6 md:py-7"
         onPointerDown={onPointerDown}
-        onPointerEnter={() => setPaused(true)}
-        onPointerLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={() => setPaused(false)}
+        // Only a keyboard focus pauses. Clicking an arrow with the mouse also
+        // focuses it, which would otherwise stop the carousel for good — the
+        // pointer never "leaves" a button it is already sitting on.
+        onFocusCapture={(e) => {
+          const target = e.target;
+          if (target instanceof HTMLElement && target.matches(":focus-visible")) {
+            setFocusPaused(true);
+          }
+        }}
+        onBlurCapture={() => setFocusPaused(false)}
         // A drag that ends over a card would otherwise also activate its link.
         onClickCapture={(e) => {
           if (movedRef.current) {
@@ -177,6 +193,19 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
                   width: `${cardW}px`,
                   transform: focused ? "scale(1)" : "scale(0.88)",
                   opacity: focused ? 1 : 0.5,
+                }}
+                // Hovering pauses, so reading a card is never interrupted —
+                // but only the card itself, not the whole strip around it. The
+                // strip spans most of the band, so pausing on that meant a
+                // cursor left anywhere near the section stopped it entirely.
+                // Mouse only: on touch, pointerenter fires on tap and the
+                // matching pointerleave often never does, which would strand
+                // the carousel paused forever.
+                onPointerEnter={(e) => {
+                  if (e.pointerType === "mouse") setHoverPaused(true);
+                }}
+                onPointerLeave={(e) => {
+                  if (e.pointerType === "mouse") setHoverPaused(false);
                 }}
                 // Keyboard users tabbing through cards pull focus to centre.
                 onFocusCapture={() => goTo(i)}
