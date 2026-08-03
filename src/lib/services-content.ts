@@ -1,24 +1,29 @@
 // Centralized copy for the /services page (Citizen Services + Govt Digital
-// Services), replicated from the prototype at
-// tnega-website-v2.vercel.app/initiatives.html per the build spec, with two
-// changes: the prototype's 3 tabs (For Citizens / For Departments /
-// Innovation & Infrastructure) are consolidated into 2 sections here
-// (Citizen Services, and Govt Digital Services = Departments + Innovation &
-// Infrastructure merged, FRAS de-duplicated to a single card).
+// Services). Rebuilt wholesale from the official "Website Content - TNeGA"
+// PDF supplied by the client — 9 Citizen Services + 7 Government Digital
+// Services, replacing the previous 28-item prototype list entirely per
+// explicit instruction ("remove all that exist and add the projects and
+// services that exist in the document").
 //
-// Images: the 6 projects already photographed for Home's Projects Spotlight
-// (e-Sevai, Namma Arasu, TN GIS, UMIS, TNSSO, e-Office) reuse those exact
-// files wherever they appear here, including across both sections. Every
-// other item uses a curated, on-theme stock photo from the shared STOCK
-// pool (see lib/stock-photos.ts) — following the same reuse-across-sections
-// precedent already set by content.ts/about-content.ts — never an icon,
-// never a visible "pending" label.
+// Each item's `real` field carries the PDF's own Statistics / Key Features /
+// "You can use this if..." / "What you'll need" / FAQs sections verbatim —
+// consumed by service-detail-generator.ts, which prefers this real content
+// over its mechanically-generated fallback wherever it's present. TNGIS and
+// GRAINS have no PDF content supplied (kept as name-only placeholders in the
+// source document), so — per explicit instruction — they keep their
+// previously-written placeholder copy and fall back to generated detail
+// content, same as before.
 //
-// CTA hrefs are `#` placeholders throughout: real Access Portal URLs are not
-// yet supplied (see build spec's pending-content note), and none of the
-// individual service detail pages this Know More would deep-link to exist
-// yet either — so both stay honest placeholders rather than fabricated
-// routes.
+// Images: real project photography (e-Sevai, Namma Arasu, TN GIS, UMIS,
+// TNSSO, e-Office) reuses the same 6 files as Home's Projects Spotlight.
+// Every other item uses a curated, on-theme stock photo from the shared
+// STOCK pool (see lib/stock-photos.ts) — never an icon, never a visible
+// "pending" label.
+//
+// CTA hrefs: `accessPortalHref: "#"` marks an item as citizen self-service
+// ("project" type, Access Portal CTA); its absence marks a department-
+// facing shared service ("service" type, Avail Service CTA via /reach-us).
+// Real portal URLs are not yet supplied, so `#` stays an honest placeholder.
 
 import { pexelsPhoto, STOCK } from "./stock-photos";
 
@@ -32,6 +37,16 @@ export const hero = {
   ] as const,
 };
 
+/** Real per-project content transcribed verbatim from the official PDF —
+ * consumed by service-detail-generator.ts in place of generated copy. */
+export interface RealContent {
+  statistics: string[];
+  keyFeatures: string[];
+  eligibility: string[];
+  whatYoullNeed: string[];
+  faqs: { q: string; a: string }[];
+}
+
 export type ServiceItem = {
   name: string;
   description: string;
@@ -39,6 +54,7 @@ export type ServiceItem = {
   image: string;
   accessPortalHref?: string;
   knowMoreHref: string;
+  real?: RealContent;
 };
 
 const PROJECT_IMG = {
@@ -52,51 +68,118 @@ const PROJECT_IMG = {
 
 const citizenServicesRaw: ServiceItem[] = [
   {
-    name: "e-Sevai",
+    name: "e-Sevai Portal",
     description:
-      "A unified digital service delivery platform enabling citizens to access essential Tamil Nadu Government services online and through 34,843 assisted centres across the state.",
-    stats: "410 Services · 34,843 Centres · 4 Crore+ Transactions",
+      "The e-Sevai Portal is Tamil Nadu's primary digital platform for Government-to-Citizen (G2C) services, enabling citizens to access a wide range of Government services through online channels and a statewide network of e-Sevai Centres.",
+    stats: "273 Services · 25,277 Centres · 1,40,52,771 Transactions FY 2025–26",
     image: PROJECT_IMG.eSevai,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    real: {
+      statistics: ["273 Government services", "25,277 Active e-Sevai Centres", "1,40,52,771 transactions in FY 2025–26"],
+      keyFeatures: [
+        "Access to multiple Government services",
+        "Online application submission",
+        "Statewide assisted service centres",
+        "Secure digital processing",
+      ],
+      eligibility: [
+        "You need to apply for Government certificates or services.",
+        "You prefer visiting an assisted service centre.",
+      ],
+      whatYoullNeed: ["Relevant supporting documents based on the requested service.", "Identity details, where applicable."],
+      faqs: [
+        { q: "How many services are available?", a: "273 Government services." },
+        { q: "Can I visit a physical centre?", a: "Yes. Services are available through 25,277 e-Sevai Centres." },
+      ],
+    },
   },
   {
     name: "Namma Arasu",
     description:
-      "Get government services directly on WhatsApp. Message 7845252525 to access 51 services across 16 departments — in Tamil or English, anytime, anywhere.",
-    stats: "51 Services · 16 Departments · Launched Jan 2026",
+      "Namma Arasu is a WhatsApp-based governance platform that enables citizens to access Government services through a conversational interface without visiting Government offices or multiple portals.",
+    stats: "76 Services · 20 Departments · 19.51 Lakh Users",
     image: PROJECT_IMG.nammaArasu,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    real: {
+      statistics: ["76 services", "20 Departments", "19.51 lakh users", "6.01 lakh services delivered"],
+      keyFeatures: ["WhatsApp-based service delivery", "AI-assisted conversations", "Secure payments", "Mobile-first experience"],
+      eligibility: ["You want to access Government services using WhatsApp."],
+      whatYoullNeed: ["A mobile phone with WhatsApp."],
+      faqs: [
+        { q: "Do I need to install another app?", a: "No. Services are available through WhatsApp." },
+        { q: "How many services are available?", a: "76 services across 20 Government Departments." },
+      ],
+    },
+  },
+  {
+    name: "Aadhaar Services",
+    description:
+      "TNeGA provides Aadhaar enrolment, biometric updates, authentication, and e-KYC services through Permanent Enrolment Centres across Tamil Nadu.",
+    stats: "583 Enrolment Centres · 47.95 Cr Authentication Transactions",
+    image: pexelsPhoto(STOCK.elderlyWomanPhone, 700, 500),
+    accessPortalHref: "#",
+    knowMoreHref: "#",
+    real: {
+      statistics: [
+        "583 Permanent Enrolment Centres",
+        "780 enrolment counters",
+        "8.53 lakh new Aadhaar enrolments",
+        "17.54 lakh biometric updates",
+        "47.95 crore authentication transactions",
+      ],
+      keyFeatures: ["Aadhaar enrolment", "Mandatory biometric updates", "Authentication services", "e-KYC", "Face Authentication"],
+      eligibility: [
+        "You need a new Aadhaar enrolment.",
+        "You need to update Aadhaar biometrics.",
+        "You require Aadhaar-based authentication.",
+      ],
+      whatYoullNeed: ["Documents required for Aadhaar services, as applicable."],
+      faqs: [{ q: "Is Aadhaar enrolment free?", a: "New enrolments and mandatory biometric updates are provided free of cost." }],
+    },
   },
   {
     name: "UMIS",
     description:
-      "A single platform for all higher education institutions in Tamil Nadu — maintaining student information, courses and university data integrated with scholarship portals.",
-    stats: "29 Lakh Students · 81 Universities · 5,490 Institutions",
+      "The University Management Information System (UMIS) is Tamil Nadu's centralized digital platform for higher education, serving as the authenticated repository of student information. It standardizes student data across institutions and integrates with multiple Government databases to enable efficient administration and seamless delivery of education and welfare services.",
+    stats: "24.27 Lakh Students · 84 Universities · 5,693 Institutions",
     image: PROJECT_IMG.umis,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    real: {
+      statistics: ["24,27,192 Active students", "84 Universities", "5,693 Institutions", "33 Beneficiary Departments"],
+      keyFeatures: [
+        "Centralized student information repository",
+        "Integration with EMIS, Aadhaar, NPCI, e-Sevai, and other Government databases",
+        "Integration with TNSSP, Naan Mudhalvan, and CM Dashboard",
+        "Authenticated student database for welfare scheme delivery",
+      ],
+      eligibility: [
+        "You are a student enrolled in a participating higher education institution.",
+        "You are applying for Government welfare schemes or services that utilize UMIS data.",
+      ],
+      whatYoullNeed: [
+        "Enrollment in a participating institution.",
+        "Student information as maintained by your institution.",
+        "Aadhaar and other details, where required for verification.",
+      ],
+      faqs: [
+        { q: "What is UMIS?", a: "UMIS is the State's centralized repository for authenticated higher education student data." },
+        {
+          q: "How does UMIS benefit students?",
+          a: "It enables verified student records and supports seamless access to welfare schemes and scholarship services.",
+        },
+        {
+          q: "Which services use UMIS data?",
+          a: "UMIS is integrated with the Tamil Nadu State Scholarship Portal (TNSSP), Naan Mudhalvan, the CM Dashboard, and serves as the authenticated database for schemes such as Tamizh Pudhalvan, Pudhumai Penn, and the Laptop Distribution Scheme for College Students.",
+        },
+      ],
+    },
   },
   {
-    name: "TNSSO",
-    description:
-      "Log in once to access all Tamil Nadu government services. A single verified credential gives citizens secure access to multiple G2C applications.",
-    stats: "9 Applications Integrated · MeitY Approved · Launching Soon",
-    image: PROJECT_IMG.tnsso,
-    accessPortalHref: "#",
-    knowMoreHref: "#",
-  },
-  {
-    name: "TNSSP",
-    description:
-      "One portal for all scholarship schemes in Tamil Nadu. Apply once and get matched to eligible schemes — automated, transparent and direct to your bank account.",
-    stats: "30 Schemes · 29 Lakh Beneficiaries · ₹1,001 Cr Disbursed",
-    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
-    accessPortalHref: "#",
-    knowMoreHref: "#",
-  },
-  {
+    // No PDF content was supplied for TNGIS — per explicit instruction, this
+    // keeps the previously-written placeholder copy unchanged.
     name: "TNGIS Tamil Nilam",
     description:
       "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops — all in one place.",
@@ -106,6 +189,8 @@ const citizenServicesRaw: ServiceItem[] = [
     knowMoreHref: "#",
   },
   {
+    // No PDF content was supplied for GRAINS — per explicit instruction,
+    // this keeps the previously-written placeholder copy unchanged.
     name: "GRAINS",
     description:
       "A unified database of farmers, land and crop details across Tamil Nadu — ensuring the right agricultural benefits reach the right farmers accurately.",
@@ -115,54 +200,84 @@ const citizenServicesRaw: ServiceItem[] = [
     knowMoreHref: "#",
   },
   {
+    name: "TNSSP",
+    description:
+      "TNSSP provides a unified platform for students to apply for scholarships, complete verification, and receive assistance through Direct Benefit Transfer.",
+    stats: "27 Scholarship Schemes · 7 Departments",
+    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
+    accessPortalHref: "#",
+    knowMoreHref: "#",
+    real: {
+      statistics: ["27 scholarship schemes", "7 Government Departments"],
+      keyFeatures: ["Scholarship applications", "Digital verification", "DBT integration", "UMIS integration"],
+      eligibility: ["You are applying for eligible Government scholarship schemes."],
+      whatYoullNeed: ["Student details", "Educational information"],
+      faqs: [{ q: "How many scholarship schemes are available?", a: "27 schemes across 7 Departments." }],
+    },
+  },
+  {
     name: "Nambikkai Inaiyam",
     description:
-      "Verify your government-issued certificates instantly using blockchain. Tamper-proof, Aadhaar-linked and accessible via the e-Pettagam app.",
-    stats: "Blockchain-secured · Zero Downtime · Certificate Verification",
+      "Nambikkai Inaiyam (NI) is TNeGA's Blockchain-as-a-Service (BaaS) infrastructure, developed to secure Government documents and data against tampering. Built in line with the Tamil Nadu Blockchain Policy, the platform enables trusted verification of digital records while allowing citizens to access secured documents through the e-Pettagam wallet application.",
+    stats: "27 Certificate Categories · 2 Crore+ Documents Secured",
     image: pexelsPhoto(STOCK.networkRack, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
+    real: {
+      statistics: [
+        "27 categories of e-Sevai certificates secured",
+        "9 lakh+ e-Sevai certificates secured",
+        "3 lakh+ education certificates and mark sheets secured",
+        "2 crore+ registered documents secured",
+      ],
+      keyFeatures: [
+        "Blockchain-based document security",
+        "Tamper-proof digital records",
+        "Secure verification of Government documents",
+        "Integration with e-Sevai certificates, education certificates, and Registration Department records",
+        "Citizen access through the e-Pettagam wallet application",
+      ],
+      eligibility: [
+        "Your Government Department wants to secure digital records using blockchain.",
+        "You need to verify blockchain-secured Government documents.",
+        "You wish to access your secured documents through the e-Pettagam wallet.",
+      ],
+      whatYoullNeed: ["A Government-issued document available on the platform.", "Access to the e-Pettagam wallet application, where applicable."],
+      faqs: [
+        {
+          q: "What is Nambikkai Inaiyam?",
+          a: "It is Tamil Nadu's Blockchain-as-a-Service platform that secures Government documents and records against tampering.",
+        },
+        {
+          q: "What types of documents are secured?",
+          a: "The platform secures e-Sevai certificates, academic certificates and mark sheets, licences, and registered land documents.",
+        },
+        {
+          q: "How can citizens access their secured documents?",
+          a: "Citizens can access blockchain-secured documents through the e-Pettagam wallet application.",
+        },
+        {
+          q: "Which department's records are automatically secured?",
+          a: "Documents registered with the Registration Department are automatically fetched and secured on the platform.",
+        },
+      ],
+    },
   },
   {
-    name: "SimpleGov",
+    name: "e-Gazette Portal",
     description:
-      "Government services made simpler. Licenses, certificates and NOCs are now paperless, self-certified and available online — no physical visits required.",
-    stats: "8 Departments · 10 Services Live · 150+ Coming Soon",
+      "The e-Gazette Portal enables citizens to apply online for name change and other Gazette notification services with end-to-end digital processing.",
+    stats: "Online Application · Digital Approval · Digital Publication",
     image: pexelsPhoto(STOCK.officeBuilding, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "DBT",
-    description:
-      "Welfare scheme benefits delivered directly to your bank account. No middlemen, no delays — Aadhaar-linked transfers that reach you instantly.",
-    stats: "₹26,250 Cr Transferred · 27 Schemes Onboarded",
-    image: pexelsPhoto(STOCK.womanPhone, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "KMUT",
-    description:
-      "Kalaignar Magalir Urimai Thittam provides ₹1,000 every month directly to eligible women — identified through 28+ datasets with no documents required.",
-    stats: "1.14 Crore Beneficiaries · 99.13% Successful Transfers",
-    image: pexelsPhoto(STOCK.ruralWomanPhone, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
-  },
-  {
-    name: "Pudhumai Penn",
-    description:
-      "Girl students from government schools receive ₹1,000 per month to pursue higher education. Benefits reach directly to bank accounts via Aadhaar-based DBT.",
-    stats: "Aadhaar e-KYC · Auto-approval · Direct Bank Transfer",
-    image: pexelsPhoto(STOCK.attentiveGroup, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "Tamil Pudhalvan",
-    description:
-      "Boy students from government schools receive ₹1,000 per month to continue their education. 4 lakh beneficiaries identified using EMIS, UMIS and DGE data.",
-    stats: "4 Lakh Beneficiaries · Aadhaar-linked DBT",
-    image: pexelsPhoto(STOCK.workshopGroup, 700, 500),
-    knowMoreHref: "#",
+    real: {
+      statistics: [],
+      keyFeatures: ["Online application", "Digital approval", "Online payment", "Digital publication"],
+      eligibility: ["You wish to publish eligible Gazette notifications online."],
+      whatYoullNeed: ["Relevant application details and supporting documents."],
+      faqs: [{ q: "Can I complete the process online?", a: "Yes. The portal supports end-to-end digital processing." }],
+    },
   },
 ];
 
@@ -170,125 +285,163 @@ const govtDigitalServicesRaw: ServiceItem[] = [
   {
     name: "e-Office",
     description:
-      "Go fully paperless with Tamil Nadu's office digitization platform. Create, track and process files digitally — from the Secretariat to district offices.",
-    stats: "1,28,243 Users · 80% State Penetration · 100% in Secretariat",
+      "Digital Office Tamil Nadu (e-Office) is the Government of Tamil Nadu's digital workplace platform that enables end-to-end electronic file processing and workflow automation. It transforms paper-based administration into a secure, transparent, and accountable digital governance framework through electronic file management, digital correspondence, digital signatures, and inter-departmental collaboration.",
+    stats: "65,95,723 e-Files Created · 1,49,535 Configured Users",
     image: PROJECT_IMG.eOffice,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    real: {
+      statistics: [
+        "65,95,723 e-files created",
+        "1,49,535 configured users across three implementation phases",
+        "46,645 users trained",
+        "7,810 desktops deployed",
+        "3,042 scanners deployed",
+      ],
+      keyFeatures: [
+        "Electronic file management",
+        "Workflow automation",
+        "Digital correspondence",
+        "Digital signatures",
+        "Inter-departmental collaboration",
+        "Real-time file tracking",
+        "Secure digital record management",
+        "Paperless office operations",
+      ],
+      eligibility: [
+        "Your Government Department or office is implementing Digital Office Tamil Nadu (e-Office).",
+        "You need to manage official files and correspondence digitally.",
+        "Your office requires secure, paperless workflow management.",
+      ],
+      whatYoullNeed: [
+        "Access to the e-Office platform provided by your Department.",
+        "User credentials issued by the concerned Government Department.",
+        "A configured workstation and digital signature, where applicable.",
+      ],
+      faqs: [
+        { q: "What is e-Office?", a: "e-Office is the Government of Tamil Nadu's digital office platform for electronic file processing and workflow automation." },
+        { q: "Who can use e-Office?", a: "It is intended for Government Departments and offices implementing the Digital Office Tamil Nadu platform." },
+        {
+          q: "What are the benefits of e-Office?",
+          a: "Improves transparency in file processing, reduces dependency on physical files, streamlines workflow management, enables real-time file tracking, enhances accountability, and ensures secure management of digital records.",
+        },
+        {
+          q: "How widely has e-Office been implemented?",
+          a: "The platform has been rolled out in phases across Secretariat Departments, District Collectorates, subordinate offices, and Head of Department (HoD) offices, with over 65 lakh e-files created and 1.49 lakh configured users.",
+        },
+      ],
+    },
   },
   {
-    name: "TNGIS",
+    name: "DBT",
     description:
-      "A unified geospatial platform with 400+ layers for asset geotagging, crop surveys, natural resource mapping and inter-departmental data sharing.",
-    stats: "400+ Layers · 200+ Shared Inter-departmentally · 500+ Officials Trained",
-    image: PROJECT_IMG.tnGis,
-    accessPortalHref: "#",
+      "The Direct Benefit Transfer (DBT) Platform enables Government Departments to disburse welfare benefits directly to eligible beneficiaries through Aadhaar and bank account validation.",
+    stats: "62 Schemes Onboarded · ₹43,318 Cr Transferred",
+    image: pexelsPhoto(STOCK.womanPhone, 700, 500),
     knowMoreHref: "#",
-  },
-  {
-    name: "GRAINS",
-    description:
-      "Access verified farmer, land and crop data for planning and implementing agricultural schemes. Integrated with DBT for direct benefit delivery.",
-    stats: "Farmer · Land · Crop Database · DBT Integrated",
-    image: pexelsPhoto(STOCK.serverRoom, 700, 500),
-    accessPortalHref: "#",
-    knowMoreHref: "#",
+    real: {
+      statistics: ["62 schemes onboarded", "₹43,318 crore transferred", "1.92 crore beneficiaries"],
+      keyFeatures: ["Aadhaar validation", "Beneficiary verification", "Bank account validation", "APB & ACH integration", "Centralized welfare payments"],
+      eligibility: ["Your Department administers welfare schemes requiring direct benefit transfer."],
+      whatYoullNeed: ["Eligible scheme", "Beneficiary database", "Department onboarding"],
+      faqs: [{ q: "How are benefits transferred?", a: "Through Aadhaar Payment Bridge (APB) and Automated Clearing House (ACH)." }],
+    },
   },
   {
     name: "TNSSO",
     description:
-      "One login for all government applications. Reduce IT overhead and give your department's users secure, unified access through a single verified credential.",
-    stats: "9 Applications Integrated · MeitY Aadhaar Approval Received · Mandating in Progress",
+      "Tamil Nadu Single Sign-On (TNSSO) is a unified authentication platform that enables Government officials and citizens to access multiple Government applications using a single set of credentials.",
+    stats: "Pilot Phase · Unified Login",
     image: PROJECT_IMG.tnsso,
     knowMoreHref: "#",
-  },
-  {
-    name: "CM Dashboard",
-    description:
-      "Real-time governance monitoring for departments. Track KPIs, iconic projects and scheme progress through 350+ live dashboards — all in one view.",
-    stats: "350+ Dashboards · 35+ Departments · 280 Iconic Projects",
-    image: pexelsPhoto(STOCK.presentation, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "SFDB",
-    description:
-      "State Family Database brings all department data together to identify the right beneficiaries for welfare schemes — ensuring correct benefits to correct persons.",
-    stats: "20+ Datasets Integrated · 30+ Datasets in Pipeline",
-    image: pexelsPhoto(STOCK.dataCenter, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "Data Purity",
-    description:
-      "Cross-departmental data analysis that removes ghost beneficiaries and saves public money. Accuracy, integrity and reliability across all welfare schemes.",
-    stats: "₹1,350+ Cr Recurring Savings · ₹1,000+ Cr One-time Savings",
-    image: pexelsPhoto(STOCK.serverRacks, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "SMS Gateway",
-    description:
-      "Send bulk SMS notifications to citizens on behalf of your department. TRAI-compliant, cost-effective and trusted by 86 departments statewide.",
-    stats: "252.57 Cr Messages · 86 Departments · 2.3 Paise Per Message",
-    image: pexelsPhoto(STOCK.elderlyManPhone, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "WhatsApp Gateway",
-    description:
-      "Reach citizens directly on WhatsApp for scheme updates, alerts and service notifications. 27 departments already onboarded.",
-    stats: "13.5 Cr Messages Delivered · 27 Departments · 36 Paise Per Message",
-    image: pexelsPhoto(STOCK.elderlyWomanPhone, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "Email Gateway",
-    description:
-      "Secure government email for all officials. Integrated with e-Office for seamless internal communication across departments and districts.",
-    stats: "2,07,250 Users Onboarded",
-    image: pexelsPhoto(STOCK.developer, 700, 500),
-    knowMoreHref: "#",
+    real: {
+      statistics: ["Pilot integration underway — no usage figures available yet"],
+      keyFeatures: ["Single authentication", "Multi-application access", "Centralized identity management"],
+      eligibility: ["Your Department is integrating applications under TNSSO."],
+      whatYoullNeed: ["Department application integration"],
+      faqs: [{ q: "Does TNSSO replace multiple logins?", a: "Yes. It enables access using a single set of credentials." }],
+    },
   },
   {
     name: "e-Sign",
     description:
-      "Enable citizens and officials to sign documents digitally — legally valid, Aadhaar-linked and integrated into government workflows.",
-    stats: "2,73,07,136 Signatures Issued",
+      "The e-Sign Service Platform enables Government Departments to digitally sign documents securely using Aadhaar-based authentication.",
+    stats: "26 Departments Onboarded · 4.35 Cr e-Signatures",
     image: pexelsPhoto(STOCK.itTechnician, 700, 500),
     knowMoreHref: "#",
+    real: {
+      statistics: ["26 Departments onboarded", "4.35 crore e-Signatures executed", "3 Departments under onboarding"],
+      keyFeatures: ["Aadhaar OTP authentication", "Biometric authentication", "Paperless workflows", "Secure digital signatures"],
+      eligibility: ["Your Department requires digital document signing."],
+      whatYoullNeed: ["Department onboarding", "Aadhaar authentication integration"],
+      faqs: [{ q: "Is the service compliant?", a: "Yes. It complies with CCA and UIDAI guidelines." }],
+    },
   },
   {
-    name: "FRAS",
+    name: "SMS & WhatsApp Gateway",
     description:
-      "Facial Recognition Attendance System for government employees — works offline, geo-fenced and deployed across 10 departments.",
-    stats: "1,00,000+ Users · 10 Departments · Offline Capable",
+      "TNeGA provides centralized SMS and WhatsApp Gateway services that enable Government Departments to communicate with citizens efficiently and at scale.",
+    stats: "660.41 Cr SMS Sent · 30.18 Cr WhatsApp Messages",
+    image: pexelsPhoto(STOCK.elderlyManPhone, 700, 500),
+    knowMoreHref: "#",
+    real: {
+      statistics: [
+        "115 Departments using SMS Gateway",
+        "27 Departments using WhatsApp Gateway",
+        "660.41 crore SMS sent",
+        "30.18 crore WhatsApp messages sent",
+      ],
+      keyFeatures: ["Bulk SMS", "WhatsApp notifications", "Citizen outreach", "Government communications"],
+      eligibility: ["Your Department needs to communicate scheme updates or service notifications."],
+      whatYoullNeed: ["Department onboarding", "Approved communication templates"],
+      faqs: [{ q: "Who can use the gateway?", a: "Government Departments, Boards, PSUs, and Agencies." }],
+    },
+  },
+  {
+    name: "IT Security Audit Framework",
+    description:
+      "TNeGA facilitates mandatory IT Security Audits for Government websites, mobile applications, APIs, and cloud applications through CERT-In empanelled agencies before deployment and during operational changes.",
+    stats: "CERT-In Compliant · STQC Compliant",
     image: pexelsPhoto(STOCK.engineerAudit, 700, 500),
     knowMoreHref: "#",
+    real: {
+      statistics: [],
+      keyFeatures: ["Security audits", "CERT-In compliance", "STQC compliance", "Cloud security validation"],
+      eligibility: ["Your Department is deploying or upgrading a digital application."],
+      whatYoullNeed: ["Application details", "Deployment environment"],
+      faqs: [{ q: "When is an audit required?", a: "Before deployment, certificate expiry, major modifications, and cloud migration." }],
+    },
   },
   {
-    name: "EaaS",
+    name: "Interdepartmental Technical Consulting",
     description:
-      "Conduct secure, scalable online examinations for government recruitment. Covers pre-exam, exam and post-exam activities end to end.",
-    stats: "29 Exams Conducted · 6 Departments · 27 Lakh Appeared",
-    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
+      "TNeGA provides technology consulting, evaluation, software implementation, and project management support for digital transformation initiatives across Government Departments.",
+    stats: "10+ Active Engagements · Multiple Departments",
+    image: pexelsPhoto(STOCK.handshakeLeaders, 700, 500),
     knowMoreHref: "#",
-  },
-  {
-    name: "Aadhaar Authentication",
-    description:
-      "Integrate Aadhaar-based identity verification into your department's applications. Approved authentication agency with 44 departments onboarded.",
-    stats: "44 Departments Onboarded · MeitY Approved",
-    image: pexelsPhoto(STOCK.handshakeFormal, 700, 500),
-    knowMoreHref: "#",
-  },
-  {
-    name: "API Gateway",
-    description:
-      "Connect your department's systems with TNeGA platforms through a secure, standardized API layer. 51 APIs developed and live.",
-    stats: "51 APIs Developed · Secure · Standardized",
-    image: pexelsPhoto(STOCK.programmer, 700, 500),
-    knowMoreHref: "#",
+    real: {
+      statistics: [
+        "STAR 3.0",
+        "ERP 2.0 (Greater Chennai Police)",
+        "PDS 2.0",
+        "Naan Mudhalvan",
+        "TWAD",
+        "CMWSSB",
+        "TANMAG",
+        "DIPR 2.0",
+        "e-Gazette Portal",
+        "Sericulture Department and others",
+      ],
+      keyFeatures: ["Technical consulting", "Software development", "ERP implementation", "Portal development", "Project management"],
+      eligibility: ["Your Department is planning or implementing an e-Governance initiative."],
+      whatYoullNeed: ["Department requirements", "Project proposal"],
+      faqs: [
+        {
+          q: "What kind of support does TNeGA provide?",
+          a: "Technical consulting, solution design, implementation support, and digital transformation services.",
+        },
+      ],
+    },
   },
 ];
 
@@ -299,12 +452,6 @@ export function slugify(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-// GRAINS, TNSSO and Nambikkai Inaiyam each appear in both lists under the
-// same name but with genuinely different citizen-facing vs department-
-// facing copy (see the top-of-file note) — give the govt-list version a
-// distinct slug so both keep their own detail page instead of colliding.
-const DUPLICATE_NAMES = new Set(["GRAINS", "TNSSO", "Nambikkai Inaiyam"]);
-
 export const citizenServices: ServiceItem[] = citizenServicesRaw.map((item) => ({
   ...item,
   knowMoreHref: `/services/${slugify(item.name)}`,
@@ -312,7 +459,7 @@ export const citizenServices: ServiceItem[] = citizenServicesRaw.map((item) => (
 
 export const govtDigitalServices: ServiceItem[] = govtDigitalServicesRaw.map((item) => ({
   ...item,
-  knowMoreHref: `/services/${DUPLICATE_NAMES.has(item.name) ? `${slugify(item.name)}-department` : slugify(item.name)}`,
+  knowMoreHref: `/services/${slugify(item.name)}`,
 }));
 
 export type ServiceItemType = "project" | "service";
@@ -334,7 +481,7 @@ function toDetailList(items: ServiceItem[], section: ServiceItemDetail["section"
   }));
 }
 
-/** Flat, slug-keyed lookup of all 37 items for the /services/[slug] detail
+/** Flat, slug-keyed lookup of all 16 items for the /services/[slug] detail
  * route — each entry's `type` decides which template (Project vs Service)
  * it renders with, per the confirmed rule: has an Access Portal -> Project,
  * Know More only -> Service. */

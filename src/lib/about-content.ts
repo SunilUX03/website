@@ -9,15 +9,15 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 
 export const aboutHero = {
   eyebrow: "Who We Are",
-  headline: "Tamil Nadu's Chief Technology & Innovation Organisation",
+  headline: "Transforming Governance Through Technology",
   description:
-    "Tamil Nadu e-Governance Agency is the State Nodal Agency for all e-Governance initiatives of the Government of Tamil Nadu — driving digital transformation that makes public services transparent, efficient and accessible to every citizen.",
+    "The Tamil Nadu e-Governance Agency (TNeGA) is the Government of Tamil Nadu's principal technology implementation agency, driving the State's digital transformation by building robust Digital Public Infrastructure (DPI) and delivering innovative e-Governance solutions. Working at the intersection of policy and technology, TNeGA enables Government departments to provide secure, transparent, efficient, and citizen-centric digital services.",
 };
 
 export const whoWeAre = {
   heading: "Who We Are",
   paragraph:
-    "Tamil Nadu e-Governance Agency (TNeGA) is the State Nodal Agency for all e-Governance initiatives of the Government of Tamil Nadu. Established under the Information Technology & Digital Services Department, TNeGA drives the digital transformation of governance — making public services transparent, efficient and accessible to every citizen across the state.",
+    "Established as the State Nodal Agency for e-Governance, TNeGA partners with Government departments to design, develop, and implement digital platforms that improve public service delivery and modernize governance. The Agency provides technology consulting, in-house software development, project management, and shared digital services that power a wide range of Government initiatives across Tamil Nadu.",
 };
 
 export const hierarchy = [
@@ -31,13 +31,13 @@ export const visionMission = [
     label: "Vision",
     title: "Good Governance Through Technology.",
     description:
-      "To fulfill the vision of Good Governance using information technology — making work within Government transparent and efficient, with concomitant transparency and efficiency in delivery of services to citizens.",
+      "To enable inclusive, accessible, secure, and future-ready digital governance by leveraging technology to improve public service delivery and create greater value for citizens, businesses, and Government departments across Tamil Nadu.",
   },
   {
     label: "Mission",
     title: "Improving Quality of Life.",
     description:
-      "To improve the quality of life of citizens through efficient delivery of Government services using information technology, and to create cost-effective, scalable solutions for governance — making full use of Blockchain, AI/ML, IoT, Drones, Data Analytics, and AR/VR.",
+      "To accelerate Tamil Nadu's digital transformation by developing secure, scalable, and citizen-centric digital solutions that empower Government departments, strengthen public service delivery, and build an inclusive Digital Public Infrastructure for all.",
   },
 ];
 
@@ -129,34 +129,31 @@ export const ecosystemRings = [
 
 export const ecosystemCenter = "IT & Digital Services Department";
 
-// Real TNeGA reporting hierarchy (5 levels). Rendered as an SVG tree in
-// OrgChart.tsx so the connectors are exact lines rather than fragile
-// div-positioned elbows.
+// Real TNeGA reporting hierarchy, per the official organisation chart:
+// CEO -> JCEO -> six parallel branches. Five branches share the same
+// 4-level structure; the sixth (Project Director) skips the
+// System Engineer / Deputy Collector level entirely — `engineer: null`
+// marks that gap so OrgChart.tsx can draw a pass-through connector line
+// instead of a box for that column at that level.
 export const orgChart = {
-  // Level 1
-  top: ["Chief Executive Officer", "Joint CEO"],
-  // Level 2 — the five Joint Directors plus the GIS Head report to the top.
-  directors: [
-    "Joint Director — Projects",
-    "Joint Director — Operations",
-    "Joint Director — Finance",
-    "Joint Director — Administration",
-    "Joint Director — Technology",
-    "GIS Head",
-  ],
-  // Level 3
-  deputies: ["Deputy Collector", "Deputy Collector — Administration"],
-  // Level 4
-  leads: ["Project Managers", "Systems Engineers", "Team Leads"],
-  // Level 5
-  base: "Assistant System Engineers",
+  top: ["CEO", "JCEO"],
+  branches: [
+    { director: "Joint Director / DRO", engineer: "System Engineer / Deputy Collector", manager: "Project Manager", base: "ASE" },
+    { director: "Joint Director / DRO", engineer: "System Engineer / Deputy Collector", manager: "Project Manager", base: "ASE" },
+    { director: "Joint Director / DRO", engineer: "System Engineer / Deputy Collector", manager: "Project Manager", base: "ASE" },
+    { director: "Joint Director / DRO", engineer: "System Engineer / Deputy Collector", manager: "Project Manager", base: "ASE" },
+    { director: "Joint Director / DRO", engineer: "System Engineer / Deputy Collector", manager: "Project Manager", base: "ASE" },
+    { director: "Project Director", engineer: null, manager: "Project Manager", base: "ASE / Developers" },
+  ] as { director: string; engineer: string | null; manager: string; base: string }[],
 };
 
-// Real, confirmed CEO — reused from the Home page's leadership data.
+// Real, confirmed current CEO (tenure July 2026 – Present). No official
+// photo supplied yet, so this uses a curated placeholder like the rest of
+// `team` below rather than a fabricated headshot.
 export const teamCeo = {
-  name: "Dr. Alby John Varghese, IAS",
+  name: "Dr. K.P. Karthikeyan, IAS",
   designation: "Director / CEO",
-  photo: "/images/leaders/alby-john-varghese.png",
+  photo: pexelsPhoto(STOCK.presentation, 320, 320),
 };
 
 // Roles are real/structural; individual names are not yet confirmed, so
@@ -178,25 +175,28 @@ export const team = [
   { name: "Mohan Raj", designation: "System Engineer — Infrastructure", photo: pexelsPhoto(STOCK.elderlyWomanPhone, 320, 320) },
 ];
 
-// Board composition (names, designations, photos, bios) has not been
-// supplied yet. Per explicit feedback, this no longer invents personal-
-// sounding bio text for these anonymous placeholder cards — the flip
-// side just says plainly that the profile is pending, rather than
-// presenting made-up biographical claims as if they were real.
-export const boardOfDirectors = [
-  pexelsPhoto(STOCK.handshakeFormal, 320, 320),
-  pexelsPhoto(STOCK.developer, 320, 320),
-  pexelsPhoto(STOCK.itTechnician, 320, 320),
-  pexelsPhoto(STOCK.womanPhone, 320, 320),
-  pexelsPhoto(STOCK.ruralWomanPhone, 320, 320),
-  pexelsPhoto(STOCK.programmer, 320, 320),
-].map((photo, i) => ({
-  photo,
-  role: "Board Member",
-  department: "Governing Board, TNeGA",
-  bio: "Full profile to be published once confirmed.",
-  key: `board-${i}`,
-}));
+// Real Governing Board composition — role/title only, per the official
+// list. No names or photos are published for these ex-officio seats, so
+// this deliberately stays designation-only rather than inventing either.
+export const governingBoard = {
+  chairman: {
+    role: "Chairman",
+    title:
+      "Additional Chief Secretary to Government, Information Technology and Digital Services Department",
+  },
+  memberSecretary: {
+    role: "Member Secretary",
+    title: "Chief Executive Officer, Tamil Nadu e-Governance Agency",
+  },
+  members: [
+    "Secretary (Expenditure) to Government, Finance Department",
+    "Managing Director, Electronics Corporation of Tamil Nadu Ltd.",
+    "Registrar of Cooperative Societies",
+    "Managing Director, Tamil Nadu Corporation for Development of Women",
+    "Managing Director, Tamil Nadu Arasu Cable TV Corporation Ltd.",
+    "State Informatics Officer, National Informatics Centre, Chennai",
+  ],
+};
 
 export const achievements = {
   // Direct reuse of Home's <Metrics /> component and its existing 6 stats
@@ -227,34 +227,37 @@ export const awards = [
   },
 ];
 
-// The build spec asks for 19 historical Director/CEO entries "from the
-// existing About page content" — no such source exists anywhere in this
-// project, and no specific tenure years for them do either. Per explicit
-// feedback, this timeline shows designation only for the 18 unconfirmed
-// historical entries — no fabricated personal name AND no fabricated
-// date range — and reuses the one name and tenure we do have confirmed
-// — the current CEO, already named in `teamCeo` above — for the present
-// entry. Ordered most-recent-first (index 0 = present).
+// Real historical Director/CEO list, as supplied. Ordered most-recent-first
+// (index 0 = present, matching `teamCeo` above). The final entry has no
+// named officer in the source list, so it stays designation-only — never a
+// fabricated name.
 export const rollOfHonour = [
-  { designation: "Director / CEO", name: teamCeo.name, range: "2023 – Present" },
-  { designation: "Chief Executive Officer" },
-  { designation: "Chief Executive Officer" },
-  { designation: "Chief Executive Officer" },
-  { designation: "Chief Executive Officer" },
-  { designation: "Chief Executive Officer" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
-  { designation: "Director" },
+  { designation: "Director / CEO", name: teamCeo.name, range: "July 2026 – Present" },
+  { designation: "Director / CEO", name: "Dr. Alby John Varghese, I.A.S.", range: "25 Jun 2025 – 30 Jul 2026" },
+  { designation: "Director / CEO", name: "Thiru. M. Govinda Rao, IAS", range: "30 Dec 2024 – 24 Jun 2025" },
+  { designation: "Director / CEO", name: "Thiru. Praveen. P. Nair, I.A.S", range: "18 Jul 2022 – 29 Dec 2024" },
+  { designation: "Commissioner/CEO (F.A.C)", name: "Thiru. S. Nagarajan, I.A.S", range: "09 Jun 2022 – 16 Jul 2022" },
+  { designation: "Director/CEO", name: "Thiru. Vijayendra Pandian, I.A.S.", range: "01 Aug 2021 – 01 Jun 2022" },
+  { designation: "Commissioner/CEO, i/c.", name: "Thiru. Ajay Yadav, I.A.S.", range: "01 Jul 2021 – 01 Aug 2021" },
+  { designation: "Commissioner/CEO", name: "Mr. Santosh K Misra, I.A.S.", range: "02 Jan 2018 – 23 Jun 2021" },
+  { designation: "Commissioner/CEO", name: "Mr. Anand Rao V. Patil, I.A.S.", range: "01 Jan 2017 – 01 Jan 2018" },
+  { designation: "Director/CEO (F.A.C)", name: "Mr. J. Kumaragurubaran, IAS", range: "14 Jan 2016 – 14 Jan 2017" },
+  { designation: "Director/CEO", name: "Mr. S. Nagarajan, IAS", range: "14 Jan 2015 – 15 Jan 2016" },
+  { designation: "Director/CEO", name: "Mr. S Nagarajan, IAS", range: "14 Jan 2014 – 30 Jun 2014" },
+  { designation: "Director/CEO (F.A.C)", name: "Mr. J. Kumaragurubaran, IAS", range: "13 Jan 2014 – 13 Jan 2015" },
+  { designation: "Commissioner/CEO (F.A.C)", name: "Mr. Atul Anand, IAS", range: "14 Jan 2011 – 14 Jan 2014" },
+  { designation: "Commissioner/CEO (F.A.C)", name: "Dr. Santhosh Babu, IAS", range: "15 Jan 2008 – 16 Jan 2011" },
+  { designation: "Director/CEO", name: "Mr. T. Udhayachandran, IAS", range: "14 Jan 2008 – 30 Jun 2008" },
+  { designation: "Commissioner/CEO i/c", name: "Dr. C. Chandramouli, IAS", range: "14 Jan 2008 – 30 Jun 2008" },
+  { designation: "Commissioner/CEO", name: "Dr. Neeraj Mittal, IAS", range: "14 Jan 2008 – 30 Jun 2008" },
+  { designation: "Director/CEO i/c.", name: "Mr. Kumar Jayant, IAS", range: "14 Jan 2007 – 14 Jan 2008" },
+  {
+    designation: "Officer on Special Duty i/c. and Director/CEO i/c.",
+    name: "Mr. Sunil Paliwal, IAS",
+    range: "14 Jan 2007 – 30 Jun 2007",
+  },
+  { designation: "Officer on Special Duty", name: "Mr. Atul Anand, IAS", range: "29 Dec 2006 – 30 Dec 2006" },
+  { designation: "Officer on Special Duty I/c", range: "30 Dec 2006 – 04 Jun 2007" },
 ] as { designation: string; name?: string; range?: string }[];
 
 export const connectWithUs = {

@@ -40,7 +40,7 @@ export const nav = {
 export const hero = {
   headline: "Powering Digital Governance in Tamil Nadu",
   description:
-    "Tamil Nadu e-Governance Agency designs, builds and manages large-scale digital platforms that deliver essential government services to citizens and departments — transparently, efficiently and at scale.",
+    "Tamil Nadu e-Governance Agency (TNeGA) is the Government of Tamil Nadu's nodal agency for digital governance, driving the State's vision of technology-enabled, citizen-centric public service delivery. TNeGA designs, develops, and implements Digital Public Infrastructure (DPI) that empowers Government departments to deliver services that are seamless, secure, transparent, and accessible.",
   leaders: [
     {
       name: "Thiru C. Joseph Vijay",
@@ -66,32 +66,32 @@ export const ticker = [
 
 export const pillars = [
   {
-    title: "Citizen Access",
+    title: "Citizen Services",
     description:
-      "TNeGA builds digital platforms that enable citizens to access government services easily, securely and from anywhere across Tamil Nadu.",
+      "TNeGA delivers citizen-centric digital services through secure and accessible platforms, making Government services faster, simpler, and more convenient.",
     image: pexelsPhoto(STOCK.womanPhone, 800, 600),
   },
   {
-    title: "Partnering with Government",
+    title: "Interdepartmental Projects",
     description:
-      "We partner with government departments to deliver end-to-end digital services, technology platforms and data-driven governance solutions.",
+      "TNeGA collaborates with Government departments to design, develop, and implement digital solutions that improve governance and service delivery.",
     image: pexelsPhoto(STOCK.handshakeLeaders, 800, 600),
   },
   {
-    title: "Innovation & Infrastructure",
+    title: "Services",
     description:
-      "As Tamil Nadu's digital governance agency, TNeGA leads AI, blockchain and geospatial innovation — building the infrastructure for tomorrow's governance.",
+      "TNeGA provides shared digital services including digital identity, DBT, e-Sign, cybersecurity, and technology consulting to support e-Governance across Tamil Nadu.",
     image: pexelsPhoto(STOCK.dataCenter, 800, 600),
   },
 ];
 
 export const metrics = [
-  { value: 410, prefix: "", suffix: "+", label: "E-Services available online" },
-  { value: 34843, prefix: "", suffix: "", label: "e-Sevai centres statewide" },
-  { value: 26250, prefix: "₹", suffix: " Cr", label: "Transferred via DBT since 2023" },
-  { value: 114, prefix: "", suffix: " Lakh", label: "KMUT women beneficiaries" },
-  { value: 128243, prefix: "", suffix: "", label: "Daily e-Office users" },
-  { value: 29, prefix: "", suffix: " Lakh", label: "Students on UMIS" },
+  { value: 273, prefix: "", suffix: "+", label: "e-Services Available Online" },
+  { value: 25277, prefix: "", suffix: "", label: "e-Sevai Centres Statewide" },
+  { value: 43318, prefix: "₹", suffix: " Cr", label: "Transferred via DBT Since 2023" },
+  { value: 24.27, prefix: "", suffix: " Lakh", label: "Students on UMIS", decimals: 2 },
+  { value: 48, prefix: "", suffix: " Crore", label: "Aadhaar Authentication Transactions" },
+  { value: 2, prefix: "", suffix: "+ Crore", label: "Documents Secured on Blockchain" },
 ];
 
 export const categories = [
@@ -233,10 +233,10 @@ export const leadership = [
     photo: "/images/leaders/pradeep-yadav.png",
   },
   {
-    name: "Dr. Alby John Varghese, IAS",
+    name: "Dr. K.P. Karthikeyan, IAS",
     designation: "Chief Executive Officer",
     department: "Tamil Nadu e-Governance Agency (TNeGA)",
-    photo: "/images/leaders/alby-john-varghese.png",
+    photo: pexelsPhoto(STOCK.presentation, 320, 320),
   },
 ];
 

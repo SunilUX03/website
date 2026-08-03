@@ -357,7 +357,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                 <p className="type-caption-uppercase mb-1.5 text-[var(--color-primary-blue)]">{tag}</p>
                 <h3 className="type-title-sm mb-1.5 text-ink">Real-world impact, coming soon</h3>
                 <p className="type-body-sm text-[var(--color-muted)]">
-                  Success stories and media coverage for {item.name} will be added here as they&apos;re published.
+                  {`Success stories and media coverage for ${item.name} will be added here as they're published.`}
                 </p>
               </div>
             ))}

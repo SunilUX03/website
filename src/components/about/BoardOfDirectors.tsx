@@ -1,19 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import { boardOfDirectors } from "@/lib/about-content";
+import { governingBoard } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 
-function BoardCard({ member }: { member: (typeof boardOfDirectors)[number] }) {
+function SeatCard({ role, title, emphasized }: { role: string; title: string; emphasized?: boolean }) {
   return (
-    <div className="card-feature board-card flex w-[calc(50%-8px)] flex-col items-center gap-3 !p-4 text-center lg:w-[calc(25%-12px)]">
-      <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg">
-        <Image src={member.photo} alt="" fill sizes="80px" className="object-cover" />
-      </div>
-      <div>
-        <p className="type-body-strong text-ink">{member.role}</p>
-        <p className="type-caption mt-0.5 text-[var(--color-muted)]">{member.department}</p>
-      </div>
+    <div
+      className={`card-feature board-card flex flex-col gap-2 !p-5 text-left ${
+        emphasized ? "border-[var(--color-primary-blue)]" : ""
+      }`}
+    >
+      <p className="type-caption-uppercase text-[var(--color-primary-blue)]">{role}</p>
+      <p className="type-body-strong text-ink">{title}</p>
     </div>
   );
 }
@@ -22,16 +20,22 @@ export function BoardOfDirectors() {
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Board of Directors</p>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Governing Board</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Governing TNeGA&apos;s mission</h2>
 
-        {/* flex-wrap + justify-center (not a grid) so an incomplete final
-            row — whenever the member count isn't a clean multiple of the
-            column count — centers instead of left-aligning with trailing
-            empty cells. */}
-        <div className="flex flex-wrap justify-center gap-4">
-          {boardOfDirectors.map((member) => (
-            <BoardCard key={member.key} member={member} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <SeatCard role={governingBoard.chairman.role} title={governingBoard.chairman.title} emphasized />
+          <SeatCard
+            role={governingBoard.memberSecretary.role}
+            title={governingBoard.memberSecretary.title}
+            emphasized
+          />
+        </div>
+
+        <p className="type-caption-uppercase mb-3 mt-8 text-[var(--color-muted)]">Members</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {governingBoard.members.map((title) => (
+            <SeatCard key={title} role="Member" title={title} />
           ))}
         </div>
       </Container>

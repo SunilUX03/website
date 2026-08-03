@@ -68,6 +68,7 @@ export function Metrics() {
                     suffix={metric.suffix}
                     start={inView}
                     delay={i * 90}
+                    decimals={"decimals" in metric ? metric.decimals : undefined}
                   />
                 </p>
                 <p className="type-caption-uppercase mt-1 text-[var(--color-muted)]">

@@ -12,6 +12,10 @@ interface CountUpProps {
   duration?: number;
   delay?: number;
   className?: string;
+  /** When set, renders with this many fixed decimal places instead of the
+   * Indian-grouped integer format (e.g. 24.27 Lakh) and skips rounding
+   * during the animation tick. */
+  decimals?: number;
 }
 
 /**
@@ -33,6 +37,7 @@ export function CountUp({
   duration = 1300,
   delay = 0,
   className,
+  decimals,
 }: CountUpProps) {
   const reducedMotion = useReducedMotion();
   const [display, setDisplay] = useState(0);
@@ -52,7 +57,8 @@ export function CountUp({
         if (!startTime) startTime = time;
         const elapsed = time - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        setDisplay(Math.round(easeOutCubic(progress) * value));
+        const eased = easeOutCubic(progress) * value;
+        setDisplay(decimals != null ? eased : Math.round(eased));
         if (progress < 1) raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
@@ -62,12 +68,12 @@ export function CountUp({
       clearTimeout(timeout);
       cancelAnimationFrame(raf);
     };
-  }, [start, value, duration, delay, reducedMotion]);
+  }, [start, value, duration, delay, reducedMotion, decimals]);
 
   return (
     <span className={className}>
       {prefix}
-      {formatIndianNumber(display)}
+      {decimals != null ? display.toFixed(decimals) : formatIndianNumber(display)}
       {suffix}
     </span>
   );

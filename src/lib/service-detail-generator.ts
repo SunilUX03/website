@@ -40,14 +40,14 @@ export function generateScreenshotImages(item: ServiceItemDetail): CarouselImage
 
 export function generateAboutSecondParagraph(item: ServiceItemDetail): string {
   const audience = SECTION_LABEL[item.section];
-  const firstStat = statsToBullets(item.stats)[0];
+  const firstStat = item.real?.statistics[0] ?? statsToBullets(item.stats)[0];
   return `As part of Tamil Nadu e-Governance Agency's digital governance programme, ${item.name} is built to make this reach every eligible ${audience.slice(0, -1)} across the state${
     firstStat ? ` — ${firstStat.toLowerCase()} so far` : ""
   }.`;
 }
 
 export function generatePullQuote(item: ServiceItemDetail): { quote: string; source: string } {
-  const bullets = statsToBullets(item.stats);
+  const bullets = item.real?.statistics.length ? item.real.statistics : statsToBullets(item.stats);
   const headline = bullets[0] ?? item.name;
   return {
     quote: `${headline} — delivered through ${item.name}, part of TNeGA's push for transparent, accessible digital governance in Tamil Nadu.`,
@@ -61,6 +61,21 @@ export interface GeneratedFeature {
 }
 
 export function generateFeatures(item: ServiceItemDetail): GeneratedFeature[] {
+  // Real content (from the official PDF) takes precedence: its own
+  // Statistics feed the same "stat card" slot the generated fallback uses,
+  // and its Key Features replace the generic structural cards below.
+  if (item.real) {
+    const statFeatures: GeneratedFeature[] = item.real.statistics.map((stat) => ({
+      title: stat,
+      description: `A key statistic for ${item.name}.`,
+    }));
+    const realFeatures: GeneratedFeature[] = item.real.keyFeatures.map((feature) => ({
+      title: feature,
+      description: `A core capability of ${item.name}.`,
+    }));
+    return [...statFeatures, ...realFeatures];
+  }
+
   const bullets = statsToBullets(item.stats);
   const statFeatures: GeneratedFeature[] = bullets.map((stat) => ({
     title: stat,
@@ -99,6 +114,10 @@ export interface GeneratedEligibility {
 }
 
 export function generateEligibility(item: ServiceItemDetail): GeneratedEligibility {
+  if (item.real) {
+    return { who: item.real.eligibility, docs: item.real.whatYoullNeed };
+  }
+
   if (item.section === "citizen-services") {
     return {
       who: [
@@ -153,6 +172,10 @@ export interface GeneratedFaq {
 }
 
 export function generateFaqs(item: ServiceItemDetail): GeneratedFaq[] {
+  if (item.real?.faqs.length) {
+    return item.real.faqs;
+  }
+
   const isProject = item.type === "project";
   return [
     {
