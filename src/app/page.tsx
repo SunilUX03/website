@@ -3,7 +3,6 @@ import { Hero } from "@/components/hero/Hero";
 import { Scroller } from "@/components/sections/Scroller";
 import { PillarCards } from "@/components/sections/PillarCards";
 import { Metrics } from "@/components/sections/Metrics";
-import { CategoryCards } from "@/components/sections/CategoryCards";
 import { ProjectsSpotlight } from "@/components/sections/ProjectsSpotlight";
 import { Leadership } from "@/components/sections/Leadership";
 import { Announcements } from "@/components/sections/Announcements";
@@ -21,7 +20,6 @@ export default function Home() {
         <Hero />
         <Scroller />
         <PillarCards />
-        <CategoryCards />
         <Metrics />
         <ProjectsSpotlight />
         <Leadership />

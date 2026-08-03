@@ -494,6 +494,22 @@ export function getServiceItemBySlug(slug: string): ServiceItemDetail | undefine
   return allServiceItems.find((item) => item.slug === slug);
 }
 
+/** Resolves a list of item names (as referenced by Home's pillar bands) to
+ * the canonical service items, so those bands reuse this file's copy rather
+ * than restating it. Throws rather than silently dropping a card, so a
+ * mistyped name fails the build instead of shipping a short carousel. */
+export function getServiceItemsByNames(names: string[]): ServiceItemDetail[] {
+  return names.map((name) => {
+    const item = allServiceItems.find((candidate) => candidate.name === name);
+    if (!item) {
+      throw new Error(
+        `Unknown service item "${name}". Expected one of: ${allServiceItems.map((i) => i.name).join(", ")}`
+      );
+    }
+    return item;
+  });
+}
+
 /** Splits a " · "-joined stats/metrics line back into individual bullet
  * points — reused as-is for the detail page's Key Features / Impact list
  * so that content stays exactly the verified copy already on the card,
