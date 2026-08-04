@@ -19,7 +19,7 @@ export interface SocialPost {
 }
 
 export const SOCIAL_SEED: Record<
-  "facebook" | "x" | "youtube" | "instagram",
+  "facebook" | "x" | "youtube" | "instagram" | "linkedin",
   SocialPost[]
 > = {
   facebook: [
@@ -88,6 +88,23 @@ export const SOCIAL_SEED: Record<
       text: "Marking 4 crore citizen transactions processed across e-Sevai centres statewide.",
       date: "Apr 2025",
       image: pexelsPhoto(STOCK.attentiveGroup, 640, 360),
+    },
+  ],
+  linkedin: [
+    {
+      text: "TNeGA is hiring across engineering and program management roles — join us in building Tamil Nadu's digital public infrastructure.",
+      date: "12 Jan 2026",
+      image: pexelsPhoto(STOCK.officeBuilding, 640, 360),
+    },
+    {
+      text: "Proud to partner with Government departments statewide on SimpleGov — 10 services made paperless, online and instant.",
+      date: "29 May 2025",
+      image: pexelsPhoto(STOCK.handshakeBusiness, 640, 360),
+    },
+    {
+      text: "UMIS now integrates student data from 5,490 institutions statewide — one platform for all of higher education.",
+      date: "02 Sep 2025",
+      image: pexelsPhoto(STOCK.studentLaptop, 640, 360),
     },
   ],
 };

@@ -63,7 +63,7 @@ export function ServiceItemCard({
           {item.stats}
         </p>
 
-        <div className="relative z-10 mt-auto flex flex-wrap gap-3 pt-5">
+        <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
           {item.accessPortalHref ? (
             <a href={item.accessPortalHref} className="type-button btn-primary">
               Access Portal

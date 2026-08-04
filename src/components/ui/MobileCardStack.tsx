@@ -29,10 +29,12 @@ const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
  * settle on top. Scrolling up reverses the sequence naturally because
  * every transform is a pure function of scroll progress.
  *
- * Each card is centered by a stable outer wrapper; only the inner element
- * carries the scroll-driven transform (keeping the two separate is what
- * prevents the card from drifting off the left edge). Cards size to their
- * own content height — no fixed viewport height stretching them.
+ * Each card sits at a fixed top offset via a stable outer wrapper; only the
+ * inner element carries the scroll-driven transform (keeping the two
+ * separate is what prevents the card from drifting off the left edge, and
+ * what keeps the active card's top edge a fixed distance from the intro
+ * card above regardless of the active card's own height). Cards size to
+ * their own content height — no fixed viewport height stretching them.
  *
  * Services page's own mobile card grid — see [[same-card-interaction-standing-rule]].
  */
@@ -124,7 +126,15 @@ export function MobileCardStack<T>({
           return (
             <div
               key={getKey(item, i)}
-              className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center"
+              // top-0 + a fixed pt (not top-1/2 + translateY(-50%)) — the
+              // active card always sits the same fixed distance below the
+              // section intro card above it, regardless of the card's own
+              // height. Centering within the deck's fixed-height box used
+              // to leave a gap that shrank or went negative (cards
+              // overlapping the intro box) on taller cards, since a taller
+              // card centered in the same box pokes further up past its
+              // top edge than a shorter one does.
+              className="pointer-events-none absolute inset-x-0 top-0 flex justify-center pt-4"
               style={{ zIndex }}
             >
               {/* No side padding or max-width here — this should render at
@@ -134,7 +144,7 @@ export function MobileCardStack<T>({
               <div
                 className="pointer-events-auto w-full"
                 style={{
-                  transform: `translateY(-50%) translateY(${translateY}%) scale(${scale})`,
+                  transform: `translateY(${translateY}%) scale(${scale})`,
                   opacity,
                   transformOrigin: "center center",
                   willChange: "transform, opacity",

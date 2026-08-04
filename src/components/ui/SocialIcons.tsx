@@ -65,3 +65,20 @@ export function InstagramIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+export function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="8.3" r="1.1" fill="currentColor" />
+      <path d="M8 11v6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M12 17.5V11M12 13.5c0-1.4 1-2.5 2.3-2.5s2.2 1 2.2 2.5v4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

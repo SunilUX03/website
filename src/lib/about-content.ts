@@ -156,23 +156,16 @@ export const teamCeo = {
   photo: pexelsPhoto(STOCK.presentation, 320, 320),
 };
 
-// Roles are real/structural; individual names are not yet confirmed, so
-// only the designation is shown — never a fabricated name, never a
-// visible "Pending" label. See the design-review question resolved for
-// Roll of Honour below for the same principle applied to historical data.
-// NOTE: `name` values here are DUMMY PLACEHOLDERS for layout/demo only —
-// replace with the real officers' names before launch. Designations are
-// the real/structural roles.
+// Real officers and designations, per explicit instruction. "Vacant" is a
+// real, currently-unfilled post — shown with an office/building photo
+// rather than a person's photo, so it never reads as an actual named
+// individual.
 export const team = [
-  { name: "Aravind Kumar", designation: "Joint CEO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
-  { name: "Priya Raman", designation: "Joint Director — Projects", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
-  { name: "Karthik Subramanian", designation: "Joint Director — Operations", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
-  { name: "Meena Lakshmi", designation: "Joint Director — Finance", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
-  { name: "Ravi Shankar", designation: "Joint Director — Administration", photo: pexelsPhoto(STOCK.womanPhone, 320, 320) },
-  { name: "Divya Narayanan", designation: "Deputy Collector — Administration", photo: pexelsPhoto(STOCK.ruralWomanPhone, 320, 320) },
-  { name: "Suresh Babu", designation: "System Engineer — AI & ML", photo: pexelsPhoto(STOCK.studentLaptop, 320, 320) },
-  { name: "Anjali Venkatesh", designation: "System Engineer — GIS", photo: pexelsPhoto(STOCK.elderlyManPhone, 320, 320) },
-  { name: "Mohan Raj", designation: "System Engineer — Infrastructure", photo: pexelsPhoto(STOCK.elderlyWomanPhone, 320, 320) },
+  { name: "Tmt. Priya", designation: "General Manager — Procurement/ DRO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
+  { name: "Thiru. Rajarajan", designation: "General Manager — Procurement/ DRO", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
+  { name: "Tmt. Preethi Parkavi", designation: "General Manager — e-Sevai/ DRO", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
+  { name: "Vacant", designation: "General Manager — Technical", photo: pexelsPhoto(STOCK.officeBuilding, 320, 320) },
+  { name: "Thiru. Jayachandran", designation: "General Manager/ Program Director — GIS", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
 ];
 
 // Real Governing Board composition, per the official list. Chairman and

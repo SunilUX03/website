@@ -282,26 +282,32 @@ export const socialMedia = [
   {
     platform: "Facebook",
     apiPath: "/api/social/facebook",
-    href: "https://www.facebook.com/TNeGovernance",
+    href: "https://www.facebook.com/tnegaofficial",
     followLabel: "Follow on Facebook",
   },
   {
     platform: "X",
     apiPath: "/api/social/x",
-    href: "https://x.com/tnega",
+    href: "https://twitter.com/TNeGA_Official",
     followLabel: "Follow on X",
+  },
+  {
+    platform: "Instagram",
+    apiPath: "/api/social/instagram",
+    href: "https://instagram.com/tnegaofficial",
+    followLabel: "Follow on Instagram",
+  },
+  {
+    platform: "LinkedIn",
+    apiPath: "/api/social/linkedin",
+    href: "https://www.linkedin.com/company/tnega/",
+    followLabel: "Follow on LinkedIn",
   },
   {
     platform: "YouTube",
     apiPath: "/api/social/youtube",
     href: "https://www.youtube.com/@tnega",
     followLabel: "Subscribe on YouTube",
-  },
-  {
-    platform: "Instagram",
-    apiPath: "/api/social/instagram",
-    href: "https://www.instagram.com/tnega_official",
-    followLabel: "Follow on Instagram",
   },
 ] as const;
 
@@ -327,14 +333,15 @@ export const footer = {
     ),
   phone: "044-4016 4900",
   email: "tnega@tn.gov.in",
-  // Same three platforms as socialMedia below, plus Instagram — kept as a
-  // separate list since the footer only needs name + href, not the full
-  // apiPath/followLabel shape the homepage social cards use.
+  // Same platforms as socialMedia below — kept as a separate list since the
+  // footer only needs name + href, not the full apiPath/followLabel shape
+  // the homepage social cards use.
   socialLinks: [
-    { label: "Facebook", href: "https://www.facebook.com/TNeGovernance" },
-    { label: "X", href: "https://x.com/tnega" },
+    { label: "Facebook", href: "https://www.facebook.com/tnegaofficial" },
+    { label: "X", href: "https://twitter.com/TNeGA_Official" },
+    { label: "Instagram", href: "https://instagram.com/tnegaofficial" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/tnega/" },
     { label: "YouTube", href: "https://www.youtube.com/@tnega" },
-    { label: "Instagram", href: "https://www.instagram.com/tnega_official" },
   ],
   quickLinks: [
     { label: "Home", href: "/" },

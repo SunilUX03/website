@@ -8,6 +8,7 @@ import { formatIndianNumber } from "@/lib/format";
 import {
   FacebookIcon,
   InstagramIcon,
+  LinkedInIcon,
   XIcon,
   YouTubeIcon,
 } from "@/components/ui/SocialIcons";
@@ -32,6 +33,7 @@ const SOCIAL_ICON: Record<string, React.ComponentType<{ className?: string }>> =
   X: XIcon,
   YouTube: YouTubeIcon,
   Instagram: InstagramIcon,
+  LinkedIn: LinkedInIcon,
 };
 
 function VisitorCounter() {

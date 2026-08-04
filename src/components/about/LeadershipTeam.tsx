@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { teamCeo, team } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
-import { CardCarousel } from "@/components/ui/CardCarousel";
+import { AutoCarousel } from "@/components/ui/AutoCarousel";
 import { useInViewOnce, useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
 function TeamCard({
@@ -37,11 +37,11 @@ function TeamCard({
       <div className="relative aspect-square w-full">
         <Image src={member.photo} alt="" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
       </div>
-      {/* min-h (not a fixed h) so a 2-line designation like "Joint
-          Director — Administration" never gets clipped — it just grows
-          the card a little instead of losing its second line. */}
-      <div className="flex min-h-[84px] flex-col items-center justify-center px-2 py-2.5 text-center">
-        <p className="type-body-strong line-clamp-1 text-ink">{member.name}</p>
+      {/* min-h (not a fixed h) so a 2-line name or designation never gets
+          clipped or ellipsized — it just wraps, and every card still ends
+          up the same height since they all share this same minimum. */}
+      <div className="flex min-h-[112px] flex-col items-center justify-center px-2 py-2.5 text-center">
+        <p className="type-body-strong text-ink">{member.name}</p>
         <p className="type-caption text-[var(--color-muted)]">{member.designation}</p>
       </div>
     </motion.div>
@@ -80,13 +80,17 @@ function MobileCarousel({
   reducedMotion: boolean;
 }) {
   return (
-    <CardCarousel>
+    <AutoCarousel>
       {members.map((member, i) => (
-        <div key={`${member.name}-${i}`} data-carousel-item className="w-[150px] shrink-0 snap-start">
+        <div
+          key={`${member.name}-${i}`}
+          data-carousel-item
+          className="w-3/4 max-w-[220px] shrink-0 snap-center sm:w-[200px]"
+        >
           <TeamCard member={member} index={i} inView={inView} reducedMotion={reducedMotion} />
         </div>
       ))}
-    </CardCarousel>
+    </AutoCarousel>
   );
 }
 
