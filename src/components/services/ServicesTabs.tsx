@@ -101,6 +101,7 @@ export function ServicesTabs() {
   const isDesktop = useIsDesktop();
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
+  const tablistRef = useRef<HTMLDivElement | null>(null);
 
   // Still tracked (not the tab bar itself anymore — that's no longer
   // sticky) because MobileCardStack's own internal sticky viewport needs
@@ -150,23 +151,48 @@ export function ServicesTabs() {
     if (fadeTimer.current) clearTimeout(fadeTimer.current);
   }, []);
 
-  const selectTab = (id: TabId) => {
-    if (id === active) return;
-    setActive(id);
-    // replaceState (not location.hash=) so switching tabs doesn't jump-scroll
-    // the page or spam browser history — the hash still ends up shareable.
-    history.replaceState(null, "", `#${id}`);
+  // Scrolls the tapped tab clear of the fixed scroll-triggered menu button
+  // (top-right, sitewide) — that button's screen position doesn't move
+  // with page content, and this row sits close enough to the top that an
+  // active tab could otherwise land right under it with its label end
+  // clipped, as happened with "Interdepartmental Projects".
+  const clearTabFromFloatingMenu = (buttonEl: HTMLButtonElement) => {
+    const container = tablistRef.current;
+    if (!container) return;
+    const floatingMenuBtn = document.querySelector<HTMLElement>('button.fixed[aria-label="Open menu"]');
+    const tabRect = buttonEl.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const rightBound = floatingMenuBtn ? floatingMenuBtn.getBoundingClientRect().left - 12 : containerRect.right;
 
-    if (reducedMotion) {
-      setDisplayed(id);
-      return;
+    const overflowRight = tabRect.right - rightBound;
+    const overflowLeft = containerRect.left - tabRect.left;
+    if (overflowRight > 0) {
+      container.scrollBy({ left: overflowRight, behavior: reducedMotion ? "auto" : "smooth" });
+    } else if (overflowLeft > 0) {
+      container.scrollBy({ left: -overflowLeft, behavior: reducedMotion ? "auto" : "smooth" });
     }
-    setFading(true);
-    if (fadeTimer.current) clearTimeout(fadeTimer.current);
-    fadeTimer.current = setTimeout(() => {
-      setDisplayed(id);
-      setFading(false);
-    }, FADE_MS);
+  };
+
+  const selectTab = (id: TabId, buttonEl: HTMLButtonElement) => {
+    if (id !== active) {
+      setActive(id);
+      // replaceState (not location.hash=) so switching tabs doesn't
+      // jump-scroll the page or spam browser history — the hash still ends
+      // up shareable.
+      history.replaceState(null, "", `#${id}`);
+
+      if (reducedMotion) {
+        setDisplayed(id);
+      } else {
+        setFading(true);
+        if (fadeTimer.current) clearTimeout(fadeTimer.current);
+        fadeTimer.current = setTimeout(() => {
+          setDisplayed(id);
+          setFading(false);
+        }, FADE_MS);
+      }
+    }
+    clearTabFromFloatingMenu(buttonEl);
   };
 
   const displayedTab = TABS.find((tab) => tab.id === displayed) ?? TABS[0];
@@ -177,15 +203,27 @@ export function ServicesTabs() {
           (gaps, overlap, footer bleeding in). Just a normal in-flow bar. */}
       <div className="border-b border-hairline bg-canvas">
         <Container>
-          <div role="tablist" aria-label="Service sections" className="flex gap-3 py-5">
+          {/* overflow-x-auto + trailing pr so all 3 tabs are reachable by
+              swipe on narrow screens instead of being clipped at the edge
+              (html/body has overflow-x:hidden sitewide, so without this
+              the last tab's label was simply unreachable, not just tight).
+              The right padding also keeps the last tab clear of the fixed
+              scroll-triggered menu button, which otherwise sits on top of
+              it at this row's scroll position. */}
+          <div
+            ref={tablistRef}
+            role="tablist"
+            aria-label="Service sections"
+            className="flex gap-3 overflow-x-auto py-5 pr-16 [scrollbar-width:none] sm:pr-0 [&::-webkit-scrollbar]:hidden"
+          >
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 type="button"
                 role="tab"
                 aria-selected={active === tab.id}
-                onClick={() => selectTab(tab.id)}
-                className={`type-button ${active === tab.id ? "btn-primary" : "btn-outline"}`}
+                onClick={(e) => selectTab(tab.id, e.currentTarget)}
+                className={`type-button shrink-0 whitespace-nowrap ${active === tab.id ? "btn-primary" : "btn-outline"}`}
               >
                 {tab.label}
               </button>

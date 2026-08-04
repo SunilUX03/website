@@ -109,11 +109,15 @@ export function MobileCardStack<T>({
           return (
             <div
               key={getKey(item, i)}
-              className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center px-5"
+              className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center"
               style={{ zIndex }}
             >
+              {/* No side padding or max-width here — this should render at
+                  exactly the same width as the section's intro card above
+                  it (which just fills the shared Container's own padding),
+                  not a narrower inset card. */}
               <div
-                className="pointer-events-auto w-full max-w-[360px]"
+                className="pointer-events-auto w-full"
                 style={{
                   transform: `translateY(-50%) translateY(${translateY}%) scale(${scale})`,
                   opacity,
