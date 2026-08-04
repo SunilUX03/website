@@ -24,7 +24,8 @@ import { footer } from "@/lib/content";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "Citizen Services",
-  "govt-digital-services": "Govt Digital Services",
+  "interdepartmental-projects": "Interdepartmental Projects",
+  services: "Services",
 };
 
 // 5 placeholder slots (not a real count) so the Success Stories carousel

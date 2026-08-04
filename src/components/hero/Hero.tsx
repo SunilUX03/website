@@ -8,9 +8,19 @@ import { HeroDistrictMap } from "./HeroDistrictMap";
 import { HeroDotCursor } from "./HeroDotCursor";
 import { NodeGraphCanvas } from "./NodeGraphCanvas";
 import { HeroTechBadges } from "./HeroTechBadges";
+import { useReducedMotion } from "@/lib/hooks";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const reducedMotion = useReducedMotion();
+  // Defined in HeroDistrictMap.tsx's own <style> block (always mounted as
+  // a child here) but applied at THIS level instead of on the map's own
+  // svg — so the map and the tech badges, two separate sibling layers,
+  // float as one unit instead of the badges staying frozen at their
+  // initial measured position while the map visually drifts away from it.
+  const floatStyle: React.CSSProperties = {
+    animation: reducedMotion ? "none" : "hero-map-float 9s ease-in-out infinite",
+  };
 
   return (
     <section
@@ -61,7 +71,7 @@ export function Hero() {
       </div>
 
       {/* Mobile: map sits behind the text column at reduced opacity */}
-      <div className="absolute inset-0 z-0 opacity-[0.32] lg:hidden" aria-hidden>
+      <div className="absolute inset-0 z-0 opacity-[0.32] lg:hidden" aria-hidden style={floatStyle}>
         <HeroDistrictMap className="relative h-full w-full" />
       </div>
 
@@ -75,11 +85,18 @@ export function Hero() {
               ))}
             </div>
 
-            <h1 className="type-display-mega text-ink">{hero.headline}</h1>
+            {/* data-hero-text marks only the headline + description — not
+                the leadership cards or CTA buttons above/below — so
+                NodeGraphCanvas (via the pointer event's real target) stays
+                dormant specifically over the copy someone's reading, while
+                staying interactive near the CM/Minister cards and buttons. */}
+            <div className="flex flex-col gap-6" data-hero-text>
+              <h1 className="type-display-mega text-ink">{hero.headline}</h1>
 
-            <p className="type-body-md max-w-[52ch] text-[var(--color-body)]">
-              {hero.description}
-            </p>
+              <p className="type-body-md max-w-[52ch] text-[var(--color-body)]">
+                {hero.description}
+              </p>
+            </div>
 
             <div className="flex flex-wrap gap-3 pt-2">
               <a href="/about" className="type-button btn-primary">
@@ -96,8 +113,11 @@ export function Hero() {
 
           {/* Right column — desktop-only interactive district map, lifted
               above the node-graph layer so the map (and its hover targets)
-              sit on top of the ambient interactions rather than under. */}
-          <div className="relative z-10 hidden h-[560px] lg:block">
+              sit on top of the ambient interactions rather than under.
+              floatStyle is applied here (not on the map's own svg) so this
+              wrapper's other child — the tech badges overlay — floats in
+              exact sync with the map instead of drifting apart from it. */}
+          <div className="relative z-10 hidden h-[560px] lg:block" style={floatStyle}>
             <HeroDistrictMap className="relative h-full w-full" />
             <HeroTechBadges />
           </div>

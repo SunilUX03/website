@@ -21,9 +21,24 @@ function MobileGroup({
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-hairline py-2">
-      <div className="flex w-full items-center justify-between py-2">
+      {/* The row itself toggles on click — not just the title text or the
+          chevron — so tapping the empty space between them (most of the
+          row's width) also opens the submenu instead of doing nothing. */}
+      <div
+        className="flex w-full cursor-pointer items-center justify-between py-2"
+        onClick={() => setOpen((v) => !v)}
+      >
         {href ? (
-          <a href={href} onClick={onNavigate} className="type-title-sm text-ink">
+          // Its own click stops propagation so tapping the word itself
+          // still navigates directly, instead of just toggling the row.
+          <a
+            href={href}
+            onClick={(e) => {
+              e.stopPropagation();
+              onNavigate?.();
+            }}
+            className="type-title-sm text-ink"
+          >
             {title}
           </a>
         ) : (
@@ -31,7 +46,10 @@ function MobileGroup({
         )}
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((v) => !v);
+          }}
           aria-expanded={open}
           aria-label={`Toggle ${title} menu`}
           className="flex items-center p-1 text-ink"
@@ -75,7 +93,7 @@ export function MobileDrawer({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/30 lg:hidden"
+            className="fixed inset-0 z-[60] bg-black/30"
             onClick={onClose}
           />
           <motion.div
@@ -83,7 +101,7 @@ export function MobileDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed inset-y-0 right-0 z-[70] w-[85%] max-w-[384px] overflow-y-auto bg-canvas p-6 shadow-2xl lg:hidden"
+            className="fixed inset-y-0 right-0 z-[70] w-[85%] max-w-[384px] overflow-y-auto bg-canvas p-6 shadow-2xl"
             role="dialog"
             aria-modal="true"
           >

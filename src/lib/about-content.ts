@@ -175,26 +175,35 @@ export const team = [
   { name: "Mohan Raj", designation: "System Engineer — Infrastructure", photo: pexelsPhoto(STOCK.elderlyWomanPhone, 320, 320) },
 ];
 
-// Real Governing Board composition — role/title only, per the official
-// list. No names or photos are published for these ex-officio seats, so
-// this deliberately stays designation-only rather than inventing either.
+// Real Governing Board composition, per the official list. Chairman and
+// Member Secretary reuse names already confirmed elsewhere on this site
+// (the Additional Chief Secretary in content.ts's `leadership`, and the
+// current CEO in `teamCeo` above) — real people, not invented for this
+// section. The 6 Members' names are NOT published anywhere we have data
+// for; per explicit instruction, those use dummy names to fill out the
+// layout — `nameIsPlaceholder: true` documents that in code (the UI no
+// longer shows a visible disclaimer, also per explicit instruction) so a
+// future maintainer swapping in real appointees knows which ones to
+// replace.
 export const governingBoard = {
   chairman: {
     role: "Chairman",
+    name: "Thiru Pradeep Yadav, IAS",
     title:
       "Additional Chief Secretary to Government, Information Technology and Digital Services Department",
   },
   memberSecretary: {
     role: "Member Secretary",
+    name: teamCeo.name,
     title: "Chief Executive Officer, Tamil Nadu e-Governance Agency",
   },
   members: [
-    "Secretary (Expenditure) to Government, Finance Department",
-    "Managing Director, Electronics Corporation of Tamil Nadu Ltd.",
-    "Registrar of Cooperative Societies",
-    "Managing Director, Tamil Nadu Corporation for Development of Women",
-    "Managing Director, Tamil Nadu Arasu Cable TV Corporation Ltd.",
-    "State Informatics Officer, National Informatics Centre, Chennai",
+    { name: "Tmt. Latha Krishnan, IAS", title: "Secretary (Expenditure) to Government, Finance Department", nameIsPlaceholder: true },
+    { name: "Thiru. R. Selvaraj, IAS", title: "Managing Director, Electronics Corporation of Tamil Nadu Ltd.", nameIsPlaceholder: true },
+    { name: "Thiru. M. Balamurugan, IAS", title: "Registrar of Cooperative Societies", nameIsPlaceholder: true },
+    { name: "Tmt. Kavitha Ramesh, IAS", title: "Managing Director, Tamil Nadu Corporation for Development of Women", nameIsPlaceholder: true },
+    { name: "Thiru. A. Gunasekaran, IAS", title: "Managing Director, Tamil Nadu Arasu Cable TV Corporation Ltd.", nameIsPlaceholder: true },
+    { name: "Dr. N. Vijayakumar", title: "State Informatics Officer, National Informatics Centre, Chennai", nameIsPlaceholder: true },
   ],
 };
 
@@ -203,27 +212,66 @@ export const achievements = {
   // — see src/components/sections/Metrics.tsx and src/lib/content.ts.
 };
 
+// Translated and summarised from the official office memo (Tamil) listing
+// TNeGA's awards over the past 5 years — one card per award, per explicit
+// instruction. Where one project earned two separate awards (UMIS), each
+// gets its own card rather than merging them into one.
 export const awards = [
   {
-    title: "National e-Governance Award",
-    year: "2024",
+    title: "Chief Minister's Best Practices Award",
+    year: "2023",
     description:
-      "Recognised for excellence in citizen service delivery through the e-Sevai platform across Tamil Nadu.",
+      "Awarded to TNeGA for the mobile app and real-time dashboard built to monitor the Chief Minister's Breakfast Scheme — tracking implementation in every school from meal preparation through to serving, with GPS-tracked food delivery.",
     image: pexelsPhoto(STOCK.presentation, 700, 500),
   },
   {
-    title: "SKOCH Digital Governance Award",
-    year: "2023",
+    title: "SKOCH Silver Award",
+    year: "2025",
     description:
-      "Awarded for the successful implementation of the Nambikkai Inaiyam blockchain platform for tamper-proof certificate verification.",
+      "Awarded to the University Management Information System (UMIS) — TNeGA's single-window platform integrating student, institution and course data across higher education in Tamil Nadu.",
+    image: pexelsPhoto(STOCK.dataCenter, 700, 500),
+  },
+  {
+    title: "Educational Technology Transformation Award",
+    year: "2025",
+    description:
+      "Presented at the 19th Digital Transformation Conclave & Awards, recognising UMIS's integration with Aadhaar, EMIS, NPCI, e-Sevai and scholarship platforms to power accurate, duplicate-free student data statewide.",
+    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
+  },
+  {
+    title: "SKOCH Gold Award",
+    year: "2022",
+    description:
+      "Awarded for the Moovalur Ramamirtham Ammaiyar Higher Education Assurance Scheme (Pudhumai Penn) — TNeGA's paperless DBT scholarship platform supporting higher education for girl students from Government schools.",
+    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
+  },
+  {
+    title: "SKOCH Gold Award",
+    year: "2025",
+    description:
+      "Awarded for the Tamil Pudhalvan Scheme — TNeGA's paperless DBT scholarship platform supporting higher education for boy students from Government schools, integrated with UMIS.",
+    image: pexelsPhoto(STOCK.workshopGroup, 700, 500),
+  },
+  {
+    title: "Technology Sabha Excellence Award",
+    year: "2025",
+    description:
+      "Awarded by The Indian Express Group in recognition of e-Sevai's citizen-centric service delivery through centres statewide and a 24x7 citizen portal.",
     image: pexelsPhoto(STOCK.handshakeBusiness, 700, 500),
   },
   {
-    title: "CSI Nihilent e-Governance Award",
-    year: "2023",
+    title: "SKOCH Silver Award",
+    year: "2022",
     description:
-      "Recognised for the KMUT data-driven beneficiary identification — first of its kind in India.",
-    image: pexelsPhoto(STOCK.attentiveGroup, 700, 500),
+      "Awarded for e-Munnetram, TNeGA's WebGIS-based platform tracking the finances and progress of every major infrastructure project valued over ₹100 crore.",
+    image: pexelsPhoto(STOCK.networkRack, 700, 500),
+  },
+  {
+    title: "Certificate of Excellence",
+    year: "2025",
+    description:
+      "Awarded by the Unique Identification Authority of India (UIDAI), recognising Tamil Nadu as the best-performing state for pioneering Aadhaar authentication in public service delivery.",
+    image: pexelsPhoto(STOCK.handshakeFormal, 700, 500),
   },
 ];
 

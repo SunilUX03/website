@@ -167,6 +167,21 @@ export function MainNav() {
         </div>
       </div>
 
+      {/* Floating quick-access menu button — appears once the page is
+          scrolled, on every breakpoint (not just mobile), so the full
+          drawer menu is reachable without scrolling back up to the header. */}
+      <button
+        type="button"
+        onClick={() => setDrawerOpen(true)}
+        aria-label="Open menu"
+        className={clsx(
+          "fixed right-5 top-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-hairline bg-surface-card text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-all duration-200 hover:bg-[var(--color-surface-strong)] md:right-8 md:top-6",
+          scrolled ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
+      >
+        <MenuIcon className="h-5 w-5" />
+      </button>
+
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
   );

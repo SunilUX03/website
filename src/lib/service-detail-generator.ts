@@ -13,7 +13,14 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "citizens",
-  "govt-digital-services": "departments",
+  "interdepartmental-projects": "departments",
+  services: "departments",
+};
+
+const SECTION_DISPLAY_NAME: Record<ServiceItemDetail["section"], string> = {
+  "citizen-services": "Citizen Services",
+  "interdepartmental-projects": "Interdepartmental Projects",
+  services: "Services",
 };
 
 // Supporting images for the Product Tour carousel — the item's own real
@@ -22,7 +29,8 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
 // fabricated "screenshot". Captioned "Illustrative" wherever it's shown.
 const SUPPORTING_IMAGES: Record<ServiceItemDetail["section"], number[]> = {
   "citizen-services": [STOCK.womanPhone, STOCK.studentLaptop],
-  "govt-digital-services": [STOCK.itTechnician, STOCK.serverRacks],
+  "interdepartmental-projects": [STOCK.handshakeFormal, STOCK.serverRacks],
+  services: [STOCK.itTechnician, STOCK.serverRacks],
 };
 
 export interface CarouselImage {
@@ -51,7 +59,7 @@ export function generatePullQuote(item: ServiceItemDetail): { quote: string; sou
   const headline = bullets[0] ?? item.name;
   return {
     quote: `${headline} — delivered through ${item.name}, part of TNeGA's push for transparent, accessible digital governance in Tamil Nadu.`,
-    source: `TNeGA — ${item.section === "citizen-services" ? "Citizen Services" : "Govt Digital Services"}`,
+    source: `TNeGA — ${SECTION_DISPLAY_NAME[item.section]}`,
   };
 }
 

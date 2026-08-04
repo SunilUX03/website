@@ -1,18 +1,25 @@
-// Centralized copy for the /services page (Citizen Services + Govt Digital
-// Services). Rebuilt wholesale from the official "Website Content - TNeGA"
-// PDF supplied by the client — 9 Citizen Services + 7 Government Digital
-// Services, replacing the previous 28-item prototype list entirely per
-// explicit instruction ("remove all that exist and add the projects and
-// services that exist in the document").
+// Centralized copy for the /services page — 3 sections (Citizen Services,
+// Interdepartmental Projects, Services), matching the categorisation used
+// by Home's "How TNeGA powers governance" bands (see `pillars` in
+// lib/content.ts and getServiceItemsByNames below) — replacing the earlier
+// 2-section (Citizen Services / Govt Digital Services) split per explicit
+// instruction.
 //
-// Each item's `real` field carries the PDF's own Statistics / Key Features /
-// "You can use this if..." / "What you'll need" / FAQs sections verbatim —
-// consumed by service-detail-generator.ts, which prefers this real content
-// over its mechanically-generated fallback wherever it's present. TNGIS and
-// GRAINS have no PDF content supplied (kept as name-only placeholders in the
-// source document), so — per explicit instruction — they keep their
-// previously-written placeholder copy and fall back to generated detail
-// content, same as before.
+// Each item lists every section it belongs to (`sections`) rather than
+// living in a single section's array — UMIS is intentionally dual-listed
+// (Citizen Services + Interdepartmental Projects), same as on Home. A
+// dual-listed item still has exactly ONE detail page: it just appears as a
+// card in both of its sections' grids. Aadhaar Services isn't referenced by
+// any of Home's bands, so it stays single-listed under Citizen Services,
+// where it already lived.
+//
+// Each item's `real` field carries the official PDF's own Statistics / Key
+// Features / "You can use this if..." / "What you'll need" / FAQs sections
+// verbatim — consumed by service-detail-generator.ts, which prefers this
+// real content over its mechanically-generated fallback wherever it's
+// present. TNGIS and GRAINS have no PDF content supplied, so they keep
+// their previously-written placeholder copy and fall back to generated
+// detail content.
 //
 // Images: real project photography (e-Sevai, Namma Arasu, TN GIS, UMIS,
 // TNSSO, e-Office) reuses the same 6 files as Home's Projects Spotlight.
@@ -47,6 +54,8 @@ export interface RealContent {
   faqs: { q: string; a: string }[];
 }
 
+export type ServiceSection = "citizen-services" | "interdepartmental-projects" | "services";
+
 export type ServiceItem = {
   name: string;
   description: string;
@@ -55,6 +64,11 @@ export type ServiceItem = {
   accessPortalHref?: string;
   knowMoreHref: string;
   real?: RealContent;
+  /** Every /services tab this item is listed under — first entry is its
+   * "home" section, used for the detail page's breadcrumb/back-link and
+   * "Related" carousel. Most items list exactly one section; UMIS
+   * intentionally lists two, matching Home's bands. */
+  sections: ServiceSection[];
 };
 
 const PROJECT_IMG = {
@@ -66,7 +80,8 @@ const PROJECT_IMG = {
   eOffice: "/images/projects/e-office.png",
 } as const;
 
-const citizenServicesRaw: ServiceItem[] = [
+const serviceItemsRaw: ServiceItem[] = [
+  // ---------- Citizen Services ----------
   {
     name: "e-Sevai Portal",
     description:
@@ -75,6 +90,7 @@ const citizenServicesRaw: ServiceItem[] = [
     image: PROJECT_IMG.eSevai,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["citizen-services"],
     real: {
       statistics: ["273 Government services", "25,277 Active e-Sevai Centres", "1,40,52,771 transactions in FY 2025–26"],
       keyFeatures: [
@@ -102,6 +118,7 @@ const citizenServicesRaw: ServiceItem[] = [
     image: PROJECT_IMG.nammaArasu,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["citizen-services"],
     real: {
       statistics: ["76 services", "20 Departments", "19.51 lakh users", "6.01 lakh services delivered"],
       keyFeatures: ["WhatsApp-based service delivery", "AI-assisted conversations", "Secure payments", "Mobile-first experience"],
@@ -121,6 +138,7 @@ const citizenServicesRaw: ServiceItem[] = [
     image: pexelsPhoto(STOCK.elderlyWomanPhone, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["citizen-services"],
     real: {
       statistics: [
         "583 Permanent Enrolment Centres",
@@ -140,6 +158,7 @@ const citizenServicesRaw: ServiceItem[] = [
     },
   },
   {
+    // Dual-listed on Home — also appears under Interdepartmental Projects.
     name: "UMIS",
     description:
       "The University Management Information System (UMIS) is Tamil Nadu's centralized digital platform for higher education, serving as the authenticated repository of student information. It standardizes student data across institutions and integrates with multiple Government databases to enable efficient administration and seamless delivery of education and welfare services.",
@@ -147,6 +166,7 @@ const citizenServicesRaw: ServiceItem[] = [
     image: PROJECT_IMG.umis,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["citizen-services", "interdepartmental-projects"],
     real: {
       statistics: ["24,27,192 Active students", "84 Universities", "5,693 Institutions", "33 Beneficiary Departments"],
       keyFeatures: [
@@ -178,8 +198,44 @@ const citizenServicesRaw: ServiceItem[] = [
     },
   },
   {
-    // No PDF content was supplied for TNGIS — per explicit instruction, this
-    // keeps the previously-written placeholder copy unchanged.
+    name: "TNSSP",
+    description:
+      "TNSSP provides a unified platform for students to apply for scholarships, complete verification, and receive assistance through Direct Benefit Transfer.",
+    stats: "27 Scholarship Schemes · 7 Departments",
+    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
+    accessPortalHref: "#",
+    knowMoreHref: "#",
+    sections: ["citizen-services"],
+    real: {
+      statistics: ["27 scholarship schemes", "7 Government Departments"],
+      keyFeatures: ["Scholarship applications", "Digital verification", "DBT integration", "UMIS integration"],
+      eligibility: ["You are applying for eligible Government scholarship schemes."],
+      whatYoullNeed: ["Student details", "Educational information"],
+      faqs: [{ q: "How many scholarship schemes are available?", a: "27 schemes across 7 Departments." }],
+    },
+  },
+  {
+    name: "e-Gazette Portal",
+    description:
+      "The e-Gazette Portal enables citizens to apply online for name change and other Gazette notification services with end-to-end digital processing.",
+    stats: "Online Application · Digital Approval · Digital Publication",
+    image: pexelsPhoto(STOCK.officeBuilding, 700, 500),
+    accessPortalHref: "#",
+    knowMoreHref: "#",
+    sections: ["citizen-services"],
+    real: {
+      statistics: [],
+      keyFeatures: ["Online application", "Digital approval", "Online payment", "Digital publication"],
+      eligibility: ["You wish to publish eligible Gazette notifications online."],
+      whatYoullNeed: ["Relevant application details and supporting documents."],
+      faqs: [{ q: "Can I complete the process online?", a: "Yes. The portal supports end-to-end digital processing." }],
+    },
+  },
+
+  // ---------- Interdepartmental Projects ----------
+  {
+    // No PDF content was supplied for TNGIS — per explicit instruction,
+    // this keeps the previously-written placeholder copy unchanged.
     name: "TNGIS Tamil Nilam",
     description:
       "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops — all in one place.",
@@ -187,6 +243,7 @@ const citizenServicesRaw: ServiceItem[] = [
     image: PROJECT_IMG.tnGis,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["interdepartmental-projects"],
   },
   {
     // No PDF content was supplied for GRAINS — per explicit instruction,
@@ -198,90 +255,8 @@ const citizenServicesRaw: ServiceItem[] = [
     image: pexelsPhoto(STOCK.serverRoom, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["interdepartmental-projects"],
   },
-  {
-    name: "TNSSP",
-    description:
-      "TNSSP provides a unified platform for students to apply for scholarships, complete verification, and receive assistance through Direct Benefit Transfer.",
-    stats: "27 Scholarship Schemes · 7 Departments",
-    image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
-    accessPortalHref: "#",
-    knowMoreHref: "#",
-    real: {
-      statistics: ["27 scholarship schemes", "7 Government Departments"],
-      keyFeatures: ["Scholarship applications", "Digital verification", "DBT integration", "UMIS integration"],
-      eligibility: ["You are applying for eligible Government scholarship schemes."],
-      whatYoullNeed: ["Student details", "Educational information"],
-      faqs: [{ q: "How many scholarship schemes are available?", a: "27 schemes across 7 Departments." }],
-    },
-  },
-  {
-    name: "Nambikkai Inaiyam",
-    description:
-      "Nambikkai Inaiyam (NI) is TNeGA's Blockchain-as-a-Service (BaaS) infrastructure, developed to secure Government documents and data against tampering. Built in line with the Tamil Nadu Blockchain Policy, the platform enables trusted verification of digital records while allowing citizens to access secured documents through the e-Pettagam wallet application.",
-    stats: "27 Certificate Categories · 2 Crore+ Documents Secured",
-    image: pexelsPhoto(STOCK.networkRack, 700, 500),
-    accessPortalHref: "#",
-    knowMoreHref: "#",
-    real: {
-      statistics: [
-        "27 categories of e-Sevai certificates secured",
-        "9 lakh+ e-Sevai certificates secured",
-        "3 lakh+ education certificates and mark sheets secured",
-        "2 crore+ registered documents secured",
-      ],
-      keyFeatures: [
-        "Blockchain-based document security",
-        "Tamper-proof digital records",
-        "Secure verification of Government documents",
-        "Integration with e-Sevai certificates, education certificates, and Registration Department records",
-        "Citizen access through the e-Pettagam wallet application",
-      ],
-      eligibility: [
-        "Your Government Department wants to secure digital records using blockchain.",
-        "You need to verify blockchain-secured Government documents.",
-        "You wish to access your secured documents through the e-Pettagam wallet.",
-      ],
-      whatYoullNeed: ["A Government-issued document available on the platform.", "Access to the e-Pettagam wallet application, where applicable."],
-      faqs: [
-        {
-          q: "What is Nambikkai Inaiyam?",
-          a: "It is Tamil Nadu's Blockchain-as-a-Service platform that secures Government documents and records against tampering.",
-        },
-        {
-          q: "What types of documents are secured?",
-          a: "The platform secures e-Sevai certificates, academic certificates and mark sheets, licences, and registered land documents.",
-        },
-        {
-          q: "How can citizens access their secured documents?",
-          a: "Citizens can access blockchain-secured documents through the e-Pettagam wallet application.",
-        },
-        {
-          q: "Which department's records are automatically secured?",
-          a: "Documents registered with the Registration Department are automatically fetched and secured on the platform.",
-        },
-      ],
-    },
-  },
-  {
-    name: "e-Gazette Portal",
-    description:
-      "The e-Gazette Portal enables citizens to apply online for name change and other Gazette notification services with end-to-end digital processing.",
-    stats: "Online Application · Digital Approval · Digital Publication",
-    image: pexelsPhoto(STOCK.officeBuilding, 700, 500),
-    accessPortalHref: "#",
-    knowMoreHref: "#",
-    real: {
-      statistics: [],
-      keyFeatures: ["Online application", "Digital approval", "Online payment", "Digital publication"],
-      eligibility: ["You wish to publish eligible Gazette notifications online."],
-      whatYoullNeed: ["Relevant application details and supporting documents."],
-      faqs: [{ q: "Can I complete the process online?", a: "Yes. The portal supports end-to-end digital processing." }],
-    },
-  },
-];
-
-const govtDigitalServicesRaw: ServiceItem[] = [
   {
     name: "e-Office",
     description:
@@ -290,6 +265,7 @@ const govtDigitalServicesRaw: ServiceItem[] = [
     image: PROJECT_IMG.eOffice,
     accessPortalHref: "#",
     knowMoreHref: "#",
+    sections: ["interdepartmental-projects"],
     real: {
       statistics: [
         "65,95,723 e-files created",
@@ -333,92 +309,13 @@ const govtDigitalServicesRaw: ServiceItem[] = [
     },
   },
   {
-    name: "DBT",
-    description:
-      "The Direct Benefit Transfer (DBT) Platform enables Government Departments to disburse welfare benefits directly to eligible beneficiaries through Aadhaar and bank account validation.",
-    stats: "62 Schemes Onboarded · ₹43,318 Cr Transferred",
-    image: pexelsPhoto(STOCK.womanPhone, 700, 500),
-    knowMoreHref: "#",
-    real: {
-      statistics: ["62 schemes onboarded", "₹43,318 crore transferred", "1.92 crore beneficiaries"],
-      keyFeatures: ["Aadhaar validation", "Beneficiary verification", "Bank account validation", "APB & ACH integration", "Centralized welfare payments"],
-      eligibility: ["Your Department administers welfare schemes requiring direct benefit transfer."],
-      whatYoullNeed: ["Eligible scheme", "Beneficiary database", "Department onboarding"],
-      faqs: [{ q: "How are benefits transferred?", a: "Through Aadhaar Payment Bridge (APB) and Automated Clearing House (ACH)." }],
-    },
-  },
-  {
-    name: "TNSSO",
-    description:
-      "Tamil Nadu Single Sign-On (TNSSO) is a unified authentication platform that enables Government officials and citizens to access multiple Government applications using a single set of credentials.",
-    stats: "Pilot Phase · Unified Login",
-    image: PROJECT_IMG.tnsso,
-    knowMoreHref: "#",
-    real: {
-      statistics: ["Pilot integration underway — no usage figures available yet"],
-      keyFeatures: ["Single authentication", "Multi-application access", "Centralized identity management"],
-      eligibility: ["Your Department is integrating applications under TNSSO."],
-      whatYoullNeed: ["Department application integration"],
-      faqs: [{ q: "Does TNSSO replace multiple logins?", a: "Yes. It enables access using a single set of credentials." }],
-    },
-  },
-  {
-    name: "e-Sign",
-    description:
-      "The e-Sign Service Platform enables Government Departments to digitally sign documents securely using Aadhaar-based authentication.",
-    stats: "26 Departments Onboarded · 4.35 Cr e-Signatures",
-    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
-    knowMoreHref: "#",
-    real: {
-      statistics: ["26 Departments onboarded", "4.35 crore e-Signatures executed", "3 Departments under onboarding"],
-      keyFeatures: ["Aadhaar OTP authentication", "Biometric authentication", "Paperless workflows", "Secure digital signatures"],
-      eligibility: ["Your Department requires digital document signing."],
-      whatYoullNeed: ["Department onboarding", "Aadhaar authentication integration"],
-      faqs: [{ q: "Is the service compliant?", a: "Yes. It complies with CCA and UIDAI guidelines." }],
-    },
-  },
-  {
-    name: "SMS & WhatsApp Gateway",
-    description:
-      "TNeGA provides centralized SMS and WhatsApp Gateway services that enable Government Departments to communicate with citizens efficiently and at scale.",
-    stats: "660.41 Cr SMS Sent · 30.18 Cr WhatsApp Messages",
-    image: pexelsPhoto(STOCK.elderlyManPhone, 700, 500),
-    knowMoreHref: "#",
-    real: {
-      statistics: [
-        "115 Departments using SMS Gateway",
-        "27 Departments using WhatsApp Gateway",
-        "660.41 crore SMS sent",
-        "30.18 crore WhatsApp messages sent",
-      ],
-      keyFeatures: ["Bulk SMS", "WhatsApp notifications", "Citizen outreach", "Government communications"],
-      eligibility: ["Your Department needs to communicate scheme updates or service notifications."],
-      whatYoullNeed: ["Department onboarding", "Approved communication templates"],
-      faqs: [{ q: "Who can use the gateway?", a: "Government Departments, Boards, PSUs, and Agencies." }],
-    },
-  },
-  {
-    name: "IT Security Audit Framework",
-    description:
-      "TNeGA facilitates mandatory IT Security Audits for Government websites, mobile applications, APIs, and cloud applications through CERT-In empanelled agencies before deployment and during operational changes.",
-    stats: "CERT-In Compliant · STQC Compliant",
-    image: pexelsPhoto(STOCK.engineerAudit, 700, 500),
-    knowMoreHref: "#",
-    real: {
-      statistics: [],
-      keyFeatures: ["Security audits", "CERT-In compliance", "STQC compliance", "Cloud security validation"],
-      eligibility: ["Your Department is deploying or upgrading a digital application."],
-      whatYoullNeed: ["Application details", "Deployment environment"],
-      faqs: [{ q: "When is an audit required?", a: "Before deployment, certificate expiry, major modifications, and cloud migration." }],
-    },
-  },
-  {
     name: "Interdepartmental Technical Consulting",
     description:
       "TNeGA provides technology consulting, evaluation, software implementation, and project management support for digital transformation initiatives across Government Departments.",
     stats: "10+ Active Engagements · Multiple Departments",
     image: pexelsPhoto(STOCK.handshakeLeaders, 700, 500),
     knowMoreHref: "#",
+    sections: ["interdepartmental-projects"],
     real: {
       statistics: [
         "STAR 3.0",
@@ -443,6 +340,142 @@ const govtDigitalServicesRaw: ServiceItem[] = [
       ],
     },
   },
+
+  // ---------- Services ----------
+  {
+    name: "DBT",
+    description:
+      "The Direct Benefit Transfer (DBT) Platform enables Government Departments to disburse welfare benefits directly to eligible beneficiaries through Aadhaar and bank account validation.",
+    stats: "62 Schemes Onboarded · ₹43,318 Cr Transferred",
+    image: pexelsPhoto(STOCK.womanPhone, 700, 500),
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: ["62 schemes onboarded", "₹43,318 crore transferred", "1.92 crore beneficiaries"],
+      keyFeatures: ["Aadhaar validation", "Beneficiary verification", "Bank account validation", "APB & ACH integration", "Centralized welfare payments"],
+      eligibility: ["Your Department administers welfare schemes requiring direct benefit transfer."],
+      whatYoullNeed: ["Eligible scheme", "Beneficiary database", "Department onboarding"],
+      faqs: [{ q: "How are benefits transferred?", a: "Through Aadhaar Payment Bridge (APB) and Automated Clearing House (ACH)." }],
+    },
+  },
+  {
+    name: "TNSSO",
+    description:
+      "Tamil Nadu Single Sign-On (TNSSO) is a unified authentication platform that enables Government officials and citizens to access multiple Government applications using a single set of credentials.",
+    stats: "Pilot Phase · Unified Login",
+    image: PROJECT_IMG.tnsso,
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: ["Pilot integration underway — no usage figures available yet"],
+      keyFeatures: ["Single authentication", "Multi-application access", "Centralized identity management"],
+      eligibility: ["Your Department is integrating applications under TNSSO."],
+      whatYoullNeed: ["Department application integration"],
+      faqs: [{ q: "Does TNSSO replace multiple logins?", a: "Yes. It enables access using a single set of credentials." }],
+    },
+  },
+  {
+    name: "e-Sign",
+    description:
+      "The e-Sign Service Platform enables Government Departments to digitally sign documents securely using Aadhaar-based authentication.",
+    stats: "26 Departments Onboarded · 4.35 Cr e-Signatures",
+    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: ["26 Departments onboarded", "4.35 crore e-Signatures executed", "3 Departments under onboarding"],
+      keyFeatures: ["Aadhaar OTP authentication", "Biometric authentication", "Paperless workflows", "Secure digital signatures"],
+      eligibility: ["Your Department requires digital document signing."],
+      whatYoullNeed: ["Department onboarding", "Aadhaar authentication integration"],
+      faqs: [{ q: "Is the service compliant?", a: "Yes. It complies with CCA and UIDAI guidelines." }],
+    },
+  },
+  {
+    name: "SMS & WhatsApp Gateway",
+    description:
+      "TNeGA provides centralized SMS and WhatsApp Gateway services that enable Government Departments to communicate with citizens efficiently and at scale.",
+    stats: "660.41 Cr SMS Sent · 30.18 Cr WhatsApp Messages",
+    image: pexelsPhoto(STOCK.elderlyManPhone, 700, 500),
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: [
+        "115 Departments using SMS Gateway",
+        "27 Departments using WhatsApp Gateway",
+        "660.41 crore SMS sent",
+        "30.18 crore WhatsApp messages sent",
+      ],
+      keyFeatures: ["Bulk SMS", "WhatsApp notifications", "Citizen outreach", "Government communications"],
+      eligibility: ["Your Department needs to communicate scheme updates or service notifications."],
+      whatYoullNeed: ["Department onboarding", "Approved communication templates"],
+      faqs: [{ q: "Who can use the gateway?", a: "Government Departments, Boards, PSUs, and Agencies." }],
+    },
+  },
+  {
+    name: "IT Security Audit Framework",
+    description:
+      "TNeGA facilitates mandatory IT Security Audits for Government websites, mobile applications, APIs, and cloud applications through CERT-In empanelled agencies before deployment and during operational changes.",
+    stats: "CERT-In Compliant · STQC Compliant",
+    image: pexelsPhoto(STOCK.engineerAudit, 700, 500),
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: [],
+      keyFeatures: ["Security audits", "CERT-In compliance", "STQC compliance", "Cloud security validation"],
+      eligibility: ["Your Department is deploying or upgrading a digital application."],
+      whatYoullNeed: ["Application details", "Deployment environment"],
+      faqs: [{ q: "When is an audit required?", a: "Before deployment, certificate expiry, major modifications, and cloud migration." }],
+    },
+  },
+  {
+    name: "Nambikkai Inaiyam",
+    description:
+      "Nambikkai Inaiyam (NI) is TNeGA's Blockchain-as-a-Service (BaaS) infrastructure, developed to secure Government documents and data against tampering. Built in line with the Tamil Nadu Blockchain Policy, the platform enables trusted verification of digital records while allowing citizens to access secured documents through the e-Pettagam wallet application.",
+    stats: "27 Certificate Categories · 2 Crore+ Documents Secured",
+    image: pexelsPhoto(STOCK.networkRack, 700, 500),
+    accessPortalHref: "#",
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      statistics: [
+        "27 categories of e-Sevai certificates secured",
+        "9 lakh+ e-Sevai certificates secured",
+        "3 lakh+ education certificates and mark sheets secured",
+        "2 crore+ registered documents secured",
+      ],
+      keyFeatures: [
+        "Blockchain-based document security",
+        "Tamper-proof digital records",
+        "Secure verification of Government documents",
+        "Integration with e-Sevai certificates, education certificates, and Registration Department records",
+        "Citizen access through the e-Pettagam wallet application",
+      ],
+      eligibility: [
+        "Your Government Department wants to secure digital records using blockchain.",
+        "You need to verify blockchain-secured Government documents.",
+        "You wish to access your secured documents through the e-Pettagam wallet.",
+      ],
+      whatYoullNeed: ["A Government-issued document available on the platform.", "Access to the e-Pettagam wallet application, where applicable."],
+      faqs: [
+        {
+          q: "What is Nambikkai Inaiyam?",
+          a: "It is Tamil Nadu's Blockchain-as-a-Service platform that secures Government documents and records against tampering.",
+        },
+        {
+          q: "What types of documents are secured?",
+          a: "The platform secures e-Sevai certificates, academic certificates and mark sheets, licences, and registered land documents.",
+        },
+        {
+          q: "How can citizens access their secured documents?",
+          a: "Citizens can access blockchain-secured documents through the e-Pettagam wallet application.",
+        },
+        {
+          q: "Which department's records are automatically secured?",
+          a: "Documents registered with the Registration Department are automatically fetched and secured on the platform.",
+        },
+      ],
+    },
+  },
 ];
 
 export function slugify(name: string): string {
@@ -452,43 +485,49 @@ export function slugify(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-export const citizenServices: ServiceItem[] = citizenServicesRaw.map((item) => ({
+// One entry per unique item, hrefs resolved. Per-section display lists
+// below are just filtered views of this — a dual-listed item is still a
+// single object, so both views point at the exact same detail page.
+const allItems: ServiceItem[] = serviceItemsRaw.map((item) => ({
   ...item,
   knowMoreHref: `/services/${slugify(item.name)}`,
 }));
 
-export const govtDigitalServices: ServiceItem[] = govtDigitalServicesRaw.map((item) => ({
-  ...item,
-  knowMoreHref: `/services/${slugify(item.name)}`,
-}));
+export const citizenServices: ServiceItem[] = allItems.filter((item) =>
+  item.sections.includes("citizen-services")
+);
+
+export const interdepartmentalProjects: ServiceItem[] = allItems.filter((item) =>
+  item.sections.includes("interdepartmental-projects")
+);
+
+/** The 3rd /services tab — "shared digital services" per Home's own
+ * description copy. Named to avoid colliding with this module's own
+ * "services" subject matter. */
+export const sharedServices: ServiceItem[] = allItems.filter((item) =>
+  item.sections.includes("services")
+);
 
 export type ServiceItemType = "project" | "service";
 
 export interface ServiceItemDetail extends ServiceItem {
   slug: string;
   type: ServiceItemType;
-  /** Which tab/list this item is shown under on /services — used for the
-   * detail page's "back to" link and breadcrumb-ish context. */
-  section: "citizen-services" | "govt-digital-services";
+  /** The item's primary/home section (sections[0]) — used for the detail
+   * page's breadcrumb, back-link, and "Related" carousel filter. */
+  section: ServiceSection;
 }
 
-function toDetailList(items: ServiceItem[], section: ServiceItemDetail["section"]): ServiceItemDetail[] {
-  return items.map((item) => ({
-    ...item,
-    slug: item.knowMoreHref.replace("/services/", ""),
-    type: item.accessPortalHref ? "project" : "service",
-    section,
-  }));
-}
-
-/** Flat, slug-keyed lookup of all 16 items for the /services/[slug] detail
- * route — each entry's `type` decides which template (Project vs Service)
- * it renders with, per the confirmed rule: has an Access Portal -> Project,
- * Know More only -> Service. */
-export const allServiceItems: ServiceItemDetail[] = [
-  ...toDetailList(citizenServices, "citizen-services"),
-  ...toDetailList(govtDigitalServices, "govt-digital-services"),
-];
+/** Flat, slug-keyed lookup of all 16 unique items for the /services/[slug]
+ * detail route — each entry's `type` decides which template (Project vs
+ * Service) it renders with, per the confirmed rule: has an Access Portal
+ * -> Project, Know More only -> Service. */
+export const allServiceItems: ServiceItemDetail[] = allItems.map((item) => ({
+  ...item,
+  slug: item.knowMoreHref.replace("/services/", ""),
+  type: item.accessPortalHref ? "project" : "service",
+  section: item.sections[0],
+}));
 
 export function getServiceItemBySlug(slug: string): ServiceItemDetail | undefined {
   return allServiceItems.find((item) => item.slug === slug);

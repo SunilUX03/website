@@ -4,19 +4,45 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/hooks";
 
 // Purely decorative, additive layer floating around the district map —
-// signals "this is a tech agency" at a glance without claiming any
-// per-district fact (the map itself deliberately avoids inventing
-// per-district numbers, see HeroDistrictMap). Six generic, true
-// categories of TNeGA's actual work, reusing the same descriptive
-// language as About's "What We Do" cards rather than one-off copy.
+// framed around TNeGA's governance mission rather than generic tech-stack
+// buzzwords. Pure mission/role statements, never a per-district claim or
+// invented figure.
 
-function WifiIcon() {
+function MapPinIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <path d="M2 8.5a15 15 0 0 1 20 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M5.5 12.5a10 10 0 0 1 13 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M9 16.5a5 5 0 0 1 6 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="12" cy="20" r="1.2" fill="currentColor" />
+      <path
+        d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="9.5" r="2.2" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function BoltIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
+      <path
+        d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function NetworkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
+      <circle cx="5" cy="6" r="2.2" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="19" cy="6" r="2.2" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="12" cy="18" r="2.2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7 7 10.3 16.2M17 7 13.7 16.2M7.2 6h9.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -32,15 +58,6 @@ function ServerIcon() {
   );
 }
 
-function ShieldIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function CpuIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
@@ -50,24 +67,11 @@ function CpuIcon() {
   );
 }
 
-function CodeIcon() {
+function ChartIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <path d="M8 5 2 12l6 7M16 5l6 7-6 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function SparkleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <path
-        d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path d="M19 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z" fill="currentColor" />
+      <path d="M4 20V10M12 20V4M20 20v-7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 20h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -77,18 +81,21 @@ type Corner = "tl" | "tr" | "ml" | "mr" | "bl" | "br";
 // Corners + mid-edges around the map's perimeter — kept as pure text/icon
 // labels, never a per-district claim.
 const BADGES: { icon: ReactNode; label: string; corner: Corner; delay: number }[] = [
-  { icon: <ServerIcon />, label: "Cloud Infrastructure", corner: "tl", delay: 0 },
-  { icon: <WifiIcon />, label: "Statewide Network", corner: "tr", delay: 1.4 },
-  { icon: <CodeIcon />, label: "Software Development", corner: "ml", delay: 2 },
-  { icon: <SparkleIcon />, label: "AI", corner: "mr", delay: 3.2 },
-  { icon: <ShieldIcon />, label: "Data Security", corner: "bl", delay: 2.6 },
-  { icon: <CpuIcon />, label: "Data Analytics", corner: "br", delay: 0.8 },
+  { icon: <BoltIcon />, label: "Powering Governance", corner: "tl", delay: 0 },
+  { icon: <ServerIcon />, label: "Building Digital Public Infrastructure", corner: "tr", delay: 1.4 },
+  { icon: <ChartIcon />, label: "Transforming Public Services", corner: "ml", delay: 2 },
+  { icon: <NetworkIcon />, label: "Connecting Government", corner: "mr", delay: 3.2 },
+  { icon: <MapPinIcon />, label: "Enabling Digital Tamil Nadu", corner: "bl", delay: 2.6 },
+  { icon: <CpuIcon />, label: "Driving e-Governance", corner: "br", delay: 0.8 },
 ];
 
-// Fixed gap between a badge and the map's actual rendered edge — tight on
-// purpose so the set reads as one cohesive ring around the map instead of
-// scattered across the whole column.
-const GAP_PX = 10;
+// Fixed gap between a badge and the map's actual rendered edge. Tamil
+// Nadu's silhouette bulges unevenly past its own rectangular bounding box
+// (e.g. near the Nilgiris in the west, and around Kanyakumari in the
+// south), so a gap this size is needed to actually clear the district
+// shapes at every corner — a tighter gap reads fine against the box but
+// visibly overlaps the map where it bulges past it.
+const GAP_PX = 34;
 
 // Rough width estimate per badge (icon circle + padding + label text) —
 // used to keep the clamp below from just bounding the anchor point (which

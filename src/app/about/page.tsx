@@ -4,7 +4,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { AboutHero } from "@/components/about/AboutHero";
 import { WhoWeAreHierarchy } from "@/components/about/WhoWeAreHierarchy";
 import { VisionMission } from "@/components/about/VisionMission";
-import { CategoryCards } from "@/components/sections/CategoryCards";
+import { PillarCards } from "@/components/sections/PillarCards";
 import { OrgChart } from "@/components/about/OrgChart";
 import { LeadershipTeam } from "@/components/about/LeadershipTeam";
 import { BoardOfDirectors } from "@/components/about/BoardOfDirectors";
@@ -31,7 +31,7 @@ export default function About() {
         <AboutHero />
         <WhoWeAreHierarchy />
         <VisionMission />
-        <CategoryCards />
+        <PillarCards />
         <Metrics />
         <OrgChart />
         <LeadershipTeam />

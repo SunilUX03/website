@@ -239,21 +239,33 @@ export function NodeGraphCanvas({ className }: { className?: string }) {
     };
     window.addEventListener("resize", handleResize);
 
+    // Listening on window (not the canvas) keeps the ambient effect alive
+    // across truly empty space — including areas that sit inside a layout
+    // wrapper's bounding box but have nothing drawn in them — rather than
+    // going dead the instant any structural div happens to cover that
+    // pixel. But it must NOT fire while the pointer is over the readable
+    // hero copy (headline, description, CTAs, leadership cards): that's
+    // marked with [data-hero-text] in Hero.tsx, and is checked here via
+    // the event's real target so hovering/tapping that content never
+    // lights up the nodes underneath and distracts from reading it.
+    const isOverHeroText = (e: PointerEvent) =>
+      (e.target as Element | null)?.closest("[data-hero-text]") != null;
+
     const handlePointerMove = (e: PointerEvent) => {
       if (reducedMotion) return;
+      if (isOverHeroText(e)) {
+        pointer = { x: -9999, y: -9999, active: false };
+        return;
+      }
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      // Only treat the pointer as active while it's actually over the
-      // canvas's box. Listening on window (rather than the canvas itself)
-      // means the highlight still tracks the cursor where the district
-      // map or text column sit on top of the canvas — those overlays no
-      // longer "block" the effect.
       const inside = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
       pointer = { x, y, active: inside };
     };
     const handlePointerDown = (e: PointerEvent) => {
       if (reducedMotion) return;
+      if (isOverHeroText(e)) return;
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;

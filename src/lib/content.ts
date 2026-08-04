@@ -16,11 +16,12 @@ export const nav = {
     { label: "Organisation structure", href: "/about#organisation-structure" },
     { label: "Careers", href: "/about/careers" },
   ],
-  // Mirrors the 2-section model on /services: just the 2 sections
+  // Mirrors the 3-section model on /services: just the 3 sections
   // themselves as direct links, not a sub-menu of individual services.
   services: [
     { label: "Citizen Services", href: "/services#citizen-services" },
-    { label: "Govt Digital Services", href: "/services#govt-digital-services" },
+    { label: "Interdepartmental Projects", href: "/services#interdepartmental-projects" },
+    { label: "Services", href: "/services#services" },
   ],
   notifications: {
     updates: [
@@ -89,7 +90,7 @@ export const pillars = [
     title: "Interdepartmental Projects",
     description:
       "TNeGA collaborates with Government departments to design, develop, and implement digital solutions that improve governance and service delivery.",
-    href: "/services#govt-digital-services",
+    href: "/services#interdepartmental-projects",
     linkLabel: "View all Interdepartmental Projects",
     itemNames: [
       "TNGIS Tamil Nilam",
@@ -103,7 +104,7 @@ export const pillars = [
     title: "Services",
     description:
       "TNeGA provides shared digital services including digital identity, DBT, e-Sign, cybersecurity, and technology consulting to support e-Governance across Tamil Nadu.",
-    href: "/services#govt-digital-services",
+    href: "/services#services",
     linkLabel: "View all Services",
     itemNames: [
       "Nambikkai Inaiyam",
@@ -123,45 +124,6 @@ export const metrics = [
   { value: 24.27, prefix: "", suffix: " Lakh", label: "Students on UMIS", decimals: 2 },
   { value: 48, prefix: "", suffix: " Crore", label: "Aadhaar Authentication Transactions" },
   { value: 2, prefix: "", suffix: "+ Crore", label: "Documents Secured on Blockchain" },
-];
-
-export const categories = [
-  {
-    title: "Software Development",
-    description:
-      "Design and build secure, scalable digital systems for government services and departmental platforms.",
-    image: pexelsPhoto(STOCK.developer, 700, 500),
-  },
-  {
-    title: "UI/UX Designing",
-    description:
-      "Craft accessible, easy-to-use interfaces so citizens and officers can navigate government services with ease.",
-    image: pexelsPhoto(STOCK.presentation, 700, 500),
-  },
-  {
-    title: "AI/ML",
-    description:
-      "Apply artificial intelligence and machine learning to make governance smarter, faster and more responsive.",
-    image: pexelsPhoto(STOCK.programmer, 700, 500),
-  },
-  {
-    title: "Blockchain",
-    description:
-      "Use distributed-ledger technology for tamper-evident records and trusted, transparent government transactions.",
-    image: pexelsPhoto(STOCK.networkRack, 700, 500),
-  },
-  {
-    title: "GIS",
-    description:
-      "Build geospatial platforms mapping land, assets and civic amenities to support data-driven decisions.",
-    image: pexelsPhoto(STOCK.dataCenter, 700, 500),
-  },
-  {
-    title: "Cybersecurity",
-    description:
-      "Protect government applications and citizen data through audits, compliance and CERT-In empanelled security practices.",
-    image: pexelsPhoto(STOCK.itTechnician, 700, 500),
-  },
 ];
 
 export const projects = [

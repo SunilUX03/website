@@ -1,21 +1,64 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { citizenServices, govtDigitalServices, ServiceItem } from "@/lib/services-content";
+import {
+  citizenServices,
+  interdepartmentalProjects,
+  sharedServices,
+  ServiceItem,
+} from "@/lib/services-content";
+import { pillars } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
 import { MobileCardStack } from "@/components/ui/MobileCardStack";
 import { useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
+// Reuses Home's governance-band copy verbatim (see `pillars` in
+// lib/content.ts) so this intro never drifts out of sync with what Home
+// already says about the same 3 sections — one source of truth.
+const TINT_COLOR = {
+  sky: "var(--color-gradient-sky)",
+  peach: "var(--color-gradient-peach)",
+  mint: "var(--color-gradient-mint)",
+} as const;
+
 const TABS = [
-  { id: "citizen-services", label: "Citizen Services", items: citizenServices },
-  { id: "govt-digital-services", label: "Govt Digital Services", items: govtDigitalServices },
+  {
+    id: "citizen-services",
+    label: "Citizen Services",
+    items: citizenServices,
+    tint: "sky" as const,
+  },
+  {
+    id: "interdepartmental-projects",
+    label: "Interdepartmental Projects",
+    items: interdepartmentalProjects,
+    tint: "peach" as const,
+  },
+  { id: "services", label: "Services", items: sharedServices, tint: "mint" as const },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
 function isTabId(value: string): value is TabId {
   return TABS.some((tab) => tab.id === value);
+}
+
+function getIntroDescription(label: string) {
+  return pillars.find((p) => p.title === label)?.description ?? "";
+}
+
+function SectionIntro({ description, tint }: { description: string; tint: keyof typeof TINT_COLOR }) {
+  return (
+    <div className="relative mb-8 overflow-hidden rounded-2xl border border-hairline bg-surface-card p-6 md:p-8">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl"
+        style={{ background: `radial-gradient(circle, ${TINT_COLOR[tint]} 0%, transparent 70%)`, opacity: 0.55 }}
+      />
+      <p className="type-body-md relative max-w-[70ch] text-[var(--color-body)]">{description}</p>
+    </div>
+  );
 }
 
 function ServiceGridDesktop({ items }: { items: readonly ServiceItem[] }) {
@@ -28,8 +71,10 @@ function ServiceGridDesktop({ items }: { items: readonly ServiceItem[] }) {
   );
 }
 
-// Same card-deck interaction as Home's PillarCards / About's Awards —
-// MobileCardStack is the one shared implementation all three now use.
+// Services' own vertical card-deck scroll — kept distinct from the
+// horizontal AutoCarousel used elsewhere (Awards, Governing Board Members,
+// Home's PillarCards) per explicit instruction: this page's mobile grid
+// stays on the stacking mechanic, not a carousel.
 function ServiceGridMobile({ items, topPx }: { items: readonly ServiceItem[]; topPx: number }) {
   return (
     <MobileCardStack
@@ -55,12 +100,16 @@ export function ServicesTabs() {
   const reducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   // Still tracked (not the tab bar itself anymore — that's no longer
   // sticky) because MobileCardStack's own internal sticky viewport needs
-  // to know the nav's real height to sit flush below it, same as Home's
-  // PillarCards / About's Awards.
+  // to know the nav's real height to sit flush below it.
   const [navHeight, setNavHeight] = useState(80);
+  const navHeightRef = useRef(navHeight);
+  useEffect(() => {
+    navHeightRef.current = navHeight;
+  }, [navHeight]);
   useEffect(() => {
     const stickyNav = document.querySelector("header .sticky.z-50");
     if (!stickyNav) return;
@@ -70,16 +119,31 @@ export function ServicesTabs() {
   }, []);
 
   useEffect(() => {
-    const syncFromHash = () => {
+    // Scrolls to the tab bar itself (not just the card grid) so a link
+    // straight into a section — e.g. Home's "View all Citizen Services" —
+    // always lands with all 3 tabs AND the cards in view, never just the
+    // cards with no context for which tab is active. Programmatic, not a
+    // native #hash jump: the tabpanel used to carry the hash as its own
+    // `id`, but that id doesn't exist in the DOM for any tab besides the
+    // default one until this effect has already run, so the browser's own
+    // anchor-scroll had nothing reliable to land on for the other two.
+    const syncFromHash = (instant: boolean) => {
       const hash = window.location.hash.replace("#", "");
-      if (isTabId(hash)) {
-        setActive(hash);
-        setDisplayed(hash);
-      }
+      if (!isTabId(hash)) return;
+      setActive(hash);
+      setDisplayed(hash);
+      requestAnimationFrame(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const top = el.getBoundingClientRect().top + window.scrollY - navHeightRef.current - 16;
+        window.scrollTo({ top, behavior: instant || reducedMotion ? "auto" : "smooth" });
+      });
     };
-    syncFromHash();
-    window.addEventListener("hashchange", syncFromHash);
-    return () => window.removeEventListener("hashchange", syncFromHash);
+    syncFromHash(true);
+    const onHashChange = () => syncFromHash(false);
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => () => {
@@ -108,7 +172,7 @@ export function ServicesTabs() {
   const displayedTab = TABS.find((tab) => tab.id === displayed) ?? TABS[0];
 
   return (
-    <section className="bg-canvas">
+    <section ref={sectionRef} className="bg-canvas">
       {/* Not sticky — tried twice, caused more problems than it solved
           (gaps, overlap, footer bleeding in). Just a normal in-flow bar. */}
       <div className="border-b border-hairline bg-canvas">
@@ -132,7 +196,6 @@ export function ServicesTabs() {
 
       <Container className="pb-xxl pt-lg md:pb-section md:pt-xl">
         <div
-          id={displayedTab.id}
           role="tabpanel"
           className="transition-opacity ease-in-out"
           style={{
@@ -140,6 +203,7 @@ export function ServicesTabs() {
             transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
           }}
         >
+          <SectionIntro description={getIntroDescription(displayedTab.label)} tint={displayedTab.tint} />
           {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
           {isDesktop === false && <ServiceGridMobile items={displayedTab.items} topPx={navHeight} />}
         </div>

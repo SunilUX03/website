@@ -12,7 +12,7 @@ interface LeadershipCardProps {
 // unintended hierarchy rather than a design choice.
 export function LeadershipCard({ name, title, photo, quote }: LeadershipCardProps) {
   return (
-    <div className="card-feature flex w-full max-w-full shrink items-center gap-3 !p-3 sm:w-auto sm:min-w-[225px]">
+    <div className="card-feature flex w-full max-w-full shrink items-center gap-3 !p-3 sm:w-[340px]">
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
         <Image src={photo} alt={name} fill sizes="56px" className="object-cover" />
       </div>

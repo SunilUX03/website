@@ -35,9 +35,7 @@ const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
  * prevents the card from drifting off the left edge). Cards size to their
  * own content height — no fixed viewport height stretching them.
  *
- * Used by Home's PillarCards, About's Awards, and Services (ServicesTabs)
- * so every mobile card grid shares one identical, verified mechanism —
- * see [[same-card-interaction-standing-rule]].
+ * Services page's own mobile card grid — see [[same-card-interaction-standing-rule]].
  */
 export function MobileCardStack<T>({
   items,

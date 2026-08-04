@@ -44,7 +44,10 @@ export function HeroDistrictMap({ className }: { className?: string }) {
         role="img"
         aria-label="Interactive map of Tamil Nadu districts"
         style={{
-          animation: reducedMotion ? "none" : "hero-map-float 9s ease-in-out infinite",
+          // The float animation lives on Hero.tsx's shared wrapper (not
+          // here) so the tech badges — a separate sibling overlay — move
+          // in exact lockstep with the map instead of floating drifting
+          // out from under a badge layer measured once and then frozen.
           filter: "drop-shadow(0 18px 30px rgba(29,63,143,0.18))",
         }}
       >

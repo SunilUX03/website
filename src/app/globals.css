@@ -74,10 +74,22 @@
     border-color: var(--color-hairline);
   }
 
+  /* Several sections use decorative blur "orbs" that deliberately bleed
+     past their own container edges (e.g. -left-32, -right-24) for a soft
+     glow effect. Without this, that bleed can push the actual page width
+     past 100vw on mobile, making the whole page swipeable sideways and
+     clipping left-aligned text off-screen after a stray horizontal touch
+     scroll — not a per-section bug, so fixed once here rather than
+     hunting down every offending orb. */
+  html {
+    overflow-x: hidden;
+  }
+
   body {
     font-family: var(--font-body);
     color: var(--color-body);
     background-color: var(--color-canvas);
+    overflow-x: hidden;
   }
 
   ::selection {
