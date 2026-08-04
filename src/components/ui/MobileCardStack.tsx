@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
-import { useScroll, useMotionValueEvent } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * Math.min(Math.max(t, 0), 1);
@@ -59,13 +58,29 @@ export function MobileCardStack<T>({
   deckHeightVh?: number;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
   const [progress, setProgress] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (p) => setProgress(p));
+
+  // Plain scroll listener rather than framer-motion's useScroll — same
+  // "start start" → "end end" progress math, but self-contained and easy
+  // to reason about/instrument directly while chasing the "stuck on the
+  // first card" report, instead of trusting a third-party hook's internals.
+  useEffect(() => {
+    const compute = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const p = total > 0 ? Math.min(Math.max(-rect.top / total, 0), 1) : 0;
+      setProgress(p);
+    };
+    compute();
+    window.addEventListener("scroll", compute, { passive: true });
+    window.addEventListener("resize", compute);
+    return () => {
+      window.removeEventListener("scroll", compute);
+      window.removeEventListener("resize", compute);
+    };
+  }, []);
 
   const count = items.length;
   const segments = Math.max(count - 1, 1);

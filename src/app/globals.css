@@ -80,16 +80,21 @@
      past 100vw on mobile, making the whole page swipeable sideways and
      clipping left-aligned text off-screen after a stray horizontal touch
      scroll — not a per-section bug, so fixed once here rather than
-     hunting down every offending orb. */
+     hunting down every offending orb. `clip` (not `hidden`) deliberately:
+     `overflow-x: hidden` on html/body also implicitly computes
+     `overflow-y: auto`, turning both into scroll containers — which broke
+     the Services page's scroll-driven `position: sticky` card stack.
+     `clip` blocks the horizontal bleed without creating a new scrolling
+     box on either element. */
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     font-family: var(--font-body);
     color: var(--color-body);
     background-color: var(--color-canvas);
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
