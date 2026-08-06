@@ -2,19 +2,18 @@
 
 import { RefObject } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { TamilMotifBackdrop } from "./TamilMotifBackdrop";
 import { useReducedMotion } from "@/lib/hooks";
 
 /**
  * Hero background — canvas colour throughout (the brand never introduces
  * a saturated colour wash, per the design system: soft gradient orbs are
  * the only "colour" moment, always at low alpha). Three very-slow-drifting
- * "sky" orbs in the brand's existing blue/lavender/mint pastels, a faint
- * film-grain for tactile depth, and a small kolam-flower accent — no
- * pointer-reactivity anywhere, which was exactly the "interaction" on the
- * old background people didn't like. Parallax-scrolls noticeably slower
- * than the page via `heroRef`'s own scroll progress, so it visibly lags
- * "upward" relative to the content as you scroll past.
+ * "sky" orbs in the brand's existing blue/lavender/mint pastels and a faint
+ * film-grain for tactile depth — no pointer-reactivity anywhere, which was
+ * exactly the "interaction" on the old background people didn't like.
+ * Parallax-scrolls noticeably slower than the page via `heroRef`'s own
+ * scroll progress, so it visibly lags "upward" relative to the content as
+ * you scroll past.
  */
 export function HeroBackdrop({ heroRef }: { heroRef: RefObject<HTMLElement | null> }) {
   const reducedMotion = useReducedMotion();
@@ -40,8 +39,6 @@ export function HeroBackdrop({ heroRef }: { heroRef: RefObject<HTMLElement | nul
       />
 
       <div aria-hidden className="bg-grain absolute inset-0 opacity-[0.02]" />
-
-      <TamilMotifBackdrop className="absolute -bottom-[10%] right-[6%] h-[38%] w-[38%] max-w-[300px] opacity-50 md:right-[16%]" />
     </motion.div>
   );
 }

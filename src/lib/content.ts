@@ -41,6 +41,10 @@ export const nav = {
 export const hero = {
   agencyLabel: "Tamil Nadu e-Governance Agency",
   headline: "Powering Digital Governance in Tamil Nadu",
+  // The word in `headline` that this list's first entry must match exactly
+  // — the hero swaps just that one word through these alternatives on a
+  // timer rather than repeating stats already shown in the Metrics section.
+  headlineCycleWords: ["Governance", "Services", "Infrastructure"],
   // Short, hero-sized supporting line — the fuller agency description below
   // moved to the About/Leadership band, which reuses `description` as-is.
   tagline:
