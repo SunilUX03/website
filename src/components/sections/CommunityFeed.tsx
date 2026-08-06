@@ -6,6 +6,7 @@ import { motion, useMotionValue } from "framer-motion";
 import { announcements, socialMedia } from "@/lib/content";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
+import { PhotoTile } from "@/components/ui/PhotoTile";
 import { useReducedMotion } from "@/lib/hooks";
 import {
   FacebookIcon,
@@ -167,11 +168,16 @@ export function CommunityFeed() {
               renderItem={(item) => (
                 <a
                   href={item.href}
-                  className="block rounded-xl border border-hairline bg-surface-card p-4 transition-colors hover:border-hairline-strong"
+                  className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
                 >
-                  <span className="type-caption text-[var(--color-muted)]">{item.timestamp}</span>
-                  <p className="type-body-strong mt-1 text-ink">{item.heading}</p>
-                  <p className="type-body-sm mt-1 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
+                  <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                    <PhotoTile src={item.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="64px" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="type-caption text-[var(--color-muted)]">{item.timestamp}</span>
+                    <p className="type-body-strong mt-0.5 text-ink">{item.heading}</p>
+                    <p className="type-body-sm mt-0.5 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
+                  </span>
                 </a>
               )}
             />
@@ -200,14 +206,17 @@ export function CommunityFeed() {
                   return (
                     <a
                       href={post.href}
-                      className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-4 transition-colors hover:border-hairline-strong"
+                      className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
                     >
-                      <span className="voice-icon-circular flex h-8 w-8 shrink-0 items-center justify-center text-ink">
-                        {Icon && <Icon className="h-4 w-4" />}
+                      <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                        <PhotoTile src={post.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="64px" />
+                        <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
+                          {Icon && <Icon className="h-2.5 w-2.5" />}
+                        </span>
                       </span>
                       <span className="min-w-0">
                         <p className="type-body-sm line-clamp-2 text-ink">{post.text}</p>
-                        <span className="type-caption mt-1 block text-[var(--color-muted)]">{post.date}</span>
+                        <span className="type-caption mt-0.5 block text-[var(--color-muted)]">{post.date}</span>
                       </span>
                     </a>
                   );

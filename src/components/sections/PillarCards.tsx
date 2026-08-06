@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
 type Pillar = (typeof pillars)[number];
+type Items = ReturnType<typeof getServiceItemsByNames>;
 
 const ACCENT: Record<string, string> = {
   "Citizen Services": "var(--color-gradient-sky)",
@@ -55,201 +56,178 @@ function PillarIcon({ title, className }: { title: string; className?: string })
   );
 }
 
+function ProjectCard({ item }: { item: Items[number] }) {
+  return (
+    <Link
+      href={item.knowMoreHref}
+      className="group/card flex w-[168px] shrink-0 flex-col overflow-hidden rounded-xl border border-hairline bg-canvas transition-colors hover:border-hairline-strong"
+    >
+      <PhotoTile
+        src={item.image}
+        alt=""
+        aspect="aspect-[4/3]"
+        className="transition-transform duration-300 group-hover/card:scale-[1.04]"
+        sizes="168px"
+      />
+      <div className="p-3">
+        <p className="type-body-sm truncate text-ink">{item.name}</p>
+        <p className="type-caption mt-0.5 truncate text-[var(--color-muted)]">
+          {item.stats.split("·")[0].trim()}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 /**
- * Grid card. `isOpen` swaps it from the default image+blurb summary to a
- * taller, elevated project list (thumbnails + stats) — content is driven
- * by `displayPillar`/`displayItems`, which can differ from this card's own
- * pillar once the bottom tab row inside the elevated card is used to
- * switch, so the elevated card stays put while what it shows changes.
+ * One rail in the floating hover-accordion: narrow with an icon and a
+ * vertically-set heading when it isn't the active pillar, wide with the
+ * pillar's project cards in a horizontal-scroll row when it is.
  */
-function PillarCard({
-  pillar,
-  items,
-  isOpen,
-  faded,
-  displayPillar,
-  displayItems,
-  onOpen,
-  onClose,
-  onSelectPillar,
-}: {
+function DesktopRail({ pillar, items, active, onActivate }: {
   pillar: Pillar;
-  items: ReturnType<typeof getServiceItemsByNames>;
-  isOpen: boolean;
-  faded: boolean;
-  displayPillar: Pillar;
-  displayItems: ReturnType<typeof getServiceItemsByNames>;
-  onOpen: () => void;
-  onClose: () => void;
-  onSelectPillar: (i: number) => void;
+  items: Items;
+  active: boolean;
+  onActivate: () => void;
 }) {
   const accent = ACCENT[pillar.title] ?? "var(--color-gradient-sky)";
-  const cover = items[0]?.image;
 
   return (
     <div
-      className={`card-feature group relative flex flex-col overflow-hidden !p-0 transition-all duration-300 ease-out ${
-        isOpen
-          ? "z-20 h-auto min-h-[500px] -translate-y-2 shadow-[0_28px_56px_rgba(12,10,9,0.20)] md:h-[500px] md:min-h-0"
-          : "h-[440px] shadow-none"
-      } ${faded ? "md:scale-[0.97] md:opacity-70" : ""}`}
+      className="relative h-[480px] overflow-hidden rounded-2xl border border-hairline bg-surface-card shadow-[0_10px_30px_rgba(12,10,9,0.06)] transition-[flex-basis] duration-500 ease-[cubic-bezier(.22,.9,.34,1)]"
+      style={{ flexBasis: active ? "66%" : "17%", flexGrow: 0, flexShrink: 0 }}
       onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") onOpen();
+        if (e.pointerType === "mouse") onActivate();
       }}
-      onPointerLeave={(e) => {
-        if (e.pointerType === "mouse") onClose();
-      }}
+      onFocus={onActivate}
     >
-      {/* ---------- Default summary ---------- */}
-      <div
-        className={`flex h-full flex-col transition-opacity duration-200 ${
-          isOpen ? "pointer-events-none absolute inset-0 opacity-0" : "opacity-100"
+      {/* Collapsed face — icon + vertical heading, cross-fades out */}
+      <button
+        type="button"
+        onClick={onActivate}
+        aria-label={`Show ${pillar.title} projects`}
+        className={`absolute inset-0 flex h-full w-full flex-col items-center justify-between gap-6 py-8 transition-opacity duration-300 ${
+          active ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
-        <div className="relative h-[42%] shrink-0 overflow-hidden">
-          {cover && <PhotoTile src={cover} alt="" aspect="aspect-auto" className="h-full w-full" sizes="(min-width: 768px) 33vw, 100vw" />}
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(to top, rgba(12,10,9,0.35) 0%, transparent 55%)" }}
-          />
-          <span
-            className="voice-icon-circular absolute bottom-3 left-4 flex h-11 w-11 items-center justify-center text-ink shadow-[0_6px_16px_rgba(12,10,9,0.18)]"
-            style={{ backgroundColor: accent }}
-          >
-            <PillarIcon title={pillar.title} className="h-5 w-5" />
-          </span>
-        </div>
+        <span
+          className="voice-icon-circular flex h-11 w-11 shrink-0 items-center justify-center text-ink"
+          style={{ backgroundColor: accent }}
+        >
+          <PillarIcon title={pillar.title} className="h-5 w-5" />
+        </span>
+        <span
+          className="type-title-sm flex-1 whitespace-nowrap text-ink"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+        >
+          {pillar.title}
+        </span>
+        <span className="type-caption text-[var(--color-muted)]">{items.length}</span>
+      </button>
 
-        <div className="flex flex-1 flex-col p-6 md:p-7">
-          <h3 className="type-title-md text-ink">{pillar.title}</h3>
-          <p className="type-body-sm mt-2 flex-1 text-[var(--color-body)]">{pillar.description}</p>
-
-          <div className="mt-4 flex items-center justify-between">
-            <span className="type-caption-uppercase text-[var(--color-muted)]">
-              {items.length} {items.length === 1 ? "project" : "projects"}
-            </span>
-            <Link
-              href={pillar.href}
-              aria-label={pillar.linkLabel}
-              className="type-caption font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+      {/* Expanded face — header + project cards */}
+      <div
+        className={`absolute inset-0 flex h-full flex-col p-6 transition-opacity duration-300 ${
+          active ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="mb-4 flex shrink-0 items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span
+              className="voice-icon-circular flex h-10 w-10 shrink-0 items-center justify-center text-ink"
+              style={{ backgroundColor: accent }}
             >
-              View all
-              <span aria-hidden>{" →"}</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* ---------- Expanded / elevated: shared pillar switcher ---------- */}
-      <div
-        className={`flex h-full flex-col p-5 transition-opacity duration-200 md:p-6 ${
-          isOpen ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
-        }`}
-      >
-        <div className="mb-3 flex shrink-0 items-center gap-3">
-          <span
-            className="voice-icon-circular flex h-9 w-9 shrink-0 items-center justify-center text-ink"
-            style={{ backgroundColor: ACCENT[displayPillar.title] }}
-          >
-            <PillarIcon title={displayPillar.title} className="h-4 w-4" />
-          </span>
-          <h3 className="type-title-sm text-ink">{displayPillar.title}</h3>
-        </div>
-
-        <ul className="flex-1 space-y-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
-          {displayItems.map((item) => (
-            <li key={item.name}>
-              <Link
-                href={item.knowMoreHref}
-                className="voice-row flex items-center gap-3 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-strong)]"
-              >
-                <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md">
-                  <PhotoTile src={item.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="32px" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="type-body-sm block truncate text-ink">{item.name}</span>
-                </span>
-                <span className="type-caption shrink-0 text-[var(--color-muted)]">
-                  {item.stats.split("·")[0].trim()}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-3 flex shrink-0 items-center justify-between gap-3 border-t border-hairline pt-3">
-          <div className="flex gap-1.5">
-            {pillars.map((p, i) => (
-              <button
-                key={p.title}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectPillar(i);
-                }}
-                aria-label={`Show ${p.title}`}
-                aria-current={p.title === displayPillar.title}
-                className={`h-2 rounded-full transition-all duration-200 ${
-                  p.title === displayPillar.title
-                    ? "w-6 bg-[var(--color-primary-blue)]"
-                    : "w-2 bg-[var(--color-hairline-strong)] hover:bg-[var(--color-muted)]"
-                }`}
-              />
-            ))}
+              <PillarIcon title={pillar.title} className="h-5 w-5" />
+            </span>
+            <div>
+              <h3 className="type-title-md text-ink">{pillar.title}</h3>
+              <p className="type-body-sm mt-1 max-w-[46ch] text-[var(--color-body)]">{pillar.description}</p>
+            </div>
           </div>
           <Link
-            href={displayPillar.href}
-            className="type-caption shrink-0 font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+            href={pillar.href}
+            aria-label={pillar.linkLabel}
+            className="type-caption shrink-0 whitespace-nowrap font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
           >
             View all
             <span aria-hidden>{" →"}</span>
           </Link>
         </div>
-      </div>
 
-      {/* Touch-only toggle — hover doesn't exist on touch. */}
+        <div className="flex flex-1 gap-3 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+          {items.map((item) => (
+            <ProjectCard key={item.name} item={item} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Mobile: a plain tap-to-expand accordion — no rotated text, no
+ * horizontal rail metaphor, since neither survives a 375px viewport. */
+function MobileAccordion({ pillar, items, open, onToggle }: {
+  pillar: Pillar;
+  items: Items;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const accent = ACCENT[pillar.title] ?? "var(--color-gradient-sky)";
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-hairline bg-surface-card">
       <button
         type="button"
-        onClick={() => (isOpen ? onClose() : onOpen())}
-        aria-label={isOpen ? `Hide ${pillar.title} projects` : `Show ${pillar.title} projects`}
-        aria-expanded={isOpen}
-        className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-hairline-strong bg-surface-card/90 text-ink md:hidden"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 p-5 text-left"
       >
+        <span
+          className="voice-icon-circular flex h-10 w-10 shrink-0 items-center justify-center text-ink"
+          style={{ backgroundColor: accent }}
+        >
+          <PillarIcon title={pillar.title} className="h-5 w-5" />
+        </span>
+        <span className="flex-1">
+          <span className="type-title-sm block text-ink">{pillar.title}</span>
+          <span className="type-caption text-[var(--color-muted)]">{items.length} projects</span>
+        </span>
         <svg
           viewBox="0 0 24 24"
-          className={`h-4 w-4 transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+          className={`h-5 w-5 shrink-0 text-[var(--color-muted)] transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           fill="none"
-          aria-hidden
         >
-          <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
+
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <p className="type-body-sm px-5 pb-4 text-[var(--color-body)]">{pillar.description}</p>
+          <div className="flex gap-3 overflow-x-auto px-5 pb-5 [scrollbar-width:thin]">
+            {items.map((item) => (
+              <ProjectCard key={item.name} item={item} />
+            ))}
+          </div>
+          <Link
+            href={pillar.href}
+            className="type-caption block px-5 pb-5 font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+          >
+            View all {pillar.title}
+            <span aria-hidden>{" →"}</span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
 
 export function PillarCards() {
-  // Which card is visually open (elevated). Set by a mouse hover-enter on
-  // desktop or the tap-toggle on touch — both funnel into the same state,
-  // guarded to mouse-only in the pointer handlers below so a stray touch
-  // "hover" can't fight the tap toggle.
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  // Which pillar's content the open card is currently showing — defaults
-  // to the open card's own pillar, but can diverge after a tab click
-  // inside it, without moving the elevated card itself.
-  const [switchedIndex, setSwitchedIndex] = useState<number | null>(null);
-
-  const displayIndex = switchedIndex ?? openIndex ?? 0;
-
-  const open = (i: number) => {
-    setOpenIndex(i);
-    setSwitchedIndex(null);
-  };
-  const close = () => {
-    setOpenIndex(null);
-    setSwitchedIndex(null);
-  };
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [mobileOpen, setMobileOpen] = useState<number>(0);
+  const active = hovered ?? 0;
 
   return (
     <section className="bg-canvas-soft">
@@ -261,19 +239,33 @@ export function PillarCards() {
           How TNeGA powers governance across Tamil Nadu
         </h2>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Desktop / tablet: floating hover-accordion rail */}
+        <div
+          className="hidden gap-4 md:flex"
+          onPointerLeave={(e) => {
+            if (e.pointerType === "mouse") setHovered(null);
+          }}
+        >
           {pillars.map((pillar, i) => (
-            <PillarCard
+            <DesktopRail
               key={pillar.title}
               pillar={pillar}
               items={PILLAR_ITEMS[i]}
-              isOpen={openIndex === i}
-              faded={openIndex !== null && openIndex !== i}
-              displayPillar={pillars[openIndex === i ? displayIndex : i]}
-              displayItems={PILLAR_ITEMS[openIndex === i ? displayIndex : i]}
-              onOpen={() => open(i)}
-              onClose={close}
-              onSelectPillar={setSwitchedIndex}
+              active={active === i}
+              onActivate={() => setHovered(i)}
+            />
+          ))}
+        </div>
+
+        {/* Mobile: stacked tap accordion */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {pillars.map((pillar, i) => (
+            <MobileAccordion
+              key={pillar.title}
+              pillar={pillar}
+              items={PILLAR_ITEMS[i]}
+              open={mobileOpen === i}
+              onToggle={() => setMobileOpen((cur) => (cur === i ? -1 : i))}
             />
           ))}
         </div>

@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { hero } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
+import { useReducedMotion } from "@/lib/hooks";
 
 type Leader = (typeof hero.leaders)[number];
 
@@ -38,9 +40,24 @@ function LeaderPortrait({ leader, size }: { leader: Leader; size: "lg" | "sm" })
  */
 export function AboutLeadership() {
   const [cm, minister] = hero.leaders;
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const reducedMotion = useReducedMotion();
+
+  // Scroll-linked (not IntersectionObserver-gated) entrance — the whole
+  // band rises, scales up slightly and fades in as it's scrolled into the
+  // lower half of the viewport, rather than snapping in once "visible".
+  // This is the "next section comes in with parallax" the redesign asked
+  // for right after the hero.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 0.55"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [reducedMotion ? 0 : 70, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [reducedMotion ? 1 : 0.95, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [reducedMotion ? 1 : 0, 1]);
 
   return (
-    <section className="relative overflow-hidden bg-canvas-soft">
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative overflow-hidden bg-canvas-soft">
       <div
         aria-hidden
         className="orb-drift-a pointer-events-none absolute left-1/2 top-0 h-[360px] w-[500px] -translate-x-1/2 rounded-full blur-3xl"
@@ -50,46 +67,42 @@ export function AboutLeadership() {
         }}
       />
 
-      <Container className="relative py-xxl md:py-section">
-        <div className="flex flex-col items-center gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="max-w-[640px] text-center"
-          >
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About TNeGA</p>
-            <h2
-              className="type-display-lg mb-5 bg-gradient-to-r from-[var(--color-primary-blue)] to-[var(--color-gradient-lavender)] bg-clip-text font-bold text-transparent"
-              style={{ WebkitTextFillColor: "transparent" }}
-            >
-              Leading Digital Tamil Nadu
-            </h2>
-            <p className="type-body-md text-[var(--color-body)]">{hero.description}</p>
-          </motion.div>
+      <motion.div style={{ y, scale, opacity }}>
+        <Container className="relative py-xxl md:py-section">
+          <div className="flex flex-col items-center gap-10">
+            <div className="max-w-[640px] text-center">
+              <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About TNeGA</p>
+              <h2
+                className="type-display-lg mb-5 bg-gradient-to-r from-[var(--color-primary-blue)] to-[var(--color-gradient-lavender)] bg-clip-text font-bold text-transparent"
+                style={{ WebkitTextFillColor: "transparent" }}
+              >
+                Leading Digital Tamil Nadu
+              </h2>
+              <p className="type-body-md text-[var(--color-body)]">{hero.description}</p>
+            </div>
 
-          {/* Mobile: portraits grouped together below the copy, size
-              hierarchy still readable side by side. */}
-          <div className="flex items-end justify-center gap-6 md:hidden">
-            <LeaderPortrait leader={cm} size="lg" />
-            <LeaderPortrait leader={minister} size="sm" />
+            {/* Mobile: portraits grouped together below the copy, size
+                hierarchy still readable side by side. */}
+            <div className="flex items-end justify-center gap-6 md:hidden">
+              <LeaderPortrait leader={cm} size="lg" />
+              <LeaderPortrait leader={minister} size="sm" />
+            </div>
           </div>
-        </div>
 
-        {/* Desktop: portraits flank the copy at the section's edges,
-            matching the reference layout — needs its own markup rather
-            than reordering the mobile row, since "grouped together" and
-            "split to the edges" aren't the same DOM shape. */}
-        <div className="pointer-events-none absolute inset-0 hidden items-center justify-between px-6 md:flex lg:px-16">
-          <div className="pointer-events-auto">
-            <LeaderPortrait leader={cm} size="lg" />
+          {/* Desktop: portraits flank the copy at the section's edges,
+              matching the reference layout — needs its own markup rather
+              than reordering the mobile row, since "grouped together" and
+              "split to the edges" aren't the same DOM shape. */}
+          <div className="pointer-events-none absolute inset-0 hidden items-center justify-between px-6 md:flex lg:px-16">
+            <div className="pointer-events-auto">
+              <LeaderPortrait leader={cm} size="lg" />
+            </div>
+            <div className="pointer-events-auto">
+              <LeaderPortrait leader={minister} size="sm" />
+            </div>
           </div>
-          <div className="pointer-events-auto">
-            <LeaderPortrait leader={minister} size="sm" />
-          </div>
-        </div>
-      </Container>
+        </Container>
+      </motion.div>
     </section>
   );
 }

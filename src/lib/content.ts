@@ -39,6 +39,7 @@ export const nav = {
 };
 
 export const hero = {
+  agencyLabel: "Tamil Nadu e-Governance Agency",
   headline: "Powering Digital Governance in Tamil Nadu",
   // Short, hero-sized supporting line — the fuller agency description below
   // moved to the About/Leadership band, which reuses `description` as-is.
@@ -244,6 +245,7 @@ export const announcements = [
     description:
       "10 government services made paperless, online and instant under the new SimpleGov initiative.",
     href: "/notifications/announcements/simplegov-launch",
+    image: pexelsPhoto(STOCK.handshakeLeaders, 320, 320),
   },
   {
     timestamp: "08 Jan 2026",
@@ -251,18 +253,21 @@ export const announcements = [
     description:
       "51 government services now accessible on WhatsApp at 7845252525 across 16 departments.",
     href: "/notifications/announcements/namma-arasu-live",
+    image: pexelsPhoto(STOCK.womanPhone, 320, 320),
   },
   {
     timestamp: "12 Jun 2025",
     heading: "CM Award for e-Governance Students",
     description: "Applications now open for the annual CM Award recognising student innovation in e-governance.",
     href: "/notifications/announcements/cm-award",
+    image: pexelsPhoto(STOCK.presentation, 320, 320),
   },
   {
     timestamp: "02 Feb 2026",
     heading: "e-Sevai helpline expands support hours",
     description: "1800-42-56000 now available with extended hours to assist citizens across the state.",
     href: "/notifications/announcements/e-sevai-helpline",
+    image: pexelsPhoto(STOCK.itTechnician, 320, 320),
   },
 ];
 
