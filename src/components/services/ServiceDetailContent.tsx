@@ -24,7 +24,7 @@ import { footer } from "@/lib/content";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "Citizen Services",
-  "interdepartmental-projects": "Interdepartmental Projects",
+  "e-governance-projects": "e-Governance Projects",
   services: "Services",
 };
 

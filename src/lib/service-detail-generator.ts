@@ -13,13 +13,13 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "citizens",
-  "interdepartmental-projects": "departments",
+  "e-governance-projects": "departments",
   services: "departments",
 };
 
 const SECTION_DISPLAY_NAME: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "Citizen Services",
-  "interdepartmental-projects": "Interdepartmental Projects",
+  "e-governance-projects": "e-Governance Projects",
   services: "Services",
 };
 
@@ -29,7 +29,7 @@ const SECTION_DISPLAY_NAME: Record<ServiceItemDetail["section"], string> = {
 // fabricated "screenshot". Captioned "Illustrative" wherever it's shown.
 const SUPPORTING_IMAGES: Record<ServiceItemDetail["section"], number[]> = {
   "citizen-services": [STOCK.womanPhone, STOCK.studentLaptop],
-  "interdepartmental-projects": [STOCK.handshakeFormal, STOCK.serverRacks],
+  "e-governance-projects": [STOCK.handshakeFormal, STOCK.serverRacks],
   services: [STOCK.itTechnician, STOCK.serverRacks],
 };
 

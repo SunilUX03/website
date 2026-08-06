@@ -2,18 +2,19 @@
 
 import { RefObject } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { NodeGraphCanvas } from "./NodeGraphCanvas";
+import { TamilMotifBackdrop } from "./TamilMotifBackdrop";
 import { useReducedMotion } from "@/lib/hooks";
 
 /**
  * Hero background — canvas colour throughout (the brand never introduces
- * a saturated colour wash, per the design system: atmospheric orbs and
- * the ambient dot-network are the only "colour" moments, both at low
- * alpha). Two layers: the pointer-reactive dot/line network that was
- * already part of this site's visual language, plus a very soft
- * gradient-orb bloom for depth, matching every other section's
- * orb-drift-a/b treatment. Parallax-scrolls at a slower rate than the
- * page via `heroRef`'s own scroll progress.
+ * a saturated colour wash, per the design system: soft gradient orbs are
+ * the only "colour" moment, always at low alpha). Three very-slow-drifting
+ * "sky" orbs in the brand's existing blue/lavender/mint pastels, a faint
+ * film-grain for tactile depth, and a small kolam-flower accent — no
+ * pointer-reactivity anywhere, which was exactly the "interaction" on the
+ * old background people didn't like. Parallax-scrolls noticeably slower
+ * than the page via `heroRef`'s own scroll progress, so it visibly lags
+ * "upward" relative to the content as you scroll past.
  */
 export function HeroBackdrop({ heroRef }: { heroRef: RefObject<HTMLElement | null> }) {
   const reducedMotion = useReducedMotion();
@@ -21,20 +22,26 @@ export function HeroBackdrop({ heroRef }: { heroRef: RefObject<HTMLElement | nul
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : 90]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : 170]);
 
   return (
     <motion.div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" style={{ y }} aria-hidden>
       <div
-        className="orb-drift-a absolute -left-20 top-[4%] h-[380px] w-[440px] rounded-full opacity-45 blur-3xl"
+        className="orb-drift-c absolute -left-24 top-[2%] h-[420px] w-[480px] rounded-full opacity-40 blur-3xl"
         style={{ background: "radial-gradient(circle, var(--color-gradient-sky) 0%, transparent 70%)" }}
       />
       <div
-        className="orb-drift-b absolute -right-24 top-[22%] h-[320px] w-[380px] rounded-full opacity-40 blur-3xl"
+        className="orb-drift-a absolute -right-28 top-[14%] h-[360px] w-[420px] rounded-full opacity-30 blur-3xl"
         style={{ background: "radial-gradient(circle, var(--color-gradient-lavender) 0%, transparent 70%)" }}
       />
+      <div
+        className="orb-drift-b absolute bottom-[-8%] left-[28%] h-[320px] w-[380px] rounded-full opacity-25 blur-3xl"
+        style={{ background: "radial-gradient(circle, var(--color-gradient-mint) 0%, transparent 70%)" }}
+      />
 
-      <NodeGraphCanvas className="absolute inset-0 h-full w-full" />
+      <div aria-hidden className="bg-grain absolute inset-0 opacity-[0.02]" />
+
+      <TamilMotifBackdrop className="absolute -bottom-[10%] right-[6%] h-[38%] w-[38%] max-w-[300px] opacity-50 md:right-[16%]" />
     </motion.div>
   );
 }

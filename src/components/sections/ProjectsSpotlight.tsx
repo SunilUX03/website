@@ -193,60 +193,91 @@ function MobileSpotlight() {
     setProgress(0);
   };
 
+  const project = projects[active];
+
   return (
-    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
-      <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
-        {projects.map((p, i) => (
-          <div key={p.slug} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/30">
-            <div
-              className="h-full bg-white"
-              style={{
-                width: `${i < active || reducedMotion ? 100 : i === active ? progress : 0}%`,
-                transition: reducedMotion ? "none" : undefined,
-              }}
-            />
-          </div>
-        ))}
+    <div className="overflow-hidden rounded-xl border border-hairline bg-surface-card">
+      {/* Image sits in its own uncropped band (aspect-video is close to
+          every project photo's real ~16:10 shape) with copy in a plain
+          panel below it, rather than white text scrimmed over the photo —
+          these photos are dense branded graphics with their own baked-in
+          headline/footer text, not plain candid shots, so a bottom-gradient
+          overlay doubled up two layers of text on top of each other and a
+          taller 3:4 crop cut off their edges. Full image, separate legible
+          panel; no cropping, no competing text. */}
+      <div className="relative aspect-video w-full overflow-hidden">
+        <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
+          {projects.map((p, i) => (
+            <div key={p.slug} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/40">
+              <div
+                className="h-full bg-white"
+                style={{
+                  width: `${i < active || reducedMotion ? 100 : i === active ? progress : 0}%`,
+                  transition: reducedMotion ? "none" : undefined,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <PhotoTile src={project.image} alt={project.name} aspect="aspect-auto" className="h-full w-full" sizes="100vw" priority />
+
+        {/* tap zones */}
+        <button
+          type="button"
+          aria-label="Previous project"
+          className="absolute inset-y-0 left-0 z-10 w-1/2"
+          onClick={() => goTo(active - 1)}
+        />
+        <button
+          type="button"
+          aria-label="Next project"
+          className="absolute inset-y-0 right-0 z-10 w-1/2"
+          onClick={() => goTo(active + 1)}
+        />
+
+        <div
+          className="absolute inset-0 z-0"
+          onTouchStart={(e) => {
+            touchStartX.current = e.touches[0].clientX;
+          }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null) return;
+            const dx = e.changedTouches[0].clientX - touchStartX.current;
+            if (Math.abs(dx) > 40) {
+              goTo(active + (dx < 0 ? 1 : -1));
+            }
+            touchStartX.current = null;
+          }}
+        />
       </div>
 
-      <PhotoTile
-        src={projects[active].image}
-        alt={projects[active].name}
-        aspect="aspect-auto"
-        className="h-full w-full"
-        sizes="100vw"
-        priority
-      />
-      <SpotlightContent project={projects[active]} active={true} />
+      <div className="p-5">
+        {"badge" in project && project.badge && (
+          <span className="badge-pill mb-3">{project.badge}</span>
+        )}
+        <h3 className="type-title-md mb-2 text-ink">{project.name}</h3>
+        <p className="type-body-sm mb-4 text-[var(--color-body)]">{project.description}</p>
 
-      {/* tap zones */}
-      <button
-        type="button"
-        aria-label="Previous project"
-        className="absolute inset-y-0 left-0 z-10 w-1/2"
-        onClick={() => goTo(active - 1)}
-      />
-      <button
-        type="button"
-        aria-label="Next project"
-        className="absolute inset-y-0 right-0 z-10 w-1/2"
-        onClick={() => goTo(active + 1)}
-      />
+        <div className="mb-4 flex flex-wrap gap-x-6 gap-y-2">
+          {project.stats.map((stat) => (
+            <div key={stat.label}>
+              <p className="type-display-sm text-ink">
+                <CountUp value={stat.value} suffix={stat.suffix} start={true} duration={1100} />
+              </p>
+              <p className="type-caption-uppercase text-[var(--color-muted)]">{stat.label}</p>
+            </div>
+          ))}
+        </div>
 
-      <div
-        className="absolute inset-0 z-0"
-        onTouchStart={(e) => {
-          touchStartX.current = e.touches[0].clientX;
-        }}
-        onTouchEnd={(e) => {
-          if (touchStartX.current === null) return;
-          const dx = e.changedTouches[0].clientX - touchStartX.current;
-          if (Math.abs(dx) > 40) {
-            goTo(active + (dx < 0 ? 1 : -1));
-          }
-          touchStartX.current = null;
-        }}
-      />
+        <div className="flex flex-wrap gap-3">
+          {project.ctas.map((cta, i) => (
+            <a key={cta.label} href={cta.href} className={i === 0 ? "type-button btn-primary" : "type-button btn-outline"}>
+              {cta.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -266,8 +297,21 @@ export function ProjectsSpotlight() {
               A few projects worth viewing
             </h2>
           </div>
-          <Link href="/services" className="type-button btn-outline shrink-0">
+          {/* Two separate links, not one class swapped by breakpoint: the
+              pill-button treatment (type-button/btn-outline) is a custom
+              class, not a Tailwind utility, so `md:btn-outline` wouldn't
+              reliably toggle it. Mobile gets a plain right-aligned text
+              link — matching the Scroller ticker's "View all →" — since
+              the full button was wide enough to wrap below the heading. */}
+          <Link href="/services" className="type-button btn-outline hidden shrink-0 md:inline-flex">
             View all services
+          </Link>
+          <Link
+            href="/services"
+            className="type-caption shrink-0 whitespace-nowrap font-semibold text-[var(--color-primary-blue)] hover:underline md:hidden"
+          >
+            View all services
+            <span aria-hidden>{" →"}</span>
           </Link>
         </div>
 

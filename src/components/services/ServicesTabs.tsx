@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   citizenServices,
-  interdepartmentalProjects,
+  eGovernanceProjects,
   sharedServices,
   ServiceItem,
 } from "@/lib/services-content";
@@ -30,9 +30,9 @@ const TABS = [
     tint: "sky" as const,
   },
   {
-    id: "interdepartmental-projects",
-    label: "Interdepartmental Projects",
-    items: interdepartmentalProjects,
+    id: "e-governance-projects",
+    label: "e-Governance Projects",
+    items: eGovernanceProjects,
     tint: "peach" as const,
   },
   { id: "services", label: "Services", items: sharedServices, tint: "mint" as const },
@@ -155,7 +155,7 @@ export function ServicesTabs() {
   // (top-right, sitewide) — that button's screen position doesn't move
   // with page content, and this row sits close enough to the top that an
   // active tab could otherwise land right under it with its label end
-  // clipped, as happened with "Interdepartmental Projects".
+  // clipped, as happened with "e-Governance Projects".
   const clearTabFromFloatingMenu = (buttonEl: HTMLButtonElement) => {
     const container = tablistRef.current;
     if (!container) return;

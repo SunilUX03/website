@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { teamCeo, team } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
@@ -32,17 +31,14 @@ function TeamCard({
         damping: 22,
         delay: reducedMotion ? 0 : index * 0.07,
       }}
-      className="card-feature team-card flex h-full min-w-0 flex-col overflow-hidden !p-0"
+      className="card-feature team-card flex h-full min-w-0 flex-col items-center justify-center text-center"
     >
-      <div className="relative aspect-square w-full">
-        <Image src={member.photo} alt="" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
-      </div>
       {/* min-h (not a fixed h) so a 2-line name or designation never gets
           clipped or ellipsized — it just wraps, and every card still ends
           up the same height since they all share this same minimum. */}
-      <div className="flex min-h-[112px] flex-col items-center justify-center px-2 py-2.5 text-center">
+      <div className="flex min-h-[80px] flex-col items-center justify-center">
         <p className="type-body-strong text-ink">{member.name}</p>
-        <p className="type-caption text-[var(--color-muted)]">{member.designation}</p>
+        <p className="type-caption mt-1 text-[var(--color-muted)]">{member.designation}</p>
       </div>
     </motion.div>
   );

@@ -6,7 +6,6 @@ import { motion, useMotionValue } from "framer-motion";
 import { announcements, socialMedia } from "@/lib/content";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
-import { PhotoTile } from "@/components/ui/PhotoTile";
 import { useReducedMotion } from "@/lib/hooks";
 import {
   FacebookIcon,
@@ -27,7 +26,7 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
 type FeedPost = SocialPost & { platform: string; href: string };
 
 const DRIFT_SPEED = 22; // px/sec
-const VIEWPORT_H = 480;
+const VIEWPORT_H = 680;
 
 /** Continuous vertical auto-scroll viewport — same drift technique as the
  * old horizontal filmstrips, rotated to Y so both feed columns read as a
@@ -168,16 +167,22 @@ export function CommunityFeed() {
               renderItem={(item) => (
                 <a
                   href={item.href}
-                  className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                  className="block overflow-hidden rounded-xl border border-hairline bg-surface-card transition-colors hover:border-hairline-strong"
                 >
-                  <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                    <PhotoTile src={item.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="64px" />
-                  </span>
-                  <span className="min-w-0">
+                  {/* Plain <img>, not PhotoTile's fill+object-cover box —
+                      real announcement photos won't all share one aspect
+                      ratio, and force-cropping every one to the same fixed
+                      height is exactly what mangled the TNSSO poster
+                      earlier. This sizes to each photo's own real
+                      proportions instead, so a portrait or square photo
+                      just makes that one card taller rather than getting
+                      cropped to match its neighbours. */}
+                  <img src={item.image} alt="" loading="lazy" className="block w-full" />
+                  <div className="p-3">
                     <span className="type-caption text-[var(--color-muted)]">{item.timestamp}</span>
                     <p className="type-body-strong mt-0.5 text-ink">{item.heading}</p>
                     <p className="type-body-sm mt-0.5 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
-                  </span>
+                  </div>
                 </a>
               )}
             />
@@ -206,18 +211,18 @@ export function CommunityFeed() {
                   return (
                     <a
                       href={post.href}
-                      className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                      className="block overflow-hidden rounded-xl border border-hairline bg-surface-card transition-colors hover:border-hairline-strong"
                     >
-                      <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                        <PhotoTile src={post.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="64px" />
-                        <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
-                          {Icon && <Icon className="h-2.5 w-2.5" />}
+                      <span className="relative block">
+                        <img src={post.image} alt="" loading="lazy" className="block w-full" />
+                        <span className="absolute bottom-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
+                          {Icon && <Icon className="h-3 w-3" />}
                         </span>
                       </span>
-                      <span className="min-w-0">
+                      <div className="p-3">
                         <p className="type-body-sm line-clamp-2 text-ink">{post.text}</p>
-                        <span className="type-caption mt-0.5 block text-[var(--color-muted)]">{post.date}</span>
-                      </span>
+                        <span className="type-caption mt-1 block text-[var(--color-muted)]">{post.date}</span>
+                      </div>
                     </a>
                   );
                 }}

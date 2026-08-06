@@ -336,6 +336,32 @@
   animation: orb-drift-b 40s ease-in-out infinite;
 }
 
+/* A third, even slower drift for the hero's largest background blob —
+   the hero wants to feel closer to "barely moving" than the shorter
+   sections elsewhere already using orb-drift-a/b. */
+@keyframes orb-drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-22px, 26px) scale(1.05); }
+}
+.orb-drift-c {
+  animation: orb-drift-c 58s ease-in-out infinite;
+}
+
+/* Slow opacity/scale "breathe" for the hero's kolam motif — never reacts
+   to the pointer (that was the old background's problem), just a faint
+   pulse so it reads as quietly alive rather than a static watermark. */
+@keyframes kolam-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.035); }
+}
+
+/* Barely-there film-grain texture — adds tactile depth to large soft
+   gradient washes (the hero backdrop) without reading as "noisy" or
+   competing with content. Self-contained SVG turbulence, no image asset. */
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* The UX4G accessibility widget auto-injects its own floating trigger
    button; we drive it from our own nav "Accessibility" control instead so
    there's a single visible entry point, not two. The widget's real button

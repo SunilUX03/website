@@ -26,7 +26,7 @@ const SITEMAP: { heading: string; links: { label: string; href: string }[] }[] =
     heading: "Services",
     links: [
       { label: "Citizen Services", href: "/services#citizen-services" },
-      { label: "Interdepartmental Projects", href: "/services#interdepartmental-projects" },
+      { label: "e-Governance Projects", href: "/services#e-governance-projects" },
       { label: "Services", href: "/services#services" },
     ],
   },

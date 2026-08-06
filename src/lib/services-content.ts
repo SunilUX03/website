@@ -1,5 +1,5 @@
 // Centralized copy for the /services page — 3 sections (Citizen Services,
-// Interdepartmental Projects, Services), matching the categorisation used
+// e-Governance Projects, Services), matching the categorisation used
 // by Home's "How TNeGA powers governance" bands (see `pillars` in
 // lib/content.ts and getServiceItemsByNames below) — replacing the earlier
 // 2-section (Citizen Services / Govt Digital Services) split per explicit
@@ -7,7 +7,7 @@
 //
 // Each item lists every section it belongs to (`sections`) rather than
 // living in a single section's array — UMIS is intentionally dual-listed
-// (Citizen Services + Interdepartmental Projects), same as on Home. A
+// (Citizen Services + e-Governance Projects), same as on Home. A
 // dual-listed item still has exactly ONE detail page: it just appears as a
 // card in both of its sections' grids. Aadhaar Services isn't referenced by
 // any of Home's bands, so it stays single-listed under Citizen Services,
@@ -54,7 +54,7 @@ export interface RealContent {
   faqs: { q: string; a: string }[];
 }
 
-export type ServiceSection = "citizen-services" | "interdepartmental-projects" | "services";
+export type ServiceSection = "citizen-services" | "e-governance-projects" | "services";
 
 export type ServiceItem = {
   name: string;
@@ -158,7 +158,7 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
   {
-    // Dual-listed on Home — also appears under Interdepartmental Projects.
+    // Dual-listed on Home — also appears under e-Governance Projects.
     name: "UMIS",
     description:
       "The University Management Information System (UMIS) is Tamil Nadu's centralized digital platform for higher education, serving as the authenticated repository of student information. It standardizes student data across institutions and integrates with multiple Government databases to enable efficient administration and seamless delivery of education and welfare services.",
@@ -166,7 +166,7 @@ const serviceItemsRaw: ServiceItem[] = [
     image: PROJECT_IMG.umis,
     accessPortalHref: "#",
     knowMoreHref: "#",
-    sections: ["citizen-services", "interdepartmental-projects"],
+    sections: ["citizen-services", "e-governance-projects"],
     real: {
       statistics: ["24,27,192 Active students", "84 Universities", "5,693 Institutions", "33 Beneficiary Departments"],
       keyFeatures: [
@@ -232,7 +232,7 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
 
-  // ---------- Interdepartmental Projects ----------
+  // ---------- e-Governance Projects ----------
   {
     // No PDF content was supplied for TNGIS — per explicit instruction,
     // this keeps the previously-written placeholder copy unchanged.
@@ -243,7 +243,7 @@ const serviceItemsRaw: ServiceItem[] = [
     image: PROJECT_IMG.tnGis,
     accessPortalHref: "#",
     knowMoreHref: "#",
-    sections: ["interdepartmental-projects"],
+    sections: ["e-governance-projects"],
   },
   {
     // No PDF content was supplied for GRAINS — per explicit instruction,
@@ -255,7 +255,7 @@ const serviceItemsRaw: ServiceItem[] = [
     image: pexelsPhoto(STOCK.serverRoom, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
-    sections: ["interdepartmental-projects"],
+    sections: ["e-governance-projects"],
   },
   {
     name: "e-Office",
@@ -265,7 +265,7 @@ const serviceItemsRaw: ServiceItem[] = [
     image: PROJECT_IMG.eOffice,
     accessPortalHref: "#",
     knowMoreHref: "#",
-    sections: ["interdepartmental-projects"],
+    sections: ["e-governance-projects"],
     real: {
       statistics: [
         "65,95,723 e-files created",
@@ -315,7 +315,7 @@ const serviceItemsRaw: ServiceItem[] = [
     stats: "10+ Active Engagements · Multiple Departments",
     image: pexelsPhoto(STOCK.handshakeLeaders, 700, 500),
     knowMoreHref: "#",
-    sections: ["interdepartmental-projects"],
+    sections: ["e-governance-projects"],
     real: {
       statistics: [
         "STAR 3.0",
@@ -497,8 +497,8 @@ export const citizenServices: ServiceItem[] = allItems.filter((item) =>
   item.sections.includes("citizen-services")
 );
 
-export const interdepartmentalProjects: ServiceItem[] = allItems.filter((item) =>
-  item.sections.includes("interdepartmental-projects")
+export const eGovernanceProjects: ServiceItem[] = allItems.filter((item) =>
+  item.sections.includes("e-governance-projects")
 );
 
 /** The 3rd /services tab — "shared digital services" per Home's own

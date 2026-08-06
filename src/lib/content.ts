@@ -20,7 +20,7 @@ export const nav = {
   // themselves as direct links, not a sub-menu of individual services.
   services: [
     { label: "Citizen Services", href: "/services#citizen-services" },
-    { label: "Interdepartmental Projects", href: "/services#interdepartmental-projects" },
+    { label: "e-Governance Projects", href: "/services#e-governance-projects" },
     { label: "Services", href: "/services#services" },
   ],
   notifications: {
@@ -52,12 +52,18 @@ export const hero = {
       name: "Thiru C. Joseph Vijay",
       title: "Hon'ble Chief Minister of Tamil Nadu",
       photo: "/images/leaders/cm-photo.jpg",
+      photoPosition: "50% 50%",
       quote: null as string | null,
     },
     {
       name: "Dr. R. Kumar",
       title: "Hon'ble Minister of IT&DS",
       photo: "/images/leaders/it-minister-photo.jpg",
+      // Source is a tall 455x562 portrait, not square — center-cropping it
+      // into the square portrait frame sliced into the hairline. Biasing
+      // the crop toward the top keeps the full head in frame and trims
+      // the collar/shoulders instead.
+      photoPosition: "50% 20%",
       quote: null as string | null,
     },
   ],
@@ -79,7 +85,7 @@ export const ticker = [
  * /services, so stats and descriptions can never drift between the two
  * pages. Names are resolved at render (see getServiceItemsByNames), which
  * throws on a typo instead of silently dropping a card. UMIS appears under
- * both Citizen Services and Interdepartmental Projects by design — it is
+ * both Citizen Services and e-Governance Projects by design — it is
  * genuinely both.
  */
 export const pillars = [
@@ -92,11 +98,11 @@ export const pillars = [
     itemNames: ["e-Sevai Portal", "Namma Arasu", "TNSSP", "e-Gazette Portal", "UMIS"],
   },
   {
-    title: "Interdepartmental Projects",
+    title: "e-Governance Projects",
     description:
       "TNeGA collaborates with Government departments to design, develop, and implement digital solutions that improve governance and service delivery.",
-    href: "/services#interdepartmental-projects",
-    linkLabel: "View all Interdepartmental Projects",
+    href: "/services#e-governance-projects",
+    linkLabel: "View all e-Governance Projects",
     itemNames: [
       "TNGIS Tamil Nilam",
       "UMIS",
