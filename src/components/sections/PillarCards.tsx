@@ -2,10 +2,10 @@
 
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { hero, pillars } from "@/lib/content";
+import { pillars } from "@/lib/content";
 import { getServiceItemsByNames } from "@/lib/services-content";
 import { Container } from "@/components/ui/Container";
-import { LeadershipCard } from "@/components/hero/LeadershipCard";
+import { PhotoTile } from "@/components/ui/PhotoTile";
 
 type Pillar = (typeof pillars)[number];
 
@@ -45,101 +45,180 @@ const ICON: Record<string, ReactNode> = {
   ),
 };
 
+const PILLAR_ITEMS = pillars.map((p) => getServiceItemsByNames(p.itemNames));
+
+function PillarIcon({ title, className }: { title: string; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
+      {ICON[title]}
+    </svg>
+  );
+}
+
 /**
- * One "Enabling Digital Governance" tile. Default state is a compact
- * summary; hovering (desktop) or tapping the toggle (touch) cross-fades in
- * the same items the old carousel showed, as a static list — so all three
- * pillars stay visible at once instead of only one carousel band at a time.
+ * Grid card. `isOpen` swaps it from the default image+blurb summary to a
+ * taller, elevated project list (thumbnails + stats) — content is driven
+ * by `displayPillar`/`displayItems`, which can differ from this card's own
+ * pillar once the bottom tab row inside the elevated card is used to
+ * switch, so the elevated card stays put while what it shows changes.
  */
-function PillarCard({ pillar }: { pillar: Pillar }) {
-  const [open, setOpen] = useState(false);
-  const items = getServiceItemsByNames(pillar.itemNames);
+function PillarCard({
+  pillar,
+  items,
+  isOpen,
+  faded,
+  displayPillar,
+  displayItems,
+  onOpen,
+  onClose,
+  onSelectPillar,
+}: {
+  pillar: Pillar;
+  items: ReturnType<typeof getServiceItemsByNames>;
+  isOpen: boolean;
+  faded: boolean;
+  displayPillar: Pillar;
+  displayItems: ReturnType<typeof getServiceItemsByNames>;
+  onOpen: () => void;
+  onClose: () => void;
+  onSelectPillar: (i: number) => void;
+}) {
   const accent = ACCENT[pillar.title] ?? "var(--color-gradient-sky)";
+  const cover = items[0]?.image;
 
   return (
     <div
-      className="card-feature group relative flex h-[440px] flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_44px_rgba(12,10,9,0.14)]"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      className={`card-feature group relative flex flex-col overflow-hidden !p-0 transition-all duration-300 ease-out ${
+        isOpen
+          ? "z-20 h-auto min-h-[500px] -translate-y-2 shadow-[0_28px_56px_rgba(12,10,9,0.20)] md:h-[500px] md:min-h-0"
+          : "h-[440px] shadow-none"
+      } ${faded ? "md:scale-[0.97] md:opacity-70" : ""}`}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") onOpen();
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType === "mouse") onClose();
+      }}
     >
+      {/* ---------- Default summary ---------- */}
       <div
-        aria-hidden
-        className="absolute -right-10 -top-16 h-[220px] w-[220px] rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover:opacity-60"
-        style={{ background: `radial-gradient(circle, ${accent} 0%, transparent 70%)` }}
-      />
-
-      <div className="relative flex flex-1 flex-col p-6 md:p-7">
-        <span
-          className="voice-icon-circular flex h-12 w-12 shrink-0 items-center justify-center text-ink"
-          style={{ backgroundColor: accent }}
-        >
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
-            {ICON[pillar.title]}
-          </svg>
-        </span>
-
-        <h3 className="type-title-md mt-4 text-ink">{pillar.title}</h3>
-
-        {/* Fixed-height content well: description and item list occupy the
-            same box and cross-fade, so the card never resizes on hover and
-            the grid stays a stable single glance. */}
-        <div className="relative mt-3 flex-1">
-          <p
-            className={`type-body-sm absolute inset-0 text-[var(--color-body)] transition-opacity duration-300 ${
-              open ? "pointer-events-none opacity-0" : "opacity-100"
-            }`}
+        className={`flex h-full flex-col transition-opacity duration-200 ${
+          isOpen ? "pointer-events-none absolute inset-0 opacity-0" : "opacity-100"
+        }`}
+      >
+        <div className="relative h-[42%] shrink-0 overflow-hidden">
+          {cover && <PhotoTile src={cover} alt="" aspect="aspect-auto" className="h-full w-full" sizes="(min-width: 768px) 33vw, 100vw" />}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(to top, rgba(12,10,9,0.35) 0%, transparent 55%)" }}
+          />
+          <span
+            className="voice-icon-circular absolute bottom-3 left-4 flex h-11 w-11 items-center justify-center text-ink shadow-[0_6px_16px_rgba(12,10,9,0.18)]"
+            style={{ backgroundColor: accent }}
           >
-            {pillar.description}
-          </p>
-
-          <ul
-            className={`absolute inset-0 space-y-1.5 overflow-y-auto pr-1 transition-opacity duration-300 [scrollbar-width:thin] ${
-              open ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-          >
-            {items.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.knowMoreHref}
-                  className="voice-row flex items-center justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[var(--color-surface-strong)]"
-                >
-                  <span className="type-body-sm truncate text-ink">{item.name}</span>
-                  <span className="type-caption shrink-0 text-[var(--color-muted)]">
-                    {item.stats.split("·")[0].trim()}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+            <PillarIcon title={pillar.title} className="h-5 w-5" />
+          </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <span className="type-caption-uppercase text-[var(--color-muted)]">
-            {items.length} {items.length === 1 ? "project" : "projects"}
+        <div className="flex flex-1 flex-col p-6 md:p-7">
+          <h3 className="type-title-md text-ink">{pillar.title}</h3>
+          <p className="type-body-sm mt-2 flex-1 text-[var(--color-body)]">{pillar.description}</p>
+
+          <div className="mt-4 flex items-center justify-between">
+            <span className="type-caption-uppercase text-[var(--color-muted)]">
+              {items.length} {items.length === 1 ? "project" : "projects"}
+            </span>
+            <Link
+              href={pillar.href}
+              aria-label={pillar.linkLabel}
+              className="type-caption font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+            >
+              View all
+              <span aria-hidden>{" →"}</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- Expanded / elevated: shared pillar switcher ---------- */}
+      <div
+        className={`flex h-full flex-col p-5 transition-opacity duration-200 md:p-6 ${
+          isOpen ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
+        }`}
+      >
+        <div className="mb-3 flex shrink-0 items-center gap-3">
+          <span
+            className="voice-icon-circular flex h-9 w-9 shrink-0 items-center justify-center text-ink"
+            style={{ backgroundColor: ACCENT[displayPillar.title] }}
+          >
+            <PillarIcon title={displayPillar.title} className="h-4 w-4" />
           </span>
+          <h3 className="type-title-sm text-ink">{displayPillar.title}</h3>
+        </div>
+
+        <ul className="flex-1 space-y-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
+          {displayItems.map((item) => (
+            <li key={item.name}>
+              <Link
+                href={item.knowMoreHref}
+                className="voice-row flex items-center gap-3 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-strong)]"
+              >
+                <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md">
+                  <PhotoTile src={item.image} alt="" aspect="aspect-auto" className="h-full w-full" sizes="32px" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="type-body-sm block truncate text-ink">{item.name}</span>
+                </span>
+                <span className="type-caption shrink-0 text-[var(--color-muted)]">
+                  {item.stats.split("·")[0].trim()}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-3 flex shrink-0 items-center justify-between gap-3 border-t border-hairline pt-3">
+          <div className="flex gap-1.5">
+            {pillars.map((p, i) => (
+              <button
+                key={p.title}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectPillar(i);
+                }}
+                aria-label={`Show ${p.title}`}
+                aria-current={p.title === displayPillar.title}
+                className={`h-2 rounded-full transition-all duration-200 ${
+                  p.title === displayPillar.title
+                    ? "w-6 bg-[var(--color-primary-blue)]"
+                    : "w-2 bg-[var(--color-hairline-strong)] hover:bg-[var(--color-muted)]"
+                }`}
+              />
+            ))}
+          </div>
           <Link
-            href={pillar.href}
-            aria-label={pillar.linkLabel}
-            className="type-caption font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
+            href={displayPillar.href}
+            className="type-caption shrink-0 font-semibold text-[var(--color-primary-blue)] underline-offset-4 hover:underline"
           >
             View all
-            <span aria-hidden>{" →"}</span>
+            <span aria-hidden>{" →"}</span>
           </Link>
         </div>
       </div>
 
-      {/* Touch-only toggle — hover doesn't exist on touch, so this is the
-          way in to the same detail there. */}
+      {/* Touch-only toggle — hover doesn't exist on touch. */}
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label={open ? `Hide ${pillar.title} projects` : `Show ${pillar.title} projects`}
-        aria-expanded={open}
-        className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-hairline-strong bg-surface-card/90 text-ink md:hidden"
+        onClick={() => (isOpen ? onClose() : onOpen())}
+        aria-label={isOpen ? `Hide ${pillar.title} projects` : `Show ${pillar.title} projects`}
+        aria-expanded={isOpen}
+        className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-hairline-strong bg-surface-card/90 text-ink md:hidden"
       >
         <svg
           viewBox="0 0 24 24"
-          className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-45" : ""}`}
+          className={`h-4 w-4 transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
           fill="none"
           aria-hidden
         >
@@ -151,30 +230,51 @@ function PillarCard({ pillar }: { pillar: Pillar }) {
 }
 
 export function PillarCards() {
+  // Which card is visually open (elevated). Set by a mouse hover-enter on
+  // desktop or the tap-toggle on touch — both funnel into the same state,
+  // guarded to mouse-only in the pointer handlers below so a stray touch
+  // "hover" can't fight the tap toggle.
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // Which pillar's content the open card is currently showing — defaults
+  // to the open card's own pillar, but can diverge after a tab click
+  // inside it, without moving the elevated card itself.
+  const [switchedIndex, setSwitchedIndex] = useState<number | null>(null);
+
+  const displayIndex = switchedIndex ?? openIndex ?? 0;
+
+  const open = (i: number) => {
+    setOpenIndex(i);
+    setSwitchedIndex(null);
+  };
+  const close = () => {
+    setOpenIndex(null);
+    setSwitchedIndex(null);
+  };
+
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           Enabling Digital Governance
         </p>
-        <h2 className="type-display-lg mb-8 max-w-2xl text-ink">
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
           How TNeGA powers governance across Tamil Nadu
         </h2>
 
-        <div className="mb-10 flex flex-col flex-wrap items-start gap-3 rounded-xl border border-hairline bg-surface-card p-4 sm:flex-row sm:items-center sm:gap-5">
-          <span className="type-caption-uppercase shrink-0 text-[var(--color-muted)]">
-            Under the guidance of
-          </span>
-          <div className="flex flex-wrap gap-3">
-            {hero.leaders.map((leader) => (
-              <LeadershipCard key={leader.name} {...leader} />
-            ))}
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {pillars.map((pillar) => (
-            <PillarCard key={pillar.title} pillar={pillar} />
+          {pillars.map((pillar, i) => (
+            <PillarCard
+              key={pillar.title}
+              pillar={pillar}
+              items={PILLAR_ITEMS[i]}
+              isOpen={openIndex === i}
+              faded={openIndex !== null && openIndex !== i}
+              displayPillar={pillars[openIndex === i ? displayIndex : i]}
+              displayItems={PILLAR_ITEMS[openIndex === i ? displayIndex : i]}
+              onOpen={() => open(i)}
+              onClose={close}
+              onSelectPillar={setSwitchedIndex}
+            />
           ))}
         </div>
       </Container>

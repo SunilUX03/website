@@ -40,6 +40,10 @@ export const nav = {
 
 export const hero = {
   headline: "Powering Digital Governance in Tamil Nadu",
+  // Short, hero-sized supporting line — the fuller agency description below
+  // moved to the About/Leadership band, which reuses `description` as-is.
+  tagline:
+    "Building secure, citizen-first Digital Public Infrastructure across Tamil Nadu.",
   description:
     "Tamil Nadu e-Governance Agency (TNeGA) is the Government of Tamil Nadu's nodal agency for digital governance, driving the State's vision of technology-enabled, citizen-centric public service delivery. TNeGA designs, develops, and implements Digital Public Infrastructure (DPI) that empowers Government departments to deliver services that are seamless, secure, transparent, and accessible.",
   leaders: [
