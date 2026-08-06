@@ -89,23 +89,31 @@ export function AnnouncementList() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="group flex h-full flex-col gap-sm rounded-xl border border-hairline bg-surface-card p-lg transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
                   >
-                    <span className="type-caption-uppercase text-[var(--color-muted)]">
-                      {item.timestamp}
-                    </span>
+                    {/* Plain <img>, not a fixed-aspect crop — matches the
+                        Home page teaser, which uses each photo's own
+                        natural proportions rather than force-cropping
+                        every announcement to the same shape. */}
+                    <img src={item.image} alt="" loading="lazy" className="block w-full" />
 
-                    <h3 className="type-title-sm text-[var(--color-body-strong)]">
-                      {item.heading}
-                    </h3>
+                    <span className="flex h-full flex-col gap-sm p-lg">
+                      <span className="type-caption-uppercase text-[var(--color-muted)]">
+                        {item.timestamp}
+                      </span>
 
-                    <p className="type-body-sm text-[var(--color-body)]">
-                      {item.description}
-                    </p>
+                      <h3 className="type-title-sm text-[var(--color-body-strong)]">
+                        {item.heading}
+                      </h3>
 
-                    <span className="type-body-strong mt-auto inline-flex items-center gap-xs pt-xs text-[var(--color-primary-blue)] transition-colors group-hover:text-[var(--color-primary-blue-active)]">
-                      Read more
-                      <ArrowIcon />
+                      <p className="type-body-sm text-[var(--color-body)]">
+                        {item.description}
+                      </p>
+
+                      <span className="type-body-strong mt-auto inline-flex items-center gap-xs pt-xs text-[var(--color-primary-blue)] transition-colors group-hover:text-[var(--color-primary-blue-active)]">
+                        Read more
+                        <ArrowIcon />
+                      </span>
                     </span>
                   </Link>
                 </li>

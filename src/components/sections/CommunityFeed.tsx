@@ -2,7 +2,6 @@
 
 import { ComponentType, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useMotionValue } from "framer-motion";
 import { announcements, socialMedia } from "@/lib/content";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
@@ -27,11 +26,15 @@ type FeedPost = SocialPost & { platform: string; href: string };
 
 const DRIFT_SPEED = 22; // px/sec
 const VIEWPORT_H = 680;
+const WHEEL_RESUME_MS = 1200;
+const TOUCH_RESUME_MS = 1600;
 
-/** Continuous vertical auto-scroll viewport — same drift technique as the
- * old horizontal filmstrips, rotated to Y so both feed columns read as a
- * live ticker rather than a static list. Hover pauses; no drag (a vertical
- * drag inside a column would fight the page's own vertical scroll). */
+/** Vertical auto-scroll viewport — drives a real `scrollTop` on a native
+ * `overflow-y-auto` container (not a CSS transform behind `overflow-hidden`)
+ * specifically so wheel, trackpad and touch scrolling keep working: a user
+ * can scroll back up to re-read something that already drifted past, not
+ * just pause it in place. Auto-drift pauses immediately on hover, wheel or
+ * touch, and resumes shortly after the interaction ends. */
 function VerticalDrift<T>({
   items,
   getKey,
@@ -42,33 +45,35 @@ function VerticalDrift<T>({
   renderItem: (item: T) => ReactNode;
 }) {
   const reducedMotion = useReducedMotion();
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const y = useMotionValue(0);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
   const paused = useRef(false);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loopHeight = useRef(0);
   const loop = [...items, ...items];
 
   useLayoutEffect(() => {
-    if (trackRef.current) loopHeight.current = trackRef.current.scrollHeight / 2;
+    const el = scrollerRef.current;
+    if (el) loopHeight.current = el.scrollHeight / 2;
   }, [items]);
 
   useEffect(() => {
     if (reducedMotion) return;
+    const el = scrollerRef.current;
+    if (!el) return;
     let raf = 0;
     let last = performance.now();
     const step = (time: number) => {
       const dt = (time - last) / 1000;
       last = time;
       if (!paused.current && loopHeight.current > 0) {
-        let next = y.get() - DRIFT_SPEED * dt;
-        if (next <= -loopHeight.current) next += loopHeight.current;
-        y.set(next);
+        let next = el.scrollTop + DRIFT_SPEED * dt;
+        if (next >= loopHeight.current) next -= loopHeight.current;
+        el.scrollTop = next;
       }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   if (reducedMotion) {
@@ -81,22 +86,38 @@ function VerticalDrift<T>({
     );
   }
 
+  const scheduleResume = (delay: number) => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      paused.current = false;
+    }, delay);
+  };
+  const pauseNow = () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    paused.current = true;
+  };
+
   return (
-    <div
-      className="relative overflow-hidden"
-      style={{ height: VIEWPORT_H }}
-      onMouseEnter={() => {
-        paused.current = true;
-      }}
-      onMouseLeave={() => {
-        paused.current = false;
-      }}
-    >
-      <motion.div ref={trackRef} style={{ y }} className="flex flex-col gap-3">
-        {loop.map((item, i) => (
-          <div key={getKey(item, i)}>{renderItem(item)}</div>
-        ))}
-      </motion.div>
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        className="overflow-y-auto [scrollbar-width:thin]"
+        style={{ height: VIEWPORT_H }}
+        onMouseEnter={pauseNow}
+        onMouseLeave={() => scheduleResume(0)}
+        onWheel={() => {
+          pauseNow();
+          scheduleResume(WHEEL_RESUME_MS);
+        }}
+        onTouchStart={pauseNow}
+        onTouchEnd={() => scheduleResume(TOUCH_RESUME_MS)}
+      >
+        <div className="flex flex-col gap-3">
+          {loop.map((item, i) => (
+            <div key={getKey(item, i)}>{renderItem(item)}</div>
+          ))}
+        </div>
+      </div>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--color-canvas)] to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--color-canvas)] to-transparent" />
     </div>
