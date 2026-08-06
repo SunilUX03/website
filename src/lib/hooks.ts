@@ -1,10 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useForcedReduceMotion } from "./accessibility";
 
-/** Tracks the user's prefers-reduced-motion setting reactively. */
+/** Tracks the user's prefers-reduced-motion setting reactively, OR'd with
+ * the "Reduce motion" toggle in the site's own accessibility toolbar — the
+ * OS-level media query alone doesn't cover a visitor who wants motion
+ * reduced on this site specifically without changing their whole system
+ * setting. Every animation loop that already calls this hook (drift
+ * carousels, the hero's cycling word, etc.) gets the forced override for
+ * free, with no per-component changes needed. */
 export function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
+  const forced = useForcedReduceMotion();
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -14,7 +22,7 @@ export function useReducedMotion(): boolean {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  return reduced;
+  return reduced || forced;
 }
 
 /**

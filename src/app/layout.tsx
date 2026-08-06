@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Tamil } from "next/font/google";
+import { AccessibilityProvider } from "@/lib/accessibility";
+import { AccessibilityPanel } from "@/components/nav/AccessibilityPanel";
 import "./globals.css";
 
 const notoSans = Noto_Sans({
@@ -33,7 +35,10 @@ export default function RootLayout({
       className={`${notoSans.variable} ${notoSansTamil.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink">
-        {children}
+        <AccessibilityProvider>
+          {children}
+          <AccessibilityPanel />
+        </AccessibilityProvider>
       </body>
     </html>
   );

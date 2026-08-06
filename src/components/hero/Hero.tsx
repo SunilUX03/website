@@ -57,7 +57,7 @@ function HeadlineCycleWord({ words, reducedMotion }: { words: string[]; reducedM
         className="inline-block bg-clip-text text-transparent"
         style={{
           backgroundImage:
-            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-lavender) 100%)",
+            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-violet) 100%)",
         }}
       >
         {words[index]}
@@ -89,7 +89,16 @@ export function Hero() {
 
       <Container className="relative py-xxl md:py-section">
         <motion.div
-          className="mx-auto flex w-full max-w-[820px] flex-col items-center gap-6 text-center"
+          // 1000px (not the previous 820px) is deliberate: "Powering Digital
+          // Infrastructure" — the longest cycling-word combination — needs
+          // ~880px at this font size, and "Governance" ~845px; 820px was
+          // narrow enough that only "Services" (~740px) ever fit row 1 on
+          // one line, so the other two words wrapped mid-row instead of
+          // breaking cleanly after the cycling word. The tagline below
+          // keeps its own tighter max-w-[46ch] regardless, so it doesn't
+          // end up reading as a wide, hard-to-scan line just because the
+          // headline needed more room.
+          className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-6 text-center"
           initial={reducedMotion ? "show" : "hidden"}
           animate="show"
           variants={stagger}
@@ -139,7 +148,7 @@ export function Hero() {
                         className="relative inline-block bg-clip-text py-0.5 transition-[background-position,color,transform] duration-500 ease-out hover:-translate-y-1 hover:text-transparent motion-safe:hover:[background-position:100%_50%]"
                         style={{
                           backgroundImage:
-                            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-lavender) 100%)",
+                            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-violet) 100%)",
                           backgroundSize: "220% 220%",
                           backgroundPosition: "0% 50%",
                         }}

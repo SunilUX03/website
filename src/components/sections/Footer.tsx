@@ -12,7 +12,7 @@ import {
   XIcon,
   YouTubeIcon,
 } from "@/components/ui/SocialIcons";
-import { toggleAccessibilityWidget } from "@/components/nav/AccessibilityBar";
+import { useAccessibilityPrefs } from "@/lib/accessibility";
 import { WebInfoManagerModal } from "@/components/legal/WebInfoManagerModal";
 
 const BOTTOM_LINKS: { label: string; href?: string }[] = [
@@ -60,6 +60,7 @@ export function Footer() {
   const [year, setYear] = useState(new Date().getFullYear());
   useEffect(() => setYear(new Date().getFullYear()), []);
   const [webInfoOpen, setWebInfoOpen] = useState(false);
+  const { openPanel } = useAccessibilityPrefs();
 
   return (
     <footer className="border-t border-hairline bg-canvas">
@@ -201,7 +202,7 @@ export function Footer() {
                 <button
                   key={link.label}
                   type="button"
-                  onClick={toggleAccessibilityWidget}
+                  onClick={(e) => openPanel(e.currentTarget)}
                   className="type-body-sm text-[var(--color-muted)] hover:text-ink"
                 >
                   {link.label}

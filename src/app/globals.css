@@ -34,6 +34,14 @@
   --color-gradient-lavender: #c8b8e0;
   --color-gradient-sky: #a8c8e8;
   --color-gradient-rose: #e8b8c4;
+  /* Muted bridge between the new logo mark's vivid magenta/blue swirl and
+     the site's existing calm palette — the logo's actual colors (~#ff4cff
+     to ~#0071ff) are far too saturated for this design system, so this is
+     a desaturated, darker violet that nods to the logo without the neon
+     effect. Used only on accents already in a gradient (hero headline
+     cycling word, its sibling hover-reveal words) — never on solid-color
+     UI like buttons or nav, which stay the plain brand blue. */
+  --color-gradient-violet: #784293;
 
   --color-success: #16a34a;
   --color-error: #dc2626;
@@ -101,95 +109,161 @@
     background-color: var(--color-primary-blue);
     color: var(--color-on-primary);
   }
+
+  /* Every interactive element gets a real, visible focus ring — keyboard
+     users otherwise have no way to tell where they are on the page. The
+     browser default outline is suppressed by most component libraries'
+     resets; this reinstates one deliberately, in the brand blue, only for
+     keyboard focus (:focus-visible skips it for mouse/touch clicks). */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+  }
+}
+
+/* ----------------------------------------------------------------------
+   Native accessibility toolbar overrides — see lib/accessibility.tsx.
+   High contrast and the dyslexia-friendly font both work by overriding the
+   same CSS custom properties every component already reads through
+   var(--color-*) / var(--font-*), so no component needs to know these
+   modes exist.
+---------------------------------------------------------------------- */
+:root[data-a11y-contrast] {
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #ffffff;
+  --color-surface-card: #ffffff;
+  --color-surface-strong: #e8e8e8;
+  --color-ink: #000000;
+  --color-body: #000000;
+  --color-body-strong: #000000;
+  --color-muted: #1a1a1a;
+  --color-hairline: #000000;
+  --color-hairline-strong: #000000;
+  --color-primary-blue: #0a2a6b;
+  --color-primary-blue-active: #071c49;
+}
+:root[data-a11y-contrast] img,
+:root[data-a11y-contrast] .bg-grain {
+  filter: saturate(1.15) contrast(1.05);
+}
+
+:root[data-a11y-dyslexic] {
+  --font-body: Verdana, "Comic Sans MS", Tahoma, sans-serif;
+  --font-display: Verdana, "Comic Sans MS", Tahoma, sans-serif;
+}
+:root[data-a11y-dyslexic] body {
+  letter-spacing: 0.02em;
+  word-spacing: 0.06em;
+}
+
+/* Forced "reduce motion" from the toolbar — same kill-switch as the
+   prefers-reduced-motion media query below, so a visitor can turn this on
+   for the site specifically without changing their whole OS setting.
+   Covers CSS animations/transitions; JS-driven loops (drift carousels,
+   the hero's cycling word) separately check useReducedMotion(), which
+   this same toggle also feeds — see lib/hooks.ts. */
+:root[data-a11y-motion-reduce] *,
+:root[data-a11y-motion-reduce] *::before,
+:root[data-a11y-motion-reduce] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* ----------------------------------------------------------------------
    Typography scale — exact tokens from the design skill.
    Plain classes (not Tailwind @utility) so family/size/weight/leading/
    tracking travel together as one unit, matching the locked type spec.
+   Every font-size is `calc(Npx * var(--a11y-scale, 1))` — the accessibility
+   toolbar's "bigger/smaller text" control sets --a11y-scale on :root, and
+   that one variable then scales the whole type system at once. Plain px
+   values don't respond to a root font-size change the way rem would, so
+   this calc() is what makes the control actually work everywhere rather
+   than just on whatever happens to use rem.
 ---------------------------------------------------------------------- */
 @layer components {
   .type-display-mega {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: 64px;
+    font-size: calc(64px * var(--a11y-scale, 1));
     line-height: 1.05;
     letter-spacing: -1.92px;
   }
   .type-display-xl {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: 48px;
+    font-size: calc(48px * var(--a11y-scale, 1));
     line-height: 1.08;
     letter-spacing: -0.96px;
   }
   .type-display-lg {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: 36px;
+    font-size: calc(36px * var(--a11y-scale, 1));
     line-height: 1.17;
     letter-spacing: -0.36px;
   }
   .type-display-md {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: 32px;
+    font-size: calc(32px * var(--a11y-scale, 1));
     line-height: 1.13;
     letter-spacing: -0.32px;
   }
   .type-display-sm {
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: 24px;
+    font-size: calc(24px * var(--a11y-scale, 1));
     line-height: 1.2;
     letter-spacing: 0;
   }
   .type-title-md {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 20px;
+    font-size: calc(20px * var(--a11y-scale, 1));
     line-height: 1.35;
     letter-spacing: 0;
   }
   .type-title-sm {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 18px;
+    font-size: calc(18px * var(--a11y-scale, 1));
     line-height: 1.44;
     letter-spacing: 0.18px;
   }
   .type-body-md {
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 16px;
+    font-size: calc(16px * var(--a11y-scale, 1));
     line-height: 1.5;
     letter-spacing: 0.16px;
   }
   .type-body-strong {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 16px;
+    font-size: calc(16px * var(--a11y-scale, 1));
     line-height: 1.5;
     letter-spacing: 0.16px;
   }
   .type-body-sm {
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 15px;
+    font-size: calc(15px * var(--a11y-scale, 1));
     line-height: 1.47;
     letter-spacing: 0.15px;
   }
   .type-caption {
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 14px;
+    font-size: calc(14px * var(--a11y-scale, 1));
     line-height: 1.5;
     letter-spacing: 0;
   }
   .type-caption-uppercase {
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: 12px;
+    font-size: calc(12px * var(--a11y-scale, 1));
     line-height: 1.4;
     letter-spacing: 0.96px;
     text-transform: uppercase;
@@ -197,27 +271,27 @@
   .type-button {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 15px;
+    font-size: calc(15px * var(--a11y-scale, 1));
     line-height: 1;
     letter-spacing: 0;
   }
   .type-nav-link {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 15px;
+    font-size: calc(15px * var(--a11y-scale, 1));
     line-height: 1.4;
     letter-spacing: 0;
   }
 
   @media (max-width: 639px) {
     .type-display-mega {
-      font-size: 32px;
+      font-size: calc(32px * var(--a11y-scale, 1));
       letter-spacing: -0.96px;
     }
   }
   @media (min-width: 640px) and (max-width: 1023px) {
     .type-display-mega {
-      font-size: 48px;
+      font-size: calc(48px * var(--a11y-scale, 1));
       letter-spacing: -0.96px;
     }
   }
@@ -347,25 +421,9 @@
   animation: orb-drift-c 58s ease-in-out infinite;
 }
 
-/* Slow opacity/scale "breathe" for the hero's kolam motif — never reacts
-   to the pointer (that was the old background's problem), just a faint
-   pulse so it reads as quietly alive rather than a static watermark. */
-@keyframes kolam-breathe {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.035); }
-}
-
 /* Barely-there film-grain texture — adds tactile depth to large soft
    gradient washes (the hero backdrop) without reading as "noisy" or
    competing with content. Self-contained SVG turbulence, no image asset. */
 .bg-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* The UX4G accessibility widget auto-injects its own floating trigger
-   button; we drive it from our own nav "Accessibility" control instead so
-   there's a single visible entry point, not two. The widget's real button
-   stays in the DOM (and still works via .click()) — only hidden visually. */
-#uw-widget-custom-trigger {
-  display: none !important;
 }
