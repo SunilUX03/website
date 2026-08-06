@@ -36,28 +36,6 @@ function BoltIcon() {
   );
 }
 
-function NetworkIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <circle cx="5" cy="6" r="2.2" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="19" cy="6" r="2.2" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="12" cy="18" r="2.2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M7 7 10.3 16.2M17 7 13.7 16.2M7.2 6h9.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ServerIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
-      <rect x="3" y="4" width="18" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-      <rect x="3" y="14" width="18" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="7" cy="7" r="1" fill="currentColor" />
-      <circle cx="7" cy="17" r="1" fill="currentColor" />
-    </svg>
-  );
-}
-
 function CpuIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
@@ -78,13 +56,13 @@ function ChartIcon() {
 
 type Corner = "tl" | "tr" | "ml" | "mr" | "bl" | "br";
 
-// Corners + mid-edges around the map's perimeter — kept as pure text/icon
-// labels, never a per-district claim.
+// Corners around the map's perimeter — kept as pure text/icon labels, never
+// a per-district claim. The right side (tr/mr) is left free on purpose:
+// HeroImpactCard now floats there, and stacking a badge on top of it there
+// was a losing fight for space at anything but the widest viewports.
 const BADGES: { icon: ReactNode; label: string; corner: Corner; delay: number }[] = [
   { icon: <BoltIcon />, label: "Powering Governance", corner: "tl", delay: 0 },
-  { icon: <ServerIcon />, label: "Building Digital Public Infrastructure", corner: "tr", delay: 1.4 },
   { icon: <ChartIcon />, label: "Transforming Public Services", corner: "ml", delay: 2 },
-  { icon: <NetworkIcon />, label: "Connecting Government", corner: "mr", delay: 3.2 },
   { icon: <MapPinIcon />, label: "Enabling Digital Tamil Nadu", corner: "bl", delay: 2.6 },
   { icon: <CpuIcon />, label: "Driving e-Governance", corner: "br", delay: 0.8 },
 ];

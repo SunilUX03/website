@@ -39,7 +39,7 @@ export function Metrics() {
 
       <Container className="relative py-xxl md:py-section">
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
-          Delivering Digital Governance at State Scale
+          Delivering Digital Governance at Scale
         </h2>
 
         <div ref={ref} className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">

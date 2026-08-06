@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { projects } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
@@ -256,12 +257,19 @@ export function ProjectsSpotlight() {
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
-          Projects Spotlight
-        </p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
-          A few projects worth viewing
-        </h2>
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
+              Projects Spotlight
+            </p>
+            <h2 className="type-display-lg max-w-2xl text-ink">
+              A few projects worth viewing
+            </h2>
+          </div>
+          <Link href="/services" className="type-button btn-outline shrink-0">
+            View all services
+          </Link>
+        </div>
 
         {isDesktop === true && <DesktopSpotlight />}
         {isDesktop === false && <MobileSpotlight />}

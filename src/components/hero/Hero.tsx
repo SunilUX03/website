@@ -3,15 +3,16 @@
 import { useRef } from "react";
 import { hero } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { LeadershipCard } from "./LeadershipCard";
 import { HeroDistrictMap } from "./HeroDistrictMap";
 import { HeroDotCursor } from "./HeroDotCursor";
 import { NodeGraphCanvas } from "./NodeGraphCanvas";
 import { HeroTechBadges } from "./HeroTechBadges";
+import { HeroImpactCard } from "./HeroImpactCard";
 import { useReducedMotion } from "@/lib/hooks";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const tiltRef = useRef<HTMLDivElement | null>(null);
   const reducedMotion = useReducedMotion();
   // Defined in HeroDistrictMap.tsx's own <style> block (always mounted as
   // a child here) but applied at THIS level instead of on the map's own
@@ -20,6 +21,28 @@ export function Hero() {
   // initial measured position while the map visually drifts away from it.
   const floatStyle: React.CSSProperties = {
     animation: reducedMotion ? "none" : "hero-map-float 9s ease-in-out infinite",
+  };
+
+  // Cursor-driven tilt lives on its own inner layer (not the float-animated
+  // one above) — a CSS animation on `transform` replaces the whole property
+  // every frame, so combining it with a JS-driven transform on the same
+  // element would make the float animation snap the tilt back to flat each
+  // cycle. Two nested layers let the bob and the tilt compose instead.
+  const handleTiltMove = (e: React.PointerEvent) => {
+    if (reducedMotion || e.pointerType !== "mouse") return;
+    const el = tiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    el.style.setProperty("--tilt-x", `${(-py * 6).toFixed(2)}deg`);
+    el.style.setProperty("--tilt-y", `${(px * 8).toFixed(2)}deg`);
+  };
+  const resetTilt = () => {
+    const el = tiltRef.current;
+    if (!el) return;
+    el.style.setProperty("--tilt-x", "0deg");
+    el.style.setProperty("--tilt-y", "0deg");
   };
 
   return (
@@ -79,17 +102,19 @@ export function Hero() {
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[46%_54%] lg:gap-8">
           {/* Left column — text */}
           <div className="relative z-10 flex flex-col gap-6">
-            <div className="flex flex-wrap gap-3">
-              {hero.leaders.map((leader) => (
-                <LeadershipCard key={leader.name} {...leader} />
-              ))}
+            <div className="badge-pill w-fit gap-2 text-[var(--color-body)]">
+              <span
+                aria-hidden
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-primary-blue)]"
+              />
+              <span className="type-caption font-medium">Government of Tamil Nadu · Digital Governance</span>
             </div>
 
             {/* data-hero-text marks only the headline + description — not
-                the leadership cards or CTA buttons above/below — so
+                the badge pill or CTA buttons above/below — so
                 NodeGraphCanvas (via the pointer event's real target) stays
                 dormant specifically over the copy someone's reading, while
-                staying interactive near the CM/Minister cards and buttons. */}
+                staying interactive near the pill and buttons. */}
             <div className="flex flex-col gap-6" data-hero-text>
               <h1 className="type-display-mega text-ink">{hero.headline}</h1>
 
@@ -118,8 +143,20 @@ export function Hero() {
               wrapper's other child — the tech badges overlay — floats in
               exact sync with the map instead of drifting apart from it. */}
           <div className="relative z-10 hidden h-[560px] lg:block" style={floatStyle}>
-            <HeroDistrictMap className="relative h-full w-full" />
-            <HeroTechBadges />
+            <div
+              ref={tiltRef}
+              onPointerMove={handleTiltMove}
+              onPointerLeave={resetTilt}
+              className="relative h-full w-full transition-transform duration-300 ease-out will-change-transform"
+              style={{
+                transform:
+                  "perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))",
+              }}
+            >
+              <HeroDistrictMap className="relative h-full w-full" />
+              <HeroTechBadges />
+              <HeroImpactCard />
+            </div>
           </div>
         </div>
       </Container>
