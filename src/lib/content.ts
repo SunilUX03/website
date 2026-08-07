@@ -40,6 +40,13 @@ export const nav = {
 
 export const hero = {
   agencyLabel: "Tamil Nadu e-Governance Agency",
+  // English/Tamil pair the hero's bold masthead line cycles through. The
+  // Tamil rendering is a standard construction (தமிழ்நாடு = Tamil Nadu,
+  // மின் = e-/electronic, ஆளுமை = governance, முகமை = agency) — it hasn't
+  // been checked against an official TNeGA Tamil-language style guide, so
+  // confirm the exact wording with the communications team before this is
+  // read as the state's own agency name.
+  agencyLabelCycle: ["Tamil Nadu e-Governance Agency", "தமிழ்நாடு மின்-ஆளுமை முகமை"],
   headline: "Powering Digital Governance in Tamil Nadu",
   // The word in `headline` that this list's first entry must match exactly
   // — the hero swaps just that one word through these alternatives on a
