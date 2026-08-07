@@ -98,6 +98,10 @@ export const ticker = [
  * throws on a typo instead of silently dropping a card. UMIS appears under
  * both Citizen Services and e-Governance Projects by design — it is
  * genuinely both.
+ *
+ * `bannerImage` is this card's own dedicated photo — deliberately separate
+ * from any itemNames entry's `.image`, so swapping it never changes what's
+ * shown on that service/project's own detail page.
  */
 export const pillars = [
   {
@@ -107,6 +111,7 @@ export const pillars = [
     href: "/services#citizen-services",
     linkLabel: "View all Citizen Services",
     itemNames: ["e-Sevai Portal", "Namma Arasu", "TNSSP", "e-Gazette Portal", "UMIS"],
+    bannerImage: "/images/pillars/citizen-services.png",
   },
   {
     title: "e-Governance Projects",
@@ -121,6 +126,7 @@ export const pillars = [
       "e-Office",
       "Interdepartmental Technical Consulting",
     ],
+    bannerImage: "/images/pillars/e-governance-projects.png",
   },
   {
     title: "Services",
@@ -136,6 +142,7 @@ export const pillars = [
       "SMS & WhatsApp Gateway",
       "IT Security Audit Framework",
     ],
+    bannerImage: "/images/pillars/services.png",
   },
 ];
 

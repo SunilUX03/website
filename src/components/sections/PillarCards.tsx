@@ -169,7 +169,7 @@ export function PillarCards() {
         {/* Desktop / tablet: three equal flip cards */}
         <div className="hidden gap-4 md:flex">
           {pillars.map((pillar, i) => (
-            <FlipCard key={pillar.title} pillar={pillar} items={PILLAR_ITEMS[i]} bannerImage={PILLAR_ITEMS[i][0]?.image} />
+            <FlipCard key={pillar.title} pillar={pillar} items={PILLAR_ITEMS[i]} bannerImage={pillar.bannerImage} />
           ))}
         </div>
 
@@ -180,7 +180,7 @@ export function PillarCards() {
               key={pillar.title}
               pillar={pillar}
               items={PILLAR_ITEMS[i]}
-              bannerImage={PILLAR_ITEMS[i][0]?.image}
+              bannerImage={pillar.bannerImage}
               open={mobileOpen === i}
               onToggle={() => setMobileOpen((cur) => (cur === i ? -1 : i))}
             />
