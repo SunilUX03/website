@@ -49,6 +49,11 @@ export const hero = {
 export interface RealContent {
   statistics: string[];
   keyFeatures: string[];
+  /** Real one-line description per `keyFeatures` entry, same index —
+   * replaces the generated "A core capability of {name}." filler when
+   * present. Optional/partial: falls back to the generic line for any
+   * index left out. */
+  keyFeatureDescriptions?: string[];
   eligibility: string[];
   whatYoullNeed: string[];
   faqs: { q: string; a: string }[];
@@ -258,30 +263,95 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
   {
+    // Source of truth: TNeGA Content & Image Brief — Aadhaar as a Service
+    // (submission doc, Jan 2026). accessPortalHref intentionally omitted:
+    // this is a B2G onboarding service (departments apply to onboard as
+    // Sub-AUA/Sub-KUA), not a citizen self-service portal — that flips
+    // `type` to "service" everywhere (Avail Service CTA, no Access Portal
+    // link), matching decision #2 in the brief.
     name: "Aadhaar Services",
     description:
-      "TNeGA provides Aadhaar enrolment, biometric updates, authentication, and e-KYC services through Permanent Enrolment Centres across Tamil Nadu.",
-    stats: "583 Enrolment Centres · 47.95 Cr Authentication Transactions",
+      "TNeGA is the State Nodal Agency for Aadhaar-related services in Tamil Nadu and is officially designated by UIDAI as an Authentication User Agency (AUA) and KYC User Agency (KUA). In this role, TNeGA onboards Government departments as Sub-AUA/Sub-KUA entities, enabling them to use Aadhaar authentication and e-KYC in their own service delivery.",
+    // 694/803 per decision #1 — the brief's more recently dated figure
+    // (explicitly "as of January 2026" at both the Highlight Stats Line and
+    // FAQ), superseding the undated 583 elsewhere in the same brief.
+    stats: "694 PECs · 803 Service Counters · 47.95 Cr Transactions FY 2025–26",
     image: pexelsPhoto(STOCK.elderlyWomanPhone, 700, 500),
-    accessPortalHref: "#",
     knowMoreHref: "#",
     sections: ["citizen-services"],
     real: {
+      tagline:
+        "TNeGA is the State Nodal Agency for Aadhaar-related services in Tamil Nadu, officially designated by UIDAI as an Authentication User Agency (AUA) and KYC User Agency (KUA), onboarding Government departments and enabling Aadhaar enrolment through Permanent Enrolment Centres.",
+      aboutSecondParagraph:
+        "TNeGA also acts as the registrar for Aadhaar enrolment and mandatory biometric updates, working through two enrolment agencies — ELCOT and TACTV — across a statewide network of Permanent Enrolment Centres (PECs) and special camps. As of January 2026, 694 Permanent Enrolment Centres with 803 service counters are operational across the State, having processed 47.95 crore Aadhaar authentication and e-KYC transactions in FY 2025–26 alone.",
       statistics: [
-        "583 Permanent Enrolment Centres",
-        "780 enrolment counters",
-        "8.53 lakh new Aadhaar enrolments",
-        "17.54 lakh biometric updates",
-        "47.95 crore authentication transactions",
+        "694 Permanent Enrolment Centres",
+        "803 Service Counters",
+        "47.95 Cr Authentication Transactions (FY 2025–26)",
       ],
-      keyFeatures: ["Aadhaar enrolment", "Mandatory biometric updates", "Authentication services", "e-KYC", "Face Authentication"],
+      // Key Features below already carries its own title+description per
+      // tile (including the two headline stats as tiles 4 and 5) — no need
+      // to also pad the grid with generic stat cards.
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "Aadhaar enrolment & updates",
+        "Departmental Sub-AUA/Sub-KUA onboarding",
+        "TN Generic Face Authentication e-KYC App",
+        "8 Departments onboarded",
+        "47.95 crore transactions (FY 2025–26)",
+        "2.53 crore beneficiaries verified",
+      ],
+      keyFeatureDescriptions: [
+        "New Aadhaar enrolment and update services delivered through a statewide network of Permanent Enrolment Centres (PECs).",
+        "Onboarding and support for Government departments as Sub-AUA and Sub-KUA entities under Section 7 and Section 4(4)(b)(ii) of the Aadhaar Act, 2016.",
+        "A mobile application enabling secure face-authentication-based verification for citizen and student use cases.",
+        "Government departments currently using TNeGA's Aadhaar authentication and e-KYC services.",
+        "Aadhaar authentication and e-KYC transactions processed statewide in the last financial year.",
+        "Aadhaar-based verification conducted during the Pongal Gift Hamper Distribution Program.",
+      ],
       eligibility: [
-        "You need a new Aadhaar enrolment.",
-        "You need to update Aadhaar biometrics.",
-        "You require Aadhaar-based authentication.",
+        "You're a Government department seeking Aadhaar authentication or e-KYC services, and want to onboard as a Sub-AUA or Sub-KUA entity under UIDAI guidelines",
+        "You're a citizen requiring Aadhaar enrolment, mandatory biometric updates, or demographic updates through a PEC",
       ],
-      whatYoullNeed: ["Documents required for Aadhaar services, as applicable."],
-      faqs: [{ q: "Is Aadhaar enrolment free?", a: "New enrolments and mandatory biometric updates are provided free of cost." }],
+      whatYoullNeed: ["Department approval and use-case details, for departments onboarding under the Aadhaar Act, 2016"],
+      getStartedSteps: [
+        {
+          title: "For citizens — visit a PEC",
+          description:
+            "Visit your nearest Permanent Enrolment Centre (PEC) with the required documents to complete enrolment or update your biometric/demographic details.",
+        },
+        {
+          title: "For Government departments — onboard as Sub-AUA/Sub-KUA",
+          description:
+            "Contact TNeGA with your department's approval and use-case details to begin onboarding as a Sub-AUA or Sub-KUA entity under the Aadhaar Act, 2016.",
+        },
+      ],
+      faqs: [
+        {
+          q: "What is TNeGA's role in Aadhaar services?",
+          a: "TNeGA functions as the State Nodal Agency for Aadhaar services in Tamil Nadu and is authorized by UIDAI as AUA and KUA for Aadhaar authentication and e-KYC services.",
+        },
+        {
+          q: "Who can use TNeGA's Aadhaar authentication services?",
+          a: "Government Departments can avail Aadhaar authentication and e-KYC services by onboarding as Sub-AUA/KUA entities through TNeGA.",
+        },
+        {
+          q: "How can citizens enrol for Aadhaar or update their Aadhaar details?",
+          a: "Citizens can visit the nearest Permanent Enrolment Centre (PEC) for Aadhaar enrolment, mandatory biometric updates, and demographic updates.",
+        },
+        {
+          q: "How many Aadhaar service centres are functioning in Tamil Nadu?",
+          a: "As of January 2026, 694 Permanent Enrolment Centres with 803 service counters are operational across the State.",
+        },
+        {
+          q: "What is the scale of Aadhaar transactions handled through TNeGA?",
+          a: "During FY 2025-26, TNeGA processed approximately 47.95 crore Aadhaar authentication and e-KYC transactions.",
+        },
+        {
+          q: "What is the TN Generic Face Authentication e-KYC Mobile Application?",
+          a: "It is a mobile-based Aadhaar e-KYC solution developed by TNeGA to facilitate secure face-authentication-based verification for Government programmes and citizen services.",
+        },
+      ],
     },
   },
   {

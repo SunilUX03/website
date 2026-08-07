@@ -76,9 +76,9 @@ export function generateFeatures(item: ServiceItemDetail): GeneratedFeature[] {
           title: stat,
           description: `A key statistic for ${item.name}.`,
         }));
-    const realFeatures: GeneratedFeature[] = item.real.keyFeatures.map((feature) => ({
+    const realFeatures: GeneratedFeature[] = item.real.keyFeatures.map((feature, i) => ({
       title: feature,
-      description: `A core capability of ${item.name}.`,
+      description: item.real?.keyFeatureDescriptions?.[i] ?? `A core capability of ${item.name}.`,
     }));
     return [...statFeatures, ...realFeatures];
   }
