@@ -43,6 +43,7 @@ export function generateScreenshotImages(item: ServiceItemDetail): CarouselImage
 }
 
 export function generateAboutSecondParagraph(item: ServiceItemDetail): string {
+  if (item.real?.aboutSecondParagraph) return item.real.aboutSecondParagraph;
   const audience = SECTION_LABEL[item.section];
   const firstStat = item.real?.statistics[0] ?? statsToBullets(item.stats)[0];
   return `As part of Tamil Nadu e-Governance Agency's digital governance programme, ${item.name} is built to make this reach every eligible ${audience.slice(0, -1)} across the state${
@@ -69,10 +70,12 @@ export function generateFeatures(item: ServiceItemDetail): GeneratedFeature[] {
   // Statistics feed the same "stat card" slot the generated fallback uses,
   // and its Key Features replace the generic structural cards below.
   if (item.real) {
-    const statFeatures: GeneratedFeature[] = item.real.statistics.map((stat) => ({
-      title: stat,
-      description: `A key statistic for ${item.name}.`,
-    }));
+    const statFeatures: GeneratedFeature[] = item.real.hideStatFeatureCards
+      ? []
+      : item.real.statistics.map((stat) => ({
+          title: stat,
+          description: `A key statistic for ${item.name}.`,
+        }));
     const realFeatures: GeneratedFeature[] = item.real.keyFeatures.map((feature) => ({
       title: feature,
       description: `A core capability of ${item.name}.`,
@@ -152,6 +155,7 @@ export interface GeneratedStep {
 }
 
 export function generateHowToAccessSteps(item: ServiceItemDetail): GeneratedStep[] {
+  if (item.real?.getStartedSteps?.length) return item.real.getStartedSteps;
   if (item.type === "project") {
     return [
       { title: `Visit the ${item.name} portal`, description: "Open the portal from the link on this page." },

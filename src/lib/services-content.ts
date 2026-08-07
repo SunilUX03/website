@@ -52,6 +52,38 @@ export interface RealContent {
   eligibility: string[];
   whatYoullNeed: string[];
   faqs: { q: string; a: string }[];
+  // Everything below is optional — only items with a fuller real-content
+  // submission (starting with Namma Arasu) set these; every other item
+  // keeps behaving exactly as before via the generator's fallbacks.
+  /** Short hero-only line, distinct from `description` (which is reused
+   * as the About section's opening paragraph). Falls back to
+   * `description` when absent, matching the original single-field
+   * behaviour. */
+  tagline?: string;
+  /** Overrides the auto-generated About section's second paragraph. */
+  aboutSecondParagraph?: string;
+  /** Overrides the auto-generated pull-quote card in the About section
+   * with a plain callout line (no generated "— TNeGA — Section" source). */
+  calloutText?: string;
+  /** `statistics` normally also becomes one Key Feature card per stat —
+   * set this when a submission's Key Features list is already complete
+   * on its own and shouldn't be padded with duplicate stat cards. */
+  hideStatFeatureCards?: boolean;
+  /** Real Product Tour images, replacing the generated stock-photo
+   * carousel. */
+  productTour?: { src: string; alt: string }[];
+  productTourCaption?: string;
+  /** Overrides the generated "How to access" steps. */
+  getStartedSteps?: { title: string; description: string }[];
+  /** Label for the Get Started card's direct-link button (project items
+   * only) — defaults to "Open". */
+  directLinkLabel?: string;
+  /** Additional FAQs shown behind a "View more" toggle, kept separate
+   * from the primary `faqs` shown by default. */
+  faqsMore?: { q: string; a: string }[];
+  /** Overrides the site-wide footer contact info for this item's Contact
+   * section — e.g. a service-specific helpdesk. */
+  contact?: { email?: string; phone?: string };
 }
 
 export type ServiceSection = "citizen-services" | "e-governance-projects" | "services";
@@ -73,11 +105,21 @@ export type ServiceItem = {
 
 const PROJECT_IMG = {
   eSevai: "/images/projects/e-sevai.png",
-  nammaArasu: "/images/projects/namma-arasu.png",
   tnGis: "/images/projects/tn-gis.png",
   umis: "/images/projects/umis.png",
   tnsso: "/images/projects/tnsso.png",
   eOffice: "/images/projects/e-office.png",
+} as const;
+
+// Real submission images for the Namma Arasu detail page — see the
+// content update sourced from NammaArasu_Content_&_Image_Submission.pdf.
+// Files are not yet present; drop them at these exact paths under
+// /public and the page picks them up with no further code changes.
+const NAMMA_ARASU_IMG = {
+  hero: "/images/projects/namma-arasu/hero.jpg",
+  productTour1: "/images/projects/namma-arasu/product-tour-1.jpg",
+  productTour2: "/images/projects/namma-arasu/product-tour-2.jpg",
+  productTour3: "/images/projects/namma-arasu/product-tour-3.jpg",
 } as const;
 
 const serviceItemsRaw: ServiceItem[] = [
@@ -111,23 +153,108 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
   {
+    // Source of truth: NammaArasu_Content_&_Image_Submission.pdf — all
+    // previous placeholder numbers on this page have been discarded.
     name: "Namma Arasu",
     description:
-      "Namma Arasu is a WhatsApp-based governance platform that enables citizens to access Government services through a conversational interface without visiting Government offices or multiple portals.",
-    stats: "76 Services · 20 Departments · 19.51 Lakh Users",
-    image: PROJECT_IMG.nammaArasu,
-    accessPortalHref: "#",
+      "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, enabling citizens to access a wide range of government services directly through WhatsApp — without needing to install a separate app, use a portal, or visit an e-Sevai centre.",
+    stats: "74 Services · 20 Departments · 6,57,239 Transactions since launch (Jan 2026)",
+    image: NAMMA_ARASU_IMG.hero,
+    accessPortalHref: "https://wa.me/917845252525",
     knowMoreHref: "#",
     sections: ["citizen-services"],
     real: {
-      statistics: ["76 services", "20 Departments", "19.51 lakh users", "6.01 lakh services delivered"],
-      keyFeatures: ["WhatsApp-based service delivery", "AI-assisted conversations", "Secure payments", "Mobile-first experience"],
-      eligibility: ["You want to access Government services using WhatsApp."],
-      whatYoullNeed: ["A mobile phone with WhatsApp."],
-      faqs: [
-        { q: "Do I need to install another app?", a: "No. Services are available through WhatsApp." },
-        { q: "How many services are available?", a: "76 services across 20 Government Departments." },
+      tagline:
+        "Government of Tamil Nadu's official WhatsApp-based governance platform — access government services without an app, portal, or e-Sevai centre visit.",
+      aboutSecondParagraph:
+        "Citizens save one WhatsApp number and get a guided, step-by-step flow in Tamil and English across all departments — including paying electricity, water, and property tax bills — with real-time sync to e-Sevai and departmental databases. The platform is built to stay stable even during peak-traffic events like exam-result days.",
+      calloutText: "Rated 4.1/5 by citizens across departments",
+      statistics: ["74 Services", "20 Departments", "6,57,239 Transactions since launch (Jan 2026)"],
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "One WhatsApp number (78452 52525) for every government service",
+        "Guided, step-by-step service flow in Tamil and English",
+        "All departments accessible in a single chat window",
+        "Pay electricity, water, and property tax bills without leaving the chat",
+        "Real-time sync with e-Sevai and departmental databases",
+        "Built to handle peak traffic (e.g., exam-result days) without downtime",
+        "Secure WhatsApp payments — ₹2,17,53,558 collected to date",
+        'Bilingual support — reply "T" anytime to switch to Tamil',
       ],
+      productTour: [
+        { src: NAMMA_ARASU_IMG.productTour1, alt: "Namma Arasu — Government at your fingertips, a 3-step visual: Join, select department, complete request" },
+        { src: NAMMA_ARASU_IMG.productTour2, alt: "அரசு சேவைகள் WhatsApp-ல்! — Namma Arasu WhatsApp chat screenshot" },
+        { src: NAMMA_ARASU_IMG.productTour3, alt: "Namma Arasu WhatsApp welcome message on a phone" },
+      ],
+      productTourCaption: "See how citizens start a request on Namma Arasu",
+      eligibility: [
+        "You're a Tamil Nadu resident with a WhatsApp-enabled mobile number",
+        "You find it hard to travel to a centre or navigate a web portal — especially useful for farmers, daily-wage workers, women, and senior citizens",
+      ],
+      whatYoullNeed: [
+        "A WhatsApp-enabled mobile phone",
+        "Service-specific details (e.g., CAN number for certificates, consumer number for bill payments)",
+      ],
+      getStartedSteps: [
+        { title: "Save the number", description: "Save 78452 52525 as a contact." },
+        { title: 'Send "Hi"', description: "Start a chat on WhatsApp (or use the direct link to skip this step)." },
+        { title: "Select your department", description: "Choose from the menu shown." },
+        { title: "Complete your request", description: "Enter the required details and finish." },
+      ],
+      directLinkLabel: "Chat on WhatsApp",
+      faqs: [
+        {
+          q: "What is Namma Arasu?",
+          a: "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, letting citizens access government services directly through a WhatsApp chat — no app, no portal login needed.",
+        },
+        {
+          q: "How do I start using Namma Arasu?",
+          a: 'Save 78452 52525 as a contact and send "Hi" on WhatsApp. You\'ll see a menu to select your department and service.',
+        },
+        {
+          q: "Do I need to download a separate app?",
+          a: "No. Namma Arasu works entirely inside WhatsApp, which is already installed on most phones.",
+        },
+        {
+          q: "Can I pay my bills on Namma Arasu?",
+          a: "Yes — electricity, water, and property tax bills can be paid directly inside the WhatsApp chat.",
+        },
+        {
+          q: "Is Namma Arasu available in Tamil?",
+          a: 'Yes, it is fully bilingual — reply "T" at any point to switch to Tamil.',
+        },
+        {
+          q: "Who do I contact if I face a problem on Namma Arasu?",
+          a: "You can reach TNeGA's support desk at tnesevaihelpdesk@tn.gov.in or the toll-free number 1800-425-6000.",
+        },
+      ],
+      faqsMore: [
+        {
+          q: "What if the service I need isn't listed yet?",
+          a: "New services are being added in phases, with a roadmap target of 275+ services across 9 rollout phases.",
+        },
+        {
+          q: "Is my data safe on Namma Arasu?",
+          a: "Yes — it runs on WhatsApp's verified business platform via Meta-certified partner Karix, and every chat leaves an accountable record for the citizen.",
+        },
+        {
+          q: "What documents or details will I need?",
+          a: "It depends on the service — for example, a CAN number for community certificates, or a consumer number for electricity bill payments.",
+        },
+        {
+          q: "Can I check my application or service status on WhatsApp?",
+          a: "Yes — status-check services (e.g., application status, grievance status) are available directly in the chat menu.",
+        },
+        {
+          q: "What if I enter the wrong details by mistake?",
+          a: 'You can type "M" at most stages to return to the Main Menu and restart the request.',
+        },
+        {
+          q: "Is Namma Arasu available 24/7?",
+          a: "Yes, the WhatsApp chat is available anytime; the platform is built to remain stable even during high-traffic events like exam-result days.",
+        },
+      ],
+      contact: { email: "tnesevaihelpdesk@tn.gov.in", phone: "1800-425-6000" },
     },
   },
   {

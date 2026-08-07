@@ -11,6 +11,11 @@ interface PhotoTileProps {
    * full-bleed slabs already sized by their parent). */
   sizes?: string;
   priority?: boolean;
+  /** "cover" (default) crops to fill the box — right for candid photos
+   * where losing some edge is fine. Use "contain" (letterboxed, no crop)
+   * for images where the whole frame matters, like a poster or a phone
+   * screenshot with real content baked in edge to edge. */
+  objectFit?: "cover" | "contain";
 }
 
 /**
@@ -25,10 +30,18 @@ export function PhotoTile({
   aspect = "aspect-[16/9]",
   sizes = "(min-width: 1024px) 33vw, 100vw",
   priority = false,
+  objectFit = "cover",
 }: PhotoTileProps) {
   return (
     <div className={clsx("relative overflow-hidden", aspect, className)}>
-      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className={objectFit === "contain" ? "object-contain" : "object-cover"}
+      />
     </div>
   );
 }

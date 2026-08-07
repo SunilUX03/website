@@ -79,13 +79,23 @@ function DocIcon({ className }: { className?: string }) {
 export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
+  const heroTagline = item.real?.tagline ?? item.description;
   const secondParagraph = generateAboutSecondParagraph(item);
   const pullQuote = generatePullQuote(item);
   const features = generateFeatures(item);
   const eligibility = generateEligibility(item);
   const steps = generateHowToAccessSteps(item);
   const faqs = generateFaqs(item);
-  const screenshotImages = generateScreenshotImages(item);
+  const faqsMore = item.real?.faqsMore?.length ? item.real.faqsMore : undefined;
+  // Real submitted images (portrait posters, phone screenshots) replace
+  // the generated stock-photo fallback and render uncropped — the
+  // generated fallback is landscape stock photography, where cropping to
+  // a wide aspect is fine.
+  const realProductTour = item.real?.productTour;
+  const screenshotImages = realProductTour ?? generateScreenshotImages(item);
+  const productTourCaption = item.real?.productTourCaption ?? "Illustrative — production screenshots to be added.";
+  const contactEmail = item.real?.contact?.email ?? footer.email;
+  const contactPhone = item.real?.contact?.phone ?? footer.phone;
   const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 8);
 
   return (
@@ -117,7 +127,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[55%_45%] lg:gap-12">
             <div>
               <h1 className="type-display-xl mb-4 text-ink">{item.name}</h1>
-              <p className="type-body-md mb-6 max-w-[56ch] text-[var(--color-body)]">{item.description}</p>
+              <p className="type-body-md mb-6 max-w-[56ch] text-[var(--color-body)]">{heroTagline}</p>
 
               {bullets.length > 0 && (
                 <div className="mb-6 flex divide-x divide-hairline border-y border-hairline">
@@ -204,8 +214,14 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-primary-blue)] text-white">
                 <TrendingUpIcon className="h-5 w-5" />
               </div>
-              <p className="type-body-md text-ink">{pullQuote.quote}</p>
-              <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+              {item.real?.calloutText ? (
+                <p className="type-title-sm text-ink">{item.real.calloutText}</p>
+              ) : (
+                <>
+                  <p className="type-body-md text-ink">{pullQuote.quote}</p>
+                  <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+                </>
+              )}
             </div>
           </div>
         </Container>
@@ -240,10 +256,12 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Product tour</p>
           <h2 className="type-display-md mb-10 text-ink">A look at {item.name}</h2>
 
-          <ScreenshotCarousel images={screenshotImages} />
-          <p className="type-caption mt-3 text-center text-[var(--color-muted)]">
-            Illustrative — production screenshots to be added.
-          </p>
+          <ScreenshotCarousel
+            images={screenshotImages}
+            aspect={realProductTour ? "aspect-[3/4]" : "aspect-[16/8]"}
+            objectFit={realProductTour ? "contain" : "cover"}
+          />
+          <p className="type-caption mt-3 text-center text-[var(--color-muted)]">{productTourCaption}</p>
         </Container>
       </section>
 
@@ -312,7 +330,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                   <div className="flex items-center justify-between gap-3 rounded-lg border border-hairline-strong bg-canvas px-4 py-3">
                     <span className="type-body-sm font-semibold text-[var(--color-primary-blue)]">{item.name} Portal</span>
                     <a href={item.accessPortalHref} className="type-button btn-primary !h-9 !px-4">
-                      Open
+                      {item.real?.directLinkLabel ?? "Open"}
                     </a>
                   </div>
                 </>
@@ -337,7 +355,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
         <Container className="max-w-[840px] py-xxl">
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Questions</p>
           <h2 className="type-display-md mb-10 text-ink">Frequently asked questions</h2>
-          <FaqAccordion faqs={faqs} />
+          <FaqAccordion faqs={faqs} moreFaqs={faqsMore} />
         </Container>
       </section>
 
@@ -368,14 +386,14 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="card-feature">
               <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Helpline</h3>
-              <a href={`tel:${footer.phone.replace(/\s|-/g, "")}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
-                {footer.phone}
+              <a href={`tel:${contactPhone.replace(/\s|-/g, "")}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
+                {contactPhone}
               </a>
             </div>
             <div className="card-feature">
               <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Email</h3>
-              <a href={`mailto:${footer.email}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
-                {footer.email}
+              <a href={`mailto:${contactEmail}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
+                {contactEmail}
               </a>
             </div>
             <div className="card-feature">

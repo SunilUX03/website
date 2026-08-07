@@ -18,7 +18,20 @@ function ChevronIcon({ direction, className }: { direction: "left" | "right"; cl
   );
 }
 
-export function ScreenshotCarousel({ images }: { images: CarouselImage[] }) {
+export function ScreenshotCarousel({
+  images,
+  aspect = "aspect-[16/8]",
+  objectFit = "cover",
+}: {
+  images: CarouselImage[];
+  /** Generated stock photos are landscape, so cover-cropping a wide
+   * aspect works fine. Real submitted assets (a poster, a phone
+   * screenshot) are usually portrait and have real content baked in edge
+   * to edge — pass a taller aspect with objectFit="contain" for those so
+   * nothing gets cropped off. */
+  aspect?: string;
+  objectFit?: "cover" | "contain";
+}) {
   const [index, setIndex] = useState(0);
 
   if (images.length === 0) return null;
@@ -26,8 +39,8 @@ export function ScreenshotCarousel({ images }: { images: CarouselImage[] }) {
   const go = (delta: number) => setIndex((i) => (i + delta + images.length) % images.length);
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-hairline bg-canvas">
-      <PhotoTile src={images[index].src} alt={images[index].alt} aspect="aspect-[16/8]" sizes="100vw" />
+    <div className="relative overflow-hidden rounded-xl border border-hairline bg-canvas-soft">
+      <PhotoTile src={images[index].src} alt={images[index].alt} aspect={aspect} objectFit={objectFit} sizes="100vw" />
 
       {images.length > 1 && (
         <>
