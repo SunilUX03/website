@@ -47,9 +47,14 @@ function useCycleIndex(length: number, intervalMs: number, reducedMotion: boolea
  * direct feedback (referencing ELCOT's own site as the bar): the org name
  * should be the first, biggest thing a visitor reads, not a small label
  * above the "real" headline — so this now outsizes the headline below it,
- * which is the reverse of where this started. Solid brand blue, not
- * gradient: the one piece of text whose entire job is "immediately read
- * as TNeGA" gets the plainest, most legible treatment.
+ * which is the reverse of where this started.
+ *
+ * Color/interaction now matches the headline's own (non-cycling) words
+ * exactly, per feedback that plain solid blue "wasn't visually pleasing":
+ * solid ink normally, and on hover the fill turns transparent to reveal
+ * the same violet→sky→blue gradient underneath, with the same slight
+ * lift — one consistent typographic language across the whole hero
+ * instead of the brand line having its own, different treatment.
  */
 function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
   const items = hero.agencyLabelCycle;
@@ -63,7 +68,13 @@ function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: reducedMotion ? 0 : -10 }}
         transition={{ duration: reducedMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="text-[32px] font-bold uppercase leading-[1.2] tracking-wide text-[var(--color-primary-blue)] sm:text-[42px] md:text-[50px]"
+        className="inline-block bg-clip-text text-[32px] font-bold uppercase leading-[1.2] tracking-wide text-ink transition-[background-position,color,transform] duration-500 ease-out hover:-translate-y-1 hover:text-transparent motion-safe:hover:[background-position:100%_50%] sm:text-[42px] md:text-[50px]"
+        style={{
+          backgroundImage:
+            "linear-gradient(120deg, var(--color-gradient-violet) 0%, var(--color-gradient-sky) 50%, var(--color-primary-blue) 100%)",
+          backgroundSize: "220% 220%",
+          backgroundPosition: "0% 50%",
+        }}
         lang={index === 0 ? "en" : "ta"}
       >
         {items[index]}

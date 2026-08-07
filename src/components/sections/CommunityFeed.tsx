@@ -23,6 +23,17 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
   YouTube: YouTubeIcon,
 };
 
+/** Trailing "go to this" cue on every card — per the requested layout,
+ * every row (image or text-only) ends in one of these, not just the odd
+ * one with room for it. */
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 self-center text-[var(--color-muted)]" fill="none" aria-hidden>
+      <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 type FeedPost = SocialPost & { platform: string; href: string };
 
 const DRIFT_SPEED = 22; // px/sec
@@ -122,8 +133,14 @@ function VerticalDrift<T>({
         ref={scrollerRef}
         className="overflow-y-auto [scrollbar-width:thin]"
         style={{ height: VIEWPORT_H }}
-        onMouseEnter={pauseNow}
-        onMouseLeave={() => scheduleResume(0)}
+        // Deliberately no onMouseEnter/onMouseLeave pause: that paused the
+        // instant the cursor merely rested anywhere over this fairly large
+        // block, with nothing to resume it until the mouse physically left
+        // — on desktop, a cursor idling here while someone reads froze the
+        // drift indefinitely, while touch devices (no hover state at all)
+        // never hit this, which is exactly the "works on mobile, not on
+        // desktop" split reported. Pausing now only on an actual wheel
+        // turn or touch — real scroll intent, not passive presence.
         onWheel={() => {
           pauseNow();
           scheduleResume(WHEEL_RESUME_MS);
@@ -226,6 +243,7 @@ export function CommunityFeed() {
                     <p className="type-body-strong mt-0.5 truncate text-ink">{item.heading}</p>
                     <p className="type-caption mt-0.5 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
                   </span>
+                  <ArrowIcon />
                 </a>
               )}
             />
@@ -268,6 +286,7 @@ export function CommunityFeed() {
                         <p className="type-caption line-clamp-2 text-ink">{post.text}</p>
                         <span className="type-caption mt-0.5 block text-[var(--color-muted)]">{post.date}</span>
                       </span>
+                      <ArrowIcon />
                     </a>
                   );
                 }}
