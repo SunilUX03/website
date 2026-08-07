@@ -256,11 +256,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Product tour</p>
           <h2 className="type-display-md mb-10 text-ink">A look at {item.name}</h2>
 
-          <ScreenshotCarousel
-            images={screenshotImages}
-            aspect={realProductTour ? "aspect-[3/2]" : "aspect-[16/8]"}
-            objectFit={realProductTour ? "contain" : "cover"}
-          />
+          <ScreenshotCarousel images={screenshotImages} />
           <p className="type-caption mt-3 text-center text-[var(--color-muted)]">{productTourCaption}</p>
         </Container>
       </section>
