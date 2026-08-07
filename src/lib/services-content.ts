@@ -118,13 +118,9 @@ const PROJECT_IMG = {
 
 // Real submission images for the Namma Arasu detail page — see the
 // content update sourced from NammaArasu_Content_&_Image_Submission.pdf.
-// Files are not yet present; drop them at these exact paths under
-// /public and the page picks them up with no further code changes.
 const NAMMA_ARASU_IMG = {
-  hero: "/images/projects/namma-arasu/hero.jpg",
-  productTour1: "/images/projects/namma-arasu/product-tour-1.jpg",
-  productTour2: "/images/projects/namma-arasu/product-tour-2.jpg",
-  productTour3: "/images/projects/namma-arasu/product-tour-3.jpg",
+  hero: "/images/projects/namma-arasu/hero.png",
+  productTour1: "/images/projects/namma-arasu/product-tour-1.png",
 } as const;
 
 const serviceItemsRaw: ServiceItem[] = [
@@ -188,8 +184,6 @@ const serviceItemsRaw: ServiceItem[] = [
       ],
       productTour: [
         { src: NAMMA_ARASU_IMG.productTour1, alt: "Namma Arasu — Government at your fingertips, a 3-step visual: Join, select department, complete request" },
-        { src: NAMMA_ARASU_IMG.productTour2, alt: "அரசு சேவைகள் WhatsApp-ல்! — Namma Arasu WhatsApp chat screenshot" },
-        { src: NAMMA_ARASU_IMG.productTour3, alt: "Namma Arasu WhatsApp welcome message on a phone" },
       ],
       productTourCaption: "See how citizens start a request on Namma Arasu",
       eligibility: [

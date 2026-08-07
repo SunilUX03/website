@@ -258,7 +258,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
 
           <ScreenshotCarousel
             images={screenshotImages}
-            aspect={realProductTour ? "aspect-[3/4]" : "aspect-[16/8]"}
+            aspect={realProductTour ? "aspect-[3/2]" : "aspect-[16/8]"}
             objectFit={realProductTour ? "contain" : "cover"}
           />
           <p className="type-caption mt-3 text-center text-[var(--color-muted)]">{productTourCaption}</p>

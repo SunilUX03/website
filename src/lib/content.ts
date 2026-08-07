@@ -178,7 +178,7 @@ export const projects = [
       { label: "Message Now", href: "https://wa.me/917845252525" },
       { label: "Know more", href: "/projects/namma-arasu" },
     ],
-    image: "/images/projects/namma-arasu.png",
+    image: "/images/projects/namma-arasu/hero.png",
   },
   {
     slug: "tn-gis",
