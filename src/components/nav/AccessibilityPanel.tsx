@@ -10,52 +10,57 @@ function CloseIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+function CheckBadge() {
+  return (
+    <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-primary-blue)] text-white">
+      <svg viewBox="0 0 24 24" className="h-2.5 w-2.5" fill="none" aria-hidden>
+        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
 
-function ToggleRow({
+function Tile({
   label,
-  description,
-  pressed,
-  onToggle,
+  sublabel,
+  active,
+  onClick,
+  children,
 }: {
   label: string;
-  description: string;
-  pressed: boolean;
-  onToggle: () => void;
+  sublabel?: string;
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
-      onClick={onToggle}
-      aria-pressed={pressed}
-      className="flex w-full items-center justify-between gap-3 rounded-lg border border-hairline px-3 py-2.5 text-left transition-colors hover:bg-[var(--color-surface-strong)]"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`relative flex flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-3 text-center transition-colors ${
+        active
+          ? "border-[var(--color-primary-blue)] bg-[var(--color-surface-strong)]"
+          : "border-hairline bg-surface-card hover:bg-[var(--color-surface-strong)]"
+      }`}
     >
-      <span>
-        <span className="type-body-strong block text-ink">{label}</span>
-        <span className="type-caption block text-[var(--color-muted)]">{description}</span>
+      {active && <CheckBadge />}
+      <span className="text-ink" aria-hidden>
+        {children}
       </span>
-      <span
-        aria-hidden
-        className={`flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors ${
-          pressed ? "border-[var(--color-primary-blue)] bg-[var(--color-primary-blue)]" : "border-hairline-strong bg-[var(--color-surface-strong)]"
-        }`}
-      >
-        <span
-          className={`h-4.5 w-4.5 rounded-full bg-white shadow transition-transform ${pressed ? "translate-x-[22px]" : "translate-x-0.5"}`}
-        />
-      </span>
+      <span className="type-caption leading-tight text-ink">{sublabel ?? label}</span>
     </button>
   );
 }
 
 /**
  * Replaces the third-party UX4G accessibility widget with a panel this
- * codebase owns end to end. Focus moves into the panel on open and back to
- * whichever button opened it on close, and Escape closes it too, so it
- * behaves like any other accessible disclosure rather than a bolted-on
- * script. Mounted once (see layout.tsx) and driven entirely by
- * AccessibilityProvider's context — any trigger anywhere on the site (nav
- * bar, footer) just calls `openPanel(event.currentTarget)` and this shows
- * up already wired to it.
+ * codebase owns end to end — same feature set (text size/spacing/line
+ * height, dyslexia font, ADHD reading guide, saturation, light-dark,
+ * invert, highlight links, text-to-speech, large cursor, pause animation,
+ * hide images), all driven by AccessibilityProvider's context. Mounted
+ * once (see layout.tsx); any trigger anywhere on the site (nav bar,
+ * footer) just calls `openPanel(event.currentTarget)`.
  */
 export function AccessibilityPanel() {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +75,6 @@ export function AccessibilityPanel() {
   useEffect(() => {
     if (!open) return;
     panelRef.current?.querySelector<HTMLElement>("button")?.focus();
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
     };
@@ -82,82 +86,89 @@ export function AccessibilityPanel() {
   if (!open) return null;
 
   const fontPct = Math.round(prefs.fontScale * 100);
+  const saturationLabel =
+    prefs.saturation === "low" ? "Low Saturation" : prefs.saturation === "high" ? "High Saturation" : "Saturation";
 
   return (
     <>
-      <div aria-hidden className="fixed inset-0 z-[65] bg-black/10" onClick={close} />
+      <div aria-hidden className="fixed inset-0 z-[65] bg-black/20" onClick={close} />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Accessibility options"
-        className="fixed right-4 top-16 z-[70] w-[min(340px,calc(100vw-2rem))] rounded-2xl border border-hairline bg-surface-card p-4 shadow-[0_16px_40px_rgba(12,10,9,0.18)]"
+        className="fixed inset-x-3 top-16 z-[70] mx-auto max-h-[80vh] w-[min(460px,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-hairline bg-surface-card shadow-[0_16px_40px_rgba(12,10,9,0.18)] sm:inset-x-auto sm:right-4"
       >
-        <div className="mb-3 flex items-center justify-between gap-4">
-          <p className="type-title-sm text-ink">Accessibility options</p>
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 rounded-t-2xl bg-[var(--color-primary-blue)] px-4 py-3 text-white">
+          <p className="type-title-sm text-white">Accessibility options</p>
           <button
             type="button"
             onClick={close}
             aria-label="Close accessibility options"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] hover:bg-[var(--color-surface-strong)] hover:text-ink"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/80 hover:bg-white/15 hover:text-white"
           >
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-hairline px-3 py-2.5">
-            <span>
-              <span className="type-body-strong block text-ink">Text size</span>
-              <span className="type-caption block text-[var(--color-muted)]">{fontPct}%</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={prefs.decreaseFontScale}
-                aria-label="Decrease text size"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline-strong text-ink hover:bg-[var(--color-surface-strong)]"
-              >
-                −
-              </button>
-              <button
-                type="button"
-                onClick={prefs.increaseFontScale}
-                aria-label="Increase text size"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline-strong text-ink hover:bg-[var(--color-surface-strong)]"
-              >
-                +
-              </button>
-            </span>
-          </div>
+        <div className="grid grid-cols-3 gap-2.5 p-4">
+          <Tile sublabel={`Bigger Text (${fontPct}%)`} label="Bigger Text" active={prefs.fontScale > 1} onClick={prefs.increaseFontScale}>
+            <span className="text-lg font-bold">T↑</span>
+          </Tile>
+          <Tile sublabel={`Smaller Text (${fontPct}%)`} label="Smaller Text" active={prefs.fontScale < 1} onClick={prefs.decreaseFontScale}>
+            <span className="text-sm font-bold">T↓</span>
+          </Tile>
+          <Tile label="Text Spacing" active={prefs.textSpacing} onClick={prefs.toggleTextSpacing}>
+            <span className="text-lg font-bold tracking-[0.2em]">A↔</span>
+          </Tile>
 
-          <ToggleRow
-            label="High contrast"
-            description="Maximum contrast text and borders"
-            pressed={prefs.highContrast}
-            onToggle={prefs.toggleHighContrast}
-          />
-          <ToggleRow
-            label="Reduce motion"
-            description="Turn off animations and auto-scrolling"
-            pressed={prefs.reduceMotion}
-            onToggle={prefs.toggleReduceMotion}
-          />
-          <ToggleRow
-            label="Dyslexia-friendly font"
-            description="Switch to a font with wider letter spacing"
-            pressed={prefs.dyslexiaFont}
-            onToggle={prefs.toggleDyslexiaFont}
-          />
+          <Tile label="Line Height" active={prefs.lineHeightBoost} onClick={prefs.toggleLineHeightBoost}>
+            <span className="text-lg font-bold">↕≡</span>
+          </Tile>
+          <Tile label="Dyslexia Friendly" active={prefs.dyslexiaFont} onClick={prefs.toggleDyslexiaFont}>
+            <span className="text-lg font-bold">Df</span>
+          </Tile>
+          <Tile label="ADHD Mode" active={prefs.adhdMode} onClick={prefs.toggleAdhdMode}>
+            <span className="text-lg">◫</span>
+          </Tile>
+
+          <Tile sublabel={saturationLabel} label="Saturation" active={prefs.saturation !== "normal"} onClick={prefs.cycleSaturation}>
+            <span className="text-lg">◐</span>
+          </Tile>
+          <Tile label="Light-Dark" active={prefs.theme === "dark"} onClick={() => prefs.setTheme("dark")}>
+            <span className="text-lg">☾</span>
+          </Tile>
+          <Tile label="Invert Colors" active={prefs.theme === "invert"} onClick={() => prefs.setTheme("invert")}>
+            <span className="text-lg">◑</span>
+          </Tile>
+
+          <Tile label="Highlight Links" active={prefs.highlightLinks} onClick={prefs.toggleHighlightLinks}>
+            <span className="text-lg">🔗</span>
+          </Tile>
+          <Tile label="Text To Speech" active={prefs.speakOnHover} onClick={prefs.toggleSpeakOnHover}>
+            <span className="text-lg">🔊</span>
+          </Tile>
+          <Tile label="Cursor" active={prefs.cursorLarge} onClick={prefs.toggleCursorLarge}>
+            <span className="text-lg">➤</span>
+          </Tile>
+
+          <Tile label="Pause Animation" active={prefs.pauseAnimation} onClick={prefs.togglePauseAnimation}>
+            <span className="text-lg">⏸</span>
+          </Tile>
+          <Tile label="Hide Images" active={prefs.hideImages} onClick={prefs.toggleHideImages}>
+            <span className="text-lg">🖼</span>
+          </Tile>
         </div>
 
-        <button
-          type="button"
-          onClick={prefs.reset}
-          className="type-caption mt-3 w-full rounded-lg border border-hairline-strong py-2 text-center font-semibold text-ink hover:bg-[var(--color-surface-strong)]"
-        >
-          Reset all settings
-        </button>
+        <div className="px-4 pb-4">
+          <button
+            type="button"
+            onClick={prefs.reset}
+            className="type-caption w-full rounded-lg border border-hairline-strong py-2 text-center font-semibold text-ink hover:bg-[var(--color-surface-strong)]"
+          >
+            Reset all settings
+          </button>
+        </div>
       </div>
     </>
   );

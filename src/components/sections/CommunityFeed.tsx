@@ -46,6 +46,7 @@ function VerticalDrift<T>({
 }) {
   const reducedMotion = useReducedMotion();
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const paused = useRef(false);
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loopHeight = useRef(0);
@@ -54,6 +55,24 @@ function VerticalDrift<T>({
   useLayoutEffect(() => {
     const el = scrollerRef.current;
     if (el) loopHeight.current = el.scrollHeight / 2;
+  }, [items]);
+
+  // A plain <img> (used here so each photo keeps its own natural aspect
+  // ratio instead of a fixed crop) has no reserved height until it loads,
+  // so the measurement above — which runs before any image has finished
+  // loading — locked in a loop height far smaller than the real content.
+  // That made the wrap-around check below trigger almost immediately,
+  // snapping scrollTop back before it visibly moved — reading as "not
+  // auto-scrolling" rather than a subtle bug. A ResizeObserver on the
+  // actual content track keeps loopHeight correct as each image loads in.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const ro = new ResizeObserver(() => {
+      loopHeight.current = track.scrollHeight / 2;
+    });
+    ro.observe(track);
+    return () => ro.disconnect();
   }, [items]);
 
   useEffect(() => {
@@ -112,7 +131,7 @@ function VerticalDrift<T>({
         onTouchStart={pauseNow}
         onTouchEnd={() => scheduleResume(TOUCH_RESUME_MS)}
       >
-        <div className="flex flex-col gap-3">
+        <div ref={trackRef} className="flex flex-col gap-3">
           {loop.map((item, i) => (
             <div key={getKey(item, i)}>{renderItem(item)}</div>
           ))}

@@ -41,7 +41,7 @@
      effect. Used only on accents already in a gradient (hero headline
      cycling word, its sibling hover-reveal words) — never on solid-color
      UI like buttons or nav, which stay the plain brand blue. */
-  --color-gradient-violet: #784293;
+  --color-gradient-violet: #85309b;
 
   --color-success: #16a34a;
   --color-error: #dc2626;
@@ -123,40 +123,100 @@
 
 /* ----------------------------------------------------------------------
    Native accessibility toolbar overrides — see lib/accessibility.tsx.
-   High contrast and the dyslexia-friendly font both work by overriding the
-   same CSS custom properties every component already reads through
-   var(--color-*) / var(--font-*), so no component needs to know these
-   modes exist.
+   Most of these work by overriding the same CSS custom properties every
+   component already reads through var(--color-*)/var(--font-*), or by
+   keying a single attribute selector, so no component needs to know these
+   modes exist. ADHD mode and text-to-speech are handled in the provider
+   itself (they need live mouse/DOM access, not just CSS).
 ---------------------------------------------------------------------- */
-:root[data-a11y-contrast] {
-  --color-canvas: #ffffff;
-  --color-canvas-soft: #ffffff;
-  --color-surface-card: #ffffff;
-  --color-surface-strong: #e8e8e8;
-  --color-ink: #000000;
-  --color-body: #000000;
-  --color-body-strong: #000000;
-  --color-muted: #1a1a1a;
-  --color-hairline: #000000;
-  --color-hairline-strong: #000000;
-  --color-primary-blue: #0a2a6b;
-  --color-primary-blue-active: #071c49;
-}
-:root[data-a11y-contrast] img,
-:root[data-a11y-contrast] .bg-grain {
-  filter: saturate(1.15) contrast(1.05);
-}
 
+/* OpenDyslexic — the actual font (not a fallback stand-in), self-hosted
+   nowhere, loaded from its canonical open-source repo via jsdelivr's
+   GitHub CDN (CORS-enabled, publicly cacheable). */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 :root[data-a11y-dyslexic] {
-  --font-body: Verdana, "Comic Sans MS", Tahoma, sans-serif;
-  --font-display: Verdana, "Comic Sans MS", Tahoma, sans-serif;
-}
-:root[data-a11y-dyslexic] body {
-  letter-spacing: 0.02em;
-  word-spacing: 0.06em;
+  --font-body: "OpenDyslexic", Verdana, sans-serif;
+  --font-display: "OpenDyslexic", Verdana, sans-serif;
 }
 
-/* Forced "reduce motion" from the toolbar — same kill-switch as the
+/* Text Spacing — wider letter/word spacing, independent of the dyslexia
+   font (a sighted low-vision or attention need, not necessarily dyslexia). */
+:root[data-a11y-spacing] body {
+  letter-spacing: 0.04em;
+  word-spacing: 0.18em;
+}
+
+/* Line Height — a blunt but broad selector list rather than threading a
+   second multiplier through every .type-* class's own line-height; covers
+   the elements that actually carry running text. */
+:root[data-a11y-line-height] p,
+:root[data-a11y-line-height] li,
+:root[data-a11y-line-height] span,
+:root[data-a11y-line-height] a,
+:root[data-a11y-line-height] h1,
+:root[data-a11y-line-height] h2,
+:root[data-a11y-line-height] h3 {
+  line-height: 1.9 !important;
+}
+
+/* Saturation — cycles normal -> low -> high on each click. */
+:root[data-a11y-saturation="low"] {
+  filter: saturate(0.35);
+}
+:root[data-a11y-saturation="high"] {
+  filter: saturate(1.9);
+}
+
+/* Light-Dark and Invert Colors are the same underlying trick (inverting
+   the page is the fastest way to derive a dark theme from a light one
+   without a second hand-built palette) — Light-Dark additionally
+   hue-rotates and counter-inverts photos/videos so they still read as
+   normal images instead of colour negatives; Invert Colors deliberately
+   leaves that off, so photos DO look like negatives — that's the
+   distinguishing, expected difference between the two modes. */
+:root[data-a11y-theme="dark"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+:root[data-a11y-theme="dark"] img,
+:root[data-a11y-theme="dark"] video {
+  filter: invert(1) hue-rotate(180deg);
+}
+:root[data-a11y-theme="invert"] {
+  filter: invert(1);
+}
+
+:root[data-a11y-highlight-links] a {
+  background-color: #fef08a !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
+/* Large cursor — an inline SVG data URI (a plain black arrow with a white
+   outline) so it stays visible on both light and dark backgrounds; no
+   image asset to manage. */
+:root[data-a11y-cursor-large], :root[data-a11y-cursor-large] * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path d="M3 2 L3 20 L8 16 L11 22 L14 20.5 L11 14.5 L17 14 Z" fill="black" stroke="white" stroke-width="1.5"/></svg>') 4 4, auto !important;
+}
+
+:root[data-a11y-hide-images] img {
+  visibility: hidden !important;
+}
+
+/* Forced "Pause Animation" from the toolbar — same kill-switch as the
    prefers-reduced-motion media query below, so a visitor can turn this on
    for the site specifically without changing their whole OS setting.
    Covers CSS animations/transitions; JS-driven loops (drift carousels,

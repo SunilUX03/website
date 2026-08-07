@@ -6,13 +6,15 @@ import Image from "next/image";
 import clsx from "clsx";
 import { nav } from "@/lib/content";
 import { NavDropdown, DropdownLink } from "./NavDropdown";
-import { HomeIcon, MenuIcon } from "./icons";
+import { AccessibilityIcon, HomeIcon, MenuIcon } from "./icons";
 import { MobileDrawer } from "./MobileDrawer";
+import { useAccessibilityPrefs } from "@/lib/accessibility";
 
 export function MainNav() {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
+  const { openPanel, panelOpen } = useAccessibilityPrefs();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -180,6 +182,24 @@ export function MainNav() {
         )}
       >
         <MenuIcon className="h-5 w-5" />
+      </button>
+
+      {/* Floating accessibility button — the top bar's "Accessibility"
+          control scrolls away with it; once scrolled, this is what's
+          actually reachable without scrolling back up. Sits just left of
+          the floating menu button, same appear-on-scroll behaviour. */}
+      <button
+        type="button"
+        onClick={(e) => openPanel(e.currentTarget)}
+        aria-label="Accessibility options"
+        aria-pressed={panelOpen}
+        className={clsx(
+          "fixed right-[68px] top-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-all duration-200 hover:bg-[var(--color-surface-strong)] md:right-[84px] md:top-6",
+          panelOpen ? "border-[var(--color-primary-blue)] bg-[var(--color-surface-strong)]" : "border-hairline bg-surface-card",
+          scrolled ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
+      >
+        <AccessibilityIcon className="h-5 w-5" />
       </button>
 
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />

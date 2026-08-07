@@ -57,7 +57,7 @@ function HeadlineCycleWord({ words, reducedMotion }: { words: string[]; reducedM
         className="inline-block bg-clip-text text-transparent"
         style={{
           backgroundImage:
-            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-violet) 100%)",
+            "linear-gradient(120deg, var(--color-gradient-violet) 0%, var(--color-gradient-sky) 50%, var(--color-primary-blue) 100%)",
         }}
       >
         {words[index]}
@@ -148,7 +148,7 @@ export function Hero() {
                         className="relative inline-block bg-clip-text py-0.5 transition-[background-position,color,transform] duration-500 ease-out hover:-translate-y-1 hover:text-transparent motion-safe:hover:[background-position:100%_50%]"
                         style={{
                           backgroundImage:
-                            "linear-gradient(120deg, var(--color-primary-blue) 0%, var(--color-gradient-sky) 45%, var(--color-gradient-violet) 100%)",
+                            "linear-gradient(120deg, var(--color-gradient-violet) 0%, var(--color-gradient-sky) 50%, var(--color-primary-blue) 100%)",
                           backgroundSize: "220% 220%",
                           backgroundPosition: "0% 50%",
                         }}
