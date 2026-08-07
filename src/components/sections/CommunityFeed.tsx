@@ -23,21 +23,10 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
   YouTube: YouTubeIcon,
 };
 
-/** Trailing "go to this" cue on every card — per the requested layout,
- * every row (image or text-only) ends in one of these, not just the odd
- * one with room for it. */
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 self-center text-[var(--color-muted)]" fill="none" aria-hidden>
-      <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 type FeedPost = SocialPost & { platform: string; href: string };
 
 const DRIFT_SPEED = 22; // px/sec
-const VIEWPORT_H = 460;
+const VIEWPORT_H = 480;
 const WHEEL_RESUME_MS = 1200;
 const TOUCH_RESUME_MS = 1600;
 
@@ -86,8 +75,21 @@ function VerticalDrift<T>({
     return () => ro.disconnect();
   }, [items]);
 
+  // reducedMotion is read from a ref inside the frame loop rather than
+  // being an effect dependency — accessibility prefs load from
+  // localStorage asynchronously (a tick after mount), so `reducedMotion`
+  // can flip from false to true shortly after the loop already started.
+  // With it in the dependency array, that flip tore the effect down and
+  // never restarted it — this way the loop is created exactly once and
+  // simply checks the current value every frame, which also means a user
+  // toggling "Pause animations" back off in our own accessibility panel
+  // makes the drift resume immediately instead of needing a refresh.
+  const reducedMotionRef = useRef(reducedMotion);
   useEffect(() => {
-    if (reducedMotion) return;
+    reducedMotionRef.current = reducedMotion;
+  }, [reducedMotion]);
+
+  useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
     let raf = 0;
@@ -95,7 +97,7 @@ function VerticalDrift<T>({
     const step = (time: number) => {
       const dt = (time - last) / 1000;
       last = time;
-      if (!paused.current && loopHeight.current > 0) {
+      if (!paused.current && !reducedMotionRef.current && loopHeight.current > 0) {
         let next = el.scrollTop + DRIFT_SPEED * dt;
         if (next >= loopHeight.current) next -= loopHeight.current;
         el.scrollTop = next;
@@ -104,11 +106,17 @@ function VerticalDrift<T>({
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [reducedMotion]);
+  }, []);
 
   if (reducedMotion) {
+    // Same scrollbar treatment as the animated viewport below — this
+    // branch previously left the browser's default (often thick) scrollbar
+    // unstyled, which visibly overlapped the cards' rounded right edge.
     return (
-      <div className="space-y-3 overflow-y-auto pr-1" style={{ maxHeight: VIEWPORT_H }}>
+      <div
+        className="space-y-3 overflow-y-auto pr-2 [scrollbar-width:thin]"
+        style={{ maxHeight: VIEWPORT_H }}
+      >
         {items.map((item, i) => (
           <div key={getKey(item, i)}>{renderItem(item)}</div>
         ))}
@@ -224,18 +232,21 @@ export function CommunityFeed() {
               renderItem={(item) => (
                 <a
                   href={item.href}
-                  className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                  className="flex items-center gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
                 >
-                  {/* Small fixed-size thumbnail, not a full-width banner —
-                      most of these source photos are low-resolution stock
-                      images that look fine at 64px but rough blown up
-                      full-width, and a compact row is what actually lets
-                      several announcements be visible at once. Optional:
-                      a text-only update (no photo to show) renders as a
+                  {/* items-center on the row (above) + a bigger thumbnail
+                      here fixes two things at once: the image no longer
+                      sits pinned to the top of a taller text block, and it
+                      now uses more of that vertical space instead of
+                      floating small inside it. Still a fixed-size
+                      rectangle, not a full-width banner — most of these
+                      source photos are low-resolution stock images that
+                      look fine at this size but rough blown up full-width.
+                      Optional: a text-only update (no photo) renders as a
                       plain full-width row instead of leaving a gap. */}
                   {item.image && (
-                    <span className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
-                      <PhotoTile src={item.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="96px" />
+                    <span className="relative h-24 w-36 shrink-0 overflow-hidden rounded-lg">
+                      <PhotoTile src={item.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="144px" />
                     </span>
                   )}
                   <span className="min-w-0 flex-1">
@@ -243,7 +254,6 @@ export function CommunityFeed() {
                     <p className="type-body-strong mt-0.5 truncate text-ink">{item.heading}</p>
                     <p className="type-caption mt-0.5 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
                   </span>
-                  <ArrowIcon />
                 </a>
               )}
             />
@@ -272,13 +282,13 @@ export function CommunityFeed() {
                   return (
                     <a
                       href={post.href}
-                      className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                      className="flex items-center gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
                     >
                       {post.image && (
-                        <span className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
-                          <PhotoTile src={post.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="96px" />
-                          <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
-                            {Icon && <Icon className="h-2.5 w-2.5" />}
+                        <span className="relative h-24 w-36 shrink-0 overflow-hidden rounded-lg">
+                          <PhotoTile src={post.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="144px" />
+                          <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
+                            {Icon && <Icon className="h-3 w-3" />}
                           </span>
                         </span>
                       )}
@@ -286,7 +296,6 @@ export function CommunityFeed() {
                         <p className="type-caption line-clamp-2 text-ink">{post.text}</p>
                         <span className="type-caption mt-0.5 block text-[var(--color-muted)]">{post.date}</span>
                       </span>
-                      <ArrowIcon />
                     </a>
                   );
                 }}
