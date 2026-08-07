@@ -234,8 +234,8 @@ export function CommunityFeed() {
                       a text-only update (no photo to show) renders as a
                       plain full-width row instead of leaving a gap. */}
                   {item.image && (
-                    <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                      <PhotoTile src={item.image} alt="" aspect="aspect-square" className="h-full w-full" sizes="64px" />
+                    <span className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
+                      <PhotoTile src={item.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="96px" />
                     </span>
                   )}
                   <span className="min-w-0 flex-1">
@@ -275,8 +275,8 @@ export function CommunityFeed() {
                       className="flex gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
                     >
                       {post.image && (
-                        <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                          <PhotoTile src={post.image} alt="" aspect="aspect-square" className="h-full w-full" sizes="64px" />
+                        <span className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
+                          <PhotoTile src={post.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="96px" />
                           <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
                             {Icon && <Icon className="h-2.5 w-2.5" />}
                           </span>
