@@ -28,12 +28,6 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   services: "Services",
 };
 
-// 5 placeholder slots (not a real count) so the Success Stories carousel
-// has more than one screen's worth to scroll through even before any
-// stories are published — see service-detail-generator.ts for why this
-// stays "coming soon" rather than generated copy.
-const STORY_PLACEHOLDER_TAGS = ["Milestone", "Update", "Feature", "Community", "Recognition"];
-
 // Same icon across every Key Features card by design (per earlier
 // feedback: "features will have the same icon") — a layered-stack glyph
 // reads as "capability" more clearly than the star it replaced.
@@ -335,34 +329,6 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               )}
             </div>
           </div>
-        </Container>
-      </section>
-
-      {/* ---------- Success Stories (placeholder — see service-detail-generator.ts
-          header comment for why this is a "coming soon" placeholder rather
-          than generated copy) ---------- */}
-      <section className="bg-canvas-soft">
-        <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">In the field</p>
-          <h2 className="type-display-md mb-10 text-ink">Success stories &amp; coverage</h2>
-
-          {/* A carousel rather than a fixed grid — this section is meant
-              to grow past 3 cards as real stories get published, without
-              a layout change. */}
-          <CardCarousel>
-            {STORY_PLACEHOLDER_TAGS.map((tag) => (
-              <div key={tag} data-carousel-item className="card-feature w-[280px] shrink-0 snap-start sm:w-[320px]">
-                <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-hairline-strong bg-[var(--color-surface-strong)]">
-                  <span className="type-caption text-[var(--color-muted)]">Coming soon</span>
-                </div>
-                <p className="type-caption-uppercase mb-1.5 text-[var(--color-primary-blue)]">{tag}</p>
-                <h3 className="type-title-sm mb-1.5 text-ink">Real-world impact, coming soon</h3>
-                <p className="type-body-sm text-[var(--color-muted)]">
-                  {`Success stories and media coverage for ${item.name} will be added here as they're published.`}
-                </p>
-              </div>
-            ))}
-          </CardCarousel>
         </Container>
       </section>
 

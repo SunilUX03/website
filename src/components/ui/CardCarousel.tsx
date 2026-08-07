@@ -19,7 +19,7 @@ function ChevronIcon({ direction, className }: { direction: "left" | "right"; cl
 /** Horizontally-scrolling row of cards with arrow controls — caller wraps
  * each child in its own fixed/min-width wrapper so this stays unopinionated
  * about card size. Used wherever a section may hold more items than fit in
- * a static grid (Success Stories, Related items). */
+ * a static grid (e.g. Related items). */
 export function CardCarousel({ children }: { children: ReactNode }) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
 

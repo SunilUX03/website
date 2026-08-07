@@ -2,11 +2,7 @@
 // paragraph, pull quote, expanded features, eligibility, how-to-access
 // steps, FAQ, carousel images) from each item's already-verified
 // name/description/stats/type/section — never invents a new specific fact
-// (a number, date, fee, or citation) that isn't already in that data. The
-// page's Success Stories section is a "coming soon" placeholder rather
-// than generated copy for the same reason: the reference template's
-// version cites real publications (The Hindu, Governance Now, ...) with
-// fabricated stories, which this project's asset policy won't reproduce.
+// (a number, date, fee, or citation) that isn't already in that data.
 
 import { ServiceItemDetail, statsToBullets } from "./services-content";
 import { pexelsPhoto, STOCK } from "./stock-photos";
