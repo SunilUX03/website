@@ -94,8 +94,10 @@ export function AnnouncementList() {
                     {/* Plain <img>, not a fixed-aspect crop — matches the
                         Home page teaser, which uses each photo's own
                         natural proportions rather than force-cropping
-                        every announcement to the same shape. */}
-                    <img src={item.image} alt="" loading="lazy" className="block w-full" />
+                        every announcement to the same shape. Not every
+                        announcement has one — a text-only update renders
+                        without this block rather than an empty image. */}
+                    {item.image && <img src={item.image} alt="" loading="lazy" className="block w-full" />}
 
                     <span className="flex h-full flex-col gap-sm p-lg">
                       <span className="type-caption-uppercase text-[var(--color-muted)]">

@@ -42,11 +42,14 @@ function useCycleIndex(length: number, intervalMs: number, reducedMotion: boolea
 }
 
 /**
- * Bold masthead line above the headline — cycles the agency's English and
- * Tamil names, same crossfade technique as the headline's cycling word.
- * Solid brand blue, not gradient: this is the one piece of text on the
- * page whose entire job is "immediately read as TNeGA," so it gets the
- * plainest, most legible treatment rather than a decorative fill.
+ * The dominant line in the hero — the agency's own name, cycling English
+ * and Tamil, same crossfade technique as the headline's cycling word. Per
+ * direct feedback (referencing ELCOT's own site as the bar): the org name
+ * should be the first, biggest thing a visitor reads, not a small label
+ * above the "real" headline — so this now outsizes the headline below it,
+ * which is the reverse of where this started. Solid brand blue, not
+ * gradient: the one piece of text whose entire job is "immediately read
+ * as TNeGA" gets the plainest, most legible treatment.
  */
 function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
   const items = hero.agencyLabelCycle;
@@ -60,7 +63,7 @@ function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: reducedMotion ? 0 : -10 }}
         transition={{ duration: reducedMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="text-[26px] font-bold uppercase tracking-wide text-[var(--color-primary-blue)] sm:text-[28px]"
+        className="text-[32px] font-bold uppercase leading-[1.2] tracking-wide text-[var(--color-primary-blue)] sm:text-[42px] md:text-[50px]"
         lang={index === 0 ? "en" : "ta"}
       >
         {items[index]}
@@ -73,11 +76,11 @@ function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
  * The one headline word that keeps rotating through `hero.headlineCycleWords`
  * after the initial reveal — always shown in the brand gradient (not just on
  * hover, unlike its sibling words) so it reads as "this part changes" at a
- * glance. Sizes naturally (no fixed-width slot): the whole headline now
- * runs at type-display-lg (36px) rather than type-display-mega (64px) —
- * secondary to the new bold brand title above it — which is small enough
- * that even "Powering Digital Infrastructure in Tamil Nadu" fits on one
- * line within the hero's 1000px column, so there's no wrap-point to manage.
+ * glance. Sizes naturally (no fixed-width slot). Now the supporting
+ * statement under the (much bigger) brand name above it, sized well below
+ * it accordingly — small enough that even "Powering Digital Infrastructure
+ * in Tamil Nadu" fits on one line within the hero's column, so there's no
+ * wrap-point to manage.
  */
 function HeadlineCycleWord({ reducedMotion }: { reducedMotion: boolean }) {
   const words = hero.headlineCycleWords;
@@ -127,7 +130,11 @@ export function Hero() {
 
       <Container className="relative py-xxl md:py-section">
         <motion.div
-          className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-6 text-center"
+          // 1080px (up from the headline-only era's 1000px) — the brand
+          // title now runs up to 50px, and "TAMIL NADU E-GOVERNANCE
+          // AGENCY" needs the extra headroom to keep clearing the column
+          // on one line at that size.
+          className="mx-auto flex w-full max-w-[1080px] flex-col items-center gap-5 text-center"
           initial={reducedMotion ? "show" : "hidden"}
           animate="show"
           variants={stagger}
@@ -143,10 +150,10 @@ export function Hero() {
               narrower box instead of the full column — the two looked
               "centered" relative to different boxes. Pinning both to the
               same full-width box fixes that for good. */}
-          <div className="flex w-full flex-col items-center gap-6" data-hero-text>
+          <div className="flex w-full flex-col items-center gap-5" data-hero-text>
             <h1
               aria-label={hero.headline}
-              className="type-display-lg flex w-full flex-wrap justify-center gap-x-1 gap-y-2 font-bold text-ink"
+              className="flex w-full flex-wrap justify-center gap-x-1 gap-y-1 text-[22px] font-bold text-ink sm:text-[24px]"
             >
               {headlineWords.map((word, i) =>
                 i === cycleWordIndex ? (

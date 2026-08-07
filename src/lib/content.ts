@@ -255,7 +255,20 @@ export const leadership = [
   },
 ];
 
-export const announcements = [
+// `image` is deliberately optional — an announcement is often just a
+// short text update (a helpline change, a policy note) with nothing to
+// photograph, and forcing a stock photo onto those reads as filler. Cards
+// that render this list handle both shapes: image + heading + description
+// when present, heading + description alone when it isn't.
+export type Announcement = {
+  timestamp: string;
+  heading: string;
+  description: string;
+  href: string;
+  image?: string;
+};
+
+export const announcements: Announcement[] = [
   {
     timestamp: "29 May 2025",
     heading: "SimpleGov launched by Hon'ble Chief Minister",
@@ -284,7 +297,8 @@ export const announcements = [
     heading: "e-Sevai helpline expands support hours",
     description: "1800-42-56000 now available with extended hours to assist citizens across the state.",
     href: "/notifications/announcements/e-sevai-helpline",
-    image: pexelsPhoto(STOCK.itTechnician, 320, 320),
+    // No image — a text-only helpline update, deliberately the
+    // demonstration case for a card with no photo.
   },
 ];
 
