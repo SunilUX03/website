@@ -33,6 +33,7 @@
 // Real portal URLs are not yet supplied, so `#` stays an honest placeholder.
 
 import { pexelsPhoto, STOCK } from "./stock-photos";
+import { DBT_SCHEMES } from "./dbt-schemes";
 
 export const hero = {
   eyebrow: "What We Build",
@@ -70,6 +71,9 @@ export interface RealContent {
   /** Overrides the auto-generated pull-quote card in the About section
    * with a plain callout line (no generated "— TNeGA — Section" source). */
   calloutText?: string;
+  /** Optional text link rendered after the About section's paragraphs —
+   * opens a modal listing `items` (e.g. "50+ schemes covered"). */
+  aboutLinkModal?: { label: string; title: string; items: string[] };
   /** `statistics` normally also becomes one Key Feature card per stat —
    * set this when a submission's Key Features list is already complete
    * on its own and shouldn't be padded with duplicate stat cards. */
@@ -534,19 +538,84 @@ const serviceItemsRaw: ServiceItem[] = [
 
   // ---------- Services ----------
   {
-    name: "DBT",
+    // Source of truth: DBT Page Migration prompt — replaces the old
+    // department-facing "DBT" service entry entirely (name, type, and
+    // content). Now a citizen-facing Project (has its own public portal,
+    // https://dbt.tn.gov.in/), still under the Services tab per the brief.
+    name: "DBT — Direct Benefit Transfer Portal",
     description:
-      "The Direct Benefit Transfer (DBT) Platform enables Government Departments to disburse welfare benefits directly to eligible beneficiaries through Aadhaar and bank account validation.",
-    stats: "62 Schemes Onboarded · ₹43,318 Cr Transferred",
+      "Tamil Nadu's citizen-facing platform to track, monitor, and receive social welfare benefits directly into your bank account.",
+    stats: "54+ Schemes Covered",
     image: pexelsPhoto(STOCK.womanPhone, 700, 500),
+    accessPortalHref: "https://dbt.tn.gov.in/",
     knowMoreHref: "#",
     sections: ["services"],
     real: {
-      statistics: ["62 schemes onboarded", "₹43,318 crore transferred", "1.92 crore beneficiaries"],
-      keyFeatures: ["Aadhaar validation", "Beneficiary verification", "Bank account validation", "APB & ACH integration", "Centralized welfare payments"],
-      eligibility: ["Your Department administers welfare schemes requiring direct benefit transfer."],
-      whatYoullNeed: ["Eligible scheme", "Beneficiary database", "Department onboarding"],
-      faqs: [{ q: "How are benefits transferred?", a: "Through Aadhaar Payment Bridge (APB) and Automated Clearing House (ACH)." }],
+      tagline:
+        "Tamil Nadu's primary citizen-facing platform to track, monitor, and receive social welfare benefits directly into your bank account — transparently, with no intermediaries.",
+      // The brief's "About the Project" paragraph 1 restates the card
+      // summary above almost verbatim (item.description already covers
+      // that slot) — folded in here with the actual paragraph 2 so both
+      // pieces of the brief's copy still appear on the page.
+      aboutSecondParagraph:
+        "The Tamil Nadu Direct Benefit Transfer (DBT) Portal is the state's primary citizen-facing platform for tracking, monitoring, and receiving social welfare benefits directly into your bank account. It ensures transparency and eliminates intermediaries, giving citizens real-time visibility into their benefit status across a wide range of state welfare schemes — from education scholarships and old-age pensions to maternity and marriage assistance — all linked securely through Aadhaar.",
+      aboutLinkModal: {
+        label: "50+ schemes covered",
+        title: "Schemes covered under DBT",
+        items: DBT_SCHEMES,
+      },
+      calloutText:
+        "100% Direct-to-Bank Subsidy Delivery · Zero Intermediaries, Maximum Transparency · Unified Tracking Across All State Welfare Schemes",
+      statistics: ["54+ Schemes Covered"],
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "Direct Benefit Disbursal",
+        "Public Transparency Dashboard",
+        "Aadhaar Payment Bridge (APB) Linkage",
+        "Application Status Lookup",
+      ],
+      keyFeatureDescriptions: [
+        "Automated credit of scholarships, pensions, and financial aid directly to beneficiary bank accounts.",
+        "Explore ongoing schemes, eligibility criteria, and disbursement metrics.",
+        "Secure, verified transactions linked directly to citizen UIDAI profiles.",
+        "Instant digital tracking for beneficiaries waiting on welfare fund credits.",
+      ],
+      eligibility: [
+        "You're a Tamil Nadu resident applying for or tracking state welfare subsidies, pensions, educational stipends, or assistance schemes",
+      ],
+      whatYoullNeed: [
+        "Aadhaar Card linked with an active bank account",
+        "Beneficiary Registration ID / Application Number for the target scheme",
+      ],
+      getStartedSteps: [
+        {
+          title: "Contact TNeGA",
+          description: "Reach out by clicking Reach Us in the top nav and raise a ticket with your query.",
+        },
+        {
+          title: "Share your details",
+          description: "Provide your scheme name and application/Aadhaar details if you need help tracking a payment.",
+        },
+        {
+          title: "Get assisted",
+          description: "Our team will guide you to the right resource or resolve your issue.",
+        },
+      ],
+      directLinkLabel: "Open Portal",
+      faqs: [
+        {
+          q: "How can I track my DBT payment status?",
+          a: "Enter your application reference ID or registered Aadhaar details in the tracking section on the public portal.",
+        },
+        {
+          q: "What should I do if my subsidy payment fails?",
+          a: "Verify with your bank branch that your bank account is active and seeded with your Aadhaar number.",
+        },
+        {
+          q: "Are central and state government schemes covered here?",
+          a: "Yes, the portal provides coverage and tracking for state welfare schemes and state-administered components.",
+        },
+      ],
     },
   },
   {

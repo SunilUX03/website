@@ -136,7 +136,7 @@ export const pillars = [
     linkLabel: "View all Services",
     itemNames: [
       "Nambikkai Inaiyam",
-      "DBT",
+      "DBT — Direct Benefit Transfer Portal",
       "TNSSO",
       "e-Sign",
       "SMS & WhatsApp Gateway",

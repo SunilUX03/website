@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { FaqAccordion } from "./FaqAccordion";
 import { ScreenshotCarousel } from "./ScreenshotCarousel";
 import { ServiceItemCard } from "./ServiceItemCard";
+import { SchemesModalLink } from "./SchemesModalLink";
 import { CardCarousel } from "@/components/ui/CardCarousel";
 import {
   allServiceItems,
@@ -200,6 +201,13 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
             <div className="flex flex-col gap-4">
               <p className="type-body-md text-[var(--color-body)]">{item.description}</p>
               <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
+              {item.real?.aboutLinkModal && (
+                <SchemesModalLink
+                  label={item.real.aboutLinkModal.label}
+                  title={item.real.aboutLinkModal.title}
+                  items={item.real.aboutLinkModal.items}
+                />
+              )}
             </div>
             {/* Always-on tinted highlight rather than a hover-revealed
                 effect — the earlier hover glow washed out the text right
@@ -324,7 +332,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                 <>
                   <h3 className="type-title-sm mb-3 text-ink">Direct link</h3>
                   <div className="flex items-center justify-between gap-3 rounded-lg border border-hairline-strong bg-canvas px-4 py-3">
-                    <span className="type-body-sm font-semibold text-[var(--color-primary-blue)]">{item.name} Portal</span>
+                    <span className="type-body-sm font-semibold text-[var(--color-primary-blue)]">
+                      {item.name.endsWith("Portal") ? item.name : `${item.name} Portal`}
+                    </span>
                     <a href={item.accessPortalHref} className="type-button btn-primary !h-9 !px-4">
                       {item.real?.directLinkLabel ?? "Open"}
                     </a>
