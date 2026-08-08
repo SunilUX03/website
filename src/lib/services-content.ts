@@ -836,19 +836,74 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
   {
+    // Source of truth: TNeGA Content & Image Brief — e-Sign submission.
+    // relatedCardStats drops the "4 Departments in Integration" tile and
+    // "Since 2020" qualifier the Hero carries, per the brief's own,
+    // deliberately shorter related-card line.
     name: "e-Sign",
     description:
-      "The e-Sign Service Platform enables Government Departments to digitally sign documents securely using Aadhaar-based authentication.",
-    stats: "26 Departments Onboarded · 4.35 Cr e-Signatures",
+      "e-Sign is a digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices. It uses Aadhaar-based authentication — via OTP or Biometric/Fingerprint — and complies with CCA (Controller of Certifying Authorities) and UIDAI guidelines.",
+    stats: "27 Departments Onboarded · 4.35+ Cr e-Signatures Since 2020 · 4 Departments in Integration",
     image: pexelsPhoto(STOCK.itTechnician, 700, 500),
     knowMoreHref: "#",
     sections: ["services"],
     real: {
-      statistics: ["26 Departments onboarded", "4.35 crore e-Signatures executed", "3 Departments under onboarding"],
-      keyFeatures: ["Aadhaar OTP authentication", "Biometric authentication", "Paperless workflows", "Secure digital signatures"],
-      eligibility: ["Your Department requires digital document signing."],
-      whatYoullNeed: ["Department onboarding", "Aadhaar authentication integration"],
-      faqs: [{ q: "Is the service compliant?", a: "Yes. It complies with CCA and UIDAI guidelines." }],
+      tagline:
+        "A digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices, with Aadhaar-based authentication (OTP and Biometric/Fingerprint), compliant with CCA and UIDAI guidelines.",
+      aboutSecondParagraph:
+        "e-Sign is integrated across multiple Government Departments through C-DAC and eMudhra, with 27 Departments currently onboarded and 4 more in integration. Since 2020, the platform has processed 4.35+ crore e-Signatures — with usage projected to cross 6 crore by 2026–27.",
+      relatedCardStats: "27 Departments Onboarded · 4.35+ Cr e-Signatures",
+      statistics: ["27 Departments Onboarded", "4.35+ Cr e-Signatures Since 2020", "4 Departments in Integration"],
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "Aadhaar-Based Authentication via OTP",
+        "Aadhaar-Based Authentication via Biometric (Fingerprint)",
+        "CCA & UIDAI Compliant",
+        "Accessible on Computers & Mobile Devices",
+        "Integrated via C-DAC and eMudhra",
+      ],
+      keyFeatureDescriptions: [
+        "Sign documents securely using an Aadhaar-linked mobile OTP.",
+        "Sign using fingerprint-based biometric verification.",
+        "Fully compliant with Controller of Certifying Authorities and UIDAI guidelines.",
+        "Sign documents from any device.",
+        "Deployed across Government Departments through certified integration partners.",
+      ],
+      eligibility: [
+        "You're a Government Department requiring secure digital signing of documents (currently used by 27 onboarded Departments, with 4 more in integration)",
+      ],
+      whatYoullNeed: [
+        "A valid Aadhaar number",
+        "A mobile number linked to Aadhaar (for OTP-based signing)",
+        "A biometric/fingerprint device (for biometric-based signing)",
+      ],
+      getStartedSteps: [
+        { title: "Reach out to TNeGA", description: "Your department contacts TNeGA to request access to e-Sign." },
+        { title: "Complete onboarding", description: "Finish the registration and integration steps required." },
+        { title: "Get connected", description: "Your department is connected with the e-Sign team to get started." },
+      ],
+      faqs: [
+        {
+          q: "What is e-Sign?",
+          a: "e-Sign is a digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices.",
+        },
+        {
+          q: "Is the service compliant with government standards?",
+          a: "Yes. e-Sign uses Aadhaar-based authentication and is compliant with CCA (Controller of Certifying Authorities) and UIDAI guidelines.",
+        },
+        {
+          q: "How does e-Sign authenticate a signer?",
+          a: "Through Aadhaar-based authentication, using either an OTP sent to your Aadhaar-linked mobile number or biometric/fingerprint verification.",
+        },
+        {
+          q: "Which departments can use e-Sign?",
+          a: "Government Departments requiring secure digital signing of documents. 27 Departments are currently onboarded, with 4 more in integration.",
+        },
+        {
+          q: "What do I need to use e-Sign?",
+          a: "A valid Aadhaar number, a mobile number linked to Aadhaar for OTP-based signing, and a biometric/fingerprint device for biometric-based signing.",
+        },
+      ],
     },
   },
   {
