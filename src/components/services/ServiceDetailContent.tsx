@@ -80,6 +80,7 @@ function DocIcon({ className }: { className?: string }) {
 export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
+  const typeLabel = item.real?.typeLabel ?? (isProject ? "Project" : "Service");
   const comingSoon = item.real?.comingSoon ?? false;
   const heroTagline = item.real?.tagline ?? item.description;
   const secondParagraph = generateAboutSecondParagraph(item);
@@ -123,7 +124,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
         <Container className="relative py-xl md:py-xxl">
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <span className="badge-pill type-caption">{SECTION_LABEL[item.section]}</span>
-            <span className="badge-pill type-caption">{isProject ? "Project" : "Service"}</span>
+            <span className="badge-pill type-caption">{typeLabel}</span>
           </div>
 
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[55%_45%] lg:gap-12">
@@ -199,7 +200,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
       {/* ---------- About ---------- */}
       <section className="bg-canvas-soft">
         <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About the {isProject ? "project" : "service"}</p>
+          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About the {typeLabel.toLowerCase()}</p>
           <h2 className="type-display-md mb-10 text-ink">What {item.name} does</h2>
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr]">

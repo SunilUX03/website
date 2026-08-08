@@ -155,7 +155,11 @@ export interface GeneratedStep {
 }
 
 export function generateHowToAccessSteps(item: ServiceItemDetail): GeneratedStep[] {
-  if (item.real?.getStartedSteps?.length) return item.real.getStartedSteps;
+  // Checks presence, not length — an explicit `getStartedSteps: []`
+  // (e.g. a Get Started section written as plain intro/outro prose, no
+  // numbered steps) must suppress the generated fallback too, not just a
+  // non-empty override.
+  if (item.real?.getStartedSteps !== undefined) return item.real.getStartedSteps;
   if (item.type === "project") {
     return [
       { title: `Visit the ${item.name} portal`, description: "Open the portal from the link on this page." },

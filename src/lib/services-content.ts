@@ -114,6 +114,13 @@ export interface RealContent {
    * `calloutText`, and the generated fallback text — built from
    * `statistics`/`stats` — wouldn't make sense here). */
   hideAboutSecondParagraph?: boolean;
+  /** Overrides the "Project"/"Service" label shown in the Hero badge and
+   * the About section's caption — independent of the functional
+   * Project/Service behaviour (CTA, Get Started panel), which is still
+   * driven purely by `accessPortalHref` as usual. For items like e-Office,
+   * decided as "Service" for classification even though it keeps a live
+   * Access Portal CTA like a Project would. */
+  typeLabel?: "Project" | "Service";
   /** Additional FAQs shown behind a "View more" toggle, kept separate
    * from the primary `faqs` shown by default. */
   faqsMore?: { q: string; a: string }[];
@@ -548,52 +555,85 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["e-governance-projects"],
   },
   {
+    // Source of truth: TNeGA Content & Image Brief — e-Office submission.
+    // All prior stats/copy were placeholder dummy data, replaced entirely.
+    // `typeLabel: "Service"` per the brief's explicit classification even
+    // though this keeps a live Access Portal CTA — accessPortalHref stays
+    // set (real URL) so the Hero/Get-Started CTA behaviour is otherwise
+    // identical to a normal Project item.
     name: "e-Office",
     description:
-      "Digital Office Tamil Nadu (e-Office) is the Government of Tamil Nadu's digital workplace platform that enables end-to-end electronic file processing and workflow automation. It transforms paper-based administration into a secure, transparent, and accountable digital governance framework through electronic file management, digital correspondence, digital signatures, and inter-departmental collaboration.",
-    stats: "65,95,723 e-Files Created · 1,49,535 Configured Users",
+      "eOffice is the Government of Tamil Nadu's integrated digital office platform that enables Government Departments to manage files, receipts, correspondence, and office workflows electronically. It promotes paperless administration, improves efficiency, enhances transparency, and enables faster decision-making across Government offices.",
+    stats: "301 Departments · 1,51,205 Users · 69,69,633 eFiles Created",
     image: PROJECT_IMG.eOffice,
-    accessPortalHref: "#",
+    accessPortalHref: "https://eoffice.tn.gov.in/",
     knowMoreHref: "#",
     sections: ["e-governance-projects"],
     real: {
-      statistics: [
-        "65,95,723 e-files created",
-        "1,49,535 configured users across three implementation phases",
-        "46,645 users trained",
-        "7,810 desktops deployed",
-        "3,042 scanners deployed",
-      ],
+      tagline:
+        "The Government of Tamil Nadu's integrated digital office platform, enabling Government Departments to manage files, receipts, correspondence, and office workflows electronically — for paperless, transparent, and faster administration.",
+      calloutText:
+        "Paperless government administration, with faster file movement across departments, secure digital workflow management, and transparent, efficient office operations.",
+      hideAboutSecondParagraph: true,
+      typeLabel: "Service",
+      statistics: [],
+      hideStatFeatureCards: true,
       keyFeatures: [
-        "Electronic file management",
-        "Workflow automation",
-        "Digital correspondence",
-        "Digital signatures",
-        "Inter-departmental collaboration",
-        "Real-time file tracking",
-        "Secure digital record management",
-        "Paperless office operations",
+        "Electronic File (eFile) Creation & Movement",
+        "Digital Receipt & Correspondence Management",
+        "Workflow-Based File Processing & Approvals",
+        "Secure User Authentication",
+        "Digital Document Storage & Retrieval",
+        "Real-Time File Tracking & Monitoring",
+      ],
+      keyFeatureDescriptions: [
+        "Create and route files digitally across departments.",
+        "Manage incoming and outgoing correspondence electronically.",
+        "Structured digital workflows for file review and sign-off.",
+        "Role-based access control for authorized users.",
+        "Centralized, searchable digital record-keeping.",
+        "Track file status and movement as it happens.",
       ],
       eligibility: [
-        "Your Government Department or office is implementing Digital Office Tamil Nadu (e-Office).",
-        "You need to manage official files and correspondence digitally.",
-        "Your office requires secure, paperless workflow management.",
+        "Your Government Department is adopting digital office administration",
+        "You're a Government official responsible for processing files and correspondence",
+        "You're a department administrator managing official records and workflows",
       ],
       whatYoullNeed: [
-        "Access to the e-Office platform provided by your Department.",
-        "User credentials issued by the concerned Government Department.",
-        "A configured workstation and digital signature, where applicable.",
+        "Department approval for eOffice onboarding",
+        "Official Government user credentials",
+        "Department-issued login ID",
+        "Access to Government network or approved secure connectivity",
+        "Digital Signature Certificate (DSC), where applicable",
       ],
+      getStartedIntro: "Department users access eOffice through the Government-authorized portal using their official credentials.",
+      // No numbered steps in the brief — just the two prose paragraphs
+      // above/below. Explicit [] suppresses the generated fallback (see
+      // generateHowToAccessSteps' presence check in service-detail-generator.ts).
+      getStartedSteps: [],
+      getStartedOutro:
+        "Government Departments intending to implement eOffice can contact TNeGA through the Reach Us page, or their designated departmental nodal officer, for onboarding, user creation, and implementation support.",
+      directLinkLabel: "Open Portal",
       faqs: [
-        { q: "What is e-Office?", a: "e-Office is the Government of Tamil Nadu's digital office platform for electronic file processing and workflow automation." },
-        { q: "Who can use e-Office?", a: "It is intended for Government Departments and offices implementing the Digital Office Tamil Nadu platform." },
         {
-          q: "What are the benefits of e-Office?",
-          a: "Improves transparency in file processing, reduces dependency on physical files, streamlines workflow management, enables real-time file tracking, enhances accountability, and ensures secure management of digital records.",
+          q: "What is eOffice?",
+          a: "eOffice is a digital office platform that enables Government Departments to manage files, receipts, correspondence, and office workflows electronically.",
         },
         {
-          q: "How widely has e-Office been implemented?",
-          a: "The platform has been rolled out in phases across Secretariat Departments, District Collectorates, subordinate offices, and Head of Department (HoD) offices, with over 65 lakh e-files created and 1.49 lakh configured users.",
+          q: "Who can use eOffice?",
+          a: "Only authorized Government Departments and officials with approved user credentials can access the platform.",
+        },
+        {
+          q: "What are the benefits of eOffice?",
+          a: "eOffice reduces paper usage, speeds up file processing, improves transparency, and enables efficient digital administration.",
+        },
+        {
+          q: "Can files be tracked online?",
+          a: "Yes. Authorized users can monitor the status and movement of electronic files within the system.",
+        },
+        {
+          q: "How can a Department adopt eOffice?",
+          a: "Departments may contact TNeGA or the designated nodal authority for onboarding, user provisioning, training, and implementation support.",
         },
       ],
     },
