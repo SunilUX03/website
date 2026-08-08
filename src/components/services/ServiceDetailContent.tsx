@@ -80,6 +80,7 @@ function DocIcon({ className }: { className?: string }) {
 export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
+  const comingSoon = item.real?.comingSoon ?? false;
   const heroTagline = item.real?.tagline ?? item.description;
   const secondParagraph = generateAboutSecondParagraph(item);
   const pullQuote = generatePullQuote(item);
@@ -144,7 +145,11 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               )}
 
               <div className="flex flex-wrap gap-3">
-                {isProject ? (
+                {comingSoon ? (
+                  <a href="#contact" className="type-button btn-primary">
+                    Coming Soon
+                  </a>
+                ) : isProject ? (
                   <a href={item.accessPortalHref} className="type-button btn-primary">
                     Access Portal
                   </a>
@@ -313,22 +318,40 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <h2 className="type-display-md mb-10 text-ink">How to access {item.name}</h2>
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr]">
-            <ol className="flex flex-col">
-              {steps.map((step, i) => (
-                <li key={step.title} className="grid grid-cols-[40px_1fr] gap-4 border-t border-hairline py-5 first:border-t-0 first:pt-0">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-primary-blue)] text-white">
-                    <span className="type-caption font-semibold">{i + 1}</span>
-                  </span>
-                  <div>
-                    <p className="type-body-strong text-ink">{step.title}</p>
-                    <p className="type-body-sm mt-1 text-[var(--color-muted)]">{step.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <div>
+              {item.real?.getStartedIntro && (
+                <p className="type-body-md mb-2 text-[var(--color-body)]">{item.real.getStartedIntro}</p>
+              )}
+              <ol className="flex flex-col">
+                {steps.map((step, i) => (
+                  <li key={step.title} className="grid grid-cols-[40px_1fr] gap-4 border-t border-hairline py-5 first:border-t-0 first:pt-0">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-primary-blue)] text-white">
+                      <span className="type-caption font-semibold">{i + 1}</span>
+                    </span>
+                    <div>
+                      <p className="type-body-strong text-ink">{step.title}</p>
+                      <p className="type-body-sm mt-1 text-[var(--color-muted)]">{step.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {item.real?.getStartedOutro && (
+                <p className="type-body-sm mt-4 text-[var(--color-muted)]">{item.real.getStartedOutro}</p>
+              )}
+            </div>
 
             <div className="card-feature h-fit">
-              {isProject ? (
+              {comingSoon ? (
+                <>
+                  <h3 className="type-title-sm mb-3 text-ink">Launching soon</h3>
+                  <p className="type-body-sm mb-4 text-[var(--color-body)]">
+                    {`${item.name} isn't live yet — reach out to TNeGA for launch updates.`}
+                  </p>
+                  <a href="#contact" className="type-button btn-primary">
+                    Contact TNeGA
+                  </a>
+                </>
+              ) : isProject ? (
                 <>
                   <h3 className="type-title-sm mb-3 text-ink">Direct link</h3>
                   <div className="flex items-center justify-between gap-3 rounded-lg border border-hairline-strong bg-canvas px-4 py-3">
@@ -384,7 +407,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
       )}
 
       {/* ---------- Contact ---------- */}
-      <section className="bg-canvas">
+      <section id="contact" className="bg-canvas scroll-mt-24">
         <Container className="py-xxl">
           <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Support</p>
           <h2 className="type-display-md mb-10 text-ink">Contact &amp; support</h2>

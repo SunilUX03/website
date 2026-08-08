@@ -60,11 +60,15 @@ export function ServiceItemCard({
             read as too dark/heavy for a caption-sized line; this matches
             the mid-tone blue already used for the "sky" badge tint. */}
         <p className="type-caption mt-4 font-semibold" style={{ color: "#2f6fb0" }}>
-          {item.stats}
+          {item.real?.relatedCardStats ?? item.stats}
         </p>
 
         <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
-          {item.accessPortalHref ? (
+          {item.real?.comingSoon ? (
+            <a href={item.knowMoreHref} className="type-button btn-primary">
+              Coming Soon
+            </a>
+          ) : item.accessPortalHref ? (
             <a href={item.accessPortalHref} className="type-button btn-primary">
               Access Portal
             </a>

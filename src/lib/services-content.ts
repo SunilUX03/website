@@ -87,6 +87,22 @@ export interface RealContent {
   /** Label for the Get Started card's direct-link button (project items
    * only) — defaults to "Open". */
   directLinkLabel?: string;
+  /** Optional line shown above the Get Started steps — e.g. framing them
+   * as a preview of a not-yet-live flow. */
+  getStartedIntro?: string;
+  /** Optional line shown below the Get Started steps. */
+  getStartedOutro?: string;
+  /** Marks a Project item as pre-launch: the Hero and Get Started CTAs
+   * become "Coming Soon" / "Contact TNeGA" (linking to the page's own
+   * #contact section) instead of the live Access Portal / Direct link,
+   * on both this detail page and its card everywhere else on the site. */
+  comingSoon?: boolean;
+  /** Overrides the stats line shown on grid/related-service cards
+   * elsewhere on the site, which otherwise reuses the Hero's own `stats`
+   * string — for cases where the two contexts should say different
+   * things (e.g. a pre-launch item flagging "Coming Soon" on cards while
+   * the Hero still shows its planned feature stats). */
+  relatedCardStats?: string;
   /** Additional FAQs shown behind a "View more" toggle, kept separate
    * from the primary `faqs` shown by default. */
   faqsMore?: { q: string; a: string }[];
@@ -410,20 +426,88 @@ const serviceItemsRaw: ServiceItem[] = [
     },
   },
   {
+    // Source of truth: e-Gazette Portal Final Page Content Spec. Pre-launch
+    // — portal link isn't real yet ("To be announced upon launch"), so
+    // `comingSoon` swaps every CTA that would otherwise point at
+    // accessPortalHref for a "Coming Soon" / "Contact TNeGA" one instead,
+    // both here and on this item's card everywhere else on the site.
     name: "e-Gazette Portal",
     description:
-      "The e-Gazette Portal enables citizens to apply online for name change and other Gazette notification services with end-to-end digital processing.",
-    stats: "Online Application · Digital Approval · Digital Publication",
+      "The e-Gazette Web Portal is an integrated online service platform being implemented by TNeGA for the Department of Stationery and Printing, to digitize and streamline Gazette publication services in Tamil Nadu.",
+    // "Aadhaar+eSign" (not "Aadhaar & eSign") so the Hero's stat-tile
+    // split (first word = value, rest = label) lands on "Aadhaar+eSign" /
+    // "Integrated" instead of splitting mid-phrase after "Aadhaar".
+    stats: "8 Service Types · Aadhaar+eSign Integrated · Bilingual Support (Tamil & English)",
     image: pexelsPhoto(STOCK.officeBuilding, 700, 500),
     accessPortalHref: "#",
     knowMoreHref: "#",
     sections: ["citizen-services"],
     real: {
+      tagline:
+        "An integrated online platform for Gazette publication services in Tamil Nadu — apply, track, pay, and access published notifications digitally. Launching soon.",
+      aboutSecondParagraph:
+        "Once launched, the portal will let individuals, companies, and partnership firms submit Gazette notification applications online, upload supporting documents, track application status, make payments, and access published Gazette notifications — all through a secure, bilingual digital platform.",
+      calloutText:
+        "Digitizing Gazette publication services with an end-to-end online application and publication process, built to be secure, transparent, and citizen-centric.",
+      comingSoon: true,
+      relatedCardStats: "8 Service Types · Aadhaar & eSign Integrated · Coming Soon",
       statistics: [],
-      keyFeatures: ["Online application", "Digital approval", "Online payment", "Digital publication"],
-      eligibility: ["You wish to publish eligible Gazette notifications online."],
-      whatYoullNeed: ["Relevant application details and supporting documents."],
-      faqs: [{ q: "Can I complete the process online?", a: "Yes. The portal supports end-to-end digital processing." }],
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "Online application submission",
+        "Aadhaar-based authentication",
+        "Document upload, tracking & payment",
+        "Automated verification & approval workflow",
+        "Public Gazette search & archive",
+        "Bilingual, role-based interface",
+      ],
+      keyFeatureDescriptions: [
+        "Submit Gazette notification applications entirely online.",
+        "Secure citizen login and identity verification via Aadhaar.",
+        "Upload supporting documents, track your application status, and pay online.",
+        "Applications move through a digital verification, approval, and publication pipeline.",
+        "Search published Gazette notifications and download them as PDFs.",
+        "Tamil and English support, with role-based access for applicants and department staff.",
+      ],
+      eligibility: [
+        "You're a citizen applying for a Gazette notification service (e.g., name change)",
+        "You represent a company or firm publishing a statutory Gazette notification",
+      ],
+      whatYoullNeed: [
+        "Aadhaar number for authentication",
+        "Supporting documents relevant to the selected Gazette service",
+        "Internet access for online application submission and payment",
+      ],
+      getStartedIntro: "The e-Gazette Portal is launching soon. Once live, applying will involve:",
+      getStartedSteps: [
+        { title: "Sign in", description: "Sign in with Aadhaar-based authentication." },
+        { title: "Submit your application", description: "Submit your Gazette notification application and upload supporting documents." },
+        { title: "Track & pay", description: "Track your application and pay online." },
+        { title: "Download your Gazette", description: "Download your published Gazette notification once approved." },
+      ],
+      getStartedOutro: "Check back here or contact TNeGA for launch updates.",
+      faqs: [
+        {
+          q: "What services are available through the e-Gazette Web Portal?",
+          a: "The portal enables eligible applicants to apply online for supported Gazette notification services and access published Gazette notifications.",
+        },
+        {
+          q: "How can I track my application?",
+          a: "Applicants can log in to the portal and monitor the status of their applications throughout the processing lifecycle.",
+        },
+        {
+          q: "Can I download my published Gazette notification?",
+          a: "Yes. Applicants can access and download their published Gazette notifications from the portal after publication.",
+        },
+        {
+          q: "Is Aadhaar authentication required?",
+          a: "Yes. The portal supports Aadhaar-based authentication for citizen login and application access.",
+        },
+        {
+          q: "Can I search previously published Gazettes?",
+          a: "Yes. The portal provides a public search and archive facility for published Gazette notifications.",
+        },
+      ],
     },
   },
 
