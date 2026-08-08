@@ -212,7 +212,6 @@ export function FocusCarousel({ items, label }: { items: ServiceItem[]; label: s
               >
                 <ServiceItemCard
                   item={item}
-                  compact
                   className={focused ? "shadow-[0_16px_34px_rgba(12,10,9,0.12)]" : ""}
                 />
               </li>

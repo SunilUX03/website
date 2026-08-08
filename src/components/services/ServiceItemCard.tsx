@@ -5,16 +5,15 @@ import { PhotoTile } from "@/components/ui/PhotoTile";
 export function ServiceItemCard({
   item,
   className,
-  compact = false,
 }: {
   item: ServiceItem;
   className?: string;
-  /** Clamps the description so cards keep a predictable height in
-   * fixed-width contexts (Home's carousels), where descriptions range from
-   * one line to five. The /services grids leave it off and show copy in
-   * full. */
-  compact?: boolean;
 }) {
+  // The card's own short tagline (shown above the metrics on the detail
+  // page) reads better clamped than the longer `description`, which is
+  // written for the About section's opening paragraph.
+  const cardDescription = item.real?.tagline ?? item.description;
+
   return (
     // Whole-card hover — noticeably lifts (translateY + real shadow), not
     // just the image scaling inside it. card-hover-lift's own shadow was
@@ -53,9 +52,13 @@ export function ServiceItemCard({
       </div>
       <div className="flex flex-1 flex-col p-6">
         <h3 className="type-title-md mb-2 text-ink">{item.name}</h3>
-        <p className={`type-body-sm text-[var(--color-body)] ${compact ? "line-clamp-3" : ""}`}>
-          {item.description}
-        </p>
+        <p className="type-body-sm line-clamp-4 text-[var(--color-body)]">{cardDescription}</p>
+        <Link
+          href={item.knowMoreHref}
+          className="type-caption relative z-10 mt-1 self-start font-semibold text-[var(--color-primary-blue)] hover:underline"
+        >
+          Read more
+        </Link>
         {/* Lighter than --color-primary-blue (#1d3f8f) on purpose — that
             read as too dark/heavy for a caption-sized line; this matches
             the mid-tone blue already used for the "sky" badge tint. */}
