@@ -149,7 +149,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                   <a href="#contact" className="type-button btn-primary">
                     Coming Soon
                   </a>
-                ) : isProject ? (
+                ) : isProject && !item.real?.gatedAccess ? (
                   <a href={item.accessPortalHref} className="type-button btn-primary">
                     Access Portal
                   </a>
@@ -205,7 +205,9 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr]">
             <div className="flex flex-col gap-4">
               <p className="type-body-md text-[var(--color-body)]">{item.description}</p>
-              <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
+              {!item.real?.hideAboutSecondParagraph && (
+                <p className="type-body-md text-[var(--color-body)]">{secondParagraph}</p>
+              )}
               {item.real?.aboutLinkModal && (
                 <SchemesModalLink
                   label={item.real.aboutLinkModal.label}

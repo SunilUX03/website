@@ -68,7 +68,7 @@ export function ServiceItemCard({
             <a href={item.knowMoreHref} className="type-button btn-primary">
               Coming Soon
             </a>
-          ) : item.accessPortalHref ? (
+          ) : item.accessPortalHref && !item.real?.gatedAccess ? (
             <a href={item.accessPortalHref} className="type-button btn-primary">
               Access Portal
             </a>

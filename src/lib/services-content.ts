@@ -103,6 +103,17 @@ export interface RealContent {
    * things (e.g. a pre-launch item flagging "Coming Soon" on cards while
    * the Hero still shows its planned feature stats). */
   relatedCardStats?: string;
+  /** Marks a Project item whose real portal is access-gated (credential-
+   * login for authorized staff, not public self-service): the Hero and
+   * card CTAs become "Avail Service" → /reach-us instead of "Access
+   * Portal" → accessPortalHref, while the Get Started section's Direct
+   * link panel still shows the real portal for reference. */
+  gatedAccess?: boolean;
+  /** Skips the About section's auto-generated second paragraph (used
+   * when a submission only has one About paragraph plus a closing
+   * `calloutText`, and the generated fallback text — built from
+   * `statistics`/`stats` — wouldn't make sense here). */
+  hideAboutSecondParagraph?: boolean;
   /** Additional FAQs shown behind a "View more" toggle, kept separate
    * from the primary `faqs` shown by default. */
   faqsMore?: { q: string; a: string }[];
@@ -698,6 +709,72 @@ const serviceItemsRaw: ServiceItem[] = [
         {
           q: "Are central and state government schemes covered here?",
           a: "Yes, the portal provides coverage and tracking for state welfare schemes and state-administered components.",
+        },
+      ],
+    },
+  },
+  {
+    // Source of truth: "TN DBT Portal for PFMS" submission — net-new page,
+    // distinct from "DBT — Direct Benefit Transfer Portal" above (that one
+    // is citizen-facing; this one is the institutional PFMS integration
+    // layer for departmental nodal officers). `gatedAccess` because the
+    // real portal (tndbt.tn.gov.in) is a credential-gated admin login, not
+    // public self-service — Hero/card CTA routes to Avail Service/Reach Us
+    // instead, with the real URL surfaced only in the Direct link panel.
+    name: "TN DBT Portal for PFMS",
+    description:
+      "The TN DBT Portal for PFMS is TNeGA's institutional platform connecting Tamil Nadu departmental scheme workflows with the central Public Financial Management System (PFMS). It facilitates administrative validation, electronic payment generation through the EAT module, and real-time reconciliation for both State and Centrally Sponsored Schemes (CSS) — covering FY 2024–25 through FY 2026–27.",
+    stats: "PFMS Integrated · SNA Compliant · Real-time Fund Reconciliation",
+    image: pexelsPhoto(STOCK.programmer, 700, 500),
+    accessPortalHref: "https://tndbt.tn.gov.in/",
+    knowMoreHref: "#",
+    sections: ["services"],
+    real: {
+      tagline:
+        "The state's institutional platform connecting Tamil Nadu departmental scheme workflows with the Public Financial Management System (PFMS) — enabling administrative validation, electronic payment generation, and real-time fund reconciliation.",
+      calloutText:
+        "Seamless state-to-central financial management system integration, with automated PFMS beneficiary verification and fund routing.",
+      hideAboutSecondParagraph: true,
+      gatedAccess: true,
+      statistics: [],
+      hideStatFeatureCards: true,
+      keyFeatures: [
+        "PFMS System Integration",
+        "Institutional Batch Processing",
+        "Single Nodal Account (SNA) Workflow",
+        "Account Validation Engine",
+      ],
+      keyFeatureDescriptions: [
+        "Directly interfaces with the Central Public Financial Management System for secure payment processing and fund flow tracking.",
+        "Lets departmental nodal officers upload, validate, and digitally sign bulk beneficiary payment lists.",
+        "Aligned with central/state SNA disbursement guidelines and zero-balance account monitoring.",
+        "Automatically validates bank account details and Aadhaar seeding status before submission to PFMS/NPCI.",
+      ],
+      eligibility: [
+        "Your department or agency processes Direct Benefit Transfer payments under Centrally Sponsored Schemes (CSS) or State Schemes integrated with PFMS",
+        "You're an authorized State Nodal Officer, Treasury Official, or Institutional Approver managing welfare fund disbursements",
+      ],
+      whatYoullNeed: [
+        "Authorized departmental / PFMS nodal login credentials",
+        "Class-2 or Class-3 Digital Signature Certificate (DSC) for batch approval",
+      ],
+      getStartedSteps: [
+        { title: "Reach out to TNeGA", description: "Your department contacts TNeGA to request PFMS onboarding." },
+        { title: "Complete onboarding", description: "Set up nodal credentials and DSC registration." },
+        { title: "Get connected", description: "Begin batch processing through the TN DBT PFMS portal." },
+      ],
+      faqs: [
+        {
+          q: "What is the role of the TN DBT PFMS portal?",
+          a: "It serves as the gateway bridge between Tamil Nadu departmental databases and the national PFMS framework for processing direct benefit payments.",
+        },
+        {
+          q: "Can the general public log into this portal?",
+          a: "No, this is an administrative portal for departmental nodal officers, scheme managers, and finance administrators.",
+        },
+        {
+          q: "How are rejected PFMS transactions resolved on this portal?",
+          a: "Nodal officers can view invalid account responses generated by PFMS/NPCI, update beneficiary records, and re-push the corrected batch.",
         },
       ],
     },
