@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     'cms-users': CmsUser;
     media: Media;
+    announcements: Announcement;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     'cms-users': CmsUsersSelect<false> | CmsUsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -186,6 +188,69 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements".
+ */
+export interface Announcement {
+  id: number;
+  heading: string;
+  /**
+   * Used in the page URL. Auto-filled from the heading — only change this if you need a specific URL.
+   */
+  slug: string;
+  date: string;
+  /**
+   * Short summary shown on the announcement card (homepage and listing page).
+   */
+  description: string;
+  image?: (number | null) | Media;
+  /**
+   * Short label shown above the headline on the detail page, e.g. "Service Launch".
+   */
+  category?: string | null;
+  /**
+   * Full announcement body, shown on its own page. Leave blank to show only the summary.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional "at a glance" figures shown on the detail page (e.g. Services live: 10).
+   */
+  facts?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional related links shown on the detail page (e.g. to a service or Government Orders).
+   */
+  links?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -215,6 +280,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'announcements';
+        value: number | Announcement;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -323,6 +392,36 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements_select".
+ */
+export interface AnnouncementsSelect<T extends boolean = true> {
+  heading?: T;
+  slug?: T;
+  date?: T;
+  description?: T;
+  image?: T;
+  category?: T;
+  body?: T;
+  facts?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  links?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

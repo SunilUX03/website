@@ -6,16 +6,15 @@ import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
+import type { Facet } from "@/components/documents/FilterBar";
 import {
-  announcements,
-  facets,
   filterBarLabel,
   listHeading,
   noResultsText,
   searchAriaLabel,
   searchPlaceholder,
-  yearOf,
 } from "@/lib/announcements-content";
+import { type CmsAnnouncement, yearOf } from "@/lib/cms/announcement-types";
 
 /**
  * Full announcements listing, with the same search + year filter used on
@@ -25,8 +24,9 @@ import {
  * announcement is short enough that its summary is worth searching, and
  * users look for terms like "WhatsApp" that only appear in the body.
  *
- * Items come from the same `announcements` array the homepage renders,
- * so the two never drift apart.
+ * Items and facets are fetched server-side (see the page component) and
+ * passed in, since they now come from the CMS rather than a static
+ * import this component could read directly.
  */
 
 function ArrowIcon() {
@@ -42,7 +42,13 @@ function ArrowIcon() {
   );
 }
 
-export function AnnouncementList() {
+export function AnnouncementList({
+  announcements,
+  facets,
+}: {
+  announcements: CmsAnnouncement[];
+  facets: Facet[];
+}) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>(() =>
     Object.fromEntries(facets.map((f) => [f.id, f.initial]))
@@ -59,7 +65,7 @@ export function AnnouncementList() {
       }
       return matchesFacets({ year: yearOf(item.timestamp) }, facets, selected);
     });
-  }, [query, selected]);
+  }, [announcements, facets, query, selected]);
 
   return (
     <>

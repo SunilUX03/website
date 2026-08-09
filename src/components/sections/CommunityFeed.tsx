@@ -2,7 +2,8 @@
 
 import { ComponentType, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { announcements, socialMedia } from "@/lib/content";
+import { socialMedia } from "@/lib/content";
+import type { CmsAnnouncement } from "@/lib/cms/announcements";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
@@ -219,7 +220,7 @@ function useMergedSocialFeed(): FeedPost[] | null {
   return posts;
 }
 
-export function CommunityFeed() {
+export function CommunityFeed({ announcements }: { announcements: CmsAnnouncement[] }) {
   const posts = useMergedSocialFeed();
 
   return (

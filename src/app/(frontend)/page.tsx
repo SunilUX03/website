@@ -9,8 +9,20 @@ import { CommunityFeed } from "@/components/sections/CommunityFeed";
 import { ReachUs } from "@/components/sections/ReachUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
+import { getAnnouncements } from "@/lib/cms/announcements";
 
-export default function Home() {
+// Announcements now come from the CMS (a live DB query, not a static
+// import Next can see through), so this page would otherwise be
+// prerendered once at build and never reflect a newly published
+// announcement. Revalidating every 60s is simple, predictable ISR —
+// good enough for content that doesn't need to appear instantly:
+// revisit with on-publish revalidation (a Payload afterChange hook
+// calling revalidatePath) if that ever becomes necessary.
+export const revalidate = 60;
+
+export default async function Home() {
+  const announcements = await getAnnouncements();
+
   return (
     <>
       <TopNav />
@@ -21,7 +33,7 @@ export default function Home() {
         <Metrics />
         <PillarCards />
         <ProjectsSpotlight />
-        <CommunityFeed />
+        <CommunityFeed announcements={announcements} />
         <ReachUs />
       </main>
       <Footer />

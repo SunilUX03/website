@@ -1,15 +1,12 @@
 // Copy and filter config for /notifications/announcements.
 //
-// The announcement items themselves are NOT redefined here — they're the
-// same `announcements` array in lib/content.ts that the homepage section
-// renders. Importing rather than copying keeps the homepage teaser and
-// this full listing in sync: add an item in content.ts and it appears in
-// both.
+// The announcement items themselves live in the CMS now (see
+// lib/cms/announcements.ts), not here — this file only keeps the static
+// copy and the facet-building logic, which still needs the fetched list
+// to derive year options from.
 
-import { announcements } from "./content";
 import type { Facet } from "@/components/documents/FilterBar";
-
-export { announcements };
+import { type CmsAnnouncement, yearOf } from "@/lib/cms/announcement-types";
 
 export const hero = {
   eyebrow: "Updates",
@@ -23,12 +20,6 @@ export const hero = {
 
 export const listHeading = "Latest from TNeGA";
 
-/** "29 May 2025" -> "2025". Timestamps end with the year in this dataset. */
-export function yearOf(timestamp: string): string {
-  const match = timestamp.match(/\b(\d{4})\b/);
-  return match ? match[1] : "";
-}
-
 /**
  * Year options are derived from the items themselves rather than being
  * hand-listed. The document pages inherited hard-coded year lists from
@@ -37,22 +28,20 @@ export function yearOf(timestamp: string): string {
  * failure mode entirely — add an announcement from any year and its
  * option appears automatically.
  */
-const years = Array.from(
-  new Set(announcements.map((a) => yearOf(a.timestamp)).filter(Boolean))
-).sort((a, b) => Number(b) - Number(a));
-
-export const facets: Facet[] = [
-  {
-    id: "year",
-    kind: "select",
-    ariaLabel: "Filter by year",
-    initial: "all",
-    options: [
-      { value: "all", label: "All Years" },
-      ...years.map((y) => ({ value: y, label: y })),
-    ],
-  },
-];
+export function buildFacets(items: CmsAnnouncement[]): Facet[] {
+  const years = Array.from(new Set(items.map((a) => yearOf(a.timestamp)).filter(Boolean))).sort(
+    (a, b) => Number(b) - Number(a)
+  );
+  return [
+    {
+      id: "year",
+      kind: "select",
+      ariaLabel: "Filter by year",
+      initial: "all",
+      options: [{ value: "all", label: "All Years" }, ...years.map((y) => ({ value: y, label: y }))],
+    },
+  ];
+}
 
 export const searchPlaceholder = "Search announcements...";
 export const searchAriaLabel = "Search announcements";

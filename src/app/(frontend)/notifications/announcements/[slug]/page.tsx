@@ -1,38 +1,39 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PhotoTile } from "@/components/ui/PhotoTile";
-import { announcements } from "@/lib/announcements-content";
-import { announcementDetails, slugOf } from "@/lib/announcement-details";
+import { getAnnouncementBySlug, getAnnouncements } from "@/lib/cms/announcements";
 
 /**
  * Individual announcement page.
  *
- * Every announcement is known at build time, so `generateStaticParams`
- * prerenders all of them — same static output as the rest of the site.
+ * `dynamicParams` (default true) means a slug published after the last
+ * build still resolves on demand rather than 404ing until the next
+ * deploy — important now that announcements come from the CMS, not a
+ * static import fixed at build time.
  *
  * Next 16 passes `params` as a Promise (synchronous access was removed
  * in this major), hence the await in both the page and generateMetadata.
  */
 
+export const revalidate = 60;
+
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return announcements.map((a) => ({ slug: slugOf(a.href) }));
-}
-
-function findAnnouncement(slug: string) {
-  return announcements.find((a) => slugOf(a.href) === slug);
+export async function generateStaticParams() {
+  const announcements = await getAnnouncements();
+  return announcements.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const announcement = findAnnouncement(slug);
+  const announcement = await getAnnouncementBySlug(slug);
   if (!announcement) return { title: "Announcement | TNeGA" };
 
   return {
@@ -69,13 +70,11 @@ function ArrowIcon() {
 
 export default async function AnnouncementPage({ params }: Params) {
   const { slug } = await params;
-  const announcement = findAnnouncement(slug);
+  const announcement = await getAnnouncementBySlug(slug);
   if (!announcement) notFound();
 
-  const detail = announcementDetails[slug];
-  const related = announcements
-    .filter((a) => a.href !== announcement.href)
-    .slice(0, 2);
+  const allAnnouncements = await getAnnouncements();
+  const related = allAnnouncements.filter((a) => a.slug !== announcement.slug).slice(0, 2);
 
   return (
     <>
@@ -112,9 +111,9 @@ export default async function AnnouncementPage({ params }: Params) {
             </Link>
 
             <div className="flex flex-wrap items-center gap-sm">
-              {detail ? (
+              {announcement.category ? (
                 <span className="badge-pill type-caption-uppercase">
-                  {detail.category}
+                  {announcement.category}
                 </span>
               ) : null}
               <span className="type-caption-uppercase text-[var(--color-muted)]">
@@ -153,20 +152,9 @@ export default async function AnnouncementPage({ params }: Params) {
           <Container>
             <div className="grid gap-xxl lg:grid-cols-[minmax(0,1fr)_280px]">
               <article className="max-w-[68ch]">
-                {detail ? (
-                  <div className="flex flex-col gap-lg">
-                    {detail.paragraphs.map((para, i) => (
-                      <p
-                        key={i}
-                        className={
-                          i === 0
-                            ? "type-title-sm text-[var(--color-body-strong)]"
-                            : "type-body-md text-[var(--color-body)]"
-                        }
-                      >
-                        {para}
-                      </p>
-                    ))}
+                {announcement.body ? (
+                  <div className="type-body-md flex flex-col gap-lg text-[var(--color-body)] [&_p]:mb-0">
+                    <RichText data={announcement.body} />
                   </div>
                 ) : (
                   <p className="type-body-md text-[var(--color-muted)]">
@@ -177,13 +165,13 @@ export default async function AnnouncementPage({ params }: Params) {
               </article>
 
               <aside className="flex flex-col gap-lg">
-                {detail?.facts?.length ? (
+                {announcement.facts?.length ? (
                   <div className="rounded-xl border border-hairline bg-surface-card p-lg">
                     <p className="type-caption-uppercase mb-base text-[var(--color-muted)]">
                       At a glance
                     </p>
                     <dl className="flex flex-col gap-base">
-                      {detail.facts.map((fact) => (
+                      {announcement.facts.map((fact) => (
                         <div key={fact.label}>
                           <dt className="type-caption text-[var(--color-muted)]">
                             {fact.label}
@@ -197,13 +185,13 @@ export default async function AnnouncementPage({ params }: Params) {
                   </div>
                 ) : null}
 
-                {detail?.links?.length ? (
+                {announcement.links?.length ? (
                   <div className="rounded-xl border border-hairline bg-surface-card p-lg">
                     <p className="type-caption-uppercase mb-base text-[var(--color-muted)]">
                       Related
                     </p>
                     <ul role="list" className="flex flex-col gap-sm">
-                      {detail.links.map((link) => (
+                      {announcement.links.map((link) => (
                         <li key={link.href}>
                           <Link
                             href={link.href}
