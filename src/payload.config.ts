@@ -30,6 +30,7 @@ import { AboutPageContent } from "./globals/AboutPageContent";
 import { OrgChartContent } from "./globals/OrgChartContent";
 import { MetricsContent } from "./globals/MetricsContent";
 import { PillarsContent } from "./globals/PillarsContent";
+import { CareersContent } from "./globals/CareersContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -72,6 +73,7 @@ export default buildConfig({
     OrgChartContent,
     MetricsContent,
     PillarsContent,
+    CareersContent,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",

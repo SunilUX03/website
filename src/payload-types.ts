@@ -123,6 +123,7 @@ export interface Config {
     'org-chart-content': OrgChartContent;
     'metrics-content': MetricsContent;
     'pillars-content': PillarsContent;
+    'careers-content': CareersContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -134,6 +135,7 @@ export interface Config {
     'org-chart-content': OrgChartContentSelect<false> | OrgChartContentSelect<true>;
     'metrics-content': MetricsContentSelect<false> | MetricsContentSelect<true>;
     'pillars-content': PillarsContentSelect<false> | PillarsContentSelect<true>;
+    'careers-content': CareersContentSelect<false> | CareersContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1612,6 +1614,35 @@ export interface PillarsContent {
   createdAt?: string | null;
 }
 /**
+ * The Careers page hero, openings note, and How to Apply steps.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-content".
+ */
+export interface CareersContent {
+  id: number;
+  hero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+    ctaLabel: string;
+  };
+  openingsNote: string;
+  /**
+   * The 4 "How to Apply" steps, in order.
+   */
+  applicationSteps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -1872,6 +1903,32 @@ export interface PillarsContentSelect<T extends boolean = true> {
         description?: T;
         linkLabel?: T;
         bannerImage?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-content_select".
+ */
+export interface CareersContentSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+        ctaLabel?: T;
+      };
+  openingsNote?: T;
+  applicationSteps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
         id?: T;
       };
   _status?: T;

@@ -1,8 +1,8 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { applicationSteps } from "@/lib/careers-content";
+import type { CmsCareersContent } from "@/lib/cms/careers-content";
 
-export function HowToApply() {
+export function HowToApply({ applicationSteps }: { applicationSteps: CmsCareersContent["applicationSteps"] }) {
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>
@@ -17,16 +17,16 @@ export function HowToApply() {
           className="grid gap-lg sm:grid-cols-2 lg:grid-cols-4"
           aria-label="Application steps"
         >
-          {applicationSteps.map((step) => (
+          {applicationSteps.map((step, i) => (
             <li
-              key={step.number}
+              key={step.title}
               className="flex flex-col gap-sm rounded-xl border border-hairline bg-surface-card p-lg"
             >
               <span
                 aria-hidden
                 className="type-display-sm text-[var(--color-muted-soft)]"
               >
-                {step.number}
+                {String(i + 1).padStart(2, "0")}
               </span>
               <p className="type-title-sm text-[var(--color-body-strong)]">
                 {step.title}

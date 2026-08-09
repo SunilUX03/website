@@ -12,6 +12,7 @@ import * as migration_20260809_194046_add_documents_go_policies_activitylog_tick
 import * as migration_20260809_212557_add_legal_pages_footer from './20260809_212557_add_legal_pages_footer';
 import * as migration_20260809_214433_add_about_page_content from './20260809_214433_add_about_page_content';
 import * as migration_20260809_221528_add_metrics_pillars_projects_spotlight from './20260809_221528_add_metrics_pillars_projects_spotlight';
+import * as migration_20260809_223632_add_careers_content from './20260809_223632_add_careers_content';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20260809_221528_add_metrics_pillars_projects_spotlight.up,
     down: migration_20260809_221528_add_metrics_pillars_projects_spotlight.down,
-    name: '20260809_221528_add_metrics_pillars_projects_spotlight'
+    name: '20260809_221528_add_metrics_pillars_projects_spotlight',
+  },
+  {
+    up: migration_20260809_223632_add_careers_content.up,
+    down: migration_20260809_223632_add_careers_content.down,
+    name: '20260809_223632_add_careers_content'
   },
 ];

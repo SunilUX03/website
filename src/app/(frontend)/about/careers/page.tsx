@@ -8,8 +8,9 @@ import { CareersGraphic } from "@/components/heroes/CareersGraphic";
 import { JobOpenings } from "@/components/careers/JobOpenings";
 import { HowToApply } from "@/components/careers/HowToApply";
 import { ApplicationForm } from "@/components/careers/ApplicationForm";
-import { hero } from "@/lib/careers-content";
+import { heroOrbs } from "@/lib/careers-content";
 import { getJobOpenings } from "@/lib/cms/job-openings";
+import { getCareersContent } from "@/lib/cms/careers-content";
 
 export const metadata: Metadata = {
   title: "Careers | TNeGA",
@@ -20,16 +21,23 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Careers() {
-  const openings = await getJobOpenings();
+  const [openings, careers] = await Promise.all([getJobOpenings(), getCareersContent()]);
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "About", href: "/about" }, { label: "Careers" }]} />
-        <PageHero {...hero} graphic={<CareersGraphic />} />
-        <JobOpenings openings={openings} />
-        <HowToApply />
+        <PageHero
+          eyebrow={careers.hero.eyebrow}
+          heading={careers.hero.heading}
+          body={careers.hero.body}
+          cta={{ label: careers.hero.ctaLabel, href: "#openings" }}
+          orbs={heroOrbs}
+          graphic={<CareersGraphic />}
+        />
+        <JobOpenings openings={openings} openingsNote={careers.openingsNote} />
+        <HowToApply applicationSteps={careers.applicationSteps} />
         <ApplicationForm />
       </main>
       <Footer />

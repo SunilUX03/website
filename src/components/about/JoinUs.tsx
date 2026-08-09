@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { hero as careersHero } from "@/lib/careers-content";
+import type { CmsCareersContent } from "@/lib/cms/careers-content";
 import type { CmsJobOpening } from "@/lib/cms/job-openings";
 
-// Reuses the real Careers page data (careers-content.ts + the CMS
-// openings) rather than duplicating it — this is a teaser, /about/careers
-// stays the source of truth for the full list and the application flow.
-export function JoinUs({ openings }: { openings: CmsJobOpening[] }) {
+// Reuses the real Careers page data (the "careers-content" CMS global +
+// the CMS openings) rather than duplicating it — this is a teaser,
+// /about/careers stays the source of truth for the full list and the
+// application flow.
+export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; openings: CmsJobOpening[] }) {
   const featured = openings.slice(0, 3);
 
   return (
@@ -14,9 +15,9 @@ export function JoinUs({ openings }: { openings: CmsJobOpening[] }) {
       <Container className="py-xxl md:py-section">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-center">
           <div>
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{careersHero.eyebrow}</p>
-            <h2 className="type-display-lg mb-4 text-ink">{careersHero.heading}</h2>
-            <p className="type-body-md mb-6 max-w-[48ch] text-[var(--color-body)]">{careersHero.body}</p>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{hero.eyebrow}</p>
+            <h2 className="type-display-lg mb-4 text-ink">{hero.heading}</h2>
+            <p className="type-body-md mb-6 max-w-[48ch] text-[var(--color-body)]">{hero.body}</p>
             <Link href="/about/careers" className="type-button btn-primary">
               View Openings
             </Link>

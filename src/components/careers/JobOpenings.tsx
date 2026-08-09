@@ -1,6 +1,5 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { openingsNote } from "@/lib/careers-content";
 import type { CmsJobOpening } from "@/lib/cms/job-openings";
 
 function DownloadIcon() {
@@ -31,7 +30,7 @@ function ClockIcon() {
   );
 }
 
-export function JobOpenings({ openings }: { openings: CmsJobOpening[] }) {
+export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpening[]; openingsNote: string }) {
   return (
     <section className="py-xxl md:py-section" id="openings">
       <Container>
