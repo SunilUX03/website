@@ -126,6 +126,7 @@ export interface Config {
     'careers-content': CareersContent;
     'rti-content': RtiContent;
     'tenders-content': TendersContent;
+    'site-copy-content': SiteCopyContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -140,6 +141,7 @@ export interface Config {
     'careers-content': CareersContentSelect<false> | CareersContentSelect<true>;
     'rti-content': RtiContentSelect<false> | RtiContentSelect<true>;
     'tenders-content': TendersContentSelect<false> | TendersContentSelect<true>;
+    'site-copy-content': SiteCopyContentSelect<false> | SiteCopyContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1730,6 +1732,55 @@ export interface TendersContent {
   createdAt?: string | null;
 }
 /**
+ * Small page-hero copy for the Notifications/Services pages, and the homepage's Reach Us panels.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-copy-content".
+ */
+export interface SiteCopyContent {
+  id: number;
+  announcementsHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  governmentOrdersHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  policiesHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  mediaHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  servicesHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  /**
+   * The homepage's 2 promo panels: Reach Us and Current Openings.
+   */
+  reachUsPanels?:
+    | {
+        eyebrow: string;
+        title: string;
+        description: string;
+        ctaLabel: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -2092,6 +2143,60 @@ export interface TendersContentSelect<T extends boolean = true> {
         ctaLabel?: T;
         ctaHref?: T;
         redirectNote?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-copy-content_select".
+ */
+export interface SiteCopyContentSelect<T extends boolean = true> {
+  announcementsHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  governmentOrdersHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  policiesHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  mediaHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  servicesHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  reachUsPanels?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        ctaLabel?: T;
+        id?: T;
       };
   _status?: T;
   updatedAt?: T;

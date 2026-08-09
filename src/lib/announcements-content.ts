@@ -8,15 +8,10 @@
 import type { Facet } from "@/components/documents/FilterBar";
 import { type CmsAnnouncement, yearOf } from "@/lib/cms/announcement-types";
 
-export const hero = {
-  eyebrow: "Updates",
-  heading: "Announcements",
-  body: "Launches, milestones and service updates from Tamil Nadu e-Governance Agency, the latest news on the platforms that deliver government services across the state.",
-  orbs: [
-    { color: "lavender", className: "-left-16 -top-24 h-[420px] w-[420px]" },
-    { color: "mint", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },
-  ] as const,
-};
+export const heroOrbs = [
+  { color: "lavender", className: "-left-16 -top-24 h-[420px] w-[420px]" },
+  { color: "mint", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },
+] as const;
 
 export const listHeading = "Latest from TNeGA";
 

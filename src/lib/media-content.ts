@@ -8,15 +8,10 @@
 import type { Facet } from "@/components/documents/FilterBar";
 import { type CmsMediaItem, yearOf } from "@/lib/cms/media-item-types";
 
-export const hero = {
-  eyebrow: "Latest Updates",
-  heading: "News, Events & Media from TNeGA",
-  body: "Stay updated with the latest photos, videos and press coverage from Tamil Nadu e-Governance Agency.",
-  orbs: [
-    { color: "mint", className: "-left-16 -top-24 h-[420px] w-[420px]" },
-    { color: "sky", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },
-  ] as const,
-};
+export const heroOrbs = [
+  { color: "mint", className: "-left-16 -top-24 h-[420px] w-[420px]" },
+  { color: "sky", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },
+] as const;
 
 /**
  * Year options derived from the items themselves, so the dropdown can't

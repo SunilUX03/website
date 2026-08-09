@@ -16,15 +16,10 @@
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
 
-export const hero = {
-  eyebrow: "Standards",
-  heading: "Policies & Guidelines",
-  body: "Technology policies, data standards, cybersecurity guidelines and e-Governance frameworks for Tamil Nadu.",
-  orbs: [
-    { color: "sky", className: "-left-20 -top-20 h-[400px] w-[400px]" },
-    { color: "rose", className: "-bottom-16 right-[100px] h-[360px] w-[360px]" },
-  ] as const,
-};
+export const heroOrbs = [
+  { color: "sky", className: "-left-20 -top-20 h-[400px] w-[400px]" },
+  { color: "rose", className: "-bottom-16 right-[100px] h-[360px] w-[360px]" },
+] as const;
 
 export const tableHeaders = ["Title", "Ref No", "Date", "Category", "Download"];
 

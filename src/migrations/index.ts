@@ -14,6 +14,7 @@ import * as migration_20260809_214433_add_about_page_content from './20260809_21
 import * as migration_20260809_221528_add_metrics_pillars_projects_spotlight from './20260809_221528_add_metrics_pillars_projects_spotlight';
 import * as migration_20260809_223632_add_careers_content from './20260809_223632_add_careers_content';
 import * as migration_20260809_224339_add_rti_tenders_content from './20260809_224339_add_rti_tenders_content';
+import * as migration_20260809_225807_add_site_copy_content from './20260809_225807_add_site_copy_content';
 
 export const migrations = [
   {
@@ -94,6 +95,11 @@ export const migrations = [
   {
     up: migration_20260809_224339_add_rti_tenders_content.up,
     down: migration_20260809_224339_add_rti_tenders_content.down,
-    name: '20260809_224339_add_rti_tenders_content'
+    name: '20260809_224339_add_rti_tenders_content',
+  },
+  {
+    up: migration_20260809_225807_add_site_copy_content.up,
+    down: migration_20260809_225807_add_site_copy_content.down,
+    name: '20260809_225807_add_site_copy_content'
   },
 ];

@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
+import type { CmsReachUsPanel } from "@/lib/cms/site-copy";
 
 function ReachUsPanel({
   eyebrow,
@@ -33,7 +34,31 @@ function ReachUsPanel({
   );
 }
 
-export function ReachUs() {
+const PANEL_META = [
+  {
+    href: "/reach-us",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
+        <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    href: "/about/careers",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
+        <path
+          d="M4 8h16v11H4V8Zm4 0V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
+];
+
+export function ReachUs({ panels }: { panels: CmsReachUsPanel[] }) {
   return (
     <section className="relative overflow-hidden bg-canvas">
       <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 -translate-y-1/2">
@@ -56,40 +81,17 @@ export function ReachUs() {
       </div>
       <Container className="relative pb-xxl pt-lg md:pb-section md:pt-xl">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <ReachUsPanel
-            eyebrow="Support"
-            title="Reach Us"
-            description="Raise a ticket with our support team through the official TNeGA ticketing portal. Login required to track your request."
-            ctaLabel="Raise a Ticket"
-            href="/reach-us"
-            icon={
-              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
-                <path
-                  d="M4 5h16v11H8l-4 4V5Z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            }
-          />
-          <ReachUsPanel
-            eyebrow="Careers"
-            title="Current Openings"
-            description="Join TNeGA and help build the digital infrastructure powering governance across Tamil Nadu."
-            ctaLabel="View Openings"
-            href="/about/careers"
-            icon={
-              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
-                <path
-                  d="M4 8h16v11H4V8Zm4 0V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            }
-          />
+          {panels.map((panel, i) => (
+            <ReachUsPanel
+              key={panel.title}
+              eyebrow={panel.eyebrow}
+              title={panel.title}
+              description={panel.description}
+              ctaLabel={panel.ctaLabel}
+              href={PANEL_META[i].href}
+              icon={PANEL_META[i].icon}
+            />
+          ))}
         </div>
       </Container>
     </section>

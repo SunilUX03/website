@@ -7,6 +7,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getAllServiceItems, getServiceItemsBySection } from "@/lib/cms/services";
 import { getPillarsContent } from "@/lib/cms/pillars-content";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 
 export const metadata: Metadata = {
   title: "Citizen Services, e-Governance Projects & Services | TNeGA",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Services() {
-  const [allItems, pillarsChrome] = await Promise.all([getAllServiceItems(), getPillarsContent()]);
+  const [allItems, pillarsChrome, siteCopy] = await Promise.all([getAllServiceItems(), getPillarsContent(), getSiteCopy()]);
   const pillarDescriptions = Object.fromEntries(pillarsChrome.map((p) => [p.title, p.description]));
 
   return (
@@ -25,7 +26,7 @@ export default async function Services() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Services" }]} />
-        <ServicesHero />
+        <ServicesHero hero={siteCopy.servicesHero} />
         <ServicesTabs
           citizenServices={getServiceItemsBySection(allItems, "citizen-services")}
           eGovernanceProjects={getServiceItemsBySection(allItems, "e-governance-projects")}

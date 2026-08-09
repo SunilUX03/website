@@ -7,13 +7,14 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { DocumentTable } from "@/components/documents/DocumentTable";
 import { GovernmentOrdersGraphic } from "@/components/heroes/GovernmentOrdersGraphic";
 import {
-  hero,
+  heroOrbs,
   tableHeaders,
   buildFacets,
   searchPlaceholder,
   noResultsText,
 } from "@/lib/government-orders-content";
 import { getGovernmentOrderRows } from "@/lib/cms/government-orders";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 
 export const metadata: Metadata = {
   title: "Government Orders | TNeGA",
@@ -24,14 +25,15 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function GovernmentOrders() {
-  const rows = await getGovernmentOrderRows();
+  const [rows, siteCopy] = await Promise.all([getGovernmentOrderRows(), getSiteCopy()]);
+  const hero = siteCopy.governmentOrdersHero;
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Government Orders" }]} />
-        <PageHero {...hero} graphic={<GovernmentOrdersGraphic />} />
+        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<GovernmentOrdersGraphic />} />
         <DocumentTable
           rows={rows}
           headers={tableHeaders}

@@ -6,8 +6,9 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { MediaGraphic } from "@/components/heroes/MediaGraphic";
 import { MediaTabs } from "@/components/media/MediaTabs";
-import { buildFacets, hero } from "@/lib/media-content";
+import { buildFacets, heroOrbs } from "@/lib/media-content";
 import { getMediaItems } from "@/lib/cms/media-items";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 
 export const metadata: Metadata = {
   title: "Media & Press | TNeGA",
@@ -21,16 +22,17 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function MediaPress() {
-  const items = await getMediaItems();
+  const [items, siteCopy] = await Promise.all([getMediaItems(), getSiteCopy()]);
   const photos = items.filter((item) => item.type === "photo");
   const videos = items.filter((item) => item.type === "video");
+  const hero = siteCopy.mediaHero;
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Media & Press" }]} />
-        <PageHero {...hero} graphic={<MediaGraphic />} />
+        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<MediaGraphic />} />
         <MediaTabs photos={photos} videos={videos} facets={buildFacets(items)} />
       </main>
       <Footer />

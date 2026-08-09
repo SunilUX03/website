@@ -33,6 +33,7 @@ import { PillarsContent } from "./globals/PillarsContent";
 import { CareersContent } from "./globals/CareersContent";
 import { RtiContent } from "./globals/RtiContent";
 import { TendersContent } from "./globals/TendersContent";
+import { SiteCopyContent } from "./globals/SiteCopyContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -78,6 +79,7 @@ export default buildConfig({
     CareersContent,
     RtiContent,
     TendersContent,
+    SiteCopyContent,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",

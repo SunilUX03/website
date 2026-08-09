@@ -61,6 +61,7 @@ const NAV: NavGroup[] = [
     items: [
       { label: "Header Navigation", href: "/cms/settings/nav" },
       { label: "Footer", href: "/cms/settings/footer" },
+      { label: "Other Page Copy", href: "/cms/settings/site-copy" },
     ],
   },
 ];

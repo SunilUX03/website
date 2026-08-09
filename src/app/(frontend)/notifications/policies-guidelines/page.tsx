@@ -7,13 +7,14 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { DocumentTable } from "@/components/documents/DocumentTable";
 import { PoliciesGraphic } from "@/components/heroes/PoliciesGraphic";
 import {
-  hero,
+  heroOrbs,
   tableHeaders,
   buildFacets,
   searchPlaceholder,
   noResultsText,
 } from "@/lib/policies-guidelines-content";
 import { getPolicyRows } from "@/lib/cms/policies";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 
 export const metadata: Metadata = {
   title: "Policies & Guidelines | TNeGA",
@@ -24,14 +25,15 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function PoliciesGuidelines() {
-  const rows = await getPolicyRows();
+  const [rows, siteCopy] = await Promise.all([getPolicyRows(), getSiteCopy()]);
+  const hero = siteCopy.policiesHero;
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Policies & Guidelines" }]} />
-        <PageHero {...hero} graphic={<PoliciesGraphic />} />
+        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<PoliciesGraphic />} />
         <DocumentTable
           rows={rows}
           headers={tableHeaders}

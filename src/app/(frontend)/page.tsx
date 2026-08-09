@@ -16,6 +16,7 @@ import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
 import { getMetrics } from "@/lib/cms/metrics";
 import { getPillarsContent } from "@/lib/cms/pillars-content";
 import { getProjectsSpotlight } from "@/lib/cms/projects-spotlight";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 import { pillars } from "@/lib/content";
 
 // Announcements now come from the CMS (a live DB query, not a static
@@ -28,7 +29,7 @@ import { pillars } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function Home() {
-  const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems, metrics, pillarsChrome, projectsSpotlight] =
+  const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems, metrics, pillarsChrome, projectsSpotlight, siteCopy] =
     await Promise.all([
       getAnnouncements(),
       getTickerAnnouncements(),
@@ -38,6 +39,7 @@ export default async function Home() {
       getMetrics(),
       getPillarsContent(),
       getProjectsSpotlight(),
+      getSiteCopy(),
     ]);
   const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
   const mergedPillars = pillarsChrome.map((chrome, i) => ({ ...chrome, href: pillars[i].href }));
@@ -53,7 +55,7 @@ export default async function Home() {
         <PillarCards pillars={mergedPillars} pillarItems={pillarItems} />
         <ProjectsSpotlight projects={projectsSpotlight} />
         <CommunityFeed announcements={announcements} />
-        <ReachUs />
+        <ReachUs panels={siteCopy.reachUsPanels} />
       </main>
       <Footer />
       <ScrollToTop />
