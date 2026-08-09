@@ -7,7 +7,8 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { TendersGraphic } from "@/components/heroes/TendersGraphic";
-import { hero, tenderPortal } from "@/lib/tenders-content";
+import { heroOrbs } from "@/lib/tenders-content";
+import { getTendersContent } from "@/lib/cms/tenders-content";
 
 export const metadata: Metadata = {
   title: "Tenders & Procurement | TNeGA",
@@ -25,13 +26,17 @@ function ExternalIcon() {
   );
 }
 
-export default function Tenders() {
+export const revalidate = 60;
+
+export default async function Tenders() {
+  const { hero, tenderPortal } = await getTendersContent();
+
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Tenders" }]} />
-        <PageHero {...hero} graphic={<TendersGraphic />} />
+        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<TendersGraphic />} />
 
         <section className="bg-canvas-soft py-xxl md:py-section">
           <Container>

@@ -10,7 +10,8 @@ import {
   DisclosureTable,
   HowToFileRti,
 } from "@/components/rti/RtiSections";
-import { hero } from "@/lib/rti-content";
+import { heroOrbs } from "@/lib/rti-content";
+import { getRtiContent } from "@/lib/cms/rti-content";
 
 export const metadata: Metadata = {
   title: "Right to Information (RTI) | TNeGA",
@@ -18,16 +19,26 @@ export const metadata: Metadata = {
     "RTI Act 2005 disclosures under Section 4(1)(b), Public Information Officer and Appellate Authority contacts, and how to file an RTI request with TNeGA.",
 };
 
-export default function Rti() {
+export const revalidate = 60;
+
+export default async function Rti() {
+  const rti = await getRtiContent();
+
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "RTI" }]} />
-        <PageHero {...hero} graphic={<RtiGraphic />} />
-        <KeyContacts />
-        <DisclosureTable />
-        <HowToFileRti />
+        <PageHero
+          eyebrow={rti.hero.eyebrow}
+          heading={rti.hero.heading}
+          body={rti.hero.body}
+          orbs={heroOrbs}
+          graphic={<RtiGraphic />}
+        />
+        <KeyContacts contacts={rti.contacts} />
+        <DisclosureTable disclosures={rti.disclosures} />
+        <HowToFileRti howToFile={rti.howToFile} />
       </main>
       <Footer />
       <ScrollToTop />

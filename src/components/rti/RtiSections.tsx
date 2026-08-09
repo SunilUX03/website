@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { contacts, disclosures, howToFile } from "@/lib/rti-content";
+import type { CmsRtiContact, CmsRtiDisclosureGroup, CmsRtiContent } from "@/lib/cms/rti-content";
 
-export function KeyContacts() {
+export function KeyContacts({ contacts }: { contacts: CmsRtiContact[] }) {
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>
@@ -66,7 +66,7 @@ export function KeyContacts() {
   );
 }
 
-export function DisclosureTable() {
+export function DisclosureTable({ disclosures }: { disclosures: CmsRtiDisclosureGroup[] }) {
   return (
     <section className="py-xxl md:py-section">
       <Container>
@@ -156,7 +156,7 @@ function ExternalIcon() {
   );
 }
 
-export function HowToFileRti() {
+export function HowToFileRti({ howToFile }: { howToFile: CmsRtiContent["howToFile"] }) {
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>

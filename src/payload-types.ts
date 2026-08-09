@@ -124,6 +124,8 @@ export interface Config {
     'metrics-content': MetricsContent;
     'pillars-content': PillarsContent;
     'careers-content': CareersContent;
+    'rti-content': RtiContent;
+    'tenders-content': TendersContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -136,6 +138,8 @@ export interface Config {
     'metrics-content': MetricsContentSelect<false> | MetricsContentSelect<true>;
     'pillars-content': PillarsContentSelect<false> | PillarsContentSelect<true>;
     'careers-content': CareersContentSelect<false> | CareersContentSelect<true>;
+    'rti-content': RtiContentSelect<false> | RtiContentSelect<true>;
+    'tenders-content': TendersContentSelect<false> | TendersContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1643,6 +1647,89 @@ export interface CareersContent {
   createdAt?: string | null;
 }
 /**
+ * The RTI page: hero, key contacts, Section 4(1)(b) disclosures, and How to File.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rti-content".
+ */
+export interface RtiContent {
+  id: number;
+  hero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  /**
+   * Always exactly 2 cards: Appellate Authority and Public Information Officer.
+   */
+  contacts?:
+    | {
+        badge: string;
+        tone: 'light' | 'dark';
+        name: string;
+        designation: string;
+        /**
+         * One detail per line. Add " :: href" to make a line a link, e.g. "044 4016 4900 :: tel:04440164900".
+         */
+        detailsText: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Each row of the Section 4(1)(b) table. "Sub-rows" text: one per line, formatted "Detail :: Info".
+   */
+  disclosures?:
+    | {
+        sno: string;
+        item: string;
+        /**
+         * One sub-row per line, formatted "Detail :: Info".
+         */
+        rowsText: string;
+        id?: string | null;
+      }[]
+    | null;
+  howToFile: {
+    heading: string;
+    sub: string;
+    body: string;
+    ctaLabel: string;
+    ctaHref: string;
+    redirectNote: string;
+    email: string;
+    phone: string;
+    phoneHref: string;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The Tenders page: hero and the link out to the Government e-Tendering portal.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenders-content".
+ */
+export interface TendersContent {
+  id: number;
+  hero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  tenderPortal: {
+    heading: string;
+    sub: string;
+    body: string;
+    ctaLabel: string;
+    ctaHref: string;
+    redirectNote: string;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -1930,6 +2017,81 @@ export interface CareersContentSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rti-content_select".
+ */
+export interface RtiContentSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  contacts?:
+    | T
+    | {
+        badge?: T;
+        tone?: T;
+        name?: T;
+        designation?: T;
+        detailsText?: T;
+        id?: T;
+      };
+  disclosures?:
+    | T
+    | {
+        sno?: T;
+        item?: T;
+        rowsText?: T;
+        id?: T;
+      };
+  howToFile?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        body?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        redirectNote?: T;
+        email?: T;
+        phone?: T;
+        phoneHref?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenders-content_select".
+ */
+export interface TendersContentSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  tenderPortal?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        body?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        redirectNote?: T;
       };
   _status?: T;
   updatedAt?: T;
