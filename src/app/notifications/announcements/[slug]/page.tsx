@@ -6,6 +6,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { PhotoTile } from "@/components/ui/PhotoTile";
 import { announcements } from "@/lib/announcements-content";
 import { announcementDetails, slugOf } from "@/lib/announcement-details";
 
@@ -128,6 +129,22 @@ export default async function AnnouncementPage({ params }: Params) {
             <p className="type-body-md mt-lg max-w-[65ch] text-[var(--color-body)]">
               {announcement.description}
             </p>
+
+            {/* Same optional-image contract as the card/list view — a
+                text-only update (no photo) just skips this rather than
+                leaving a gap. Was only ever shown on the card before this,
+                so opening the full announcement lost the photo entirely. */}
+            {announcement.image ? (
+              <div className="relative mt-xl max-w-[720px] overflow-hidden rounded-xl border border-hairline">
+                <PhotoTile
+                  src={announcement.image}
+                  alt=""
+                  aspect="aspect-[16/9]"
+                  sizes="(min-width: 1024px) 720px, 100vw"
+                  priority
+                />
+              </div>
+            ) : null}
           </Container>
         </section>
 
