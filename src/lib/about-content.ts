@@ -168,37 +168,9 @@ export const team = [
   { name: "Thiru. Jayachandran", designation: "General Manager/ Program Director", subject: "GIS", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
 ];
 
-// Real Governing Board composition, per the official list. Chairman and
-// Member Secretary reuse names already confirmed elsewhere on this site
-// (the Additional Chief Secretary in content.ts's `leadership`, and the
-// current CEO in `teamCeo` above) — real people, not invented for this
-// section. The 6 Members' names are NOT published anywhere we have data
-// for; per explicit instruction, those use dummy names to fill out the
-// layout — `nameIsPlaceholder: true` documents that in code (the UI no
-// longer shows a visible disclaimer, also per explicit instruction) so a
-// future maintainer swapping in real appointees knows which ones to
-// replace.
-export const governingBoard = {
-  chairman: {
-    role: "Chairman",
-    name: "Thiru Pradeep Yadav, IAS",
-    title:
-      "Additional Chief Secretary to Government, Information Technology and Digital Services Department",
-  },
-  memberSecretary: {
-    role: "Member Secretary",
-    name: teamCeo.name,
-    title: "Chief Executive Officer, Tamil Nadu e-Governance Agency",
-  },
-  members: [
-    { name: "Tmt. Latha Krishnan, IAS", title: "Secretary (Expenditure) to Government, Finance Department", nameIsPlaceholder: true },
-    { name: "Thiru. R. Selvaraj, IAS", title: "Managing Director, Electronics Corporation of Tamil Nadu Ltd.", nameIsPlaceholder: true },
-    { name: "Thiru. M. Balamurugan, IAS", title: "Registrar of Cooperative Societies", nameIsPlaceholder: true },
-    { name: "Tmt. Kavitha Ramesh, IAS", title: "Managing Director, Tamil Nadu Corporation for Development of Women", nameIsPlaceholder: true },
-    { name: "Thiru. A. Gunasekaran, IAS", title: "Managing Director, Tamil Nadu Arasu Cable TV Corporation Ltd.", nameIsPlaceholder: true },
-    { name: "Dr. N. Vijayakumar", title: "State Informatics Officer, National Informatics Centre, Chennai", nameIsPlaceholder: true },
-  ],
-};
+// governingBoard used to live here — it's now the "board-content" Payload
+// global (see lib/cms/board-content.ts), fetched by the About page and
+// passed to BoardOfDirectors.tsx.
 
 export const achievements = {
   // Direct reuse of Home's <Metrics /> component and its existing 6 stats

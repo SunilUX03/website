@@ -1,6 +1,6 @@
 "use client";
 
-import { governingBoard } from "@/lib/about-content";
+import type { CmsBoardContent } from "@/lib/cms/board-content";
 import { Container } from "@/components/ui/Container";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
 
@@ -28,7 +28,7 @@ function SeatCard({
   );
 }
 
-export function BoardOfDirectors() {
+export function BoardOfDirectors({ board }: { board: CmsBoardContent }) {
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
@@ -37,22 +37,22 @@ export function BoardOfDirectors() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SeatCard
-            role={governingBoard.chairman.role}
-            name={governingBoard.chairman.name}
-            title={governingBoard.chairman.title}
+            role={board.chairman.role}
+            name={board.chairman.name}
+            title={board.chairman.title}
             emphasized
           />
           <SeatCard
-            role={governingBoard.memberSecretary.role}
-            name={governingBoard.memberSecretary.name}
-            title={governingBoard.memberSecretary.title}
+            role={board.memberSecretary.role}
+            name={board.memberSecretary.name}
+            title={board.memberSecretary.title}
             emphasized
           />
         </div>
 
         <p className="type-caption-uppercase mb-3 mt-8 text-[var(--color-muted)]">Members</p>
         <AutoCarousel>
-          {governingBoard.members.map((member) => (
+          {board.members.map((member) => (
             <div
               key={member.title}
               data-carousel-item

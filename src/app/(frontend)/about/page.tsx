@@ -16,6 +16,7 @@ import { ConnectWithUs } from "@/components/about/ConnectWithUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getJobOpenings } from "@/lib/cms/job-openings";
+import { getBoardContent } from "@/lib/cms/board-content";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const openings = await getJobOpenings();
+  const [openings, board] = await Promise.all([getJobOpenings(), getBoardContent()]);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function About() {
         <Metrics />
         <OrgChart />
         <LeadershipTeam />
-        <BoardOfDirectors />
+        <BoardOfDirectors board={board} />
         <Awards />
         <RollOfHonour />
         <JoinUs openings={openings} />

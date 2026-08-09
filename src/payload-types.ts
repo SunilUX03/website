@@ -95,9 +95,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'nav-content': NavContent;
+    'board-content': BoardContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
+    'board-content': BoardContentSelect<false> | BoardContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -600,6 +602,42 @@ export interface NavContent {
   createdAt?: string | null;
 }
 /**
+ * Governing Board shown on the About page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "board-content".
+ */
+export interface BoardContent {
+  id: number;
+  chairman: {
+    role: string;
+    name: string;
+    title: string;
+  };
+  memberSecretary: {
+    role: string;
+    name: string;
+    title: string;
+  };
+  /**
+   * Regular Governing Board members, shown in the carousel below the two seats above.
+   */
+  members?:
+    | {
+        name: string;
+        title: string;
+        /**
+         * Check if this name is a placeholder rather than the real, confirmed appointee — a reminder for editors to replace it once the real name is available. Doesn't change what's shown on the site.
+         */
+        isPlaceholder?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -631,6 +669,38 @@ export interface NavContentSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "board-content_select".
+ */
+export interface BoardContentSelect<T extends boolean = true> {
+  chairman?:
+    | T
+    | {
+        role?: T;
+        name?: T;
+        title?: T;
+      };
+  memberSecretary?:
+    | T
+    | {
+        role?: T;
+        name?: T;
+        title?: T;
+      };
+  members?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        isPlaceholder?: T;
         id?: T;
       };
   _status?: T;
