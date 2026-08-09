@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     announcements: Announcement;
     'media-items': MediaItem;
+    'job-openings': JobOpening;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     'media-items': MediaItemsSelect<false> | MediaItemsSelect<true>;
+    'job-openings': JobOpeningsSelect<false> | JobOpeningsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -277,6 +279,30 @@ export interface MediaItem {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-openings".
+ */
+export interface JobOpening {
+  id: number;
+  role: string;
+  /**
+   * Employment type shown as a small badge, e.g. "Contract" or "Full-time".
+   */
+  type: string;
+  department: string;
+  /**
+   * Last date to apply.
+   */
+  deadline: string;
+  /**
+   * Link to the job description PDF, e.g. /documents/careers/role-name.pdf after dropping the file in public/documents/careers/. Leave blank to hide the Download JD button.
+   */
+  jdHref?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -314,6 +340,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media-items';
         value: number | MediaItem;
+      } | null)
+    | ({
+        relationTo: 'job-openings';
+        value: number | JobOpening;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -463,6 +493,20 @@ export interface MediaItemsSelect<T extends boolean = true> {
   altText?: T;
   date?: T;
   image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-openings_select".
+ */
+export interface JobOpeningsSelect<T extends boolean = true> {
+  role?: T;
+  type?: T;
+  department?: T;
+  deadline?: T;
+  jdHref?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

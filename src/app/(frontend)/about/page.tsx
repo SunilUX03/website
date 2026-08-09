@@ -15,6 +15,7 @@ import { JoinUs } from "@/components/about/JoinUs";
 import { ConnectWithUs } from "@/components/about/ConnectWithUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
+import { getJobOpenings } from "@/lib/cms/job-openings";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -22,7 +23,14 @@ export const metadata: Metadata = {
     "Tamil Nadu e-Governance Agency is the State Nodal Agency for all e-Governance initiatives of the Government of Tamil Nadu, driving digital transformation that makes public services transparent, efficient and accessible to every citizen.",
 };
 
-export default function About() {
+// See the matching note on the Announcements pages — CMS-backed data
+// needs explicit revalidation since Next can't see through a database
+// query the way it can a static import.
+export const revalidate = 60;
+
+export default async function About() {
+  const openings = await getJobOpenings();
+
   return (
     <>
       <TopNav />
@@ -38,7 +46,7 @@ export default function About() {
         <BoardOfDirectors />
         <Awards />
         <RollOfHonour />
-        <JoinUs />
+        <JoinUs openings={openings} />
         <ConnectWithUs />
       </main>
       <Footer />

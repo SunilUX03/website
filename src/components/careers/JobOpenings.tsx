@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { openings, openingsNote } from "@/lib/careers-content";
+import { openingsNote } from "@/lib/careers-content";
+import type { CmsJobOpening } from "@/lib/cms/job-openings";
 
 function DownloadIcon() {
   return (
@@ -30,7 +31,7 @@ function ClockIcon() {
   );
 }
 
-export function JobOpenings() {
+export function JobOpenings({ openings }: { openings: CmsJobOpening[] }) {
   return (
     <section className="py-xxl md:py-section" id="openings">
       <Container>
@@ -39,7 +40,7 @@ export function JobOpenings() {
         <ul role="list" className="grid gap-lg md:grid-cols-2">
           {openings.map((job) => (
             <li
-              key={job.role}
+              key={job.id}
               className="flex flex-col gap-base rounded-xl border border-hairline bg-surface-card p-lg transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
             >
               <div className="flex items-start justify-between gap-sm">
@@ -66,14 +67,16 @@ export function JobOpenings() {
               </p>
 
               <div className="mt-auto flex flex-wrap gap-xs pt-xs">
-                <a
-                  href={job.jdHref}
-                  className="type-button btn-outline"
-                  aria-label={`Download job description for ${job.role}`}
-                >
-                  <DownloadIcon />
-                  Download JD
-                </a>
+                {job.jdHref ? (
+                  <a
+                    href={job.jdHref}
+                    className="type-button btn-outline"
+                    aria-label={`Download job description for ${job.role}`}
+                  >
+                    <DownloadIcon />
+                    Download JD
+                  </a>
+                ) : null}
                 <a
                   href="#apply"
                   className="type-button btn-primary"

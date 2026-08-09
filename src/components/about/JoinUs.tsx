@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { hero as careersHero, openings } from "@/lib/careers-content";
+import { hero as careersHero } from "@/lib/careers-content";
+import type { CmsJobOpening } from "@/lib/cms/job-openings";
 
-// Reuses the real Careers page data (careers-content.ts) rather than
-// duplicating it — this is a teaser, /about/careers stays the source of
-// truth for the full list and the application flow.
-export function JoinUs() {
+// Reuses the real Careers page data (careers-content.ts + the CMS
+// openings) rather than duplicating it — this is a teaser, /about/careers
+// stays the source of truth for the full list and the application flow.
+export function JoinUs({ openings }: { openings: CmsJobOpening[] }) {
   const featured = openings.slice(0, 3);
 
   return (
@@ -23,7 +24,7 @@ export function JoinUs() {
 
           <div className="flex flex-col gap-3">
             {featured.map((job) => (
-              <div key={job.role} className="card-feature flex items-center justify-between gap-4">
+              <div key={job.id} className="card-feature flex items-center justify-between gap-4">
                 <div>
                   <p className="type-body-strong text-ink">{job.role}</p>
                   <p className="type-caption text-[var(--color-muted)]">

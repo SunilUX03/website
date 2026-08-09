@@ -10,6 +10,7 @@ import { CmsUsers } from "./collections/CmsUsers";
 import { Media } from "./collections/Media";
 import { Announcements } from "./collections/Announcements";
 import { MediaItems } from "./collections/MediaItems";
+import { JobOpenings } from "./collections/JobOpenings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -25,7 +26,7 @@ export default buildConfig({
     admin: "/cms",
     api: "/api/payload",
   },
-  collections: [CmsUsers, Media, Announcements, MediaItems],
+  collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {

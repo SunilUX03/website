@@ -9,6 +9,7 @@ import { JobOpenings } from "@/components/careers/JobOpenings";
 import { HowToApply } from "@/components/careers/HowToApply";
 import { ApplicationForm } from "@/components/careers/ApplicationForm";
 import { hero } from "@/lib/careers-content";
+import { getJobOpenings } from "@/lib/cms/job-openings";
 
 export const metadata: Metadata = {
   title: "Careers | TNeGA",
@@ -16,14 +17,18 @@ export const metadata: Metadata = {
     "Join Tamil Nadu e-Governance Agency. Explore current openings across project management, data, GIS, AI/ML and security, and apply online.",
 };
 
-export default function Careers() {
+export const revalidate = 60;
+
+export default async function Careers() {
+  const openings = await getJobOpenings();
+
   return (
     <>
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "About", href: "/about" }, { label: "Careers" }]} />
         <PageHero {...hero} graphic={<CareersGraphic />} />
-        <JobOpenings />
+        <JobOpenings openings={openings} />
         <HowToApply />
         <ApplicationForm />
       </main>
