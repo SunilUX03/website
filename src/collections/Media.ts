@@ -15,6 +15,10 @@ export const Media: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   upload: {
+    // `staticDir` only matters if nothing else handles storage. The
+    // vercelBlobStorage plugin (see payload.config.ts) takes over actual
+    // file storage for this collection and disables local-disk writes —
+    // left here only as the inert default if that plugin's ever removed.
     staticDir: "media",
     imageSizes: [
       { name: "thumbnail", width: 400, height: undefined, position: "centre" },

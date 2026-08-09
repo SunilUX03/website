@@ -4,6 +4,7 @@ import sharp from "sharp";
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 
 import { CmsUsers } from "./collections/CmsUsers";
 import { Media } from "./collections/Media";
@@ -42,4 +43,15 @@ export default buildConfig({
     push: false,
   }),
   sharp,
+  plugins: [
+    // Local disk (Media collection's own `staticDir`) doesn't persist on
+    // Vercel's serverless filesystem — an upload would vanish the moment
+    // that function instance recycled. Vercel Blob is a real, persistent
+    // store that works identically once self-hosted later too (it's just
+    // a network API, not tied to Vercel's compute).
+    vercelBlobStorage({
+      collections: { [Media.slug]: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 });
