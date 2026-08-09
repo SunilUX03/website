@@ -9,6 +9,7 @@ import * as migration_20260809_172326_add_hero_and_leadership_band from './20260
 import * as migration_20260809_173933_add_services from './20260809_173933_add_services';
 import * as migration_20260809_174207_add_suppress_get_started_steps from './20260809_174207_add_suppress_get_started_steps';
 import * as migration_20260809_194046_add_documents_go_policies_activitylog_ticker from './20260809_194046_add_documents_go_policies_activitylog_ticker';
+import * as migration_20260809_212557_add_legal_pages_footer from './20260809_212557_add_legal_pages_footer';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20260809_194046_add_documents_go_policies_activitylog_ticker.up,
     down: migration_20260809_194046_add_documents_go_policies_activitylog_ticker.down,
-    name: '20260809_194046_add_documents_go_policies_activitylog_ticker'
+    name: '20260809_194046_add_documents_go_policies_activitylog_ticker',
+  },
+  {
+    up: migration_20260809_212557_add_legal_pages_footer.up,
+    down: migration_20260809_212557_add_legal_pages_footer.down,
+    name: '20260809_212557_add_legal_pages_footer'
   },
 ];

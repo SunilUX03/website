@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { footer } from "@/lib/content";
 
 function CloseIcon() {
   return (
@@ -12,7 +11,17 @@ function CloseIcon() {
   );
 }
 
-export function WebInfoManagerModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function WebInfoManagerModal({
+  open,
+  onClose,
+  phone,
+  email,
+}: {
+  open: boolean;
+  onClose: () => void;
+  phone: string;
+  email: string;
+}) {
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -67,14 +76,14 @@ export function WebInfoManagerModal({ open, onClose }: { open: boolean; onClose:
             <div className="flex flex-col gap-2">
               <p className="type-body-sm text-ink">
                 Helpline:{" "}
-                <a href={`tel:${footer.phone.replace(/\s|-/g, "")}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
-                  {footer.phone}
+                <a href={`tel:${phone.replace(/\s|-/g, "")}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
+                  {phone}
                 </a>
               </p>
               <p className="type-body-sm text-ink">
                 Email:{" "}
-                <a href={`mailto:${footer.email}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
-                  {footer.email}
+                <a href={`mailto:${email}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
+                  {email}
                 </a>
               </p>
             </div>

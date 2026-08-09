@@ -17,10 +17,12 @@ import { Documents } from "./collections/Documents";
 import { GovernmentOrders } from "./collections/GovernmentOrders";
 import { Policies } from "./collections/Policies";
 import { ActivityLog } from "./collections/ActivityLog";
+import { LegalPages } from "./collections/LegalPages";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
 import { LeadershipBandContent } from "./globals/LeadershipBandContent";
+import { FooterContent } from "./globals/FooterContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -48,8 +50,9 @@ export default buildConfig({
     GovernmentOrders,
     Policies,
     ActivityLog,
+    LegalPages,
   ],
-  globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent],
+  globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent, FooterContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {

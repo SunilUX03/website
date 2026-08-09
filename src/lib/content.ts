@@ -303,47 +303,7 @@ export const ecosystem = [
   { name: "iTNT Hub", href: "https://www.itnthub.in", logo: "/images/logos/itnt-hub.png" },
 ];
 
-export const footer = {
-  description: "Powering Digital Governance in Tamil Nadu",
-  address:
-    "2nd & 7th Floor, PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai, 600 002",
-  // Same address as above, used to build a Google Maps "View Directions" link.
-  mapsHref:
-    "https://www.google.com/maps/search/?api=1&query=" +
-    encodeURIComponent(
-      "PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai 600002"
-    ),
-  phone: "044-4016 4900",
-  email: "tnega@tn.gov.in",
-  // Same platforms as socialMedia below — kept as a separate list since the
-  // footer only needs name + href, not the full apiPath/followLabel shape
-  // the homepage social cards use.
-  socialLinks: [
-    { label: "Facebook", href: "https://www.facebook.com/tnegaofficial" },
-    { label: "X", href: "https://twitter.com/TNeGA_Official" },
-    { label: "Instagram", href: "https://instagram.com/tnegaofficial" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/company/tnega/" },
-    { label: "YouTube", href: "https://www.youtube.com/@tnega" },
-  ],
-  quickLinks: [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Services", href: "/services" },
-    { label: "Careers", href: "/about/careers" },
-    { label: "RTI", href: "/notifications/rti" },
-  ],
-  citizenServices: [
-    { label: "e-Sevai", href: "/services/citizen/e-sevai" },
-    { label: "Namma Arasu", href: "/services/citizen/namma-arasu" },
-    { label: "TN GIS", href: "/projects/tn-gis" },
-    { label: "UMIS", href: "/projects/umis" },
-  ],
-  // Replaces the footer's old "Ecosystem" logo grid column.
-  helpSupport: [
-    { label: "Help", href: "/help" },
-    { label: "Feedback", href: "/feedback" },
-    { label: "Terms & Conditions", href: "/terms-conditions" },
-    { label: "Contact Us", href: "/reach-us" },
-    { label: "Site Map", href: "/sitemap" },
-  ],
-};
+// footer used to live here — it's now the "footer-content" Payload
+// global (see lib/cms/footer.ts), fetched by the Footer server wrapper
+// component and passed down to FooterClient.tsx.
+

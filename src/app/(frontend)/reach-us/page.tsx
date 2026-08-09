@@ -4,12 +4,14 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
-import { footer } from "@/lib/content";
+import { getFooterContent } from "@/lib/cms/footer";
 
 export const metadata: Metadata = {
   title: "Contact Us | TNeGA",
   description: "Get in touch with Tamil Nadu e-Governance Agency: helpline, email and office address.",
 };
+
+export const revalidate = 60;
 
 function PhoneIcon() {
   return (
@@ -42,7 +44,9 @@ function PinIcon() {
   );
 }
 
-export default function ReachUs() {
+export default async function ReachUs() {
+  const footer = await getFooterContent();
+
   return (
     <>
       <TopNav />

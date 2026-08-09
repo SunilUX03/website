@@ -17,7 +17,7 @@ import {
   generateFaqs,
   generateScreenshotImages,
 } from "@/lib/service-detail-generator";
-import { footer } from "@/lib/content";
+import { getFooterContent } from "@/lib/cms/footer";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   "citizen-services": "Citizen Services",
@@ -73,7 +73,8 @@ function DocIcon({ className }: { className?: string }) {
   );
 }
 
-export function ServiceDetailContent({ item, related }: { item: ServiceItemDetail; related: ServiceItemDetail[] }) {
+export async function ServiceDetailContent({ item, related }: { item: ServiceItemDetail; related: ServiceItemDetail[] }) {
+  const footer = await getFooterContent();
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
   const typeLabel = item.real?.typeLabel ?? (isProject ? "Project" : "Service");

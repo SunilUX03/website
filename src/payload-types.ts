@@ -78,6 +78,7 @@ export interface Config {
     'government-orders': GovernmentOrder;
     policies: Policy;
     'activity-log': ActivityLog;
+    'legal-pages': LegalPage;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +97,7 @@ export interface Config {
     'government-orders': GovernmentOrdersSelect<false> | GovernmentOrdersSelect<true>;
     policies: PoliciesSelect<false> | PoliciesSelect<true>;
     'activity-log': ActivityLogSelect<false> | ActivityLogSelect<true>;
+    'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -110,12 +112,14 @@ export interface Config {
     'board-content': BoardContent;
     'hero-content': HeroContent;
     'leadership-band-content': LeadershipBandContent;
+    'footer-content': FooterContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
     'board-content': BoardContentSelect<false> | BoardContentSelect<true>;
     'hero-content': HeroContentSelect<false> | HeroContentSelect<true>;
     'leadership-band-content': LeadershipBandContentSelect<false> | LeadershipBandContentSelect<true>;
+    'footer-content': FooterContentSelect<false> | FooterContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -612,6 +616,33 @@ export interface ActivityLog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal-pages".
+ */
+export interface LegalPage {
+  id: number;
+  /**
+   * Which page this content backs — matches a fixed route, not a URL you can change.
+   */
+  slug: 'privacy-policy' | 'terms-conditions' | 'terms-of-use' | 'disclaimer' | 'help' | 'feedback';
+  title: string;
+  eyebrow?: string | null;
+  intro?: string | null;
+  sections?:
+    | {
+        heading: string;
+        /**
+         * Separate paragraphs with a blank line. A paragraph where every line starts with "- " renders as a bullet list.
+         */
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -677,6 +708,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'activity-log';
         value: number | ActivityLog;
+      } | null)
+    | ({
+        relationTo: 'legal-pages';
+        value: number | LegalPage;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1028,6 +1063,26 @@ export interface ActivityLogSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal-pages_select".
+ */
+export interface LegalPagesSelect<T extends boolean = true> {
+  slug?: T;
+  title?: T;
+  eyebrow?: T;
+  intro?: T;
+  sections?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1208,6 +1263,62 @@ export interface LeadershipBandContent {
   createdAt?: string | null;
 }
 /**
+ * The footer shown at the bottom of every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer-content".
+ */
+export interface FooterContent {
+  id: number;
+  description: string;
+  address: string;
+  phone: string;
+  email: string;
+  /**
+   * The icon shown is looked up from the platform name, so it must be one of the options below.
+   */
+  socialLinks?:
+    | {
+        label: 'Facebook' | 'X' | 'YouTube' | 'Instagram' | 'LinkedIn';
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Quick Links column.
+   */
+  quickLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Citizen Services column.
+   */
+  citizenServices?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Help & Support column.
+   */
+  helpSupport?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -1316,6 +1427,48 @@ export interface LeadershipBandContentSelect<T extends boolean = true> {
         photo?: T;
         photoPosition?: T;
         quote?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer-content_select".
+ */
+export interface FooterContentSelect<T extends boolean = true> {
+  description?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  socialLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  quickLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  citizenServices?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  helpSupport?:
+    | T
+    | {
+        label?: T;
+        href?: T;
         id?: T;
       };
   _status?: T;
