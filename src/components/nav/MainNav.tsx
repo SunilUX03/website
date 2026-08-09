@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import clsx from "clsx";
-import { nav } from "@/lib/content";
+import type { CmsNavContent } from "@/lib/cms/nav-content";
 import { NavDropdown, DropdownLink } from "./NavDropdown";
 import { AccessibilityIcon, HomeIcon, MenuIcon } from "./icons";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
 
-export function MainNav() {
+export function MainNav({ nav }: { nav: CmsNavContent }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
@@ -131,7 +131,7 @@ export function MainNav() {
                       Updates
                     </p>
                     <div className="flex flex-col gap-0.5">
-                      {nav.notifications.updates.map((item) => (
+                      {nav.notificationsUpdates.map((item) => (
                         <DropdownLink key={item.href} {...item} />
                       ))}
                     </div>
@@ -141,7 +141,7 @@ export function MainNav() {
                       Documents
                     </p>
                     <div className="flex flex-col gap-0.5">
-                      {nav.notifications.documents.map((item) => (
+                      {nav.notificationsDocuments.map((item) => (
                         <DropdownLink key={item.href} {...item} />
                       ))}
                     </div>
@@ -202,7 +202,7 @@ export function MainNav() {
         <AccessibilityIcon className="h-5 w-5" />
       </button>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer nav={nav} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
   );
 }

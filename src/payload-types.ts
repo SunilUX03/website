@@ -93,8 +93,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'nav-content': NavContent;
+  };
+  globalsSelect: {
+    'nav-content': NavContentSelect<false> | NavContentSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -550,6 +554,89 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * The header navigation and top accessibility bar, shown on every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nav-content".
+ */
+export interface NavContent {
+  id: number;
+  /**
+   * Top bar link label to tn.gov.in, e.g. "தமிழ்நாடு அரசு | Government of Tamil Nadu".
+   */
+  govLabel: string;
+  about?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  services?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  notificationsUpdates?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  notificationsDocuments?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nav-content_select".
+ */
+export interface NavContentSelect<T extends boolean = true> {
+  govLabel?: T;
+  about?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  services?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  notificationsUpdates?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  notificationsDocuments?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

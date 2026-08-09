@@ -11,6 +11,7 @@ import { Media } from "./collections/Media";
 import { Announcements } from "./collections/Announcements";
 import { MediaItems } from "./collections/MediaItems";
 import { JobOpenings } from "./collections/JobOpenings";
+import { NavContent } from "./globals/NavContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -27,6 +28,7 @@ export default buildConfig({
     api: "/api/payload",
   },
   collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings],
+  globals: [NavContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {

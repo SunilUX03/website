@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import clsx from "clsx";
-import { nav } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
 import { AccessibilityIcon, ExternalLinkArrow } from "./icons";
 
-export function AccessibilityBar() {
+export function AccessibilityBar({ govLabel }: { govLabel: string }) {
   const [lang, setLang] = useState<"ta" | "en">("en");
   const { panelOpen, openPanel } = useAccessibilityPrefs();
 
@@ -20,7 +19,7 @@ export function AccessibilityBar() {
           rel="noopener noreferrer"
           className="flex min-w-0 items-center gap-1 text-[var(--color-muted)] hover:text-ink"
         >
-          <span className="truncate">{nav.accessibility.govLabel}</span>
+          <span className="truncate">{govLabel}</span>
           <ExternalLinkArrow className="h-3 w-3 shrink-0" />
         </a>
 

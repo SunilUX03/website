@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { nav } from "@/lib/content";
+import type { CmsNavContent } from "@/lib/cms/nav-content";
 import { CloseIcon, ChevronDownIcon } from "./icons";
 
 function MobileGroup({
@@ -79,9 +79,11 @@ function MobileGroup({
 }
 
 export function MobileDrawer({
+  nav,
   open,
   onClose,
 }: {
+  nav: CmsNavContent;
   open: boolean;
   onClose: () => void;
 }) {
@@ -143,13 +145,13 @@ export function MobileDrawer({
 
             <MobileGroup title="Notifications">
               <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">Updates</p>
-              {nav.notifications.updates.map((item) => (
+              {nav.notificationsUpdates.map((item) => (
                 <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
                 </a>
               ))}
               <p className="type-caption-uppercase mb-1 mt-2 text-[var(--color-muted)]">Documents</p>
-              {nav.notifications.documents.map((item) => (
+              {nav.notificationsDocuments.map((item) => (
                 <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
                 </a>

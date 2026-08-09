@@ -6,39 +6,9 @@
 
 import { pexelsPhoto, STOCK } from "./stock-photos";
 
-export const nav = {
-  accessibility: {
-    govLabel: "தமிழ்நாடு அரசு | Government of Tamil Nadu",
-  },
-  about: [
-    { label: "Overview", href: "/about" },
-    { label: "Leadership", href: "/about#leadership" },
-    { label: "Organisation structure", href: "/about#organisation-structure" },
-    { label: "Careers", href: "/about/careers" },
-  ],
-  // Mirrors the 3-section model on /services: just the 3 sections
-  // themselves as direct links, not a sub-menu of individual services.
-  services: [
-    { label: "Citizen Services", href: "/services#citizen-services" },
-    { label: "e-Governance Projects", href: "/services#e-governance-projects" },
-    { label: "Services", href: "/services#services" },
-  ],
-  notifications: {
-    updates: [
-      { label: "Announcements", href: "/notifications/announcements" },
-      { label: "Media & Press", href: "/notifications/media-press" },
-    ],
-    // Publications is temporarily switched off site-wide (see
-    // src/app/notifications/publications/page.tsx) — left out of this
-    // list rather than deleted, so re-adding it later is a one-line change.
-    documents: [
-      { label: "RTI", href: "/notifications/rti" },
-      { label: "Tenders", href: "/notifications/tenders" },
-      { label: "Government Orders", href: "/notifications/government-orders" },
-      { label: "Policies & Guidelines", href: "/notifications/policies-guidelines" },
-    ],
-  },
-};
+// nav used to live here — it's now the "nav-content" Payload global (see
+// lib/cms/nav-content.ts), fetched by TopNav.tsx and passed down to
+// AccessibilityBar/MainNav/MobileDrawer.
 
 export const hero = {
   agencyLabel: "Tamil Nadu e-Governance Agency",
