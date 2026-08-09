@@ -6,6 +6,7 @@ import { ServicesTabs } from "@/components/services/ServicesTabs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getAllServiceItems, getServiceItemsBySection } from "@/lib/cms/services";
+import { getPillarsContent } from "@/lib/cms/pillars-content";
 
 export const metadata: Metadata = {
   title: "Citizen Services, e-Governance Projects & Services | TNeGA",
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Services() {
-  const allItems = await getAllServiceItems();
+  const [allItems, pillarsChrome] = await Promise.all([getAllServiceItems(), getPillarsContent()]);
+  const pillarDescriptions = Object.fromEntries(pillarsChrome.map((p) => [p.title, p.description]));
 
   return (
     <>
@@ -28,6 +30,7 @@ export default async function Services() {
           citizenServices={getServiceItemsBySection(allItems, "citizen-services")}
           eGovernanceProjects={getServiceItemsBySection(allItems, "e-governance-projects")}
           sharedServices={getServiceItemsBySection(allItems, "services")}
+          pillarDescriptions={pillarDescriptions}
         />
       </main>
       <Footer />

@@ -13,6 +13,9 @@ import { getAnnouncements, getTickerAnnouncements } from "@/lib/cms/announcement
 import { getHeroContent } from "@/lib/cms/hero-content";
 import { getLeadershipBand } from "@/lib/cms/leadership-band";
 import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
+import { getMetrics } from "@/lib/cms/metrics";
+import { getPillarsContent } from "@/lib/cms/pillars-content";
+import { getProjectsSpotlight } from "@/lib/cms/projects-spotlight";
 import { pillars } from "@/lib/content";
 
 // Announcements now come from the CMS (a live DB query, not a static
@@ -25,14 +28,19 @@ import { pillars } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function Home() {
-  const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems] = await Promise.all([
-    getAnnouncements(),
-    getTickerAnnouncements(),
-    getHeroContent(),
-    getLeadershipBand(),
-    getAllServiceItems(),
-  ]);
+  const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems, metrics, pillarsChrome, projectsSpotlight] =
+    await Promise.all([
+      getAnnouncements(),
+      getTickerAnnouncements(),
+      getHeroContent(),
+      getLeadershipBand(),
+      getAllServiceItems(),
+      getMetrics(),
+      getPillarsContent(),
+      getProjectsSpotlight(),
+    ]);
   const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
+  const mergedPillars = pillarsChrome.map((chrome, i) => ({ ...chrome, href: pillars[i].href }));
 
   return (
     <>
@@ -41,9 +49,9 @@ export default async function Home() {
         <Hero hero={hero} />
         <Scroller items={tickerAnnouncements} />
         <AboutLeadership band={leadershipBand} />
-        <Metrics />
-        <PillarCards pillarItems={pillarItems} />
-        <ProjectsSpotlight />
+        <Metrics metrics={metrics} />
+        <PillarCards pillars={mergedPillars} pillarItems={pillarItems} />
+        <ProjectsSpotlight projects={projectsSpotlight} />
         <CommunityFeed announcements={announcements} />
         <ReachUs />
       </main>

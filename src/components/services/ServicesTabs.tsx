@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CmsServiceItemDetail as ServiceItem } from "@/lib/cms/service-types";
-import { pillars } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
 import { MobileCardStack } from "@/components/ui/MobileCardStack";
@@ -27,10 +26,6 @@ type TabId = (typeof TAB_META)[number]["id"];
 
 function isTabId(value: string): value is TabId {
   return TAB_META.some((tab) => tab.id === value);
-}
-
-function getIntroDescription(label: string) {
-  return pillars.find((p) => p.title === label)?.description ?? "";
 }
 
 function SectionIntro({ description, tint }: { description: string; tint: keyof typeof TINT_COLOR }) {
@@ -77,10 +72,12 @@ export function ServicesTabs({
   citizenServices,
   eGovernanceProjects,
   sharedServices,
+  pillarDescriptions,
 }: {
   citizenServices: ServiceItem[];
   eGovernanceProjects: ServiceItem[];
   sharedServices: ServiceItem[];
+  pillarDescriptions: Record<string, string>;
 }) {
   const itemsByTab: Record<TabId, ServiceItem[]> = {
     "citizen-services": citizenServices,
@@ -241,7 +238,7 @@ export function ServicesTabs({
             transitionDuration: reducedMotion ? "0ms" : `${FADE_MS}ms`,
           }}
         >
-          <SectionIntro description={getIntroDescription(displayedTab.label)} tint={displayedTab.tint} />
+          <SectionIntro description={pillarDescriptions[displayedTab.label] ?? ""} tint={displayedTab.tint} />
           {isDesktop === true && <ServiceGridDesktop items={displayedTab.items} />}
           {isDesktop === false && <ServiceGridMobile items={displayedTab.items} topPx={navHeight} />}
         </div>

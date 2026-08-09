@@ -81,6 +81,7 @@ export interface Config {
     'legal-pages': LegalPage;
     awards: Award;
     'roll-of-honour': RollOfHonour;
+    'projects-spotlight': ProjectsSpotlight;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +103,7 @@ export interface Config {
     'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
     awards: AwardsSelect<false> | AwardsSelect<true>;
     'roll-of-honour': RollOfHonourSelect<false> | RollOfHonourSelect<true>;
+    'projects-spotlight': ProjectsSpotlightSelect<false> | ProjectsSpotlightSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -119,6 +121,8 @@ export interface Config {
     'footer-content': FooterContent;
     'about-page-content': AboutPageContent;
     'org-chart-content': OrgChartContent;
+    'metrics-content': MetricsContent;
+    'pillars-content': PillarsContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -128,6 +132,8 @@ export interface Config {
     'footer-content': FooterContentSelect<false> | FooterContentSelect<true>;
     'about-page-content': AboutPageContentSelect<false> | AboutPageContentSelect<true>;
     'org-chart-content': OrgChartContentSelect<false> | OrgChartContentSelect<true>;
+    'metrics-content': MetricsContentSelect<false> | MetricsContentSelect<true>;
+    'pillars-content': PillarsContentSelect<false> | PillarsContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -685,6 +691,51 @@ export interface RollOfHonour {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-spotlight".
+ */
+export interface ProjectsSpotlight {
+  id: number;
+  name: string;
+  description: string;
+  image: number | Media;
+  /**
+   * Optional small badge, e.g. "MeitY Approved".
+   */
+  badge?: string | null;
+  /**
+   * The numbers shown under the description, e.g. "410 Services".
+   */
+  stats?:
+    | {
+        value: number;
+        /**
+         * e.g. " Crore+", "%"
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The buttons shown on the card, e.g. "Login to Portal" / "Know more".
+   */
+  ctas?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Lower numbers show first in the carousel.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -762,6 +813,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'roll-of-honour';
         value: number | RollOfHonour;
+      } | null)
+    | ({
+        relationTo: 'projects-spotlight';
+        value: number | ProjectsSpotlight;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1159,6 +1214,35 @@ export interface RollOfHonourSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-spotlight_select".
+ */
+export interface ProjectsSpotlightSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  image?: T;
+  badge?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  ctas?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1476,6 +1560,58 @@ export interface OrgChartContent {
   createdAt?: string | null;
 }
 /**
+ * The 6 stat cards on the homepage. Values and labels only — always exactly 6 cards.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-content".
+ */
+export interface MetricsContent {
+  id: number;
+  metrics?:
+    | {
+        value: number;
+        /**
+         * Decimal places to show, e.g. 2 for 24.27. Leave blank for a whole number.
+         */
+        decimals?: number | null;
+        /**
+         * e.g. "₹"
+         */
+        prefix?: string | null;
+        /**
+         * e.g. "+", " Cr", " Lakh"
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The 3 pillar cards' chrome on the Home and About pages. Always exactly 3 cards.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pillars-content".
+ */
+export interface PillarsContent {
+  id: number;
+  pillars?:
+    | {
+        title: string;
+        description: string;
+        linkLabel: string;
+        bannerImage?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -1697,6 +1833,45 @@ export interface OrgChartContentSelect<T extends boolean = true> {
         engineer?: T;
         manager?: T;
         base?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics-content_select".
+ */
+export interface MetricsContentSelect<T extends boolean = true> {
+  metrics?:
+    | T
+    | {
+        value?: T;
+        decimals?: T;
+        prefix?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pillars-content_select".
+ */
+export interface PillarsContentSelect<T extends boolean = true> {
+  pillars?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        linkLabel?: T;
+        bannerImage?: T;
         id?: T;
       };
   _status?: T;

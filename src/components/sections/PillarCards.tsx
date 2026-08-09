@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { pillars } from "@/lib/content";
 import type { CmsServiceItemDetail } from "@/lib/cms/service-types";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
-type Pillar = (typeof pillars)[number];
+export type PillarCardData = {
+  title: string;
+  description: string;
+  href: string;
+  linkLabel: string;
+  bannerImage: string | null;
+};
+type Pillar = PillarCardData;
 type Items = CmsServiceItemDetail[];
 
 /**
@@ -151,7 +157,7 @@ function MobileAccordion({ pillar, items, bannerImage, open, onToggle }: {
   );
 }
 
-export function PillarCards({ pillarItems }: { pillarItems: Items[] }) {
+export function PillarCards({ pillars, pillarItems }: { pillars: Pillar[]; pillarItems: Items[] }) {
   const [mobileOpen, setMobileOpen] = useState<number>(-1);
 
   return (
@@ -167,7 +173,7 @@ export function PillarCards({ pillarItems }: { pillarItems: Items[] }) {
         {/* Desktop / tablet: three equal flip cards */}
         <div className="hidden gap-4 md:flex">
           {pillars.map((pillar, i) => (
-            <FlipCard key={pillar.title} pillar={pillar} items={pillarItems[i]} bannerImage={pillar.bannerImage} />
+            <FlipCard key={pillar.title} pillar={pillar} items={pillarItems[i]} bannerImage={pillar.bannerImage ?? undefined} />
           ))}
         </div>
 
@@ -178,7 +184,7 @@ export function PillarCards({ pillarItems }: { pillarItems: Items[] }) {
               key={pillar.title}
               pillar={pillar}
               items={pillarItems[i]}
-              bannerImage={pillar.bannerImage}
+              bannerImage={pillar.bannerImage ?? undefined}
               open={mobileOpen === i}
               onToggle={() => setMobileOpen((cur) => (cur === i ? -1 : i))}
             />

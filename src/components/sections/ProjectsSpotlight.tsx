@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { projects } from "@/lib/content";
+import type { CmsProjectSpotlight } from "@/lib/cms/projects-spotlight-types";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { CountUp } from "@/components/ui/CountUp";
 import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
 
-type Project = (typeof projects)[number];
+type Project = CmsProjectSpotlight;
 
 function SpotlightContent({ project, active }: { project: Project; active: boolean }) {
   return (
@@ -68,7 +68,7 @@ function SpotlightContent({ project, active }: { project: Project; active: boole
 
 const SLIDE_DURATION_MS = 2500;
 
-function DesktopSpotlight() {
+function DesktopSpotlight({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState(0);
   const [hovering, setHovering] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -119,7 +119,7 @@ function DesktopSpotlight() {
       <div className="absolute bottom-6 left-6 z-10 flex gap-1.5">
         {projects.map((p, i) => (
           <button
-            key={p.slug}
+            key={p.id}
             type="button"
             onClick={() => setActive(i)}
             aria-label={`Go to ${p.name}`}
@@ -156,7 +156,7 @@ function DesktopSpotlight() {
 
 const STORY_DURATION = 4000;
 
-function MobileSpotlight() {
+function MobileSpotlight({ projects }: { projects: Project[] }) {
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -208,7 +208,7 @@ function MobileSpotlight() {
       <div className="relative aspect-video w-full overflow-hidden">
         <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
           {projects.map((p, i) => (
-            <div key={p.slug} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/40">
+            <div key={p.id} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/40">
               <div
                 className="h-full bg-white"
                 style={{
@@ -282,7 +282,7 @@ function MobileSpotlight() {
   );
 }
 
-export function ProjectsSpotlight() {
+export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
   const isDesktop = useIsDesktop();
 
   return (
@@ -315,8 +315,8 @@ export function ProjectsSpotlight() {
           </Link>
         </div>
 
-        {isDesktop === true && <DesktopSpotlight />}
-        {isDesktop === false && <MobileSpotlight />}
+        {isDesktop === true && <DesktopSpotlight projects={projects} />}
+        {isDesktop === false && <MobileSpotlight projects={projects} />}
       </Container>
     </section>
   );

@@ -22,38 +22,20 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 // "Show in ticker" (see getTickerAnnouncements in lib/cms/announcements.ts),
 // so it can never drift out of sync with an announcement's own content.
 
-/**
- * The three "Enabling Digital Governance" bands on Home. Each pairs a
- * standing description with a carousel of projects.
- *
- * `itemNames` reference entries in services-content.ts by name rather than
- * duplicating their copy — every card here is the same card shown on
- * /services, so stats and descriptions can never drift between the two
- * pages. Names are resolved at render (see getServiceItemsByNames), which
- * throws on a typo instead of silently dropping a card. UMIS appears under
- * both Citizen Services and e-Governance Projects by design — it is
- * genuinely both.
- *
- * `bannerImage` is this card's own dedicated photo — deliberately separate
- * from any itemNames entry's `.image`, so swapping it never changes what's
- * shown on that service/project's own detail page.
- */
+// pillars' chrome (title/description/linkLabel/bannerImage) is now the
+// "pillars-content" Payload global (see lib/cms/pillars-content.ts), fetched
+// by Home and About and merged with the structural fields below. `href` and
+// `itemNames` stay in code — they're structural references (a /services
+// page anchor, and names that must exactly match Services collection
+// entries via getServiceItemsByNames, which throws on a typo) rather than
+// freeform copy, so they're deliberately not exposed to the admin.
 export const pillars = [
   {
-    title: "Citizen Services",
-    description:
-      "TNeGA delivers citizen-centric digital services through secure and accessible platforms, making Government services faster, simpler, and more convenient.",
     href: "/services#citizen-services",
-    linkLabel: "View all Citizen Services",
     itemNames: ["e-Sevai Portal", "Namma Arasu", "TNSSP", "e-Gazette Portal", "UMIS"],
-    bannerImage: "/images/pillars/citizen-services.png",
   },
   {
-    title: "e-Governance Projects",
-    description:
-      "TNeGA collaborates with Government departments to design, develop, and implement digital solutions that improve governance and service delivery.",
     href: "/services#e-governance-projects",
-    linkLabel: "View all e-Governance Projects",
     itemNames: [
       "TNGIS Tamil Nilam",
       "UMIS",
@@ -61,14 +43,9 @@ export const pillars = [
       "e-Office",
       "Interdepartmental Technical Consulting",
     ],
-    bannerImage: "/images/pillars/e-governance-projects.png",
   },
   {
-    title: "Services",
-    description:
-      "TNeGA provides shared digital services including digital identity, DBT, e-Sign, cybersecurity, and technology consulting to support e-Governance across Tamil Nadu.",
     href: "/services#services",
-    linkLabel: "View all Services",
     itemNames: [
       "Nambikkai Inaiyam",
       "DBT (Direct Benefit Transfer Portal)",
@@ -77,10 +54,14 @@ export const pillars = [
       "SMS & WhatsApp Gateway",
       "IT Security Audit Framework",
     ],
-    bannerImage: "/images/pillars/services.png",
   },
 ];
 
+// metrics used to live here — it's now the "metrics-content" Payload global
+// (see lib/cms/metrics.ts), fetched by Home and About. Kept here, unchanged,
+// only because HeroImpactCard.tsx (not rendered anywhere on the live site —
+// see the dead-code note on WhatWeDo/EcosystemGrowthRings above) still
+// imports it.
 export const metrics = [
   { value: 273, prefix: "", suffix: "+", label: "e-Services Available Online" },
   { value: 25277, prefix: "", suffix: "", label: "e-Sevai Centres Statewide" },
@@ -88,95 +69,6 @@ export const metrics = [
   { value: 24.27, prefix: "", suffix: " Lakh", label: "Students on UMIS", decimals: 2 },
   { value: 48, prefix: "", suffix: " Crore", label: "Aadhaar Authentication Transactions" },
   { value: 2, prefix: "", suffix: "+ Crore", label: "Documents Secured on Blockchain" },
-];
-
-export const projects = [
-  {
-    slug: "e-sevai",
-    name: "e-Sevai",
-    description:
-      "A unified digital service delivery platform enabling citizens to access essential Tamil Nadu Government services online and through 34,843 assisted centres across the state.",
-    stats: [
-      { value: 410, suffix: "", label: "Services" },
-      { value: 34843, suffix: "", label: "CSCs" },
-      { value: 4, suffix: " Crore+", label: "Transactions" },
-    ],
-    ctas: [
-      { label: "Login to Portal", href: "https://tnesevai.tn.gov.in" },
-      { label: "Know more", href: "/projects/e-sevai" },
-    ],
-    image: "/images/projects/e-sevai.png",
-  },
-  {
-    slug: "namma-arasu",
-    name: "Namma Arasu",
-    description:
-      "Get government services directly on WhatsApp. Message 7845252525 to access 51 services across 16 departments, in Tamil or English, anytime, anywhere.",
-    stats: [
-      { value: 51, suffix: "", label: "Services" },
-      { value: 16, suffix: "", label: "Departments" },
-    ],
-    ctas: [
-      { label: "Message Now", href: "https://wa.me/917845252525" },
-      { label: "Know more", href: "/projects/namma-arasu" },
-    ],
-    image: "/images/projects/namma-arasu/hero.png",
-  },
-  {
-    slug: "tn-gis",
-    name: "TN GIS",
-    description:
-      "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops, all in one place.",
-    stats: [{ value: 400, suffix: "+", label: "Spatial Layers" }],
-    ctas: [
-      { label: "Access Portal", href: "https://tngis.tn.gov.in" },
-      { label: "Know more", href: "/projects/tn-gis" },
-    ],
-    image: "/images/projects/tn-gis.png",
-  },
-  {
-    slug: "umis",
-    name: "UMIS",
-    description:
-      "A single platform for all higher education institutions in Tamil Nadu, maintaining student information, courses and university data integrated with scholarship portals.",
-    stats: [
-      { value: 29, suffix: " Lakh", label: "Students" },
-      { value: 81, suffix: "", label: "Universities" },
-      { value: 5490, suffix: "", label: "Institutions" },
-    ],
-    ctas: [
-      { label: "Login to Portal", href: "/projects/umis" },
-      { label: "Know more", href: "/projects/umis" },
-    ],
-    image: "/images/projects/umis.png",
-  },
-  {
-    slug: "tnsso",
-    name: "TNSSO",
-    description:
-      "Log in once to access all Tamil Nadu government services. A single verified credential gives citizens secure access to multiple G2C applications.",
-    stats: [
-      { value: 9, suffix: "", label: "Applications Integrated" },
-    ],
-    ctas: [{ label: "Know more", href: "/projects/tnsso" }],
-    image: "/images/projects/tnsso.png",
-    badge: "MeitY Approved",
-  },
-  {
-    slug: "e-office",
-    name: "e-Office",
-    description:
-      "A digital workflow and file management platform enabling government departments to process files, approvals and communications electronically.",
-    stats: [
-      { value: 128243, suffix: "", label: "Daily Users" },
-      { value: 80, suffix: "%", label: "State Penetration" },
-    ],
-    ctas: [
-      { label: "Login to Portal", href: "/projects/e-office" },
-      { label: "Know more", href: "/projects/e-office" },
-    ],
-    image: "/images/projects/e-office.png",
-  },
 ];
 
 // Only the Additional Chief Secretary + CEO are confirmed so far; remaining

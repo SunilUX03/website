@@ -11,6 +11,7 @@ import * as migration_20260809_174207_add_suppress_get_started_steps from './202
 import * as migration_20260809_194046_add_documents_go_policies_activitylog_ticker from './20260809_194046_add_documents_go_policies_activitylog_ticker';
 import * as migration_20260809_212557_add_legal_pages_footer from './20260809_212557_add_legal_pages_footer';
 import * as migration_20260809_214433_add_about_page_content from './20260809_214433_add_about_page_content';
+import * as migration_20260809_221528_add_metrics_pillars_projects_spotlight from './20260809_221528_add_metrics_pillars_projects_spotlight';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20260809_214433_add_about_page_content.up,
     down: migration_20260809_214433_add_about_page_content.down,
-    name: '20260809_214433_add_about_page_content'
+    name: '20260809_214433_add_about_page_content',
+  },
+  {
+    up: migration_20260809_221528_add_metrics_pillars_projects_spotlight.up,
+    down: migration_20260809_221528_add_metrics_pillars_projects_spotlight.down,
+    name: '20260809_221528_add_metrics_pillars_projects_spotlight'
   },
 ];

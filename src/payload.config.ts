@@ -20,6 +20,7 @@ import { ActivityLog } from "./collections/ActivityLog";
 import { LegalPages } from "./collections/LegalPages";
 import { Awards } from "./collections/Awards";
 import { RollOfHonour } from "./collections/RollOfHonour";
+import { ProjectsSpotlight } from "./collections/ProjectsSpotlight";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
@@ -27,6 +28,8 @@ import { LeadershipBandContent } from "./globals/LeadershipBandContent";
 import { FooterContent } from "./globals/FooterContent";
 import { AboutPageContent } from "./globals/AboutPageContent";
 import { OrgChartContent } from "./globals/OrgChartContent";
+import { MetricsContent } from "./globals/MetricsContent";
+import { PillarsContent } from "./globals/PillarsContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -57,6 +60,7 @@ export default buildConfig({
     LegalPages,
     Awards,
     RollOfHonour,
+    ProjectsSpotlight,
   ],
   globals: [
     NavContent,
@@ -66,6 +70,8 @@ export default buildConfig({
     FooterContent,
     AboutPageContent,
     OrgChartContent,
+    MetricsContent,
+    PillarsContent,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",

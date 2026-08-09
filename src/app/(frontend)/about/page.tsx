@@ -24,6 +24,8 @@ import { getAwards } from "@/lib/cms/awards";
 import { getRollOfHonour } from "@/lib/cms/roll-of-honour";
 import { pillars } from "@/lib/content";
 import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
+import { getMetrics } from "@/lib/cms/metrics";
+import { getPillarsContent } from "@/lib/cms/pillars-content";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -37,7 +39,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const [openings, board, members, allServiceItems, aboutPage, orgChart, awards, rollOfHonour] =
+  const [openings, board, members, allServiceItems, aboutPage, orgChart, awards, rollOfHonour, metrics, pillarsChrome] =
     await Promise.all([
       getJobOpenings(),
       getBoardContent(),
@@ -47,8 +49,11 @@ export default async function About() {
       getOrgChart(),
       getAwards(),
       getRollOfHonour(),
+      getMetrics(),
+      getPillarsContent(),
     ]);
   const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
+  const mergedPillars = pillarsChrome.map((chrome, i) => ({ ...chrome, href: pillars[i].href }));
 
   return (
     <>
@@ -58,8 +63,8 @@ export default async function About() {
         <AboutHero aboutHero={aboutPage.hero} />
         <WhoWeAreHierarchy whoWeAre={aboutPage.whoWeAre} hierarchy={aboutPage.hierarchy} />
         <VisionMission visionMission={aboutPage.visionMission} />
-        <PillarCards pillarItems={pillarItems} />
-        <Metrics />
+        <PillarCards pillars={mergedPillars} pillarItems={pillarItems} />
+        <Metrics metrics={metrics} />
         <OrgChart orgChart={orgChart} />
         <LeadershipTeam members={members} />
         <BoardOfDirectors board={board} />

@@ -1,11 +1,11 @@
 "use client";
 
-import { metrics } from "@/lib/content";
+import type { CmsMetric } from "@/lib/cms/metrics-types";
 import { Container } from "@/components/ui/Container";
 import { CountUp } from "@/components/ui/CountUp";
 import { useInViewOnce } from "@/lib/hooks";
 
-export function Metrics() {
+export function Metrics({ metrics }: { metrics: CmsMetric[] }) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.35 });
 
   return (
