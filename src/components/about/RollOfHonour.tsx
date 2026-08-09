@@ -3,7 +3,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { rollOfHonour } from "@/lib/about-content";
+import type { RollOfHonourEntry } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/hooks";
 
@@ -14,7 +14,7 @@ function TimelineEntry({
   index,
   reducedMotion,
 }: {
-  entry: (typeof rollOfHonour)[number];
+  entry: RollOfHonourEntry;
   index: number;
   reducedMotion: boolean;
 }) {
@@ -65,11 +65,11 @@ function TimelineEntry({
   );
 }
 
-export function RollOfHonour() {
+export function RollOfHonour({ entries }: { entries: RollOfHonourEntry[] }) {
   const [expanded, setExpanded] = useState(false);
   const reducedMotion = useReducedMotion();
-  const visible = rollOfHonour.slice(0, VISIBLE_COUNT);
-  const rest = rollOfHonour.slice(VISIBLE_COUNT);
+  const visible = entries.slice(0, VISIBLE_COUNT);
+  const rest = entries.slice(VISIBLE_COUNT);
 
   return (
     <section className="bg-canvas">

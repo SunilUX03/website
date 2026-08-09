@@ -72,6 +72,7 @@ export interface Config {
     announcements: Announcement;
     'media-items': MediaItem;
     'job-openings': JobOpening;
+    'team-members': TeamMember;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     'media-items': MediaItemsSelect<false> | MediaItemsSelect<true>;
     'job-openings': JobOpeningsSelect<false> | JobOpeningsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -309,6 +311,30 @@ export interface JobOpening {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  /**
+   * Use "Vacant" for a currently-unfilled post rather than inventing a name.
+   */
+  name: string;
+  designation: string;
+  /**
+   * Department/division, e.g. "GIS" or "Procurement/ DRO". Leave blank for the CEO.
+   */
+  subject?: string | null;
+  photo?: (number | null) | Media;
+  /**
+   * Lower numbers show first. The CEO is normally 0.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -350,6 +376,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'job-openings';
         value: number | JobOpening;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -513,6 +543,20 @@ export interface JobOpeningsSelect<T extends boolean = true> {
   department?: T;
   deadline?: T;
   jdHref?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  designation?: T;
+  subject?: T;
+  photo?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

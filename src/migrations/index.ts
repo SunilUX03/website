@@ -4,6 +4,7 @@ import * as migration_20260809_163817_add_media_items from './20260809_163817_ad
 import * as migration_20260809_164620_add_job_openings from './20260809_164620_add_job_openings';
 import * as migration_20260809_165947_add_nav_content from './20260809_165947_add_nav_content';
 import * as migration_20260809_170753_add_board_content from './20260809_170753_add_board_content';
+import * as migration_20260809_171259_add_team_members from './20260809_171259_add_team_members';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260809_170753_add_board_content.up,
     down: migration_20260809_170753_add_board_content.down,
-    name: '20260809_170753_add_board_content'
+    name: '20260809_170753_add_board_content',
+  },
+  {
+    up: migration_20260809_171259_add_team_members.up,
+    down: migration_20260809_171259_add_team_members.down,
+    name: '20260809_171259_add_team_members'
   },
 ];

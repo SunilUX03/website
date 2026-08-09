@@ -147,26 +147,10 @@ export const orgChart = {
   ] as { director: string; engineer: string | null; manager: string; base: string }[],
 };
 
-// Real, confirmed current CEO (tenure July 2026 – Present). No official
-// photo supplied yet, so this uses a curated placeholder like the rest of
-// `team` below rather than a fabricated headshot.
-export const teamCeo = {
-  name: "Dr. K.P. Karthikeyan, IAS",
-  designation: "Director / CEO",
-  photo: pexelsPhoto(STOCK.presentation, 320, 320),
-};
-
-// Real officers and designations, per explicit instruction. "Vacant" is a
-// real, currently-unfilled post — shown with an office/building photo
-// rather than a person's photo, so it never reads as an actual named
-// individual.
-export const team = [
-  { name: "Tmt. Priya", designation: "General Manager", subject: "Procurement/ DRO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
-  { name: "Thiru. Rajarajan", designation: "General Manager", subject: "Procurement/ DRO", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
-  { name: "Tmt. Preethi Parkavi", designation: "General Manager", subject: "e-Sevai/ DRO", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
-  { name: "Vacant", designation: "General Manager", subject: "Technical", photo: pexelsPhoto(STOCK.officeBuilding, 320, 320) },
-  { name: "Thiru. Jayachandran", designation: "General Manager/ Program Director", subject: "GIS", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
-];
+// teamCeo/team used to live here — they're now the "team-members" Payload
+// collection (see lib/cms/team-members.ts), fetched by the About page and
+// passed to LeadershipTeam.tsx. buildRollOfHonour below still needs the
+// current CEO's name, passed in from that same fetch.
 
 // governingBoard used to live here — it's now the "board-content" Payload
 // global (see lib/cms/board-content.ts), fetched by the About page and
@@ -240,12 +224,18 @@ export const awards = [
   },
 ];
 
-// Real historical Director/CEO list, as supplied. Ordered most-recent-first
-// (index 0 = present, matching `teamCeo` above). The final two "Officer on
-// Special Duty" entries are the same person (Mr. Atul Anand) across two
-// consecutive stints, merged into one row per explicit instruction.
-export const rollOfHonour = [
-  { designation: "Director / CEO", name: teamCeo.name, range: "July 2026 – Present" },
+export type RollOfHonourEntry = { designation: string; name?: string; range?: string };
+
+/** Real historical Director/CEO list, as supplied. Ordered most-recent-
+ * first (index 0 = present) — the CEO's name is now the CMS's team-members
+ * collection rather than a static duplicate, so the current entry is
+ * built from that instead of a hardcoded name, to avoid the two drifting
+ * apart if the CEO changes. The final two "Officer on Special Duty"
+ * entries are the same person (Mr. Atul Anand) across two consecutive
+ * stints, merged into one row per explicit instruction. */
+export function buildRollOfHonour(currentCeoName: string): RollOfHonourEntry[] {
+  return [
+  { designation: "Director / CEO", name: currentCeoName, range: "July 2026 – Present" },
   { designation: "Director / CEO", name: "Dr. Alby John Varghese, I.A.S.", range: "25 Jun 2025 – 30 Jul 2026" },
   { designation: "Director / CEO", name: "Thiru. M. Govinda Rao, IAS", range: "30 Dec 2024 – 24 Jun 2025" },
   { designation: "Director / CEO", name: "Thiru. Praveen. P. Nair, I.A.S", range: "18 Jul 2022 – 29 Dec 2024" },
@@ -274,7 +264,8 @@ export const rollOfHonour = [
     name: "Mr. Atul Anand, IAS",
     range: "29 Dec 2006 – 04 Jun 2007",
   },
-] as { designation: string; name?: string; range?: string }[];
+  ];
+}
 
 export const connectWithUs = {
   email: "tnega@tn.gov.in",

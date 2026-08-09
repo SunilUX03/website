@@ -17,6 +17,8 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getJobOpenings } from "@/lib/cms/job-openings";
 import { getBoardContent } from "@/lib/cms/board-content";
+import { getTeamMembers } from "@/lib/cms/team-members";
+import { buildRollOfHonour } from "@/lib/about-content";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -30,7 +32,12 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const [openings, board] = await Promise.all([getJobOpenings(), getBoardContent()]);
+  const [openings, board, members] = await Promise.all([
+    getJobOpenings(),
+    getBoardContent(),
+    getTeamMembers(),
+  ]);
+  const rollOfHonour = buildRollOfHonour(members[0]?.name ?? "");
 
   return (
     <>
@@ -43,10 +50,10 @@ export default async function About() {
         <PillarCards />
         <Metrics />
         <OrgChart />
-        <LeadershipTeam />
+        <LeadershipTeam members={members} />
         <BoardOfDirectors board={board} />
         <Awards />
-        <RollOfHonour />
+        <RollOfHonour entries={rollOfHonour} />
         <JoinUs openings={openings} />
         <ConnectWithUs />
       </main>

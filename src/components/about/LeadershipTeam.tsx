@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { teamCeo, team } from "@/lib/about-content";
+import type { CmsTeamMember } from "@/lib/cms/team-member-types";
 import { Container } from "@/components/ui/Container";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
 import { useInViewOnce, useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
-type TeamMember = { name: string; designation: string; subject?: string; photo: string };
+type TeamMember = CmsTeamMember;
 
 function TeamCard({
   member,
@@ -63,7 +63,7 @@ function DesktopGrid({
     // centers itself instead of trailing left with empty trailing columns.
     <div className="flex flex-wrap justify-center gap-3">
       {members.map((member, i) => (
-        <div key={`${member.name}-${i}`} className="w-[calc(50%-0.375rem)] sm:w-[calc(25%-0.5625rem)] lg:w-[calc(16.6667%-0.625rem)]">
+        <div key={member.id} className="w-[calc(50%-0.375rem)] sm:w-[calc(25%-0.5625rem)] lg:w-[calc(16.6667%-0.625rem)]">
           <TeamCard member={member} index={i} inView={inView} reducedMotion={reducedMotion} />
         </div>
       ))}
@@ -84,7 +84,7 @@ function MobileCarousel({
     <AutoCarousel>
       {members.map((member, i) => (
         <div
-          key={`${member.name}-${i}`}
+          key={member.id}
           data-carousel-item
           className="w-3/4 max-w-[220px] shrink-0 snap-center sm:w-[200px]"
         >
@@ -95,14 +95,10 @@ function MobileCarousel({
   );
 }
 
-export function LeadershipTeam() {
+export function LeadershipTeam({ members }: { members: CmsTeamMember[] }) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.15 });
   const reducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
-  // CEO leads the same set as the rest of the team, at the same card size
-  // — not a separate oversized hero card above it. Every member renders;
-  // desktop wraps them, mobile scrolls them — neither silently drops any.
-  const allMembers = [{ name: teamCeo.name, designation: teamCeo.designation, photo: teamCeo.photo }, ...team];
 
   return (
     <section id="leadership" className="scroll-mt-24 bg-canvas-soft">
@@ -111,8 +107,8 @@ export function LeadershipTeam() {
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">The people behind TNeGA</h2>
 
         <div ref={ref}>
-          {isDesktop === true && <DesktopGrid members={allMembers} inView={inView} reducedMotion={reducedMotion} />}
-          {isDesktop === false && <MobileCarousel members={allMembers} inView={inView} reducedMotion={reducedMotion} />}
+          {isDesktop === true && <DesktopGrid members={members} inView={inView} reducedMotion={reducedMotion} />}
+          {isDesktop === false && <MobileCarousel members={members} inView={inView} reducedMotion={reducedMotion} />}
         </div>
       </Container>
 
