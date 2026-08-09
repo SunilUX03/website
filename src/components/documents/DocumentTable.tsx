@@ -26,6 +26,8 @@ function compareValues(a: string, b: string): number {
   return a.localeCompare(b);
 }
 
+const PAGE_SIZE = 25;
+
 function SortIcon({ direction }: { direction: "asc" | "desc" | null }) {
   return (
     <svg viewBox="0 0 16 16" aria-hidden className="h-3 w-3 shrink-0 fill-none stroke-current stroke-[1.5]">
@@ -52,13 +54,11 @@ function SortIcon({ direction }: { direction: "asc" | "desc" | null }) {
  * swipe sideways to read a single row. Instead, the <table> renders from
  * `md:` up, and below that each row becomes a self-contained card with
  * the columns as label/value pairs — no sideways scrolling at all. Both
- * views read from the same filtered `visible` array, so they can't
- * disagree.
+ * views read from the same filtered, sorted, paginated `pageRows` array,
+ * so they can't disagree.
  *
- * Filtering runs on the client over data passed in from the server. The
- * prototypes' pagination control was static markup with a single,
- * always-disabled page — kept for visual parity, but it only becomes
- * meaningful once these lists come from a real source and need paging.
+ * Filtering, sorting and pagination (25 rows/page) all run on the client
+ * over data passed in from the server.
  */
 
 export function DocumentTable({
@@ -105,8 +105,27 @@ export function DocumentTable({
     return sorted;
   }, [rows, facets, query, selected, sortColumn, sortDirection]);
 
-  const setFacet = (id: string, value: string) =>
+  const [page, setPage] = useState(1);
+  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const pageRows = useMemo(
+    () => visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [visible, currentPage]
+  );
+
+  // Every one of these resets to page 1 itself, right where the result set
+  // changes — a search, filter or re-sort landing a user on a now-empty or
+  // confusingly-reordered later page would be far more confusing than
+  // always starting back at the top of the new results.
+  const changeQuery = (value: string) => {
+    setQuery(value);
+    setPage(1);
+  };
+
+  const setFacet = (id: string, value: string) => {
     setSelected((prev) => ({ ...prev, [id]: value }));
+    setPage(1);
+  };
 
   const toggleSort = (columnIndex: number) => {
     if (sortColumn !== columnIndex) {
@@ -119,18 +138,22 @@ export function DocumentTable({
       // — lets a user get back to the original, unsorted order.
       setSortColumn(null);
     }
+    setPage(1);
   };
 
   const countText =
     visible.length === 0
       ? "No entries found"
-      : `Showing 1 to ${visible.length} of ${rows.length} entries`;
+      : `Showing ${(currentPage - 1) * PAGE_SIZE + 1} to ${Math.min(
+          currentPage * PAGE_SIZE,
+          visible.length
+        )} of ${visible.length} entries`;
 
   return (
     <>
       <FilterBar
         query={query}
-        onQueryChange={setQuery}
+        onQueryChange={changeQuery}
         facets={facets}
         selected={selected}
         onFacetChange={setFacet}
@@ -160,6 +183,7 @@ export function DocumentTable({
                   setSortColumn(Number(value));
                   setSortDirection("asc");
                 }
+                setPage(1);
               }}
               className="h-9 flex-1 rounded-md border border-hairline-strong bg-surface-card px-2.5 text-sm text-ink"
             >
@@ -175,7 +199,10 @@ export function DocumentTable({
             {sortColumn !== null ? (
               <button
                 type="button"
-                onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
+                onClick={() => {
+                  setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
+                  setPage(1);
+                }}
                 aria-label={`Toggle sort direction, currently ${sortDirection === "asc" ? "ascending" : "descending"}`}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-hairline-strong bg-surface-card text-[var(--color-body-strong)]"
               >
@@ -185,7 +212,7 @@ export function DocumentTable({
           </div>
 
           <ul role="list" className="flex flex-col gap-base md:hidden">
-            {visible.map((row) => {
+            {pageRows.map((row) => {
               const title = row.cells.find((c) => c.kind === "title");
               const badges = row.cells.filter((c) => c.kind === "badge");
               const download = row.cells.find((c) => c.kind === "download");
@@ -248,12 +275,40 @@ export function DocumentTable({
             ) : null}
           </ul>
 
-          <p
-            className="mt-base text-[13px] text-[var(--color-muted)] md:hidden"
-            aria-live="polite"
-          >
-            {countText}
-          </p>
+          <div className="mt-base flex items-center justify-between gap-sm md:hidden">
+            <p className="text-[13px] text-[var(--color-muted)]" aria-live="polite">
+              {countText}
+            </p>
+            {pageCount > 1 ? (
+              <div className="flex shrink-0 items-center gap-xs">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  aria-label="Previous page"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-hairline-strong text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
+                >
+                  <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
+                    <polyline points="10 4 6 8 10 12" />
+                  </svg>
+                </button>
+                <span className="text-[13px] text-[var(--color-muted)]">
+                  {currentPage} / {pageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                  disabled={currentPage >= pageCount}
+                  aria-label="Next page"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-hairline-strong text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
+                >
+                  <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
+                    <polyline points="6 4 10 8 6 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : null}
+          </div>
 
           {/* ── Tablet and up: the full table ── */}
           <div className="hidden overflow-hidden rounded-md border border-hairline bg-surface-card md:block">
@@ -288,7 +343,7 @@ export function DocumentTable({
                   </tr>
                 </thead>
                 <tbody>
-                  {visible.map((row) => (
+                  {pageRows.map((row) => (
                     <tr key={row.id} className="transition-colors hover:bg-canvas">
                       {row.cells.map((cell, i) => (
                         <td
@@ -326,27 +381,38 @@ export function DocumentTable({
               <nav className="flex items-center gap-xxs" aria-label="Table pagination">
                 <button
                   type="button"
-                  disabled
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
                   aria-label="Previous page"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] opacity-35"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
                     <polyline points="10 4 6 8 10 12" />
                   </svg>
                 </button>
+                {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setPage(n)}
+                    aria-label={`Page ${n}`}
+                    aria-current={n === currentPage ? "page" : undefined}
+                    className={clsx(
+                      "inline-flex h-8 w-8 items-center justify-center rounded-sm border text-[13px] font-medium",
+                      n === currentPage
+                        ? "border-[var(--color-primary-blue)] bg-[var(--color-primary-blue)] text-[var(--color-on-primary)]"
+                        : "border-transparent text-[var(--color-body-strong)] hover:bg-canvas"
+                    )}
+                  >
+                    {n}
+                  </button>
+                ))}
                 <button
                   type="button"
-                  aria-label="Page 1"
-                  aria-current="page"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--color-primary-blue)] bg-[var(--color-primary-blue)] text-[13px] font-medium text-[var(--color-on-primary)]"
-                >
-                  1
-                </button>
-                <button
-                  type="button"
-                  disabled
+                  onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                  disabled={currentPage >= pageCount}
                   aria-label="Next page"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] opacity-35"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
                     <polyline points="6 4 10 8 6 12" />

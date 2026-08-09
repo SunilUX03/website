@@ -72,7 +72,7 @@ export const facets: DocumentFacet[] = [
 export const rows: DocumentRow[] = [
   {
     id: "go-001",
-    searchText: "G.O. (Ms).No. 2",
+    searchText: "G.O. (Ms).No. 2 2002",
     facets: { year: "2002" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 2" },
@@ -84,7 +84,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-002",
-    searchText: "Letter No. 237",
+    searchText: "Letter No. 237 2002",
     facets: { year: "2002" },
     cells: [
       { kind: "title", text: "Letter No. 237" },
@@ -96,7 +96,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-003",
-    searchText: "G.O. Ms No. 4 (Additional Copy)",
+    searchText: "G.O. Ms No. 4 (Additional Copy) 2006",
     facets: { year: "2006" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 4 (Additional Copy)" },
@@ -108,7 +108,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-004",
-    searchText: "G.O. Ms No. 4",
+    searchText: "G.O. Ms No. 4 2006",
     facets: { year: "2006" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 4" },
@@ -120,7 +120,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-005",
-    searchText: "G.O. (Ms) No. 17",
+    searchText: "G.O. (Ms) No. 17 2007",
     facets: { year: "2007" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 17" },
@@ -132,7 +132,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-006",
-    searchText: "G.O. (Ms) No. 31",
+    searchText: "G.O. (Ms) No. 31 2010",
     facets: { year: "2010" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 31" },
@@ -144,7 +144,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-007",
-    searchText: "G.O. (Ms).No. 16",
+    searchText: "G.O. (Ms).No. 16 2011",
     facets: { year: "2011" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 16" },
@@ -156,7 +156,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-008",
-    searchText: "G.O. 2(D) No. 22",
+    searchText: "G.O. 2(D) No. 22 2011",
     facets: { year: "2011" },
     cells: [
       { kind: "title", text: "G.O. 2(D) No. 22" },
@@ -168,7 +168,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-009",
-    searchText: "G.O. (Ms) No. 3",
+    searchText: "G.O. (Ms) No. 3 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 3" },
@@ -180,7 +180,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-010",
-    searchText: "G.O. (Ms) No. 4",
+    searchText: "G.O. (Ms) No. 4 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 4" },
@@ -192,7 +192,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-011",
-    searchText: "G.O. (Ms) No. 5",
+    searchText: "G.O. (Ms) No. 5 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 5" },
@@ -204,7 +204,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-012",
-    searchText: "G.O. (2D) No. 2",
+    searchText: "G.O. (2D) No. 2 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (2D) No. 2" },
@@ -216,7 +216,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-013",
-    searchText: "G.O. (2D) No. 8",
+    searchText: "G.O. (2D) No. 8 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (2D) No. 8" },
@@ -228,7 +228,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-014",
-    searchText: "G.O. (Ms) No. 6",
+    searchText: "G.O. (Ms) No. 6 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 6" },
@@ -240,7 +240,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-015",
-    searchText: "G.O. 2(D) No. 4",
+    searchText: "G.O. 2(D) No. 4 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. 2(D) No. 4" },
@@ -252,7 +252,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-016",
-    searchText: "G.O. Ms. No. 15",
+    searchText: "G.O. Ms. No. 15 2012",
     facets: { year: "2012" },
     cells: [
       { kind: "title", text: "G.O. Ms. No. 15" },
@@ -264,7 +264,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-017",
-    searchText: "G.O. (Ms) No. 22",
+    searchText: "G.O. (Ms) No. 22 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 22" },
@@ -276,7 +276,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-018",
-    searchText: "G.O. (Ms) No. 23",
+    searchText: "G.O. (Ms) No. 23 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 23" },
@@ -288,7 +288,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-019",
-    searchText: "G.O. (Ms) No. 8",
+    searchText: "G.O. (Ms) No. 8 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 8" },
@@ -300,7 +300,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-020",
-    searchText: "G.O. Ms No. 21",
+    searchText: "G.O. Ms No. 21 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 21" },
@@ -312,7 +312,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-021",
-    searchText: "G.O. (MS) No. 14",
+    searchText: "G.O. (MS) No. 14 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (MS) No. 14" },
@@ -324,7 +324,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-022",
-    searchText: "G.O. (Ms) No. 19",
+    searchText: "G.O. (Ms) No. 19 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 19" },
@@ -336,7 +336,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-023",
-    searchText: "G.O. (Ms) No. 3 (Additional Copy)",
+    searchText: "G.O. (Ms) No. 3 (Additional Copy) 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 3 (Additional Copy)" },
@@ -348,7 +348,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-024",
-    searchText: "G.O. (Ms) No. 3",
+    searchText: "G.O. (Ms) No. 3 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 3" },
@@ -360,7 +360,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-025",
-    searchText: "G.O. 2(D) No. 42",
+    searchText: "G.O. 2(D) No. 42 2013",
     facets: { year: "2013" },
     cells: [
       { kind: "title", text: "G.O. 2(D) No. 42" },
@@ -372,7 +372,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-026",
-    searchText: "G.O. (D).No. 36",
+    searchText: "G.O. (D).No. 36 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 36" },
@@ -384,7 +384,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-027",
-    searchText: "G.O. (Ms)No. 2",
+    searchText: "G.O. (Ms)No. 2 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. (Ms)No. 2" },
@@ -396,7 +396,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-028",
-    searchText: "G.O. (D)No. 28",
+    searchText: "G.O. (D)No. 28 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. (D)No. 28" },
@@ -408,7 +408,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-029",
-    searchText: "G.O. (Ms)No. 4",
+    searchText: "G.O. (Ms)No. 4 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. (Ms)No. 4" },
@@ -420,7 +420,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-030",
-    searchText: "G.O. (Ms) No. 3",
+    searchText: "G.O. (Ms) No. 3 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 3" },
@@ -432,7 +432,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-031",
-    searchText: "G.O. 2(D)No. 14",
+    searchText: "G.O. 2(D)No. 14 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. 2(D)No. 14" },
@@ -444,7 +444,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-032",
-    searchText: "G.O. 2(D)No. 17",
+    searchText: "G.O. 2(D)No. 17 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. 2(D)No. 17" },
@@ -456,7 +456,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-033",
-    searchText: "G.O. Ms No. 13",
+    searchText: "G.O. Ms No. 13 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 13" },
@@ -468,7 +468,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-034",
-    searchText: "G.O. Ms No. 17",
+    searchText: "G.O. Ms No. 17 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 17" },
@@ -480,7 +480,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-035",
-    searchText: "G.O. Ms No. 5",
+    searchText: "G.O. Ms No. 5 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 5" },
@@ -492,7 +492,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-036",
-    searchText: "G.O. Ms No. 66",
+    searchText: "G.O. Ms No. 66 2014",
     facets: { year: "2014" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 66" },
@@ -504,7 +504,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-037",
-    searchText: "G.O. (D)No. 1",
+    searchText: "G.O. (D)No. 1 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (D)No. 1" },
@@ -516,7 +516,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-038",
-    searchText: "G.O. (D)No. 4",
+    searchText: "G.O. (D)No. 4 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (D)No. 4" },
@@ -528,7 +528,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-039",
-    searchText: "G.O. (D)No. 5",
+    searchText: "G.O. (D)No. 5 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (D)No. 5" },
@@ -540,7 +540,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-040",
-    searchText: "G.O. (Ms).No. 10",
+    searchText: "G.O. (Ms).No. 10 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 10" },
@@ -552,7 +552,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-041",
-    searchText: "G.O. (Ms).No. 12",
+    searchText: "G.O. (Ms).No. 12 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 12" },
@@ -564,7 +564,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-042",
-    searchText: "G.O. (Ms).No. 2",
+    searchText: "G.O. (Ms).No. 2 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 2" },
@@ -576,7 +576,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-043",
-    searchText: "G.O. Ms No. 1",
+    searchText: "G.O. Ms No. 1 2015",
     facets: { year: "2015" },
     cells: [
       { kind: "title", text: "G.O. Ms No. 1" },
@@ -588,7 +588,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-044",
-    searchText: "G.O. (D).No. 13",
+    searchText: "G.O. (D).No. 13 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 13" },
@@ -600,7 +600,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-045",
-    searchText: "G.O. (D).No. 2",
+    searchText: "G.O. (D).No. 2 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 2" },
@@ -612,7 +612,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-046",
-    searchText: "G.O. (D) No. 25",
+    searchText: "G.O. (D) No. 25 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 25" },
@@ -624,7 +624,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-047",
-    searchText: "G.O. (D) No. 26",
+    searchText: "G.O. (D) No. 26 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 26" },
@@ -636,7 +636,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-048",
-    searchText: "G.O. (D) No. 3",
+    searchText: "G.O. (D) No. 3 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 3" },
@@ -648,7 +648,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-049",
-    searchText: "G.O. (Ms).No. 13",
+    searchText: "G.O. (Ms).No. 13 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 13" },
@@ -660,7 +660,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-050",
-    searchText: "G.O. (Ms).No. 2",
+    searchText: "G.O. (Ms).No. 2 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 2" },
@@ -672,7 +672,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-051",
-    searchText: "G.O. (Ms).No. 3",
+    searchText: "G.O. (Ms).No. 3 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 3" },
@@ -684,7 +684,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-052",
-    searchText: "G.O. (Ms) No. 4",
+    searchText: "G.O. (Ms) No. 4 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 4" },
@@ -696,7 +696,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-053",
-    searchText: "G.O. (Ms) No. 8",
+    searchText: "G.O. (Ms) No. 8 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 8" },
@@ -708,7 +708,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-054",
-    searchText: "G.O. (Ms) No. 10",
+    searchText: "G.O. (Ms) No. 10 2016",
     facets: { year: "2016" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 10" },
@@ -720,7 +720,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-055",
-    searchText: "G.O. (2D).No. 4",
+    searchText: "G.O. (2D).No. 4 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 4" },
@@ -732,7 +732,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-056",
-    searchText: "G.O. (2D).No. 8",
+    searchText: "G.O. (2D).No. 8 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 8" },
@@ -744,7 +744,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-057",
-    searchText: "G.O. (D).No. 1",
+    searchText: "G.O. (D).No. 1 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 1" },
@@ -756,7 +756,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-058",
-    searchText: "G.O. (D).No. 12",
+    searchText: "G.O. (D).No. 12 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 12" },
@@ -768,7 +768,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-059",
-    searchText: "G.O. (D).No. 14",
+    searchText: "G.O. (D).No. 14 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 14" },
@@ -780,7 +780,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-060",
-    searchText: "G.O. (D).No. 20",
+    searchText: "G.O. (D).No. 20 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 20" },
@@ -792,7 +792,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-061",
-    searchText: "G.O. (D).No. 22",
+    searchText: "G.O. (D).No. 22 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 22" },
@@ -804,7 +804,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-062",
-    searchText: "G.O. (D).No. 25",
+    searchText: "G.O. (D).No. 25 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 25" },
@@ -816,7 +816,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-063",
-    searchText: "G.O. (D).No. 26",
+    searchText: "G.O. (D).No. 26 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 26" },
@@ -828,7 +828,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-064",
-    searchText: "G.O. (D).No. 30",
+    searchText: "G.O. (D).No. 30 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 30" },
@@ -840,7 +840,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-065",
-    searchText: "G.O. (D).No. 9",
+    searchText: "G.O. (D).No. 9 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 9" },
@@ -852,7 +852,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-066",
-    searchText: "G.O. (Ms).No. 10",
+    searchText: "G.O. (Ms).No. 10 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 10" },
@@ -864,7 +864,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-067",
-    searchText: "G.O. (Ms).No. 16",
+    searchText: "G.O. (Ms).No. 16 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 16" },
@@ -876,7 +876,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-068",
-    searchText: "G.O. (Ms).No. 18",
+    searchText: "G.O. (Ms).No. 18 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 18" },
@@ -888,7 +888,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-069",
-    searchText: "G.O. (Ms).No. 2",
+    searchText: "G.O. (Ms).No. 2 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 2" },
@@ -900,7 +900,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-070",
-    searchText: "G.O. (Ms).No. 20",
+    searchText: "G.O. (Ms).No. 20 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 20" },
@@ -912,7 +912,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-071",
-    searchText: "G.O. (Ms).No. 21",
+    searchText: "G.O. (Ms).No. 21 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 21" },
@@ -924,7 +924,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-072",
-    searchText: "G.O. (Ms).No. 22",
+    searchText: "G.O. (Ms).No. 22 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 22" },
@@ -936,7 +936,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-073",
-    searchText: "G.O. (Ms).No. 24",
+    searchText: "G.O. (Ms).No. 24 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 24" },
@@ -948,7 +948,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-074",
-    searchText: "G.O. (Ms).No. 3",
+    searchText: "G.O. (Ms).No. 3 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 3" },
@@ -960,7 +960,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-075",
-    searchText: "G.O. (Ms).No. 4",
+    searchText: "G.O. (Ms).No. 4 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 4" },
@@ -972,7 +972,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-076",
-    searchText: "Letter No. 8212",
+    searchText: "Letter No. 8212 2017",
     facets: { year: "2017" },
     cells: [
       { kind: "title", text: "Letter No. 8212" },
@@ -984,7 +984,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-077",
-    searchText: "G.O. (2D).No. 8",
+    searchText: "G.O. (2D).No. 8 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 8" },
@@ -996,7 +996,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-078",
-    searchText: "G.O. (2D).No. 9",
+    searchText: "G.O. (2D).No. 9 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 9" },
@@ -1008,7 +1008,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-079",
-    searchText: "G.O. (D).No. 19",
+    searchText: "G.O. (D).No. 19 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 19" },
@@ -1020,7 +1020,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-080",
-    searchText: "G.O. (Ms).No. 1",
+    searchText: "G.O. (Ms).No. 1 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 1" },
@@ -1032,7 +1032,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-081",
-    searchText: "G.O. (Ms).No. 13",
+    searchText: "G.O. (Ms).No. 13 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 13" },
@@ -1044,7 +1044,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-082",
-    searchText: "G.O. (Ms).No. 3",
+    searchText: "G.O. (Ms).No. 3 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 3" },
@@ -1056,7 +1056,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-083",
-    searchText: "G.O. (2D).No. 10",
+    searchText: "G.O. (2D).No. 10 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 10" },
@@ -1068,7 +1068,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-084",
-    searchText: "G.O. (2D).No. 11",
+    searchText: "G.O. (2D).No. 11 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 11" },
@@ -1080,7 +1080,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-085",
-    searchText: "G.O. (2D).No. 6",
+    searchText: "G.O. (2D).No. 6 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 6" },
@@ -1092,7 +1092,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-086",
-    searchText: "G.O. (D).No. 24",
+    searchText: "G.O. (D).No. 24 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 24" },
@@ -1104,7 +1104,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-087",
-    searchText: "G.O. (D).No. 33",
+    searchText: "G.O. (D).No. 33 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 33" },
@@ -1116,7 +1116,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-088",
-    searchText: "G.O. (D).No. 1",
+    searchText: "G.O. (D).No. 1 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 1" },
@@ -1128,7 +1128,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-089",
-    searchText: "G.O. (D). No. 33",
+    searchText: "G.O. (D). No. 33 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (D). No. 33" },
@@ -1140,7 +1140,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-090",
-    searchText: "G.O. (Ms).No. 12",
+    searchText: "G.O. (Ms).No. 12 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 12" },
@@ -1152,7 +1152,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-091",
-    searchText: "G.O. (Ms).No. 17",
+    searchText: "G.O. (Ms).No. 17 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 17" },
@@ -1164,7 +1164,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-092",
-    searchText: "G.O. (Ms).No. 19",
+    searchText: "G.O. (Ms).No. 19 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 19" },
@@ -1176,7 +1176,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-093",
-    searchText: "G.O. (Ms).No. 23 (Additional Copy)",
+    searchText: "G.O. (Ms).No. 23 (Additional Copy) 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 23 (Additional Copy)" },
@@ -1188,7 +1188,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-094",
-    searchText: "G.O. (Ms).No. 23",
+    searchText: "G.O. (Ms).No. 23 2018",
     facets: { year: "2018" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 23" },
@@ -1200,7 +1200,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-095",
-    searchText: "G.O. (2D).No. 4",
+    searchText: "G.O. (2D).No. 4 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 4" },
@@ -1212,7 +1212,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-096",
-    searchText: "G.O. (2D).No. 5",
+    searchText: "G.O. (2D).No. 5 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 5" },
@@ -1224,7 +1224,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-097",
-    searchText: "G.O. (D).No. 14",
+    searchText: "G.O. (D).No. 14 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 14" },
@@ -1236,7 +1236,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-098",
-    searchText: "G.O. (D).No. 15",
+    searchText: "G.O. (D).No. 15 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 15" },
@@ -1248,7 +1248,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-099",
-    searchText: "G.O. (D).No. 16",
+    searchText: "G.O. (D).No. 16 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 16" },
@@ -1260,7 +1260,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-100",
-    searchText: "G.O. (D).No. 17",
+    searchText: "G.O. (D).No. 17 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 17" },
@@ -1272,7 +1272,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-101",
-    searchText: "G.O. (D).No. 18",
+    searchText: "G.O. (D).No. 18 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 18" },
@@ -1284,7 +1284,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-102",
-    searchText: "G.O. (D).No. 19",
+    searchText: "G.O. (D).No. 19 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 19" },
@@ -1296,7 +1296,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-103",
-    searchText: "G.O. (D).No. 21",
+    searchText: "G.O. (D).No. 21 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 21" },
@@ -1308,7 +1308,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-104",
-    searchText: "G.O. (D).No. 22",
+    searchText: "G.O. (D).No. 22 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 22" },
@@ -1320,7 +1320,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-105",
-    searchText: "G.O. (D).No. 28",
+    searchText: "G.O. (D).No. 28 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 28" },
@@ -1332,7 +1332,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-106",
-    searchText: "G.O. (D).No. 29",
+    searchText: "G.O. (D).No. 29 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 29" },
@@ -1344,7 +1344,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-107",
-    searchText: "G.O. (D).No. 35",
+    searchText: "G.O. (D).No. 35 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 35" },
@@ -1356,7 +1356,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-108",
-    searchText: "G.O. (D).No. 36",
+    searchText: "G.O. (D).No. 36 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 36" },
@@ -1368,7 +1368,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-109",
-    searchText: "G.O. (D).No. 37",
+    searchText: "G.O. (D).No. 37 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 37" },
@@ -1380,7 +1380,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-110",
-    searchText: "G.O. (D).No. 38",
+    searchText: "G.O. (D).No. 38 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 38" },
@@ -1392,7 +1392,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-111",
-    searchText: "G.O. (D).No. 43",
+    searchText: "G.O. (D).No. 43 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 43" },
@@ -1404,7 +1404,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-112",
-    searchText: "G.O. (D).No. 44",
+    searchText: "G.O. (D).No. 44 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 44" },
@@ -1416,7 +1416,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-113",
-    searchText: "G.O. (D).No. 45",
+    searchText: "G.O. (D).No. 45 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 45" },
@@ -1428,7 +1428,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-114",
-    searchText: "G.O. (D).No. 48",
+    searchText: "G.O. (D).No. 48 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 48" },
@@ -1440,7 +1440,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-115",
-    searchText: "G.O. (D).No. 8",
+    searchText: "G.O. (D).No. 8 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 8" },
@@ -1452,7 +1452,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-116",
-    searchText: "G.O. (Ms).No. 10 (Additional Copy)",
+    searchText: "G.O. (Ms).No. 10 (Additional Copy) 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 10 (Additional Copy)" },
@@ -1464,7 +1464,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-117",
-    searchText: "G.O. (Ms).No. 10",
+    searchText: "G.O. (Ms).No. 10 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 10" },
@@ -1476,7 +1476,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-118",
-    searchText: "G.O. (Ms).No. 12",
+    searchText: "G.O. (Ms).No. 12 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 12" },
@@ -1488,7 +1488,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-119",
-    searchText: "G.O. (Ms).No. 2",
+    searchText: "G.O. (Ms).No. 2 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 2" },
@@ -1500,7 +1500,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-120",
-    searchText: "G.O. (Ms).No. 9",
+    searchText: "G.O. (Ms).No. 9 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 9" },
@@ -1512,7 +1512,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-121",
-    searchText: "G.O. (D).No. 30",
+    searchText: "G.O. (D).No. 30 2019",
     facets: { year: "2019" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 30" },
@@ -1524,7 +1524,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-122",
-    searchText: "G.O. (2D).No. 2",
+    searchText: "G.O. (2D).No. 2 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (2D).No. 2" },
@@ -1536,7 +1536,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-123",
-    searchText: "G.O. (2D.).No. 4",
+    searchText: "G.O. (2D.).No. 4 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (2D.).No. 4" },
@@ -1548,7 +1548,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-124",
-    searchText: "G.O. (D).No. 14",
+    searchText: "G.O. (D).No. 14 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 14" },
@@ -1560,7 +1560,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-125",
-    searchText: "G.O. (D).No. 2",
+    searchText: "G.O. (D).No. 2 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 2" },
@@ -1572,7 +1572,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-126",
-    searchText: "G.O. (D).No. 3",
+    searchText: "G.O. (D).No. 3 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 3" },
@@ -1584,7 +1584,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-127",
-    searchText: "G.O. (D.).No. 21",
+    searchText: "G.O. (D.).No. 21 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D.).No. 21" },
@@ -1596,7 +1596,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-128",
-    searchText: "G.O. (D.).No. 24",
+    searchText: "G.O. (D.).No. 24 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D.).No. 24" },
@@ -1608,7 +1608,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-129",
-    searchText: "G.O. (D.).No. 26",
+    searchText: "G.O. (D.).No. 26 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (D.).No. 26" },
@@ -1620,7 +1620,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-130",
-    searchText: "G.O. (MS.).No. 26",
+    searchText: "G.O. (MS.).No. 26 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (MS.).No. 26" },
@@ -1632,7 +1632,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-131",
-    searchText: "G.O. (Ms).No. 11",
+    searchText: "G.O. (Ms).No. 11 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 11" },
@@ -1644,7 +1644,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-132",
-    searchText: "G.O. (Ms).No. 12",
+    searchText: "G.O. (Ms).No. 12 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 12" },
@@ -1656,7 +1656,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-133",
-    searchText: "G.O. (Ms).No. 13",
+    searchText: "G.O. (Ms).No. 13 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 13" },
@@ -1668,7 +1668,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-134",
-    searchText: "G.O. (Ms).No. 15",
+    searchText: "G.O. (Ms).No. 15 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 15" },
@@ -1680,7 +1680,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-135",
-    searchText: "G.O. (Ms).No. 24",
+    searchText: "G.O. (Ms).No. 24 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 24" },
@@ -1692,7 +1692,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-136",
-    searchText: "G.O. (Ms).No. 25",
+    searchText: "G.O. (Ms).No. 25 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 25" },
@@ -1704,7 +1704,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-137",
-    searchText: "G.O. (Ms).No. 27",
+    searchText: "G.O. (Ms).No. 27 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 27" },
@@ -1716,7 +1716,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-138",
-    searchText: "G.O. (Ms).No. 28",
+    searchText: "G.O. (Ms).No. 28 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 28" },
@@ -1728,7 +1728,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-139",
-    searchText: "G.O. (Ms).No. 3",
+    searchText: "G.O. (Ms).No. 3 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 3" },
@@ -1740,7 +1740,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-140",
-    searchText: "G.O. (Ms).No. 30",
+    searchText: "G.O. (Ms).No. 30 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 30" },
@@ -1752,7 +1752,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-141",
-    searchText: "G.O. (Ms).No. 4",
+    searchText: "G.O. (Ms).No. 4 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 4" },
@@ -1764,7 +1764,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-142",
-    searchText: "G.O. (Ms).No. 8",
+    searchText: "G.O. (Ms).No. 8 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 8" },
@@ -1776,7 +1776,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-143",
-    searchText: "G.O. (Ms).No. 1",
+    searchText: "G.O. (Ms).No. 1 2020",
     facets: { year: "2020" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 1" },
@@ -1788,7 +1788,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-144",
-    searchText: "G.O. (2D). No. 1",
+    searchText: "G.O. (2D). No. 1 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (2D). No. 1" },
@@ -1800,7 +1800,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-145",
-    searchText: "G.O. (2D) No. 4",
+    searchText: "G.O. (2D) No. 4 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (2D) No. 4" },
@@ -1812,7 +1812,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-146",
-    searchText: "G.O. (D) No. 23",
+    searchText: "G.O. (D) No. 23 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 23" },
@@ -1824,7 +1824,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-147",
-    searchText: "G.O. (D) No. 29",
+    searchText: "G.O. (D) No. 29 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 29" },
@@ -1836,7 +1836,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-148",
-    searchText: "G.O. (Ms).No. 37",
+    searchText: "G.O. (Ms).No. 37 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 37" },
@@ -1848,7 +1848,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-149",
-    searchText: "G.O. (Ms.) No. 14",
+    searchText: "G.O. (Ms.) No. 14 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 14" },
@@ -1860,7 +1860,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-150",
-    searchText: "G.O. (Ms.) No. 17",
+    searchText: "G.O. (Ms.) No. 17 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 17" },
@@ -1872,7 +1872,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-151",
-    searchText: "G.O. (Ms.) No. 18",
+    searchText: "G.O. (Ms.) No. 18 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 18" },
@@ -1884,7 +1884,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-152",
-    searchText: "G.O. (Ms.) No. 33",
+    searchText: "G.O. (Ms.) No. 33 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 33" },
@@ -1896,7 +1896,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-153",
-    searchText: "G.O. (Ms.) No. 33 Annexure",
+    searchText: "G.O. (Ms.) No. 33 Annexure 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 33 Annexure" },
@@ -1908,7 +1908,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-154",
-    searchText: "G.O. (Ms.) No. 35",
+    searchText: "G.O. (Ms.) No. 35 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 35" },
@@ -1920,7 +1920,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-155",
-    searchText: "G.O. (Ms.) No. 37",
+    searchText: "G.O. (Ms.) No. 37 2021",
     facets: { year: "2021" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 37" },
@@ -1932,7 +1932,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-156",
-    searchText: "G.O. (D) No. 15",
+    searchText: "G.O. (D) No. 15 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 15" },
@@ -1944,7 +1944,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-157",
-    searchText: "G.O. (Ms) No. 16",
+    searchText: "G.O. (Ms) No. 16 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 16" },
@@ -1956,7 +1956,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-158",
-    searchText: "G.O. (Ms) No. 23",
+    searchText: "G.O. (Ms) No. 23 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 23" },
@@ -1968,7 +1968,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-159",
-    searchText: "G.O. (Ms) No. 26",
+    searchText: "G.O. (Ms) No. 26 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 26" },
@@ -1980,7 +1980,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-160",
-    searchText: "G.O. (Ms) No. 3",
+    searchText: "G.O. (Ms) No. 3 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 3" },
@@ -1992,7 +1992,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-161",
-    searchText: "G.O. (Ms) No. 32",
+    searchText: "G.O. (Ms) No. 32 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 32" },
@@ -2004,7 +2004,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-162",
-    searchText: "G.O. (Ms) No. 33",
+    searchText: "G.O. (Ms) No. 33 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 33" },
@@ -2016,7 +2016,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-163",
-    searchText: "G.O. (Ms) No. 37",
+    searchText: "G.O. (Ms) No. 37 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 37" },
@@ -2028,7 +2028,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-164",
-    searchText: "G.O. (Ms) No. 4",
+    searchText: "G.O. (Ms) No. 4 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 4" },
@@ -2040,7 +2040,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-165",
-    searchText: "G.O. (Ms) No. 1",
+    searchText: "G.O. (Ms) No. 1 2022",
     facets: { year: "2022" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 1" },
@@ -2052,7 +2052,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-166",
-    searchText: "G.O. (D) No. 22",
+    searchText: "G.O. (D) No. 22 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 22" },
@@ -2064,7 +2064,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-167",
-    searchText: "G.O. (D) No. 27",
+    searchText: "G.O. (D) No. 27 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 27" },
@@ -2076,7 +2076,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-168",
-    searchText: "G.O. (Ms) No. 9",
+    searchText: "G.O. (Ms) No. 9 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 9" },
@@ -2088,7 +2088,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-169",
-    searchText: "G.O. (Ms) No. 11",
+    searchText: "G.O. (Ms) No. 11 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 11" },
@@ -2100,7 +2100,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-170",
-    searchText: "G.O. (Ms) No. 18",
+    searchText: "G.O. (Ms) No. 18 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 18" },
@@ -2112,7 +2112,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-171",
-    searchText: "G.O. (Ms) No. 26",
+    searchText: "G.O. (Ms) No. 26 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 26" },
@@ -2124,7 +2124,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-172",
-    searchText: "G.O. (Ms) No. 30",
+    searchText: "G.O. (Ms) No. 30 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 30" },
@@ -2136,7 +2136,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-173",
-    searchText: "G.O. (Ms) No. 31",
+    searchText: "G.O. (Ms) No. 31 2023",
     facets: { year: "2023" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 31" },
@@ -2148,7 +2148,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-174",
-    searchText: "G.O. (D).No. 2",
+    searchText: "G.O. (D).No. 2 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 2" },
@@ -2160,7 +2160,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-175",
-    searchText: "G.O. (Ms).No. 5",
+    searchText: "G.O. (Ms).No. 5 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 5" },
@@ -2172,7 +2172,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-176",
-    searchText: "G.O. (Ms).No. 1",
+    searchText: "G.O. (Ms).No. 1 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 1" },
@@ -2184,7 +2184,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-177",
-    searchText: "G.O. (Ms).No. 21",
+    searchText: "G.O. (Ms).No. 21 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms).No. 21" },
@@ -2196,7 +2196,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-178",
-    searchText: "G.O. (Ms) No. 25",
+    searchText: "G.O. (Ms) No. 25 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 25" },
@@ -2208,7 +2208,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-179",
-    searchText: "G.O. (Ms) No. 29",
+    searchText: "G.O. (Ms) No. 29 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms) No. 29" },
@@ -2220,7 +2220,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-180",
-    searchText: "G.O. (Ms.) No. 22",
+    searchText: "G.O. (Ms.) No. 22 2024",
     facets: { year: "2024" },
     cells: [
       { kind: "title", text: "G.O. (Ms.) No. 22" },
@@ -2232,7 +2232,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-181",
-    searchText: "G.O. (D).No. 14",
+    searchText: "G.O. (D).No. 14 2025",
     facets: { year: "2025" },
     cells: [
       { kind: "title", text: "G.O. (D).No. 14" },
@@ -2244,7 +2244,7 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-182",
-    searchText: "G.O. (D) No. 34",
+    searchText: "G.O. (D) No. 34 2025",
     facets: { year: "2025" },
     cells: [
       { kind: "title", text: "G.O. (D) No. 34" },
