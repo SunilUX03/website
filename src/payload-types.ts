@@ -70,6 +70,7 @@ export interface Config {
     'cms-users': CmsUser;
     media: Media;
     announcements: Announcement;
+    'media-items': MediaItem;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     'cms-users': CmsUsersSelect<false> | CmsUsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
+    'media-items': MediaItemsSelect<false> | MediaItemsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -251,6 +253,30 @@ export interface Announcement {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-items".
+ */
+export interface MediaItem {
+  id: number;
+  type: 'photo' | 'video';
+  /**
+   * Shown under the thumbnail on the media grid.
+   */
+  caption: string;
+  /**
+   * Accessibility description of the image. Falls back to the caption if left blank.
+   */
+  altText?: string | null;
+  /**
+   * Only the month and year are shown on the site.
+   */
+  date: string;
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -284,6 +310,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'announcements';
         value: number | Announcement;
+      } | null)
+    | ({
+        relationTo: 'media-items';
+        value: number | MediaItem;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -419,6 +449,20 @@ export interface AnnouncementsSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-items_select".
+ */
+export interface MediaItemsSelect<T extends boolean = true> {
+  type?: T;
+  caption?: T;
+  altText?: T;
+  date?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

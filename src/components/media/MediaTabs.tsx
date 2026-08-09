@@ -5,17 +5,9 @@ import Image from "next/image";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
-import {
-  facets,
-  filterBarLabel,
-  noResultsText,
-  photos,
-  searchAriaLabel,
-  searchPlaceholder,
-  videos,
-  yearOf,
-  type MediaItem,
-} from "@/lib/media-content";
+import type { Facet } from "@/components/documents/FilterBar";
+import { filterBarLabel, noResultsText, searchAriaLabel, searchPlaceholder } from "@/lib/media-content";
+import { type CmsMediaItem, yearOf } from "@/lib/cms/media-item-types";
 
 /**
  * Photos / Videos toggle from the Media & Press prototype.
@@ -56,7 +48,7 @@ function MediaGrid({
   items,
   isVideo,
 }: {
-  items: MediaItem[];
+  items: CmsMediaItem[];
   isVideo: boolean;
 }) {
   return (
@@ -91,14 +83,22 @@ function MediaGrid({
   );
 }
 
-export function MediaTabs() {
+export function MediaTabs({
+  photos,
+  videos,
+  facets,
+}: {
+  photos: CmsMediaItem[];
+  videos: CmsMediaItem[];
+  facets: Facet[];
+}) {
   const [panel, setPanel] = useState<PanelId>("photos");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>(() =>
     Object.fromEntries(facets.map((f) => [f.id, f.initial]))
   );
 
-  const filter = (items: MediaItem[]) => {
+  const filter = (items: CmsMediaItem[]) => {
     const q = query.trim().toLowerCase();
     return items.filter((item) => {
       if (q && !item.caption.toLowerCase().includes(q)) return false;
@@ -109,12 +109,12 @@ export function MediaTabs() {
   const visiblePhotos = useMemo(
     () => filter(photos),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, selected]
+    [photos, query, selected]
   );
   const visibleVideos = useMemo(
     () => filter(videos),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, selected]
+    [videos, query, selected]
   );
 
   const tabs: {

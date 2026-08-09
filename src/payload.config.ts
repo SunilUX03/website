@@ -9,6 +9,7 @@ import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { CmsUsers } from "./collections/CmsUsers";
 import { Media } from "./collections/Media";
 import { Announcements } from "./collections/Announcements";
+import { MediaItems } from "./collections/MediaItems";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -24,7 +25,7 @@ export default buildConfig({
     admin: "/cms",
     api: "/api/payload",
   },
-  collections: [CmsUsers, Media, Announcements],
+  collections: [CmsUsers, Media, Announcements, MediaItems],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {
