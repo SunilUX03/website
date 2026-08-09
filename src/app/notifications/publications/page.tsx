@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
@@ -21,7 +22,15 @@ export const metadata: Metadata = {
     "Annual reports, policy frameworks and research publications from Tamil Nadu e-Governance Agency.",
 };
 
+// Page is fully built and left in place — just switched off site-wide
+// (unlinked from nav/sitemap below, and this route itself 404s) until
+// there's real publication content to show. Flip this back to `true`
+// to bring it back with no other changes needed.
+const PUBLICATIONS_ENABLED = false;
+
 export default function Publications() {
+  if (!PUBLICATIONS_ENABLED) notFound();
+
   return (
     <>
       <TopNav />

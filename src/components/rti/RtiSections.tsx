@@ -178,7 +178,7 @@ export function HowToFileRti() {
               target="_blank"
               rel="noopener noreferrer"
               className="type-button btn-primary"
-              aria-label={`${howToFile.ctaLabel} at rtionline.gov.in (opens in new tab)`}
+              aria-label={`${howToFile.ctaLabel} at rtionline.tn.gov.in (opens in new tab)`}
             >
               {howToFile.ctaLabel}
               <ExternalIcon />

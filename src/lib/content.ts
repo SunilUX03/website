@@ -28,10 +28,12 @@ export const nav = {
       { label: "Announcements", href: "/notifications/announcements" },
       { label: "Media & Press", href: "/notifications/media-press" },
     ],
+    // Publications is temporarily switched off site-wide (see
+    // src/app/notifications/publications/page.tsx) — left out of this
+    // list rather than deleted, so re-adding it later is a one-line change.
     documents: [
       { label: "RTI", href: "/notifications/rti" },
       { label: "Tenders", href: "/notifications/tenders" },
-      { label: "Publications", href: "/notifications/publications" },
       { label: "Government Orders", href: "/notifications/government-orders" },
       { label: "Policies & Guidelines", href: "/notifications/policies-guidelines" },
     ],

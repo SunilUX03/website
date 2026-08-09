@@ -37,7 +37,6 @@ const SITEMAP: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Media & Press", href: "/notifications/media-press" },
       { label: "RTI", href: "/notifications/rti" },
       { label: "Tenders", href: "/notifications/tenders" },
-      { label: "Publications", href: "/notifications/publications" },
       { label: "Government Orders", href: "/notifications/government-orders" },
       { label: "Policies & Guidelines", href: "/notifications/policies-guidelines" },
     ],

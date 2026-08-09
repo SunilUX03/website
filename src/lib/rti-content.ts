@@ -194,11 +194,11 @@ export const disclosures: DisclosureGroup[] = [
 
 export const howToFile = {
   heading: "How to File an RTI",
-  sub: "Citizens can file RTI requests online through the national RTI portal.",
-  body: "To file an RTI request with Tamil Nadu e-Governance Agency, visit the official RTI Online Portal of the Government of India.",
+  sub: "Citizens can file RTI requests online through the Tamil Nadu RTI portal.",
+  body: "To file an RTI request with Tamil Nadu e-Governance Agency, visit the official RTI Online Portal of the Government of Tamil Nadu.",
   ctaLabel: "File RTI Online",
-  ctaHref: "https://rtionline.gov.in",
-  redirectNote: "You will be redirected to the national RTI portal at rtionline.gov.in",
+  ctaHref: "https://rtionline.tn.gov.in/",
+  redirectNote: "You will be redirected to the Tamil Nadu RTI portal at rtionline.tn.gov.in",
   email: "tnega@tn.gov.in",
   phone: "044 – 4016 4900",
   phoneHref: "tel:04440164900",
