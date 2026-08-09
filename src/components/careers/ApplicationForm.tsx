@@ -6,24 +6,10 @@ import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { roleOptions } from "@/lib/careers-content";
 
-/**
- * ─────────────────────────────────────────────────────────────────────
- * NOTE — this form does not submit anywhere yet.
- *
- * The HTML prototype validated on the client and then swapped in a
- * "Thank you for applying" panel without ever sending the data. That
- * behaviour is reproduced here so nothing is lost in the port, but it
- * means an applicant currently sees a success message for an application
- * that was never received.
- *
- * Before this page goes live, `handleSubmit` needs to POST to a real
- * endpoint (a Route Handler under src/app/api/, or a Server Action) that
- * stores the resume and notifies HR — and the success panel should only
- * render after that call resolves.
- * ─────────────────────────────────────────────────────────────────────
- */
-
-const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+// Kept under Vercel's ~4.5MB serverless request-body ceiling, since
+// that's where this runs until handover — raise this once the app is
+// self-hosted on a plain Node server, which has no such limit.
+const MAX_RESUME_BYTES = 4 * 1024 * 1024;
 
 type Errors = Partial<
   Record<"fullName" | "email" | "phone" | "role" | "resume", string>
@@ -82,12 +68,15 @@ const inputBase =
 export function ApplicationForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const data = new FormData(form);
     const next: Errors = {};
 
     const fullName = String(data.get("fullName") ?? "").trim();
@@ -107,14 +96,27 @@ export function ApplicationForm() {
     } else if (resume.type !== "application/pdf") {
       next.resume = "Resume must be a PDF file.";
     } else if (resume.size > MAX_RESUME_BYTES) {
-      next.resume = "Resume must be 5MB or smaller.";
+      next.resume = "Resume must be 4MB or smaller.";
     }
 
     setErrors(next);
+    setSubmitError(null);
     if (Object.keys(next).length > 0) return;
 
-    // TODO: send `data` to a real endpoint before showing success.
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/careers/apply", { method: "POST", body: data });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        setSubmitError(body?.error ?? "Something went wrong. Please try again.");
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -238,7 +240,7 @@ export function ApplicationForm() {
                   label="Upload Resume"
                   htmlFor="resume"
                   error={errors.resume}
-                  helper="PDF only. Maximum file size 5MB."
+                  helper="PDF only. Maximum file size 4MB."
                 >
                   <div className="relative">
                     <input
@@ -292,11 +294,18 @@ export function ApplicationForm() {
                   />
                 </Field>
 
+                {submitError ? (
+                  <p role="alert" className="text-sm text-[var(--color-error)]">
+                    {submitError}
+                  </p>
+                ) : null}
+
                 <button
                   type="submit"
-                  className="type-button btn-primary h-12 w-full text-base"
+                  disabled={submitting}
+                  className="type-button btn-primary h-12 w-full text-base disabled:opacity-60"
                 >
-                  Submit Application
+                  {submitting ? "Submitting…" : "Submit Application"}
                 </button>
               </form>
             )}

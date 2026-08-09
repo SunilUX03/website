@@ -1,0 +1,47 @@
+// Careers backend: job applications submitted through the public form,
+// plus the admin accounts (HR, and any future content editors) that can
+// log in to view them. Deliberately not part of the future site-wide CMS
+// (that's a separate, later project) — just enough schema to make the
+// Careers application form and its HR-facing inbox real.
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled (PgBouncer) connection — safe for many concurrent serverless
+  // function invocations, but doesn't support the direct/prepared-statement
+  // access Migrate needs.
+  url       = env("DATABASE_URL")
+  // Direct connection, used only by `prisma migrate`/`db push`.
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  // Just "hr" for now — kept as a plain string rather than an enum so a
+  // future CMS role (e.g. "editor") doesn't need a migration to add.
+  role         String   @default("hr")
+  createdAt    DateTime @default(now())
+}
+
+model JobApplication {
+  id          String   @id @default(cuid())
+  role        String
+  fullName    String
+  email       String
+  phone       String
+  coverNote   String?
+  resumeName  String
+  resumeType  String
+  // Resume stored directly in the database rather than a separate file
+  // storage service — application volume is low, and this keeps the
+  // whole backend to a single portable Postgres database with nothing
+  // else to provision, migrate, or reconnect at handover time.
+  resumeData  Bytes
+  submittedAt DateTime @default(now())
+}
