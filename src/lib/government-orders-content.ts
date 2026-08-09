@@ -9,10 +9,10 @@
 // "(Additional Copy)"/"Annexure" suffixes mark filenames that included a
 // "(1)" or "_annexure" marker.
 //
-// One file from the client's upload, 2021_Data_Center_Policy_2021.pdf, was
-// left out -- it's a policy document, not a government order (a near-match
-// already exists in policies-guidelines/), and was almost certainly placed
-// in the wrong folder.
+// One file from the client's upload, 2021_Data_Center_Policy_2021.pdf, is
+// not listed here -- it's a policy document, not a government order, and
+// was moved to policies-guidelines/ (byte-identical to the copy already
+// there, per explicit instruction) rather than left duplicated here.
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
 

@@ -114,7 +114,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "Data Centre Policy 2021" },
       { kind: "date", text: "2021" },
       { kind: "badge", text: "Data Policy", tone: "sky" },
-      { kind: "download", href: "/documents/policies-guidelines/policy-guidelines_Data_Centre_Policy_2021.pdf", label: "PDF", ariaLabel: "Download Data Centre Policy 2021 PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/2021_Data_Center_Policy_2021.pdf", label: "PDF", ariaLabel: "Download Data Centre Policy 2021 PDF" },
     ],
   },
   {
