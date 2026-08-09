@@ -14,6 +14,8 @@ import { JobOpenings } from "./collections/JobOpenings";
 import { TeamMembers } from "./collections/TeamMembers";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
+import { HeroContent } from "./globals/HeroContent";
+import { LeadershipBandContent } from "./globals/LeadershipBandContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -30,7 +32,7 @@ export default buildConfig({
     api: "/api/payload",
   },
   collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings, TeamMembers],
-  globals: [NavContent, BoardContent],
+  globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {

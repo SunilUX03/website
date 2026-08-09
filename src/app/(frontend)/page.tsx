@@ -10,6 +10,8 @@ import { ReachUs } from "@/components/sections/ReachUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getAnnouncements } from "@/lib/cms/announcements";
+import { getHeroContent } from "@/lib/cms/hero-content";
+import { getLeadershipBand } from "@/lib/cms/leadership-band";
 
 // Announcements now come from the CMS (a live DB query, not a static
 // import Next can see through), so this page would otherwise be
@@ -21,15 +23,19 @@ import { getAnnouncements } from "@/lib/cms/announcements";
 export const revalidate = 60;
 
 export default async function Home() {
-  const announcements = await getAnnouncements();
+  const [announcements, hero, leadershipBand] = await Promise.all([
+    getAnnouncements(),
+    getHeroContent(),
+    getLeadershipBand(),
+  ]);
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Hero />
+        <Hero hero={hero} />
         <Scroller />
-        <AboutLeadership />
+        <AboutLeadership band={leadershipBand} />
         <Metrics />
         <PillarCards />
         <ProjectsSpotlight />

@@ -3,11 +3,11 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { hero } from "@/lib/content";
+import type { CmsLeader, CmsLeadershipBand } from "@/lib/cms/leadership-band-types";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/hooks";
 
-type Leader = (typeof hero.leaders)[number];
+type Leader = CmsLeader;
 
 // Both photo slots are this wide regardless of leader size — the CM's
 // photo fills it, the Minister's smaller photo sits flush-left inside it.
@@ -56,8 +56,8 @@ function LeaderSignature({ leader, size }: { leader: Leader; size: "lg" | "sm" }
  * description) leads, with the two leaders appearing underneath as a
  * quiet "signed by" strip rather than large flanking portraits.
  */
-export function AboutLeadership() {
-  const [cm, minister] = hero.leaders;
+export function AboutLeadership({ band }: { band: CmsLeadershipBand }) {
+  const [cm, minister] = band.leaders;
   const sectionRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
 
@@ -95,7 +95,7 @@ export function AboutLeadership() {
             <h2 className="type-display-lg mb-5 font-bold leading-[1.4] text-[var(--color-primary-blue)]">
               Leading Digital Tamil Nadu
             </h2>
-            <p className="type-body-md text-[var(--color-body)]">{hero.description}</p>
+            <p className="type-body-md text-[var(--color-body)]">{band.description}</p>
 
             <div aria-hidden className="mx-auto my-8 h-[2px] w-20 rounded-full bg-[var(--color-hairline-strong)]" />
           </div>

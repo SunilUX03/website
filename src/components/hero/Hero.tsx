@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { hero } from "@/lib/content";
+import type { CmsHeroContent } from "@/lib/cms/hero-content-types";
 import { Container } from "@/components/ui/Container";
 import { HeroBackdrop } from "./HeroBackdrop";
 import { HeroDotCursor } from "./HeroDotCursor";
@@ -56,8 +56,7 @@ function useCycleIndex(length: number, intervalMs: number, reducedMotion: boolea
  * lift — one consistent typographic language across the whole hero
  * instead of the brand line having its own, different treatment.
  */
-function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
-  const items = hero.agencyLabelCycle;
+function CyclingBrandTitle({ items, reducedMotion }: { items: string[]; reducedMotion: boolean }) {
   const index = useCycleIndex(items.length, BRAND_CYCLE_MS, reducedMotion);
 
   return (
@@ -93,8 +92,7 @@ function CyclingBrandTitle({ reducedMotion }: { reducedMotion: boolean }) {
  * in Tamil Nadu" fits on one line within the hero's column, so there's no
  * wrap-point to manage.
  */
-function HeadlineCycleWord({ reducedMotion }: { reducedMotion: boolean }) {
-  const words = hero.headlineCycleWords;
+function HeadlineCycleWord({ words, reducedMotion }: { words: string[]; reducedMotion: boolean }) {
   const index = useCycleIndex(words.length, CYCLE_MS, reducedMotion);
 
   return (
@@ -117,11 +115,44 @@ function HeadlineCycleWord({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-export function Hero() {
+function HeadlineWord({ word, index }: { word: string; index: number }) {
+  return (
+    <motion.span
+      key={`${word}-${index}`}
+      aria-hidden
+      variants={riseIn}
+      // The gradient is always painted in (bg-clip-text is a no-op
+      // visually while the fill is opaque) — hovering just swaps the
+      // fill to transparent, letting it show through the letter shapes
+      // instead of the solid ink. Needs the bold weight above:
+      // bg-clip-text on thin strokes reads as messy/illegible, bold
+      // gives the gradient enough letterform to sit in.
+      className="relative inline-block bg-clip-text py-0.5 transition-[background-position,color,transform] duration-500 ease-out hover:-translate-y-1 hover:text-transparent motion-safe:hover:[background-position:100%_50%]"
+      style={{
+        backgroundImage:
+          "linear-gradient(120deg, var(--color-gradient-violet) 0%, var(--color-gradient-sky) 50%, var(--color-primary-blue) 100%)",
+        backgroundSize: "220% 220%",
+        backgroundPosition: "0% 50%",
+      }}
+    >
+      {word}
+    </motion.span>
+  );
+}
+
+export function Hero({ hero }: { hero: CmsHeroContent }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
-  const headlineWords = hero.headline.split(" ");
-  const cycleWordIndex = headlineWords.findIndex((w) => w === hero.headlineCycleWords[0]);
+  // `headlineTemplate` carries the animated word as an explicit `{word}`
+  // placeholder (see hero-content-types.ts) rather than the old approach
+  // of string-matching a word inside the full headline — that broke
+  // silently the moment the headline text and the cycle word list drifted
+  // out of sync, which an editor rephrasing the headline could easily do
+  // by accident.
+  const [beforeText, afterText = ""] = hero.headlineTemplate.split("{word}");
+  const beforeWords = beforeText.trim().split(/\s+/).filter(Boolean);
+  const afterWords = afterText.trim().split(/\s+/).filter(Boolean);
+  const resolvedHeadline = hero.headlineTemplate.replace("{word}", hero.headlineCycleWords[0] ?? "");
 
   const scrollToNextSection = () => {
     const el = heroRef.current;
@@ -151,7 +182,7 @@ export function Hero() {
           variants={stagger}
         >
           <motion.div variants={riseIn}>
-            <CyclingBrandTitle reducedMotion={reducedMotion} />
+            <CyclingBrandTitle items={hero.agencyLabelCycle} reducedMotion={reducedMotion} />
           </motion.div>
 
           {/* w-full here is the fix for the headline/tagline drifting out
@@ -163,38 +194,18 @@ export function Hero() {
               same full-width box fixes that for good. */}
           <div className="flex w-full flex-col items-center gap-5" data-hero-text>
             <h1
-              aria-label={hero.headline}
+              aria-label={resolvedHeadline}
               className="flex w-full flex-wrap justify-center gap-x-1 gap-y-1 text-[22px] font-bold text-ink sm:text-[24px]"
             >
-              {headlineWords.map((word, i) =>
-                i === cycleWordIndex ? (
-                  <motion.span key={`${word}-${i}`} aria-hidden variants={riseIn}>
-                    <HeadlineCycleWord reducedMotion={reducedMotion} />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key={`${word}-${i}`}
-                    aria-hidden
-                    variants={riseIn}
-                    // The gradient is always painted in (bg-clip-text is a
-                    // no-op visually while the fill is opaque) — hovering
-                    // just swaps the fill to transparent, letting it show
-                    // through the letter shapes instead of the solid ink.
-                    // Needs the bold weight above: bg-clip-text on thin
-                    // strokes reads as messy/illegible, bold gives the
-                    // gradient enough letterform to sit in.
-                    className="relative inline-block bg-clip-text py-0.5 transition-[background-position,color,transform] duration-500 ease-out hover:-translate-y-1 hover:text-transparent motion-safe:hover:[background-position:100%_50%]"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(120deg, var(--color-gradient-violet) 0%, var(--color-gradient-sky) 50%, var(--color-primary-blue) 100%)",
-                      backgroundSize: "220% 220%",
-                      backgroundPosition: "0% 50%",
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                )
-              )}
+              {beforeWords.map((word, i) => (
+                <HeadlineWord key={`before-${word}-${i}`} word={word} index={i} />
+              ))}
+              <motion.span aria-hidden variants={riseIn}>
+                <HeadlineCycleWord words={hero.headlineCycleWords} reducedMotion={reducedMotion} />
+              </motion.span>
+              {afterWords.map((word, i) => (
+                <HeadlineWord key={`after-${word}-${i}`} word={word} index={i} />
+              ))}
             </h1>
 
             <motion.p

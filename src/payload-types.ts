@@ -98,10 +98,14 @@ export interface Config {
   globals: {
     'nav-content': NavContent;
     'board-content': BoardContent;
+    'hero-content': HeroContent;
+    'leadership-band-content': LeadershipBandContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
     'board-content': BoardContentSelect<false> | BoardContentSelect<true>;
+    'hero-content': HeroContentSelect<false> | HeroContentSelect<true>;
+    'leadership-band-content': LeadershipBandContentSelect<false> | LeadershipBandContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -682,6 +686,67 @@ export interface BoardContent {
   createdAt?: string | null;
 }
 /**
+ * The homepage Hero — agency name, headline and tagline.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-content".
+ */
+export interface HeroContent {
+  id: number;
+  /**
+   * The bold masthead line the hero cycles through, e.g. the English and Tamil agency name.
+   */
+  agencyLabelCycle: {
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * The headline, with {word} marking where the animated cycling word goes — e.g. "Powering Digital {word} in Tamil Nadu".
+   */
+  headlineTemplate: string;
+  /**
+   * Words that cycle through the {word} placeholder above, e.g. "Governance", "Services".
+   */
+  headlineCycleWords: {
+    word: string;
+    id?: string | null;
+  }[];
+  tagline: string;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * "Leading Digital Tamil Nadu" band on the homepage — the CM/Minister signature strip.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leadership-band-content".
+ */
+export interface LeadershipBandContent {
+  id: number;
+  description: string;
+  /**
+   * Exactly two — shown as a larger (first) and smaller (second) signature.
+   */
+  leaders: {
+    name: string;
+    title: string;
+    photo: number | Media;
+    /**
+     * CSS object-position for the photo crop, e.g. "50% 20%" to bias toward the top.
+     */
+    photoPosition?: string | null;
+    /**
+     * Not currently shown on the site — reserved for future use.
+     */
+    quote?: string | null;
+    id?: string | null;
+  }[];
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -745,6 +810,51 @@ export interface BoardContentSelect<T extends boolean = true> {
         name?: T;
         title?: T;
         isPlaceholder?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-content_select".
+ */
+export interface HeroContentSelect<T extends boolean = true> {
+  agencyLabelCycle?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  headlineTemplate?: T;
+  headlineCycleWords?:
+    | T
+    | {
+        word?: T;
+        id?: T;
+      };
+  tagline?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leadership-band-content_select".
+ */
+export interface LeadershipBandContentSelect<T extends boolean = true> {
+  description?: T;
+  leaders?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        photo?: T;
+        photoPosition?: T;
+        quote?: T;
         id?: T;
       };
   _status?: T;

@@ -10,47 +10,13 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 // lib/cms/nav-content.ts), fetched by TopNav.tsx and passed down to
 // AccessibilityBar/MainNav/MobileDrawer.
 
-export const hero = {
-  agencyLabel: "Tamil Nadu e-Governance Agency",
-  // English/Tamil pair the hero's bold masthead line cycles through. The
-  // Tamil rendering is a standard construction (தமிழ்நாடு = Tamil Nadu,
-  // மின் = e-/electronic, ஆளுமை = governance, முகமை = agency) — it hasn't
-  // been checked against an official TNeGA Tamil-language style guide, so
-  // confirm the exact wording with the communications team before this is
-  // read as the state's own agency name.
-  agencyLabelCycle: ["Tamil Nadu e-Governance Agency", "தமிழ்நாடு மின்-ஆளுமை முகமை"],
-  headline: "Powering Digital Governance in Tamil Nadu",
-  // The word in `headline` that this list's first entry must match exactly
-  // — the hero swaps just that one word through these alternatives on a
-  // timer rather than repeating stats already shown in the Metrics section.
-  headlineCycleWords: ["Governance", "Services", "Infrastructure"],
-  // Short, hero-sized supporting line — the fuller agency description below
-  // moved to the About/Leadership band, which reuses `description` as-is.
-  tagline:
-    "Building secure, citizen-first Digital Public Infrastructure across Tamil Nadu.",
-  description:
-    "Tamil Nadu e-Governance Agency (TNeGA) is the Government of Tamil Nadu's nodal agency for digital governance, driving the State's vision of technology-enabled, citizen-centric public service delivery. TNeGA designs, develops, and implements Digital Public Infrastructure (DPI) that empowers Government departments to deliver services that are seamless, secure, transparent, and accessible.",
-  leaders: [
-    {
-      name: "Thiru C. Joseph Vijay",
-      title: "Hon'ble Chief Minister of Tamil Nadu",
-      photo: "/images/leaders/cm-photo.jpg",
-      photoPosition: "50% 50%",
-      quote: null as string | null,
-    },
-    {
-      name: "Dr. R. Kumar",
-      title: "Hon'ble Minister of IT&DS",
-      photo: "/images/leaders/it-minister-photo.jpg",
-      // Source is a tall 455x562 portrait, not square — center-cropping it
-      // into the square portrait frame sliced into the hairline. Biasing
-      // the crop toward the top keeps the full head in frame and trims
-      // the collar/shoulders instead.
-      photoPosition: "50% 20%",
-      quote: null as string | null,
-    },
-  ],
-};
+// hero used to live here — it's now split across two Payload globals:
+// "hero-content" (agencyLabelCycle/headlineTemplate/headlineCycleWords/
+// tagline, see lib/cms/hero-content.ts, used by Hero.tsx) and
+// "leadership-band-content" (description/leaders, see
+// lib/cms/leadership-band.ts, used by AboutLeadership.tsx) — two
+// different homepage sections that happened to share one static object
+// before this migration.
 
 export const ticker = [
   { type: "link", text: "SimpleGov launched by Hon'ble CM on 29 May 2025: 10 services live", href: "/notifications/announcements/simplegov-launch" },
