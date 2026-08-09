@@ -10,6 +10,7 @@ import * as migration_20260809_173933_add_services from './20260809_173933_add_s
 import * as migration_20260809_174207_add_suppress_get_started_steps from './20260809_174207_add_suppress_get_started_steps';
 import * as migration_20260809_194046_add_documents_go_policies_activitylog_ticker from './20260809_194046_add_documents_go_policies_activitylog_ticker';
 import * as migration_20260809_212557_add_legal_pages_footer from './20260809_212557_add_legal_pages_footer';
+import * as migration_20260809_214433_add_about_page_content from './20260809_214433_add_about_page_content';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20260809_212557_add_legal_pages_footer.up,
     down: migration_20260809_212557_add_legal_pages_footer.down,
-    name: '20260809_212557_add_legal_pages_footer'
+    name: '20260809_212557_add_legal_pages_footer',
+  },
+  {
+    up: migration_20260809_214433_add_about_page_content.up,
+    down: migration_20260809_214433_add_about_page_content.down,
+    name: '20260809_214433_add_about_page_content'
   },
 ];

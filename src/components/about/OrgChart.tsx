@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { orgChart } from "@/lib/about-content";
+import type { CmsOrgChart } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { useIsDesktop } from "@/lib/hooks";
 
@@ -87,7 +87,7 @@ function BranchPanel({
   branch,
   isOpen,
 }: {
-  branch: (typeof orgChart.branches)[number];
+  branch: CmsOrgChart["branches"][number];
   isOpen: boolean;
 }) {
   return (
@@ -127,7 +127,7 @@ interface FanLines {
   dropXs: number[];
 }
 
-function DesktopTree() {
+function DesktopTree({ orgChart }: { orgChart: CmsOrgChart }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const jceoRef = useRef<HTMLDivElement | null>(null);
   const boxRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -237,7 +237,7 @@ function MobileNode({ label, variant = "default" }: { label: string; variant?: B
   );
 }
 
-function MobileTree() {
+function MobileTree({ orgChart }: { orgChart: CmsOrgChart }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -274,7 +274,7 @@ function MobileTree() {
   );
 }
 
-export function OrgChart() {
+export function OrgChart({ orgChart }: { orgChart: CmsOrgChart }) {
   const isDesktop = useIsDesktop();
 
   return (
@@ -283,8 +283,8 @@ export function OrgChart() {
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Organisation Structure</p>
         <h2 className="type-display-lg mb-10 max-w-2xl text-ink">How TNeGA is organised</h2>
 
-        {isDesktop === true && <DesktopTree />}
-        {isDesktop === false && <MobileTree />}
+        {isDesktop === true && <DesktopTree orgChart={orgChart} />}
+        {isDesktop === false && <MobileTree orgChart={orgChart} />}
       </Container>
 
       <style>{`

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import type { RollOfHonourEntry } from "@/lib/about-content";
+import type { CmsRollOfHonourEntry } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/hooks";
 
@@ -14,7 +14,7 @@ function TimelineEntry({
   index,
   reducedMotion,
 }: {
-  entry: RollOfHonourEntry;
+  entry: CmsRollOfHonourEntry;
   index: number;
   reducedMotion: boolean;
 }) {
@@ -65,7 +65,7 @@ function TimelineEntry({
   );
 }
 
-export function RollOfHonour({ entries }: { entries: RollOfHonourEntry[] }) {
+export function RollOfHonour({ entries }: { entries: CmsRollOfHonourEntry[] }) {
   const [expanded, setExpanded] = useState(false);
   const reducedMotion = useReducedMotion();
   const visible = entries.slice(0, VISIBLE_COUNT);

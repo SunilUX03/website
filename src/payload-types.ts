@@ -79,6 +79,8 @@ export interface Config {
     policies: Policy;
     'activity-log': ActivityLog;
     'legal-pages': LegalPage;
+    awards: Award;
+    'roll-of-honour': RollOfHonour;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +100,8 @@ export interface Config {
     policies: PoliciesSelect<false> | PoliciesSelect<true>;
     'activity-log': ActivityLogSelect<false> | ActivityLogSelect<true>;
     'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
+    awards: AwardsSelect<false> | AwardsSelect<true>;
+    'roll-of-honour': RollOfHonourSelect<false> | RollOfHonourSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -113,6 +117,8 @@ export interface Config {
     'hero-content': HeroContent;
     'leadership-band-content': LeadershipBandContent;
     'footer-content': FooterContent;
+    'about-page-content': AboutPageContent;
+    'org-chart-content': OrgChartContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -120,6 +126,8 @@ export interface Config {
     'hero-content': HeroContentSelect<false> | HeroContentSelect<true>;
     'leadership-band-content': LeadershipBandContentSelect<false> | LeadershipBandContentSelect<true>;
     'footer-content': FooterContentSelect<false> | FooterContentSelect<true>;
+    'about-page-content': AboutPageContentSelect<false> | AboutPageContentSelect<true>;
+    'org-chart-content': OrgChartContentSelect<false> | OrgChartContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -643,6 +651,40 @@ export interface LegalPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "awards".
+ */
+export interface Award {
+  id: number;
+  title: string;
+  year: string;
+  description: string;
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roll-of-honour".
+ */
+export interface RollOfHonour {
+  id: number;
+  designation: string;
+  name?: string | null;
+  /**
+   * e.g. "July 2026 – Present"
+   */
+  range?: string | null;
+  /**
+   * Lower numbers show first (most recent first).
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -712,6 +754,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'legal-pages';
         value: number | LegalPage;
+      } | null)
+    | ({
+        relationTo: 'awards';
+        value: number | Award;
+      } | null)
+    | ({
+        relationTo: 'roll-of-honour';
+        value: number | RollOfHonour;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1083,6 +1133,32 @@ export interface LegalPagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "awards_select".
+ */
+export interface AwardsSelect<T extends boolean = true> {
+  title?: T;
+  year?: T;
+  description?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roll-of-honour_select".
+ */
+export interface RollOfHonourSelect<T extends boolean = true> {
+  designation?: T;
+  name?: T;
+  range?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1319,6 +1395,87 @@ export interface FooterContent {
   createdAt?: string | null;
 }
 /**
+ * Hero, Who We Are, Vision & Mission, and Connect With Us on the About page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page-content".
+ */
+export interface AboutPageContent {
+  id: number;
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+  };
+  whoWeAre: {
+    heading: string;
+    paragraph: string;
+  };
+  /**
+   * The reporting-line boxes shown below Who We Are, top to bottom.
+   */
+  hierarchy?:
+    | {
+        label: string;
+        /**
+         * Highlight this box (used for TNeGA itself).
+         */
+        emphasized?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Normally exactly two: Vision and Mission.
+   */
+  visionMission?:
+    | {
+        label: string;
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  connectWithUs: {
+    email: string;
+    social?:
+      | {
+          label: string;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The organisation chart on the About page. Labels only — the chart's shape is fixed.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "org-chart-content".
+ */
+export interface OrgChartContent {
+  id: number;
+  topPrimary: string;
+  topSecondary: string;
+  branches?:
+    | {
+        director: string;
+        /**
+         * Leave blank to draw a pass-through line instead of a box at this level (as the Project Director branch does).
+         */
+        engineer?: string | null;
+        manager: string;
+        base: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -1469,6 +1626,77 @@ export interface FooterContentSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page-content_select".
+ */
+export interface AboutPageContentSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+      };
+  whoWeAre?:
+    | T
+    | {
+        heading?: T;
+        paragraph?: T;
+      };
+  hierarchy?:
+    | T
+    | {
+        label?: T;
+        emphasized?: T;
+        id?: T;
+      };
+  visionMission?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  connectWithUs?:
+    | T
+    | {
+        email?: T;
+        social?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "org-chart-content_select".
+ */
+export interface OrgChartContentSelect<T extends boolean = true> {
+  topPrimary?: T;
+  topSecondary?: T;
+  branches?:
+    | T
+    | {
+        director?: T;
+        engineer?: T;
+        manager?: T;
+        base?: T;
         id?: T;
       };
   _status?: T;

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { aboutHero } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 import { AboutHeroGraphic } from "@/components/about/AboutHeroGraphic";
 import { useReducedMotion } from "@/lib/hooks";
@@ -35,7 +34,7 @@ function AnimatedHeadline({ text }: { text: string }) {
   );
 }
 
-export function AboutHero() {
+export function AboutHero({ aboutHero }: { aboutHero: { eyebrow: string; headline: string; description: string } }) {
   return (
     <section className="relative overflow-hidden bg-canvas" id="main-content">
       <div

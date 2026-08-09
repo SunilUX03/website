@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-import { whoWeAre, hierarchy } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 
 function Connector() {
@@ -37,7 +36,13 @@ function HierarchyBox({ label, emphasized }: { label: string; emphasized: boolea
   );
 }
 
-export function WhoWeAreHierarchy() {
+export function WhoWeAreHierarchy({
+  whoWeAre,
+  hierarchy,
+}: {
+  whoWeAre: { heading: string; paragraph: string };
+  hierarchy: { label: string; emphasized: boolean }[];
+}) {
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">

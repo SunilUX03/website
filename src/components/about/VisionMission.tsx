@@ -1,7 +1,8 @@
-import { visionMission } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 
-function VisionMissionCard({ item }: { item: (typeof visionMission)[number] }) {
+type VisionMissionItem = { label: string; title: string; description: string };
+
+function VisionMissionCard({ item }: { item: VisionMissionItem }) {
   return (
     <div className="vision-mission-card group card-feature h-full">
       <p className="type-caption-uppercase mb-4 text-[var(--color-muted)] transition-colors duration-250 group-hover:text-[var(--color-primary-blue)]">
@@ -13,7 +14,7 @@ function VisionMissionCard({ item }: { item: (typeof visionMission)[number] }) {
   );
 }
 
-export function VisionMission() {
+export function VisionMission({ visionMission }: { visionMission: VisionMissionItem[] }) {
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">

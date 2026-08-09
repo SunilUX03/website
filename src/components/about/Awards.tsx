@@ -1,11 +1,11 @@
 "use client";
 
-import { awards } from "@/lib/about-content";
+import type { CmsAward } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
 
-function AwardCard({ award }: { award: (typeof awards)[number] }) {
+function AwardCard({ award }: { award: CmsAward }) {
   return (
     <div className="card-feature group flex h-full flex-col overflow-hidden !p-0">
       <div className="overflow-hidden">
@@ -25,7 +25,7 @@ function AwardCard({ award }: { award: (typeof awards)[number] }) {
   );
 }
 
-export function Awards() {
+export function Awards({ awards }: { awards: CmsAward[] }) {
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
@@ -43,7 +43,7 @@ export function Awards() {
         <AutoCarousel arrowStyle="overlay">
           {awards.map((award) => (
             <div
-              key={award.title + award.year}
+              key={award.id}
               data-carousel-item
               className="w-[88%] max-w-[340px] shrink-0 snap-center sm:w-[300px]"
             >

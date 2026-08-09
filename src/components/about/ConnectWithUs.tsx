@@ -1,7 +1,8 @@
-import { connectWithUs } from "@/lib/about-content";
 import { Container } from "@/components/ui/Container";
 
-export function ConnectWithUs() {
+type ConnectWithUs = { email: string; social: { label: string; href: string }[] };
+
+export function ConnectWithUs({ connectWithUs }: { connectWithUs: ConnectWithUs }) {
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">

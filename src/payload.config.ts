@@ -18,11 +18,15 @@ import { GovernmentOrders } from "./collections/GovernmentOrders";
 import { Policies } from "./collections/Policies";
 import { ActivityLog } from "./collections/ActivityLog";
 import { LegalPages } from "./collections/LegalPages";
+import { Awards } from "./collections/Awards";
+import { RollOfHonour } from "./collections/RollOfHonour";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
 import { LeadershipBandContent } from "./globals/LeadershipBandContent";
 import { FooterContent } from "./globals/FooterContent";
+import { AboutPageContent } from "./globals/AboutPageContent";
+import { OrgChartContent } from "./globals/OrgChartContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -51,8 +55,18 @@ export default buildConfig({
     Policies,
     ActivityLog,
     LegalPages,
+    Awards,
+    RollOfHonour,
   ],
-  globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent, FooterContent],
+  globals: [
+    NavContent,
+    BoardContent,
+    HeroContent,
+    LeadershipBandContent,
+    FooterContent,
+    AboutPageContent,
+    OrgChartContent,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {

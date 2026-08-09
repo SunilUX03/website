@@ -18,7 +18,10 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getJobOpenings } from "@/lib/cms/job-openings";
 import { getBoardContent } from "@/lib/cms/board-content";
 import { getTeamMembers } from "@/lib/cms/team-members";
-import { buildRollOfHonour } from "@/lib/about-content";
+import { getAboutPageContent } from "@/lib/cms/about-page";
+import { getOrgChart } from "@/lib/cms/org-chart";
+import { getAwards } from "@/lib/cms/awards";
+import { getRollOfHonour } from "@/lib/cms/roll-of-honour";
 import { pillars } from "@/lib/content";
 import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
 
@@ -34,13 +37,17 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const [openings, board, members, allServiceItems] = await Promise.all([
-    getJobOpenings(),
-    getBoardContent(),
-    getTeamMembers(),
-    getAllServiceItems(),
-  ]);
-  const rollOfHonour = buildRollOfHonour(members[0]?.name ?? "");
+  const [openings, board, members, allServiceItems, aboutPage, orgChart, awards, rollOfHonour] =
+    await Promise.all([
+      getJobOpenings(),
+      getBoardContent(),
+      getTeamMembers(),
+      getAllServiceItems(),
+      getAboutPageContent(),
+      getOrgChart(),
+      getAwards(),
+      getRollOfHonour(),
+    ]);
   const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
 
   return (
@@ -48,18 +55,18 @@ export default async function About() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "About" }]} />
-        <AboutHero />
-        <WhoWeAreHierarchy />
-        <VisionMission />
+        <AboutHero aboutHero={aboutPage.hero} />
+        <WhoWeAreHierarchy whoWeAre={aboutPage.whoWeAre} hierarchy={aboutPage.hierarchy} />
+        <VisionMission visionMission={aboutPage.visionMission} />
         <PillarCards pillarItems={pillarItems} />
         <Metrics />
-        <OrgChart />
+        <OrgChart orgChart={orgChart} />
         <LeadershipTeam members={members} />
         <BoardOfDirectors board={board} />
-        <Awards />
+        <Awards awards={awards} />
         <RollOfHonour entries={rollOfHonour} />
         <JoinUs openings={openings} />
-        <ConnectWithUs />
+        <ConnectWithUs connectWithUs={aboutPage.connectWithUs} />
       </main>
       <Footer />
       <ScrollToTop />
