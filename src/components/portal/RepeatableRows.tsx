@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type FieldSpec = { key: string; label: string; placeholder?: string; textarea?: boolean };
+type FieldSpec = { key: string; label: string; placeholder?: string; textarea?: boolean; checkbox?: boolean };
 
 /** Add/remove/edit a list of small structured rows (facts, links, FAQs)
  * inside a plain <form> — inputs are named `${name}.${index}.${key}` so
@@ -16,10 +16,10 @@ export function RepeatableRows({
 }: {
   name: string;
   fields: FieldSpec[];
-  initialRows: Record<string, string>[];
+  initialRows: Record<string, string | null | undefined>[];
   addLabel: string;
 }) {
-  const [rows, setRows] = useState<Record<string, string>[]>(
+  const [rows, setRows] = useState<Record<string, string | null | undefined>[]>(
     initialRows.length > 0 ? initialRows : []
   );
 
@@ -29,7 +29,12 @@ export function RepeatableRows({
         <div key={i} className="flex items-start gap-2 rounded-lg border border-hairline p-3">
           <div className="grid flex-1 gap-2" style={{ gridTemplateColumns: `repeat(${fields.length}, 1fr)` }}>
             {fields.map((f) =>
-              f.textarea ? (
+              f.checkbox ? (
+                <label key={f.key} className="flex items-center gap-1.5 text-sm text-ink">
+                  <input type="checkbox" name={`${name}.${i}.${f.key}`} defaultChecked={row[f.key] === "true"} />
+                  {f.label}
+                </label>
+              ) : f.textarea ? (
                 <textarea
                   key={f.key}
                   name={`${name}.${i}.${f.key}`}
