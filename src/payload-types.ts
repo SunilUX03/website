@@ -73,6 +73,7 @@ export interface Config {
     'media-items': MediaItem;
     'job-openings': JobOpening;
     'team-members': TeamMember;
+    services: Service;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     'media-items': MediaItemsSelect<false> | MediaItemsSelect<true>;
     'job-openings': JobOpeningsSelect<false> | JobOpeningsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -339,6 +341,180 @@ export interface TeamMember {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  name: string;
+  /**
+   * Used in the page URL. Auto-filled from the name.
+   */
+  slug: string;
+  /**
+   * Shown on the card and as the About section's opening paragraph.
+   */
+  description: string;
+  /**
+   * A single " · "-joined line, e.g. "273 Services · 25,277 Centres · ...".
+   */
+  stats: string;
+  image: number | Media;
+  /**
+   * Presence decides the CTA/template: set (even "#" as a placeholder) for a citizen-facing "project" with an Access Portal button; leave blank for a department-facing "service" routed to /reach-us.
+   */
+  accessPortalHref?: string | null;
+  /**
+   * Every /services tab this item appears under. The first one picked is its "home" section for the breadcrumb and Related carousel.
+   */
+  sections: ('citizen-services' | 'e-governance-projects' | 'services')[];
+  /**
+   * Official submitted content for the detail page. Every field here is optional — service-detail-generator.ts fills in sensible generated copy for anything left blank.
+   */
+  real?: {
+    /**
+     * Short hero-only line. Falls back to the description above when blank.
+     */
+    tagline?: string | null;
+    /**
+     * One stat per row, e.g. "273 Government services".
+     */
+    statistics?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    keyFeatures?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional, same order as Key Features — a one-line description per feature. Leave a row blank to use the generic fallback for that feature.
+     */
+    keyFeatureDescriptions?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Statistics normally also become Key Feature cards — check this when Key Features is already complete on its own.
+     */
+    hideStatFeatureCards?: boolean | null;
+    /**
+     * "You can use this if..." bullet points.
+     */
+    eligibility?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    whatYoullNeed?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    faqs?:
+      | {
+          q: string;
+          a: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Extra FAQs shown behind a "View more" toggle.
+     */
+    faqsMore?:
+      | {
+          q: string;
+          a: string;
+          id?: string | null;
+        }[]
+      | null;
+    aboutSecondParagraph?: string | null;
+    hideAboutSecondParagraph?: boolean | null;
+    /**
+     * A plain callout line in the About section, instead of a generated pull-quote.
+     */
+    calloutText?: string | null;
+    /**
+     * Optional link in the About section that opens a modal listing items, e.g. a schemes list.
+     */
+    aboutLinkModal?: {
+      label?: string | null;
+      title?: string | null;
+      items?:
+        | {
+            value: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Real product screenshots. Leave empty to show a generated stock-photo carousel instead.
+     */
+    productTour?:
+      | {
+          photo: number | Media;
+          alt: string;
+          id?: string | null;
+        }[]
+      | null;
+    productTourCaption?: string | null;
+    /**
+     * Overrides the generated "How to access" steps. Leave empty and check "Hide steps" below for an intro/outro-only Get Started section with no numbered steps.
+     */
+    getStartedSteps?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Hide the numbered Get Started steps entirely (e.g. intro/outro prose only, like eOffice) rather than showing generated fallback steps.
+     */
+    suppressGetStartedSteps?: boolean | null;
+    getStartedIntro?: string | null;
+    getStartedOutro?: string | null;
+    /**
+     * Label for the Get Started direct-link button (projects only). Defaults to "Open".
+     */
+    directLinkLabel?: string | null;
+    /**
+     * Marks a pre-launch project: CTAs become "Coming Soon" / "Contact TNeGA".
+     */
+    comingSoon?: boolean | null;
+    /**
+     * Marks an access-gated project (staff login, not public self-service): CTAs become "Avail Service" → /reach-us.
+     */
+    gatedAccess?: boolean | null;
+    /**
+     * Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above).
+     */
+    relatedCardStats?: string | null;
+    /**
+     * Overrides the "Project"/"Service" badge label shown on the page — independent of the Project/Service CTA behaviour, which is still driven by Access Portal Link above.
+     */
+    typeLabel?: ('Project' | 'Service') | null;
+    /**
+     * Overrides the sitewide footer contact info for this item's Contact section.
+     */
+    contact?: {
+      email?: string | null;
+      phone?: string | null;
+    };
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -384,6 +560,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'team-members';
         value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -561,6 +741,116 @@ export interface TeamMembersSelect<T extends boolean = true> {
   subject?: T;
   photo?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  stats?: T;
+  image?: T;
+  accessPortalHref?: T;
+  sections?: T;
+  real?:
+    | T
+    | {
+        tagline?: T;
+        statistics?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        keyFeatures?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        keyFeatureDescriptions?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        hideStatFeatureCards?: T;
+        eligibility?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        whatYoullNeed?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        faqs?:
+          | T
+          | {
+              q?: T;
+              a?: T;
+              id?: T;
+            };
+        faqsMore?:
+          | T
+          | {
+              q?: T;
+              a?: T;
+              id?: T;
+            };
+        aboutSecondParagraph?: T;
+        hideAboutSecondParagraph?: T;
+        calloutText?: T;
+        aboutLinkModal?:
+          | T
+          | {
+              label?: T;
+              title?: T;
+              items?:
+                | T
+                | {
+                    value?: T;
+                    id?: T;
+                  };
+            };
+        productTour?:
+          | T
+          | {
+              photo?: T;
+              alt?: T;
+              id?: T;
+            };
+        productTourCaption?: T;
+        getStartedSteps?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+        suppressGetStartedSteps?: T;
+        getStartedIntro?: T;
+        getStartedOutro?: T;
+        directLinkLabel?: T;
+        comingSoon?: T;
+        gatedAccess?: T;
+        relatedCardStats?: T;
+        typeLabel?: T;
+        contact?:
+          | T
+          | {
+              email?: T;
+              phone?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

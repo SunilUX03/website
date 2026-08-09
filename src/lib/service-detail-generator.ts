@@ -4,7 +4,7 @@
 // name/description/stats/type/section — never invents a new specific fact
 // (a number, date, fee, or citation) that isn't already in that data.
 
-import { ServiceItemDetail, statsToBullets } from "./services-content";
+import { CmsServiceItemDetail as ServiceItemDetail, statsToBullets } from "./cms/service-types";
 import { pexelsPhoto, STOCK } from "./stock-photos";
 
 const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
@@ -155,10 +155,13 @@ export interface GeneratedStep {
 }
 
 export function generateHowToAccessSteps(item: ServiceItemDetail): GeneratedStep[] {
-  // Checks presence, not length — an explicit `getStartedSteps: []`
-  // (e.g. a Get Started section written as plain intro/outro prose, no
-  // numbered steps) must suppress the generated fallback too, not just a
-  // non-empty override.
+  // An explicit empty steps list (e.g. a Get Started section written as
+  // plain intro/outro prose, no numbered steps, like eOffice) must
+  // suppress the generated fallback too, not just a non-empty override.
+  // The CMS can't tell "explicitly emptied" apart from "field never
+  // touched" for an array field, so `suppressGetStartedSteps` carries
+  // that intent explicitly instead.
+  if (item.real?.suppressGetStartedSteps) return [];
   if (item.real?.getStartedSteps !== undefined) return item.real.getStartedSteps;
   if (item.type === "project") {
     return [

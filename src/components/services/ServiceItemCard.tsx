@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ServiceItem } from "@/lib/services-content";
+import type { CmsServiceItem as ServiceItem } from "@/lib/cms/service-types";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
 export function ServiceItemCard({

@@ -12,6 +12,7 @@ import { Announcements } from "./collections/Announcements";
 import { MediaItems } from "./collections/MediaItems";
 import { JobOpenings } from "./collections/JobOpenings";
 import { TeamMembers } from "./collections/TeamMembers";
+import { Services } from "./collections/Services";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
@@ -31,7 +32,7 @@ export default buildConfig({
     admin: "/cms",
     api: "/api/payload",
   },
-  collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings, TeamMembers],
+  collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings, TeamMembers, Services],
   globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",

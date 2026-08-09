@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  citizenServices,
-  eGovernanceProjects,
-  sharedServices,
-  ServiceItem,
-} from "@/lib/services-content";
+import type { CmsServiceItemDetail as ServiceItem } from "@/lib/cms/service-types";
 import { pillars } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { ServiceItemCard } from "./ServiceItemCard";
@@ -22,26 +17,16 @@ const TINT_COLOR = {
   mint: "var(--color-gradient-mint)",
 } as const;
 
-const TABS = [
-  {
-    id: "citizen-services",
-    label: "Citizen Services",
-    items: citizenServices,
-    tint: "sky" as const,
-  },
-  {
-    id: "e-governance-projects",
-    label: "e-Governance Projects",
-    items: eGovernanceProjects,
-    tint: "peach" as const,
-  },
-  { id: "services", label: "Services", items: sharedServices, tint: "mint" as const },
+const TAB_META = [
+  { id: "citizen-services", label: "Citizen Services", tint: "sky" as const },
+  { id: "e-governance-projects", label: "e-Governance Projects", tint: "peach" as const },
+  { id: "services", label: "Services", tint: "mint" as const },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+type TabId = (typeof TAB_META)[number]["id"];
 
 function isTabId(value: string): value is TabId {
-  return TABS.some((tab) => tab.id === value);
+  return TAB_META.some((tab) => tab.id === value);
 }
 
 function getIntroDescription(label: string) {
@@ -88,7 +73,22 @@ function ServiceGridMobile({ items, topPx }: { items: readonly ServiceItem[]; to
 
 const FADE_MS = 150;
 
-export function ServicesTabs() {
+export function ServicesTabs({
+  citizenServices,
+  eGovernanceProjects,
+  sharedServices,
+}: {
+  citizenServices: ServiceItem[];
+  eGovernanceProjects: ServiceItem[];
+  sharedServices: ServiceItem[];
+}) {
+  const itemsByTab: Record<TabId, ServiceItem[]> = {
+    "citizen-services": citizenServices,
+    "e-governance-projects": eGovernanceProjects,
+    services: sharedServices,
+  };
+  const TABS = TAB_META.map((tab) => ({ ...tab, items: itemsByTab[tab.id] }));
+
   const [active, setActive] = useState<TabId>("citizen-services");
   // The tab actually rendered — swaps at the crossfade midpoint so content
   // never changes mid-fade-out (plain state + CSS transition, not

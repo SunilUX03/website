@@ -7,11 +7,7 @@ import { ScreenshotCarousel } from "./ScreenshotCarousel";
 import { ServiceItemCard } from "./ServiceItemCard";
 import { SchemesModalLink } from "./SchemesModalLink";
 import { CardCarousel } from "@/components/ui/CardCarousel";
-import {
-  allServiceItems,
-  ServiceItemDetail,
-  statsToBullets,
-} from "@/lib/services-content";
+import { type CmsServiceItemDetail as ServiceItemDetail, statsToBullets } from "@/lib/cms/service-types";
 import {
   generateAboutSecondParagraph,
   generatePullQuote,
@@ -77,7 +73,7 @@ function DocIcon({ className }: { className?: string }) {
   );
 }
 
-export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
+export function ServiceDetailContent({ item, related }: { item: ServiceItemDetail; related: ServiceItemDetail[] }) {
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
   const typeLabel = item.real?.typeLabel ?? (isProject ? "Project" : "Service");
@@ -99,8 +95,6 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   const productTourCaption = item.real?.productTourCaption ?? "Illustrative photos. Production screenshots will be added soon.";
   const contactEmail = item.real?.contact?.email ?? footer.email;
   const contactPhone = item.real?.contact?.phone ?? footer.phone;
-  const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 8);
-
   return (
     <>
       <Breadcrumb

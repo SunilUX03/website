@@ -3,14 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { pillars } from "@/lib/content";
-import { getServiceItemsByNames } from "@/lib/services-content";
+import type { CmsServiceItemDetail } from "@/lib/cms/service-types";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 
 type Pillar = (typeof pillars)[number];
-type Items = ReturnType<typeof getServiceItemsByNames>;
-
-const PILLAR_ITEMS = pillars.map((p) => getServiceItemsByNames(p.itemNames));
+type Items = CmsServiceItemDetail[];
 
 /**
  * Desktop pillar card — flips in place on hover/focus, nothing else
@@ -153,7 +151,7 @@ function MobileAccordion({ pillar, items, bannerImage, open, onToggle }: {
   );
 }
 
-export function PillarCards() {
+export function PillarCards({ pillarItems }: { pillarItems: Items[] }) {
   const [mobileOpen, setMobileOpen] = useState<number>(-1);
 
   return (
@@ -169,7 +167,7 @@ export function PillarCards() {
         {/* Desktop / tablet: three equal flip cards */}
         <div className="hidden gap-4 md:flex">
           {pillars.map((pillar, i) => (
-            <FlipCard key={pillar.title} pillar={pillar} items={PILLAR_ITEMS[i]} bannerImage={pillar.bannerImage} />
+            <FlipCard key={pillar.title} pillar={pillar} items={pillarItems[i]} bannerImage={pillar.bannerImage} />
           ))}
         </div>
 
@@ -179,7 +177,7 @@ export function PillarCards() {
             <MobileAccordion
               key={pillar.title}
               pillar={pillar}
-              items={PILLAR_ITEMS[i]}
+              items={pillarItems[i]}
               bannerImage={pillar.bannerImage}
               open={mobileOpen === i}
               onToggle={() => setMobileOpen((cur) => (cur === i ? -1 : i))}

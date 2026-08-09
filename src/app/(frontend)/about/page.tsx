@@ -19,6 +19,8 @@ import { getJobOpenings } from "@/lib/cms/job-openings";
 import { getBoardContent } from "@/lib/cms/board-content";
 import { getTeamMembers } from "@/lib/cms/team-members";
 import { buildRollOfHonour } from "@/lib/about-content";
+import { pillars } from "@/lib/content";
+import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -32,12 +34,14 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const [openings, board, members] = await Promise.all([
+  const [openings, board, members, allServiceItems] = await Promise.all([
     getJobOpenings(),
     getBoardContent(),
     getTeamMembers(),
+    getAllServiceItems(),
   ]);
   const rollOfHonour = buildRollOfHonour(members[0]?.name ?? "");
+  const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
 
   return (
     <>
@@ -47,7 +51,7 @@ export default async function About() {
         <AboutHero />
         <WhoWeAreHierarchy />
         <VisionMission />
-        <PillarCards />
+        <PillarCards pillarItems={pillarItems} />
         <Metrics />
         <OrgChart />
         <LeadershipTeam members={members} />

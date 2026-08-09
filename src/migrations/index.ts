@@ -6,6 +6,8 @@ import * as migration_20260809_165947_add_nav_content from './20260809_165947_ad
 import * as migration_20260809_170753_add_board_content from './20260809_170753_add_board_content';
 import * as migration_20260809_171259_add_team_members from './20260809_171259_add_team_members';
 import * as migration_20260809_172326_add_hero_and_leadership_band from './20260809_172326_add_hero_and_leadership_band';
+import * as migration_20260809_173933_add_services from './20260809_173933_add_services';
+import * as migration_20260809_174207_add_suppress_get_started_steps from './20260809_174207_add_suppress_get_started_steps';
 
 export const migrations = [
   {
@@ -46,6 +48,16 @@ export const migrations = [
   {
     up: migration_20260809_172326_add_hero_and_leadership_band.up,
     down: migration_20260809_172326_add_hero_and_leadership_band.down,
-    name: '20260809_172326_add_hero_and_leadership_band'
+    name: '20260809_172326_add_hero_and_leadership_band',
+  },
+  {
+    up: migration_20260809_173933_add_services.up,
+    down: migration_20260809_173933_add_services.down,
+    name: '20260809_173933_add_services',
+  },
+  {
+    up: migration_20260809_174207_add_suppress_get_started_steps.up,
+    down: migration_20260809_174207_add_suppress_get_started_steps.down,
+    name: '20260809_174207_add_suppress_get_started_steps'
   },
 ];
