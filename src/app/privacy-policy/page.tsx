@@ -3,7 +3,7 @@ import { LegalPageShell, LegalSection, LegalList } from "@/components/legal/Lega
 import { footer } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — TNeGA",
+  title: "Privacy Policy | TNeGA",
   description: "How the Tamil Nadu e-Governance Agency collects, uses and protects information on this website.",
 };
 
@@ -19,8 +19,8 @@ export default function PrivacyPolicy() {
         <p>This website may collect the following categories of information:</p>
         <LegalList
           items={[
-            "Information you submit directly — for example through the Feedback or Careers application forms (name, email, and the content of your message).",
-            "Standard technical information collected automatically by any website — such as browser type and pages visited — used only in aggregate to understand site usage.",
+            "Information you submit directly, for example through the Feedback or Careers application forms (name, email, and the content of your message).",
+            "Standard technical information collected automatically by any website, such as browser type and pages visited, used only in aggregate to understand site usage.",
           ]}
         />
       </LegalSection>

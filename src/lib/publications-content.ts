@@ -51,10 +51,10 @@ export const facets: DocumentFacet[] = [
 export const rows: DocumentRow[] = [
   {
     id: "pub-01",
-    searchText: "Annual Report 2024-25 — Tamil Nadu e-Governance Agency",
+    searchText: "Annual Report 2024-25: Tamil Nadu e-Governance Agency",
     facets: { year: "2025", dept: "tnega" },
     cells: [
-      { kind: "title", text: "Annual Report 2024-25 — Tamil Nadu e-Governance Agency" },
+      { kind: "title", text: "Annual Report 2024-25: Tamil Nadu e-Governance Agency" },
       { kind: "ref", text: "TNeGA/AR/2025/001" },
       { kind: "date", text: "01 Apr 2025" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -75,10 +75,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-03",
-    searchText: "AI in Governance — Tamil Nadu Perspective",
+    searchText: "AI in Governance: Tamil Nadu Perspective",
     facets: { year: "2025", dept: "tnega" },
     cells: [
-      { kind: "title", text: "AI in Governance — Tamil Nadu Perspective" },
+      { kind: "title", text: "AI in Governance: Tamil Nadu Perspective" },
       { kind: "ref", text: "TNeGA/AI/2025/003" },
       { kind: "date", text: "01 Feb 2025" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -87,10 +87,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-04",
-    searchText: "TNGIS — Geospatial Governance Report 2024",
+    searchText: "TNGIS: Geospatial Governance Report 2024",
     facets: { year: "2024", dept: "tnega" },
     cells: [
-      { kind: "title", text: "TNGIS — Geospatial Governance Report 2024" },
+      { kind: "title", text: "TNGIS: Geospatial Governance Report 2024" },
       { kind: "ref", text: "TNeGA/GIS/2024/004" },
       { kind: "date", text: "15 Dec 2024" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -99,10 +99,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-05",
-    searchText: "Data Purity Project — Impact Assessment Report",
+    searchText: "Data Purity Project: Impact Assessment Report",
     facets: { year: "2024", dept: "tnega" },
     cells: [
-      { kind: "title", text: "Data Purity Project — Impact Assessment Report" },
+      { kind: "title", text: "Data Purity Project: Impact Assessment Report" },
       { kind: "ref", text: "TNeGA/DATA/2024/005" },
       { kind: "date", text: "01 Nov 2024" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -111,10 +111,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-06",
-    searchText: "e-Office Implementation — State Progress Report 2024",
+    searchText: "e-Office Implementation: State Progress Report 2024",
     facets: { year: "2024", dept: "tnega" },
     cells: [
-      { kind: "title", text: "e-Office Implementation — State Progress Report 2024" },
+      { kind: "title", text: "e-Office Implementation: State Progress Report 2024" },
       { kind: "ref", text: "TNeGA/EOFF/2024/006" },
       { kind: "date", text: "01 Oct 2024" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -123,10 +123,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-07",
-    searchText: "Nambikkai Inaiyam — Blockchain in Tamil Nadu Governance",
+    searchText: "Nambikkai Inaiyam: Blockchain in Tamil Nadu Governance",
     facets: { year: "2024", dept: "tnega" },
     cells: [
-      { kind: "title", text: "Nambikkai Inaiyam — Blockchain in Tamil Nadu Governance" },
+      { kind: "title", text: "Nambikkai Inaiyam: Blockchain in Tamil Nadu Governance" },
       { kind: "ref", text: "TNeGA/BC/2024/007" },
       { kind: "date", text: "01 Sep 2024" },
       { kind: "badge", text: "TNeGA", tone: "violet" },
@@ -135,10 +135,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "pub-08",
-    searchText: "KMUT Scheme — Data-Driven Beneficiary Identification",
+    searchText: "KMUT Scheme: Data-Driven Beneficiary Identification",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "KMUT Scheme — Data-Driven Beneficiary Identification" },
+      { kind: "title", text: "KMUT Scheme: Data-Driven Beneficiary Identification" },
       { kind: "ref", text: "TNeGA/KMUT/2024/008" },
       { kind: "date", text: "01 Aug 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },

@@ -24,7 +24,7 @@ export const SOCIAL_SEED: Record<
 > = {
   facebook: [
     {
-      text: "TNeGA's SimpleGov initiative simplifies 10 government services — paperless, online and instant. A new era of governance begins.",
+      text: "TNeGA's SimpleGov initiative simplifies 10 government services, paperless, online and instant. A new era of governance begins.",
       date: "29 May 2025",
       image: pexelsPhoto(STOCK.handshakeFormal, 640, 360),
     },
@@ -34,7 +34,7 @@ export const SOCIAL_SEED: Record<
       image: pexelsPhoto(STOCK.ruralWomanPhone, 640, 360),
     },
     {
-      text: "UMIS now integrates student data from 5,490 institutions statewide — one platform for all of higher education.",
+      text: "UMIS now integrates student data from 5,490 institutions statewide, one platform for all of higher education.",
       date: "02 Sep 2025",
       image: pexelsPhoto(STOCK.studentLaptop, 640, 360),
     },
@@ -46,7 +46,7 @@ export const SOCIAL_SEED: Record<
       image: pexelsPhoto(STOCK.womanPhone, 640, 360),
     },
     {
-      text: "TN GIS now maps 400+ spatial layers — land records, guideline values and civic amenities in one click.",
+      text: "TN GIS now maps 400+ spatial layers: land records, guideline values and civic amenities in one click.",
       date: "22 Oct 2025",
       image: pexelsPhoto(STOCK.networkRack, 640, 360),
     },
@@ -58,7 +58,7 @@ export const SOCIAL_SEED: Record<
   ],
   youtube: [
     {
-      text: "Watch: Chief Minister launches SimpleGov — Tamil Nadu's landmark digital governance reform initiative.",
+      text: "Watch: Chief Minister launches SimpleGov, Tamil Nadu's landmark digital governance reform initiative.",
       date: "29 May 2025",
       image: pexelsPhoto(STOCK.handshakeLeaders, 640, 360),
     },
@@ -75,7 +75,7 @@ export const SOCIAL_SEED: Record<
   ],
   instagram: [
     {
-      text: "Behind the scenes at the SimpleGov launch event — 10 services, one paperless platform.",
+      text: "Behind the scenes at the SimpleGov launch event: 10 services, one paperless platform.",
       date: "29 May 2025",
       image: pexelsPhoto(STOCK.presentation, 640, 360),
     },
@@ -92,17 +92,17 @@ export const SOCIAL_SEED: Record<
   ],
   linkedin: [
     {
-      text: "TNeGA is hiring across engineering and program management roles — join us in building Tamil Nadu's digital public infrastructure.",
+      text: "TNeGA is hiring across engineering and program management roles, join us in building Tamil Nadu's digital public infrastructure.",
       date: "12 Jan 2026",
       image: pexelsPhoto(STOCK.officeBuilding, 640, 360),
     },
     {
-      text: "Proud to partner with Government departments statewide on SimpleGov — 10 services made paperless, online and instant.",
+      text: "Proud to partner with Government departments statewide on SimpleGov: 10 services made paperless, online and instant.",
       date: "29 May 2025",
       image: pexelsPhoto(STOCK.handshakeBusiness, 640, 360),
     },
     {
-      text: "UMIS now integrates student data from 5,490 institutions statewide — one platform for all of higher education.",
+      text: "UMIS now integrates student data from 5,490 institutions statewide, one platform for all of higher education.",
       date: "02 Sep 2025",
       image: pexelsPhoto(STOCK.studentLaptop, 640, 360),
     },

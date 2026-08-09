@@ -10,7 +10,7 @@ import { TendersGraphic } from "@/components/heroes/TendersGraphic";
 import { hero, tenderPortal } from "@/lib/tenders-content";
 
 export const metadata: Metadata = {
-  title: "Tenders & Procurement — TNeGA",
+  title: "Tenders & Procurement | TNeGA",
   description:
     "Active and upcoming tenders from Tamil Nadu e-Governance Agency, published on the Tamil Nadu Government e-Tendering portal.",
 };

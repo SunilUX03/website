@@ -54,10 +54,10 @@ export const facets: DocumentFacet[] = [
 export const rows: DocumentRow[] = [
   {
     id: "go-01",
-    searchText: "SimpleGov — Sanitation Certificate Digitization",
+    searchText: "SimpleGov: Sanitation Certificate Digitization",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Sanitation Certificate Digitization" },
+      { kind: "title", text: "SimpleGov: Sanitation Certificate Digitization" },
       { kind: "ref", text: "G.O.Ms.No.276, H&FW Dept" },
       { kind: "date", text: "23 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -66,10 +66,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-02",
-    searchText: "SimpleGov — Registration of Old Age Homes",
+    searchText: "SimpleGov: Registration of Old Age Homes",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Registration of Old Age Homes" },
+      { kind: "title", text: "SimpleGov: Registration of Old Age Homes" },
       { kind: "ref", text: "G.O.Ms.No.64, SW&WW Dept" },
       { kind: "date", text: "19 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -78,10 +78,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-03",
-    searchText: "SimpleGov — Verification of Characters and Antecedents",
+    searchText: "SimpleGov: Verification of Characters and Antecedents",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Verification of Characters and Antecedents" },
+      { kind: "title", text: "SimpleGov: Verification of Characters and Antecedents" },
       { kind: "ref", text: "G.O.Ms.No.509, Home Dept" },
       { kind: "date", text: "06 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -90,10 +90,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-04",
-    searchText: "SimpleGov — NOC for Dryland Non-Agricultural Purposes",
+    searchText: "SimpleGov: NOC for Dryland Non-Agricultural Purposes",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — NOC for Dryland Non-Agricultural Purposes" },
+      { kind: "title", text: "SimpleGov: NOC for Dryland Non-Agricultural Purposes" },
       { kind: "ref", text: "G.O.Ms.No.221, Agri & FW Dept" },
       { kind: "date", text: "24 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -102,10 +102,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-05",
-    searchText: "SimpleGov — Registration of Working Women Hostel",
+    searchText: "SimpleGov: Registration of Working Women Hostel",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Registration of Working Women Hostel" },
+      { kind: "title", text: "SimpleGov: Registration of Working Women Hostel" },
       { kind: "ref", text: "G.O.Ms.No.80, SW&WW Dept" },
       { kind: "date", text: "29 Oct 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -114,10 +114,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-06",
-    searchText: "SimpleGov — Lift and Escalator License",
+    searchText: "SimpleGov: Lift and Escalator License",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Lift and Escalator License" },
+      { kind: "title", text: "SimpleGov: Lift and Escalator License" },
       { kind: "ref", text: "G.O.Ms.No.86, Energy Dept" },
       { kind: "date", text: "29 Aug 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
@@ -126,10 +126,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "go-07",
-    searchText: "SimpleGov — Fire License",
+    searchText: "SimpleGov: Fire License",
     facets: { year: "2024", dept: "itds" },
     cells: [
-      { kind: "title", text: "SimpleGov — Fire License" },
+      { kind: "title", text: "SimpleGov: Fire License" },
       { kind: "ref", text: "G.O.Ms.No.639, Home Dept" },
       { kind: "date", text: "21 Nov 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },

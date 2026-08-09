@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { LegalPageShell, LegalSection, LegalList } from "@/components/legal/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Help — TNeGA",
-  description: "Help with accessing and navigating the TNeGA website — file formats, accessibility options and where to get further support.",
+  title: "Help | TNeGA",
+  description: "Help with accessing and navigating the TNeGA website: file formats, accessibility options and where to get further support.",
 };
 
 export default function Help() {
@@ -17,7 +17,7 @@ export default function Help() {
       <LegalSection heading="Viewing documents on this site">
         <p>
           Documents on this site are published as PDFs. To view them, your browser needs a PDF
-          reader — most modern browsers (Chrome, Edge, Firefox, Safari) can open PDFs directly with
+          reader. Most modern browsers (Chrome, Edge, Firefox, Safari) can open PDFs directly with
           no extra software. If a document doesn&apos;t open, try downloading it and opening it with
           Adobe Acrobat Reader or another PDF viewer.
         </p>

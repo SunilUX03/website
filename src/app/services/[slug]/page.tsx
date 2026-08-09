@@ -19,7 +19,7 @@ export async function generateMetadata({
   const item = getServiceItemBySlug(slug);
   if (!item) return {};
   return {
-    title: `${item.name} — TNeGA`,
+    title: `${item.name} | TNeGA`,
     description: item.description,
   };
 }

@@ -17,7 +17,7 @@ import {
 } from "@/lib/publications-content";
 
 export const metadata: Metadata = {
-  title: "Publications — TNeGA",
+  title: "Publications | TNeGA",
   description:
     "Annual reports, policy frameworks and research publications from Tamil Nadu e-Governance Agency.",
 };

@@ -37,7 +37,7 @@ export interface CarouselImage {
 export function generateScreenshotImages(item: ServiceItemDetail): CarouselImage[] {
   const supporting = SUPPORTING_IMAGES[item.section].map((id, i) => ({
     src: pexelsPhoto(id, 1200, 675),
-    alt: `${item.name} — illustrative photo ${i + 1}`,
+    alt: `${item.name}: illustrative photo ${i + 1}`,
   }));
   return [{ src: item.image, alt: `${item.name} interface` }, ...supporting];
 }
@@ -47,7 +47,7 @@ export function generateAboutSecondParagraph(item: ServiceItemDetail): string {
   const audience = SECTION_LABEL[item.section];
   const firstStat = item.real?.statistics[0] ?? statsToBullets(item.stats)[0];
   return `As part of Tamil Nadu e-Governance Agency's digital governance programme, ${item.name} is built to make this reach every eligible ${audience.slice(0, -1)} across the state${
-    firstStat ? ` — ${firstStat.toLowerCase()} so far` : ""
+    firstStat ? `, ${firstStat.toLowerCase()} so far` : ""
   }.`;
 }
 
@@ -55,8 +55,8 @@ export function generatePullQuote(item: ServiceItemDetail): { quote: string; sou
   const bullets = item.real?.statistics.length ? item.real.statistics : statsToBullets(item.stats);
   const headline = bullets[0] ?? item.name;
   return {
-    quote: `${headline} — delivered through ${item.name}, part of TNeGA's push for transparent, accessible digital governance in Tamil Nadu.`,
-    source: `TNeGA — ${SECTION_DISPLAY_NAME[item.section]}`,
+    quote: `${headline}, delivered through ${item.name} as part of TNeGA's push for transparent, accessible digital governance in Tamil Nadu.`,
+    source: `TNeGA, ${SECTION_DISPLAY_NAME[item.section]}`,
   };
 }
 
@@ -94,7 +94,7 @@ export function generateFeatures(item: ServiceItemDetail): GeneratedFeature[] {
       ? [
           {
             title: "Self-service access",
-            description: `${item.accessPortalHref ? "Available" : "Designed to be available"} directly through the ${item.name} portal — no in-person visit required for most requests.`,
+            description: `${item.accessPortalHref ? "Available" : "Designed to be available"} directly through the ${item.name} portal. No in-person visit is required for most requests.`,
           },
           {
             title: "Statewide reach",
@@ -193,12 +193,12 @@ export function generateFaqs(item: ServiceItemDetail): GeneratedFaq[] {
     {
       q: `Who can use ${item.name}?`,
       a: isProject
-        ? "Any resident of Tamil Nadu — see the Eligibility section above for details."
+        ? "Any resident of Tamil Nadu, see the Eligibility section above for details."
         : "Tamil Nadu government departments and public sector undertakings, through TNeGA onboarding.",
     },
     {
       q: "Is there a cost to use this?",
-      a: "Any government fees involved are as prescribed by the concerned department — TNeGA does not add a separate service charge on top.",
+      a: "Any government fees involved are as prescribed by the concerned department. TNeGA does not add a separate service charge on top.",
     },
     {
       q: "How do I get help if I run into an issue?",

@@ -32,10 +32,10 @@ function findAnnouncement(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const announcement = findAnnouncement(slug);
-  if (!announcement) return { title: "Announcement — TNeGA" };
+  if (!announcement) return { title: "Announcement | TNeGA" };
 
   return {
-    title: `${announcement.heading} — TNeGA`,
+    title: `${announcement.heading} | TNeGA`,
     description: announcement.description,
   };
 }

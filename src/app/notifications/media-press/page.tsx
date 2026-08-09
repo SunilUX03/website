@@ -9,7 +9,7 @@ import { MediaTabs } from "@/components/media/MediaTabs";
 import { hero } from "@/lib/media-content";
 
 export const metadata: Metadata = {
-  title: "Media & Press — TNeGA",
+  title: "Media & Press | TNeGA",
   description:
     "News, events, photographs and videos from Tamil Nadu e-Governance Agency.",
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalPageShell, LegalSection, LegalList } from "@/components/legal/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Terms of Use — TNeGA",
+  title: "Terms of Use | TNeGA",
   description: "Acceptable use, intellectual property and linking policy for the Tamil Nadu e-Governance Agency website.",
 };
 

@@ -17,9 +17,9 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 export const metadata: Metadata = {
-  title: "About TNeGA — Tamil Nadu e-Governance Agency",
+  title: "About TNeGA | Tamil Nadu e-Governance Agency",
   description:
-    "Tamil Nadu e-Governance Agency is the State Nodal Agency for all e-Governance initiatives of the Government of Tamil Nadu — driving digital transformation that makes public services transparent, efficient and accessible to every citizen.",
+    "Tamil Nadu e-Governance Agency is the State Nodal Agency for all e-Governance initiatives of the Government of Tamil Nadu, driving digital transformation that makes public services transparent, efficient and accessible to every citizen.",
 };
 
 export default function About() {

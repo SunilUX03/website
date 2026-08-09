@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { PhotoTile } from "@/components/ui/PhotoTile";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
 import {
   announcements,
@@ -84,22 +85,30 @@ export function AnnouncementList() {
               {noResultsText}
             </p>
           ) : (
-            <ul role="list" className="grid gap-lg md:grid-cols-2">
+            <ul role="list" className="grid gap-lg sm:grid-cols-2 lg:grid-cols-4">
               {visible.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     className="group flex h-full flex-col overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
                   >
-                    {/* Plain <img>, not a fixed-aspect crop — matches the
-                        Home page teaser, which uses each photo's own
-                        natural proportions rather than force-cropping
-                        every announcement to the same shape. Not every
-                        announcement has one — a text-only update renders
-                        without this block rather than an empty image. */}
-                    {item.image && <img src={item.image} alt="" loading="lazy" className="block w-full" />}
+                    {/* Fixed 3:2 crop (not each photo's natural size) so
+                        every card is the same compact height — 4 fit in one
+                        row/glance on desktop instead of a couple of
+                        variable-height, full-size photos filling the
+                        screen. Not every announcement has an image — a
+                        text-only update renders without this block rather
+                        than an empty crop. */}
+                    {item.image && (
+                      <PhotoTile
+                        src={item.image}
+                        alt=""
+                        aspect="aspect-[3/2]"
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      />
+                    )}
 
-                    <span className="flex h-full flex-col gap-sm p-lg">
+                    <span className="flex h-full flex-col gap-sm p-base">
                       <span className="type-caption-uppercase text-[var(--color-muted)]">
                         {item.timestamp}
                       </span>
@@ -108,7 +117,7 @@ export function AnnouncementList() {
                         {item.heading}
                       </h3>
 
-                      <p className="type-body-sm text-[var(--color-body)]">
+                      <p className="type-body-sm line-clamp-3 text-[var(--color-body)]">
                         {item.description}
                       </p>
 

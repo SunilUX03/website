@@ -6,13 +6,15 @@ import { Container } from "@/components/ui/Container";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
 import { useInViewOnce, useIsDesktop, useReducedMotion } from "@/lib/hooks";
 
+type TeamMember = { name: string; designation: string; subject?: string; photo: string };
+
 function TeamCard({
   member,
   index,
   inView,
   reducedMotion,
 }: {
-  member: (typeof team)[number];
+  member: TeamMember;
   index: number;
   inView: boolean;
   reducedMotion: boolean;
@@ -39,6 +41,9 @@ function TeamCard({
       <div className="flex min-h-[80px] flex-col items-center justify-center">
         <p className="type-body-strong text-ink">{member.name}</p>
         <p className="type-caption mt-1 text-[var(--color-muted)]">{member.designation}</p>
+        {member.subject ? (
+          <p className="type-caption text-[var(--color-muted)]">{member.subject}</p>
+        ) : null}
       </div>
     </motion.div>
   );
@@ -49,7 +54,7 @@ function DesktopGrid({
   inView,
   reducedMotion,
 }: {
-  members: typeof team;
+  members: TeamMember[];
   inView: boolean;
   reducedMotion: boolean;
 }) {
@@ -71,7 +76,7 @@ function MobileCarousel({
   inView,
   reducedMotion,
 }: {
-  members: typeof team;
+  members: TeamMember[];
   inView: boolean;
   reducedMotion: boolean;
 }) {

@@ -13,7 +13,7 @@ import {
 import { hero } from "@/lib/rti-content";
 
 export const metadata: Metadata = {
-  title: "Right to Information (RTI) — TNeGA",
+  title: "Right to Information (RTI) | TNeGA",
   description:
     "RTI Act 2005 disclosures under Section 4(1)(b), Public Information Officer and Appellate Authority contacts, and how to file an RTI request with TNeGA.",
 };

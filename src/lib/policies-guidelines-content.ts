@@ -106,10 +106,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "policy-05",
-    searchText: "Website Accessibility Guidelines — WCAG 2AA Compliance",
+    searchText: "Website Accessibility Guidelines: WCAG 2AA Compliance",
     facets: { year: "2022", cat: "access" },
     cells: [
-      { kind: "title", text: "Website Accessibility Guidelines — WCAG 2AA Compliance" },
+      { kind: "title", text: "Website Accessibility Guidelines: WCAG 2AA Compliance" },
       { kind: "ref", text: "TNeGA/ACC/2022/005" },
       { kind: "date", text: "15 Dec 2022" },
       { kind: "badge", text: "Accessibility", tone: "green" },
@@ -142,10 +142,10 @@ export const rows: DocumentRow[] = [
   },
   {
     id: "policy-08",
-    searchText: "Open Data Policy — Tamil Nadu Government",
+    searchText: "Open Data Policy: Tamil Nadu Government",
     facets: { year: "2021", cat: "data" },
     cells: [
-      { kind: "title", text: "Open Data Policy — Tamil Nadu Government" },
+      { kind: "title", text: "Open Data Policy: Tamil Nadu Government" },
       { kind: "ref", text: "TNeGA/OD/2021/008" },
       { kind: "date", text: "01 Jan 2021" },
       { kind: "badge", text: "Data Policy", tone: "sky" },

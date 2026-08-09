@@ -16,7 +16,7 @@ import {
 } from "@/lib/policies-guidelines-content";
 
 export const metadata: Metadata = {
-  title: "Policies & Guidelines — TNeGA",
+  title: "Policies & Guidelines | TNeGA",
   description:
     "Cybersecurity, data and e-Governance standards and guidelines issued by Tamil Nadu e-Governance Agency.",
 };

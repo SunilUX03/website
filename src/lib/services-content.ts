@@ -38,7 +38,7 @@ import { DBT_SCHEMES } from "./dbt-schemes";
 export const hero = {
   eyebrow: "What We Build",
   heading: "Initiatives Powering Tamil Nadu's Digital Future",
-  body: "From citizen-facing portals to department platforms and emerging technology — TNeGA builds, operates and scales digital governance across Tamil Nadu.",
+  body: "From citizen-facing portals to department platforms and emerging technology, TNeGA builds, operates and scales digital governance across Tamil Nadu.",
   orbs: [
     { color: "sky", className: "-left-32 -top-20 h-[420px] w-[420px]" },
     { color: "lavender", className: "-right-24 bottom-0 h-[360px] w-[360px]" },
@@ -196,7 +196,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // previous placeholder numbers on this page have been discarded.
     name: "Namma Arasu",
     description:
-      "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, enabling citizens to access a wide range of government services directly through WhatsApp — without needing to install a separate app, use a portal, or visit an e-Sevai centre.",
+      "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, enabling citizens to access a wide range of government services directly through WhatsApp, without needing to install a separate app, use a portal, or visit an e-Sevai centre.",
     stats: "74 Services · 20 Departments · 6,57,239 Transactions since launch (Jan 2026)",
     image: NAMMA_ARASU_IMG.hero,
     accessPortalHref: "https://wa.me/917845252525",
@@ -204,9 +204,9 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["citizen-services"],
     real: {
       tagline:
-        "Government of Tamil Nadu's official WhatsApp-based governance platform — access government services without an app, portal, or e-Sevai centre visit.",
+        "Government of Tamil Nadu's official WhatsApp-based governance platform: access government services without an app, portal, or e-Sevai centre visit.",
       aboutSecondParagraph:
-        "Citizens save one WhatsApp number and get a guided, step-by-step flow in Tamil and English across all departments — including paying electricity, water, and property tax bills — with real-time sync to e-Sevai and departmental databases. The platform is built to stay stable even during peak-traffic events like exam-result days.",
+        "Citizens save one WhatsApp number and get a guided, step-by-step flow in Tamil and English across all departments, including paying electricity, water, and property tax bills, with real-time sync to e-Sevai and departmental databases. The platform is built to stay stable even during peak-traffic events like exam-result days.",
       calloutText: "Rated 4.1/5 by citizens across departments",
       statistics: ["74 Services", "20 Departments", "6,57,239 Transactions since launch (Jan 2026)"],
       hideStatFeatureCards: true,
@@ -217,16 +217,16 @@ const serviceItemsRaw: ServiceItem[] = [
         "Pay electricity, water, and property tax bills without leaving the chat",
         "Real-time sync with e-Sevai and departmental databases",
         "Built to handle peak traffic (e.g., exam-result days) without downtime",
-        "Secure WhatsApp payments — ₹2,17,53,558 collected to date",
-        'Bilingual support — reply "T" anytime to switch to Tamil',
+        "Secure WhatsApp payments: ₹2,17,53,558 collected to date",
+        'Bilingual support: reply "T" anytime to switch to Tamil',
       ],
       productTour: [
-        { src: NAMMA_ARASU_IMG.productTour1, alt: "Namma Arasu — Government at your fingertips, a 3-step visual: Join, select department, complete request" },
+        { src: NAMMA_ARASU_IMG.productTour1, alt: "Namma Arasu: Government at your fingertips, a 3-step visual: Join, select department, complete request" },
       ],
       productTourCaption: "See how citizens start a request on Namma Arasu",
       eligibility: [
         "You're a Tamil Nadu resident with a WhatsApp-enabled mobile number",
-        "You find it hard to travel to a centre or navigate a web portal — especially useful for farmers, daily-wage workers, women, and senior citizens",
+        "You find it hard to travel to a centre or navigate a web portal, especially useful for farmers, daily-wage workers, women, and senior citizens",
       ],
       whatYoullNeed: [
         "A WhatsApp-enabled mobile phone",
@@ -242,7 +242,7 @@ const serviceItemsRaw: ServiceItem[] = [
       faqs: [
         {
           q: "What is Namma Arasu?",
-          a: "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, letting citizens access government services directly through a WhatsApp chat — no app, no portal login needed.",
+          a: "Namma Arasu is the Government of Tamil Nadu's official WhatsApp-based governance platform, letting citizens access government services directly through a WhatsApp chat. No app, no portal login needed.",
         },
         {
           q: "How do I start using Namma Arasu?",
@@ -254,11 +254,11 @@ const serviceItemsRaw: ServiceItem[] = [
         },
         {
           q: "Can I pay my bills on Namma Arasu?",
-          a: "Yes — electricity, water, and property tax bills can be paid directly inside the WhatsApp chat.",
+          a: "Yes, electricity, water, and property tax bills can be paid directly inside the WhatsApp chat.",
         },
         {
           q: "Is Namma Arasu available in Tamil?",
-          a: 'Yes, it is fully bilingual — reply "T" at any point to switch to Tamil.',
+          a: 'Yes, it is fully bilingual. Reply "T" at any point to switch to Tamil.',
         },
         {
           q: "Who do I contact if I face a problem on Namma Arasu?",
@@ -272,15 +272,15 @@ const serviceItemsRaw: ServiceItem[] = [
         },
         {
           q: "Is my data safe on Namma Arasu?",
-          a: "Yes — it runs on WhatsApp's verified business platform via Meta-certified partner Karix, and every chat leaves an accountable record for the citizen.",
+          a: "Yes, it runs on WhatsApp's verified business platform via Meta-certified partner Karix, and every chat leaves an accountable record for the citizen.",
         },
         {
           q: "What documents or details will I need?",
-          a: "It depends on the service — for example, a CAN number for community certificates, or a consumer number for electricity bill payments.",
+          a: "It depends on the service, for example, a CAN number for community certificates, or a consumer number for electricity bill payments.",
         },
         {
           q: "Can I check my application or service status on WhatsApp?",
-          a: "Yes — status-check services (e.g., application status, grievance status) are available directly in the chat menu.",
+          a: "Yes, status-check services (e.g., application status, grievance status) are available directly in the chat menu.",
         },
         {
           q: "What if I enter the wrong details by mistake?",
@@ -315,7 +315,7 @@ const serviceItemsRaw: ServiceItem[] = [
       tagline:
         "TNeGA is the State Nodal Agency for Aadhaar-related services in Tamil Nadu, officially designated by UIDAI as an Authentication User Agency (AUA) and KYC User Agency (KUA), onboarding Government departments and enabling Aadhaar enrolment through Permanent Enrolment Centres.",
       aboutSecondParagraph:
-        "TNeGA also acts as the registrar for Aadhaar enrolment and mandatory biometric updates, working through two enrolment agencies — ELCOT and TACTV — across a statewide network of Permanent Enrolment Centres (PECs) and special camps. As of January 2026, 694 Permanent Enrolment Centres with 803 service counters are operational across the State, having processed 47.95 crore Aadhaar authentication and e-KYC transactions in FY 2025–26 alone.",
+        "TNeGA also acts as the registrar for Aadhaar enrolment and mandatory biometric updates, working through two enrolment agencies (ELCOT and TACTV) across a statewide network of Permanent Enrolment Centres (PECs) and special camps. As of January 2026, 694 Permanent Enrolment Centres with 803 service counters are operational across the State, having processed 47.95 crore Aadhaar authentication and e-KYC transactions in FY 2025–26 alone.",
       statistics: [
         "694 Permanent Enrolment Centres",
         "803 Service Counters",
@@ -348,12 +348,12 @@ const serviceItemsRaw: ServiceItem[] = [
       whatYoullNeed: ["Department approval and use-case details, for departments onboarding under the Aadhaar Act, 2016"],
       getStartedSteps: [
         {
-          title: "For citizens — visit a PEC",
+          title: "For citizens: visit a PEC",
           description:
             "Visit your nearest Permanent Enrolment Centre (PEC) with the required documents to complete enrolment or update your biometric/demographic details.",
         },
         {
-          title: "For Government departments — onboard as Sub-AUA/Sub-KUA",
+          title: "For Government departments: onboard as Sub-AUA/Sub-KUA",
           description:
             "Contact TNeGA with your department's approval and use-case details to begin onboarding as a Sub-AUA or Sub-KUA entity under the Aadhaar Act, 2016.",
         },
@@ -462,9 +462,9 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["citizen-services"],
     real: {
       tagline:
-        "An integrated online platform for Gazette publication services in Tamil Nadu — apply, track, pay, and access published notifications digitally. Launching soon.",
+        "An integrated online platform for Gazette publication services in Tamil Nadu: apply, track, pay, and access published notifications digitally. Launching soon.",
       aboutSecondParagraph:
-        "Once launched, the portal will let individuals, companies, and partnership firms submit Gazette notification applications online, upload supporting documents, track application status, make payments, and access published Gazette notifications — all through a secure, bilingual digital platform.",
+        "Once launched, the portal will let individuals, companies, and partnership firms submit Gazette notification applications online, upload supporting documents, track application status, make payments, and access published Gazette notifications, all through a secure, bilingual digital platform.",
       calloutText:
         "Digitizing Gazette publication services with an end-to-end online application and publication process, built to be secure, transparent, and citizen-centric.",
       comingSoon: true,
@@ -535,7 +535,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // this keeps the previously-written placeholder copy unchanged.
     name: "TNGIS Tamil Nilam",
     description:
-      "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops — all in one place.",
+      "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops, all in one place.",
     stats: "400+ Spatial Layers · Public Access via tngis.tn.gov.in",
     image: PROJECT_IMG.tnGis,
     accessPortalHref: "#",
@@ -547,7 +547,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // this keeps the previously-written placeholder copy unchanged.
     name: "GRAINS",
     description:
-      "A unified database of farmers, land and crop details across Tamil Nadu — ensuring the right agricultural benefits reach the right farmers accurately.",
+      "A unified database of farmers, land and crop details across Tamil Nadu, ensuring the right agricultural benefits reach the right farmers accurately.",
     stats: "Farmer · Land · Crop Database",
     image: pexelsPhoto(STOCK.serverRoom, 700, 500),
     accessPortalHref: "#",
@@ -571,7 +571,7 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["e-governance-projects"],
     real: {
       tagline:
-        "The Government of Tamil Nadu's integrated digital office platform, enabling Government Departments to manage files, receipts, correspondence, and office workflows electronically — for paperless, transparent, and faster administration.",
+        "The Government of Tamil Nadu's integrated digital office platform, enabling Government Departments to manage files, receipts, correspondence, and office workflows electronically, for paperless, transparent, and faster administration.",
       calloutText:
         "Paperless government administration, with faster file movement across departments, secure digital workflow management, and transparent, efficient office operations.",
       hideAboutSecondParagraph: true,
@@ -677,7 +677,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // department-facing "DBT" service entry entirely (name, type, and
     // content). Now a citizen-facing Project (has its own public portal,
     // https://dbt.tn.gov.in/), still under the Services tab per the brief.
-    name: "DBT — Direct Benefit Transfer Portal",
+    name: "DBT (Direct Benefit Transfer Portal)",
     description:
       "Tamil Nadu's citizen-facing platform to track, monitor, and receive social welfare benefits directly into your bank account.",
     stats: "54+ Schemes Covered",
@@ -687,13 +687,13 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["services"],
     real: {
       tagline:
-        "Tamil Nadu's primary citizen-facing platform to track, monitor, and receive social welfare benefits directly into your bank account — transparently, with no intermediaries.",
+        "Tamil Nadu's primary citizen-facing platform to track, monitor, and receive social welfare benefits directly into your bank account, transparently, with no intermediaries.",
       // The brief's "About the Project" paragraph 1 restates the card
       // summary above almost verbatim (item.description already covers
       // that slot) — folded in here with the actual paragraph 2 so both
       // pieces of the brief's copy still appear on the page.
       aboutSecondParagraph:
-        "The Tamil Nadu Direct Benefit Transfer (DBT) Portal is the state's primary citizen-facing platform for tracking, monitoring, and receiving social welfare benefits directly into your bank account. It ensures transparency and eliminates intermediaries, giving citizens real-time visibility into their benefit status across a wide range of state welfare schemes — from education scholarships and old-age pensions to maternity and marriage assistance — all linked securely through Aadhaar.",
+        "The Tamil Nadu Direct Benefit Transfer (DBT) Portal is the state's primary citizen-facing platform for tracking, monitoring, and receiving social welfare benefits directly into your bank account. It ensures transparency and eliminates intermediaries, giving citizens real-time visibility into their benefit status across a wide range of state welfare schemes, from education scholarships and old-age pensions to maternity and marriage assistance, all linked securely through Aadhaar.",
       aboutLinkModal: {
         label: "50+ schemes covered",
         title: "Schemes covered under DBT",
@@ -763,7 +763,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // instead, with the real URL surfaced only in the Direct link panel.
     name: "TN DBT Portal for PFMS",
     description:
-      "The TN DBT Portal for PFMS is TNeGA's institutional platform connecting Tamil Nadu departmental scheme workflows with the central Public Financial Management System (PFMS). It facilitates administrative validation, electronic payment generation through the EAT module, and real-time reconciliation for both State and Centrally Sponsored Schemes (CSS) — covering FY 2024–25 through FY 2026–27.",
+      "The TN DBT Portal for PFMS is TNeGA's institutional platform connecting Tamil Nadu departmental scheme workflows with the central Public Financial Management System (PFMS). It facilitates administrative validation, electronic payment generation through the EAT module, and real-time reconciliation for both State and Centrally Sponsored Schemes (CSS), covering FY 2024–25 through FY 2026–27.",
     stats: "PFMS Integrated · SNA Compliant · Real-time Fund Reconciliation",
     image: pexelsPhoto(STOCK.programmer, 700, 500),
     accessPortalHref: "https://tndbt.tn.gov.in/",
@@ -771,7 +771,7 @@ const serviceItemsRaw: ServiceItem[] = [
     sections: ["services"],
     real: {
       tagline:
-        "The state's institutional platform connecting Tamil Nadu departmental scheme workflows with the Public Financial Management System (PFMS) — enabling administrative validation, electronic payment generation, and real-time fund reconciliation.",
+        "The state's institutional platform connecting Tamil Nadu departmental scheme workflows with the Public Financial Management System (PFMS), enabling administrative validation, electronic payment generation, and real-time fund reconciliation.",
       calloutText:
         "Seamless state-to-central financial management system integration, with automated PFMS beneficiary verification and fund routing.",
       hideAboutSecondParagraph: true,
@@ -828,7 +828,7 @@ const serviceItemsRaw: ServiceItem[] = [
     knowMoreHref: "#",
     sections: ["services"],
     real: {
-      statistics: ["Pilot integration underway — no usage figures available yet"],
+      statistics: ["Pilot integration underway, no usage figures available yet"],
       keyFeatures: ["Single authentication", "Multi-application access", "Centralized identity management"],
       eligibility: ["Your Department is integrating applications under TNSSO."],
       whatYoullNeed: ["Department application integration"],
@@ -842,7 +842,7 @@ const serviceItemsRaw: ServiceItem[] = [
     // deliberately shorter related-card line.
     name: "e-Sign",
     description:
-      "e-Sign is a digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices. It uses Aadhaar-based authentication — via OTP or Biometric/Fingerprint — and complies with CCA (Controller of Certifying Authorities) and UIDAI guidelines.",
+      "e-Sign is a digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices. It uses Aadhaar-based authentication (via OTP or Biometric/Fingerprint) and complies with CCA (Controller of Certifying Authorities) and UIDAI guidelines.",
     stats: "27 Departments Onboarded · 4.35+ Cr e-Signatures Since 2020 · 4 Departments in Integration",
     image: pexelsPhoto(STOCK.itTechnician, 700, 500),
     knowMoreHref: "#",
@@ -851,7 +851,7 @@ const serviceItemsRaw: ServiceItem[] = [
       tagline:
         "A digital signing service that enables citizens and Government Departments to securely sign documents online using computers or mobile devices, with Aadhaar-based authentication (OTP and Biometric/Fingerprint), compliant with CCA and UIDAI guidelines.",
       aboutSecondParagraph:
-        "e-Sign is integrated across multiple Government Departments through C-DAC and eMudhra, with 27 Departments currently onboarded and 4 more in integration. Since 2020, the platform has processed 4.35+ crore e-Signatures — with usage projected to cross 6 crore by 2026–27.",
+        "e-Sign is integrated across multiple Government Departments through C-DAC and eMudhra, with 27 Departments currently onboarded and 4 more in integration. Since 2020, the platform has processed 4.35+ crore e-Signatures, with usage projected to cross 6 crore by 2026–27.",
       relatedCardStats: "27 Departments Onboarded · 4.35+ Cr e-Signatures",
       statistics: ["27 Departments Onboarded", "4.35+ Cr e-Signatures Since 2020", "4 Departments in Integration"],
       hideStatFeatureCards: true,

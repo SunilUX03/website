@@ -11,7 +11,7 @@ import { ApplicationForm } from "@/components/careers/ApplicationForm";
 import { hero } from "@/lib/careers-content";
 
 export const metadata: Metadata = {
-  title: "Careers — TNeGA",
+  title: "Careers | TNeGA",
   description:
     "Join Tamil Nadu e-Governance Agency. Explore current openings across project management, data, GIS, AI/ML and security, and apply online.",
 };

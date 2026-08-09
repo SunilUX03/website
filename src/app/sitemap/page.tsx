@@ -7,7 +7,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
-  title: "Site Map — TNeGA",
+  title: "Site Map | TNeGA",
   description: "A full list of pages on the Tamil Nadu e-Governance Agency website.",
 };
 

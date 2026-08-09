@@ -9,7 +9,7 @@ import { AnnouncementList } from "@/components/announcements/AnnouncementList";
 import { hero } from "@/lib/announcements-content";
 
 export const metadata: Metadata = {
-  title: "Announcements — TNeGA",
+  title: "Announcements | TNeGA",
   description:
     "Launches, milestones and service updates from Tamil Nadu e-Governance Agency.",
 };

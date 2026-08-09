@@ -83,9 +83,9 @@ export const hero = {
 };
 
 export const ticker = [
-  { type: "link", text: "SimpleGov launched by Hon'ble CM on 29 May 2025 — 10 services live", href: "/notifications/announcements/simplegov-launch" },
-  { type: "cta", text: "Namma Arasu WhatsApp governance — 51 services on 7845252525", ctaLabel: "Message Now", href: "/services/citizen/namma-arasu" },
-  { type: "link", text: "CM Award for e-Governance Students — Applications open", href: "/notifications/announcements/cm-award" },
+  { type: "link", text: "SimpleGov launched by Hon'ble CM on 29 May 2025: 10 services live", href: "/notifications/announcements/simplegov-launch" },
+  { type: "cta", text: "Namma Arasu WhatsApp governance: 51 services on 7845252525", ctaLabel: "Message Now", href: "/services/citizen/namma-arasu" },
+  { type: "link", text: "CM Award for e-Governance Students: Applications open", href: "/notifications/announcements/cm-award" },
   { type: "cta", text: "e-Sevai Helpline: 1800-42-56000", ctaLabel: "Call now", href: "tel:1800-42-56000" },
 ] as const;
 
@@ -138,7 +138,7 @@ export const pillars = [
     linkLabel: "View all Services",
     itemNames: [
       "Nambikkai Inaiyam",
-      "DBT — Direct Benefit Transfer Portal",
+      "DBT (Direct Benefit Transfer Portal)",
       "TNSSO",
       "e-Sign",
       "SMS & WhatsApp Gateway",
@@ -178,7 +178,7 @@ export const projects = [
     slug: "namma-arasu",
     name: "Namma Arasu",
     description:
-      "Get government services directly on WhatsApp. Message 7845252525 to access 51 services across 16 departments — in Tamil or English, anytime, anywhere.",
+      "Get government services directly on WhatsApp. Message 7845252525 to access 51 services across 16 departments, in Tamil or English, anytime, anywhere.",
     stats: [
       { value: 51, suffix: "", label: "Services" },
       { value: 16, suffix: "", label: "Departments" },
@@ -193,7 +193,7 @@ export const projects = [
     slug: "tn-gis",
     name: "TN GIS",
     description:
-      "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops — all in one place.",
+      "Click anywhere on the map to get land parcel details, ownership records, guideline values, nearest hospitals, schools and ration shops, all in one place.",
     stats: [{ value: 400, suffix: "+", label: "Spatial Layers" }],
     ctas: [
       { label: "Access Portal", href: "https://tngis.tn.gov.in" },
@@ -205,7 +205,7 @@ export const projects = [
     slug: "umis",
     name: "UMIS",
     description:
-      "A single platform for all higher education institutions in Tamil Nadu — maintaining student information, courses and university data integrated with scholarship portals.",
+      "A single platform for all higher education institutions in Tamil Nadu, maintaining student information, courses and university data integrated with scholarship portals.",
     stats: [
       { value: 29, suffix: " Lakh", label: "Students" },
       { value: 81, suffix: "", label: "Universities" },
@@ -373,7 +373,7 @@ export const ecosystem = [
 export const footer = {
   description: "Powering Digital Governance in Tamil Nadu",
   address:
-    "2nd & 7th Floor, PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai — 600 002",
+    "2nd & 7th Floor, PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai, 600 002",
   // Same address as above, used to build a Google Maps "View Directions" link.
   mapsHref:
     "https://www.google.com/maps/search/?api=1&query=" +
@@ -396,7 +396,6 @@ export const footer = {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Services", href: "/services" },
-    { label: "Notifications", href: "/notifications" },
     { label: "Careers", href: "/about/careers" },
     { label: "RTI", href: "/notifications/rti" },
   ],

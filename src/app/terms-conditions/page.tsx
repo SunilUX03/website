@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalPageShell, LegalSection } from "@/components/legal/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — TNeGA",
+  title: "Terms & Conditions | TNeGA",
   description: "Terms and conditions governing the use of the Tamil Nadu e-Governance Agency website.",
 };
 
@@ -44,7 +44,7 @@ export default function TermsConditions() {
 
       <LegalSection heading="4. Copyright and trademarks">
         <p>
-          Content on this website — including text, graphics and the TNeGA name and logo — is the
+          Content on this website, including text, graphics and the TNeGA name and logo, is the
           property of TNeGA or the Government of Tamil Nadu unless otherwise stated, and may not be
           reproduced without prior written permission, except for personal or non-commercial use.
         </p>

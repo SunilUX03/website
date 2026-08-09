@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { FeedbackForm } from "@/components/legal/FeedbackForm";
 
 export const metadata: Metadata = {
-  title: "Feedback — TNeGA",
+  title: "Feedback | TNeGA",
   description: "Share your feedback, questions or comments with the Tamil Nadu e-Governance Agency.",
 };
 

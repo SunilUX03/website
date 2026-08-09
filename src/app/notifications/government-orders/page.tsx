@@ -16,7 +16,7 @@ import {
 } from "@/lib/government-orders-content";
 
 export const metadata: Metadata = {
-  title: "Government Orders — TNeGA",
+  title: "Government Orders | TNeGA",
   description:
     "Official Government Orders issued by the IT & Digital Services Department and Tamil Nadu e-Governance Agency.",
 };

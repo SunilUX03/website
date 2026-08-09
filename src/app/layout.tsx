@@ -19,9 +19,9 @@ const notoSansTamil = Noto_Sans_Tamil({
 });
 
 export const metadata: Metadata = {
-  title: "TNeGA — Tamil Nadu e-Governance Agency",
+  title: "TNeGA | Tamil Nadu e-Governance Agency",
   description:
-    "Tamil Nadu e-Governance Agency designs, builds and manages large-scale digital platforms that deliver essential government services to citizens and departments — transparently, efficiently and at scale.",
+    "Tamil Nadu e-Governance Agency designs, builds and manages large-scale digital platforms that deliver essential government services to citizens and departments, transparently, efficiently and at scale.",
 };
 
 export default function RootLayout({

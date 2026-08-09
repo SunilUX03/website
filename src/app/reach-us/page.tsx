@@ -7,8 +7,8 @@ import { Container } from "@/components/ui/Container";
 import { footer } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Contact Us — TNeGA",
-  description: "Get in touch with Tamil Nadu e-Governance Agency — helpline, email and office address.",
+  title: "Contact Us | TNeGA",
+  description: "Get in touch with Tamil Nadu e-Governance Agency: helpline, email and office address.",
 };
 
 function PhoneIcon() {

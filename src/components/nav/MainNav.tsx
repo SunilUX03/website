@@ -42,7 +42,7 @@ export function MainNav() {
           <a
             href="/"
             className="flex items-center gap-3"
-            aria-label="TNeGA — Tamil Nadu e-Governance Agency home"
+            aria-label="TNeGA, Tamil Nadu e-Governance Agency home"
           >
             <Image
               src="/images/tn-emblem.png"

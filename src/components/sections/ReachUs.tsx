@@ -59,7 +59,7 @@ export function ReachUs() {
           <ReachUsPanel
             eyebrow="Support"
             title="Reach Us"
-            description="Raise a ticket with our support team through the official TNeGA ticketing portal — login required to track your request."
+            description="Raise a ticket with our support team through the official TNeGA ticketing portal. Login required to track your request."
             ctaLabel="Raise a Ticket"
             href="/reach-us"
             icon={

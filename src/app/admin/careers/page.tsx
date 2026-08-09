@@ -73,7 +73,7 @@ export default async function AdminCareersPage() {
                       {app.coverNote ? (
                         <span className="line-clamp-2">{app.coverNote}</span>
                       ) : (
-                        <span className="text-[var(--color-muted-soft)]">—</span>
+                        <span className="text-[var(--color-muted-soft)]">Not provided</span>
                       )}
                     </td>
                     <td className="px-4 py-3">

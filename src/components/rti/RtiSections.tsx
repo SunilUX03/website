@@ -71,7 +71,7 @@ export function DisclosureTable() {
     <section className="py-xxl md:py-section">
       <Container>
         <SectionHead
-          heading="RTI Act 2005 — Disclosures under Section 4(1)(b)"
+          heading="RTI Act 2005: Disclosures under Section 4(1)(b)"
           sub="Mandatory proactive disclosures as required under the Right to Information Act, 2005."
           id="disclosure-heading"
         />
@@ -123,7 +123,7 @@ export function DisclosureTable() {
                       <td
                         className={clsx(
                           "border-t border-hairline-soft px-4 py-4 text-sm",
-                          row.info === "—"
+                          row.info === "Not Applicable"
                             ? "text-[var(--color-muted-soft)]"
                             : "text-[var(--color-body)]"
                         )}

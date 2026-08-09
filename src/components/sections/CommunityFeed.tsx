@@ -89,6 +89,17 @@ function VerticalDrift<T>({
     reducedMotionRef.current = reducedMotion;
   }, [reducedMotion]);
 
+  // The actual drift position, tracked as its own float — NOT derived by
+  // reading `el.scrollTop` back each frame. DRIFT_SPEED (22px/sec) means
+  // well under 1px per frame at any normal refresh rate (e.g. ~0.37px at
+  // 60Hz, ~0.18px at 120Hz), but `scrollTop` rounds to a whole pixel on
+  // read in at least some browsers. Using it as the running total meant
+  // each frame recomputed "0 (rounded-down last value) + a sub-pixel
+  // increment", which rounds straight back to 0 forever — the drift never
+  // visibly moved at all, on any device, which is exactly what real
+  // reports of "auto-scroll isn't working" turned out to be measuring.
+  const scrollPos = useRef(0);
+
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -97,10 +108,14 @@ function VerticalDrift<T>({
     const step = (time: number) => {
       const dt = (time - last) / 1000;
       last = time;
-      if (!paused.current && !reducedMotionRef.current && loopHeight.current > 0) {
-        let next = el.scrollTop + DRIFT_SPEED * dt;
-        if (next >= loopHeight.current) next -= loopHeight.current;
-        el.scrollTop = next;
+      if (paused.current) {
+        // Stay in sync with wherever the user actually scrolled to, so
+        // resuming continues smoothly instead of jumping to a stale value.
+        scrollPos.current = el.scrollTop;
+      } else if (!reducedMotionRef.current && loopHeight.current > 0) {
+        scrollPos.current += DRIFT_SPEED * dt;
+        if (scrollPos.current >= loopHeight.current) scrollPos.current -= loopHeight.current;
+        el.scrollTop = scrollPos.current;
       }
       raf = requestAnimationFrame(step);
     };

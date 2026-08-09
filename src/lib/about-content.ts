@@ -51,13 +51,13 @@ export const whatWeDo = [
   {
     title: "Paperless Governance",
     description:
-      "Transform every government institution to be hassle-free, transparent and free of physical touchpoints — from the Secretariat to the last mile.",
+      "Transform every government institution to be hassle-free, transparent and free of physical touchpoints, from the Secretariat to the last mile.",
     image: pexelsPhoto(STOCK.officeBuilding, 300, 300),
   },
   {
     title: "Force Multiplier",
     description:
-      "Build shared digital infrastructure that departments can plug into — reducing cost, time and duplication across government.",
+      "Build shared digital infrastructure that departments can plug into, reducing cost, time and duplication across government.",
     image: pexelsPhoto(STOCK.networkRack, 300, 300),
   },
   {
@@ -75,7 +75,7 @@ export const whatWeDo = [
   {
     title: "Data-Driven Governance",
     description:
-      "Build systems that ensure correct benefits reach the correct person — through clean, integrated and secure data across departments.",
+      "Build systems that ensure correct benefits reach the correct person, through clean, integrated and secure data across departments.",
     image: pexelsPhoto(STOCK.itTechnician, 300, 300),
   },
 ];
@@ -87,7 +87,7 @@ export const ecosystemRings = [
     name: "ELCOT",
     year: 1977,
     description:
-      "Electronics Corporation of Tamil Nadu — the state's pioneering IT infrastructure and hardware/software procurement agency.",
+      "Electronics Corporation of Tamil Nadu, the state's pioneering IT infrastructure and hardware/software procurement agency.",
   },
   {
     name: "Tamil Virtual Academy",
@@ -111,13 +111,13 @@ export const ecosystemRings = [
     name: "TACTV",
     year: 2011,
     description:
-      "Tamil Nadu Arasu Cable TV Corporation — delivering digital cable television access statewide.",
+      "Tamil Nadu Arasu Cable TV Corporation, delivering digital cable television access statewide.",
   },
   {
     name: "TANFINET",
     year: 2018,
     description:
-      "Tamil Nadu Fibernet Corporation — the state's optical fibre backbone connecting every village.",
+      "Tamil Nadu Fibernet Corporation, the state's optical fibre backbone connecting every village.",
   },
   {
     name: "iTNT Hub",
@@ -161,11 +161,11 @@ export const teamCeo = {
 // rather than a person's photo, so it never reads as an actual named
 // individual.
 export const team = [
-  { name: "Tmt. Priya", designation: "General Manager — Procurement/ DRO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
-  { name: "Thiru. Rajarajan", designation: "General Manager — Procurement/ DRO", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
-  { name: "Tmt. Preethi Parkavi", designation: "General Manager — e-Sevai/ DRO", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
-  { name: "Vacant", designation: "General Manager — Technical", photo: pexelsPhoto(STOCK.officeBuilding, 320, 320) },
-  { name: "Thiru. Jayachandran", designation: "General Manager/ Program Director — GIS", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
+  { name: "Tmt. Priya", designation: "General Manager", subject: "Procurement/ DRO", photo: pexelsPhoto(STOCK.developer, 320, 320) },
+  { name: "Thiru. Rajarajan", designation: "General Manager", subject: "Procurement/ DRO", photo: pexelsPhoto(STOCK.programmer, 320, 320) },
+  { name: "Tmt. Preethi Parkavi", designation: "General Manager", subject: "e-Sevai/ DRO", photo: pexelsPhoto(STOCK.itTechnician, 320, 320) },
+  { name: "Vacant", designation: "General Manager", subject: "Technical", photo: pexelsPhoto(STOCK.officeBuilding, 320, 320) },
+  { name: "Thiru. Jayachandran", designation: "General Manager/ Program Director", subject: "GIS", photo: pexelsPhoto(STOCK.engineerAudit, 320, 320) },
 ];
 
 // Real Governing Board composition, per the official list. Chairman and
@@ -214,14 +214,14 @@ export const awards = [
     title: "Chief Minister's Best Practices Award",
     year: "2023",
     description:
-      "Awarded to TNeGA for the mobile app and real-time dashboard built to monitor the Chief Minister's Breakfast Scheme — tracking implementation in every school from meal preparation through to serving, with GPS-tracked food delivery.",
+      "Awarded to TNeGA for the mobile app and real-time dashboard built to monitor the Chief Minister's Breakfast Scheme, tracking implementation in every school from meal preparation through to serving, with GPS-tracked food delivery.",
     image: pexelsPhoto(STOCK.presentation, 700, 500),
   },
   {
     title: "SKOCH Silver Award",
     year: "2025",
     description:
-      "Awarded to the University Management Information System (UMIS) — TNeGA's single-window platform integrating student, institution and course data across higher education in Tamil Nadu.",
+      "Awarded to the University Management Information System (UMIS), TNeGA's single-window platform integrating student, institution and course data across higher education in Tamil Nadu.",
     image: pexelsPhoto(STOCK.dataCenter, 700, 500),
   },
   {
@@ -235,14 +235,14 @@ export const awards = [
     title: "SKOCH Gold Award",
     year: "2022",
     description:
-      "Awarded for the Moovalur Ramamirtham Ammaiyar Higher Education Assurance Scheme (Pudhumai Penn) — TNeGA's paperless DBT scholarship platform supporting higher education for girl students from Government schools.",
+      "Awarded for the Moovalur Ramamirtham Ammaiyar Higher Education Assurance Scheme (Pudhumai Penn), TNeGA's paperless DBT scholarship platform supporting higher education for girl students from Government schools.",
     image: pexelsPhoto(STOCK.studentLaptop, 700, 500),
   },
   {
     title: "SKOCH Gold Award",
     year: "2025",
     description:
-      "Awarded for the Tamil Pudhalvan Scheme — TNeGA's paperless DBT scholarship platform supporting higher education for boy students from Government schools, integrated with UMIS.",
+      "Awarded for the Tamil Pudhalvan Scheme, TNeGA's paperless DBT scholarship platform supporting higher education for boy students from Government schools, integrated with UMIS.",
     image: pexelsPhoto(STOCK.workshopGroup, 700, 500),
   },
   {
@@ -269,9 +269,9 @@ export const awards = [
 ];
 
 // Real historical Director/CEO list, as supplied. Ordered most-recent-first
-// (index 0 = present, matching `teamCeo` above). The final entry has no
-// named officer in the source list, so it stays designation-only — never a
-// fabricated name.
+// (index 0 = present, matching `teamCeo` above). The final two "Officer on
+// Special Duty" entries are the same person (Mr. Atul Anand) across two
+// consecutive stints, merged into one row per explicit instruction.
 export const rollOfHonour = [
   { designation: "Director / CEO", name: teamCeo.name, range: "July 2026 – Present" },
   { designation: "Director / CEO", name: "Dr. Alby John Varghese, I.A.S.", range: "25 Jun 2025 – 30 Jul 2026" },
@@ -297,8 +297,11 @@ export const rollOfHonour = [
     name: "Mr. Sunil Paliwal, IAS",
     range: "14 Jan 2007 – 30 Jun 2007",
   },
-  { designation: "Officer on Special Duty", name: "Mr. Atul Anand, IAS", range: "29 Dec 2006 – 30 Dec 2006" },
-  { designation: "Officer on Special Duty I/c", range: "30 Dec 2006 – 04 Jun 2007" },
+  {
+    designation: "Officer on Special Duty and Officer on Special Duty i/c.",
+    name: "Mr. Atul Anand, IAS",
+    range: "29 Dec 2006 – 04 Jun 2007",
+  },
 ] as { designation: string; name?: string; range?: string }[];
 
 export const connectWithUs = {

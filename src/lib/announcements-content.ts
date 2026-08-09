@@ -14,7 +14,7 @@ export { announcements };
 export const hero = {
   eyebrow: "Updates",
   heading: "Announcements",
-  body: "Launches, milestones and service updates from Tamil Nadu e-Governance Agency — the latest news on the platforms that deliver government services across the state.",
+  body: "Launches, milestones and service updates from Tamil Nadu e-Governance Agency, the latest news on the platforms that deliver government services across the state.",
   orbs: [
     { color: "lavender", className: "-left-16 -top-24 h-[420px] w-[420px]" },
     { color: "mint", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },

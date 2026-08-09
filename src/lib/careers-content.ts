@@ -17,7 +17,7 @@
 export const hero = {
   eyebrow: "Join Us",
   heading: "Build Tamil Nadu's Digital Future",
-  body: "At TNeGA, your work doesn't just run on servers — it runs on the lives of millions of Tamil Nadu citizens. Join a team that builds real technology for real governance challenges at a scale very few organisations in the country can match.",
+  body: "At TNeGA, your work doesn't just run on servers, it runs on the lives of millions of Tamil Nadu citizens. Join a team that builds real technology for real governance challenges at a scale very few organisations in the country can match.",
   cta: { label: "View Openings", href: "#openings" },
   orbs: [
     { color: "mint", className: "-left-20 -top-32 h-[440px] w-[440px]" },
@@ -35,7 +35,7 @@ export type JobOpening = {
 
 export const openings: JobOpening[] = [
   {
-    role: "Project Manager — e-Governance",
+    role: "Project Manager, e-Governance",
     type: "Contract",
     department: "IT Consultancy & Project Management",
     deadline: "31 July 2026",
@@ -51,7 +51,7 @@ export const openings: JobOpening[] = [
   {
     role: "GIS Specialist",
     type: "Contract",
-    department: "TNGIS — Tamil Nadu GIS",
+    department: "TNGIS (Tamil Nadu GIS)",
     deadline: "15 August 2026",
     jdHref: "/documents/careers/gis-specialist.pdf",
   },
@@ -105,7 +105,7 @@ export const applicationSteps: ApplicationStep[] = [
 /** Options for the "Role Applied For" select on the application form. */
 export const roleOptions = [
   { value: "", label: "Select a role" },
-  { value: "pm", label: "Project Manager — e-Governance" },
+  { value: "pm", label: "Project Manager, e-Governance" },
   { value: "da", label: "Data Analyst" },
   { value: "gis", label: "GIS Specialist" },
   { value: "aiml", label: "AI / ML Engineer" },

@@ -96,7 +96,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
   // a wide aspect is fine.
   const realProductTour = item.real?.productTour;
   const screenshotImages = realProductTour ?? generateScreenshotImages(item);
-  const productTourCaption = item.real?.productTourCaption ?? "Illustrative — production screenshots to be added.";
+  const productTourCaption = item.real?.productTourCaption ?? "Illustrative photos. Production screenshots will be added soon.";
   const contactEmail = item.real?.contact?.email ?? footer.email;
   const contactPhone = item.real?.contact?.phone ?? footer.phone;
   const related = allServiceItems.filter((sibling) => sibling.section === item.section && sibling.slug !== item.slug).slice(0, 8);
@@ -235,7 +235,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
               ) : (
                 <>
                   <p className="type-body-md text-ink">{pullQuote.quote}</p>
-                  <p className="type-caption mt-4 text-[var(--color-muted)]">— {pullQuote.source}</p>
+                  <p className="type-caption mt-4 text-[var(--color-muted)]">Source: {pullQuote.source}</p>
                 </>
               )}
             </div>
@@ -348,7 +348,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                 <>
                   <h3 className="type-title-sm mb-3 text-ink">Launching soon</h3>
                   <p className="type-body-sm mb-4 text-[var(--color-body)]">
-                    {`${item.name} isn't live yet — reach out to TNeGA for launch updates.`}
+                    {`${item.name} isn't live yet. Reach out to TNeGA for launch updates.`}
                   </p>
                   <a href="#contact" className="type-button btn-primary">
                     Contact TNeGA
@@ -370,7 +370,7 @@ export function ServiceDetailContent({ item }: { item: ServiceItemDetail }) {
                 <>
                   <h3 className="type-title-sm mb-3 text-ink">Availability</h3>
                   <p className="type-body-sm mb-4 text-[var(--color-body)]">
-                    {`${item.name} is a department-facing service coordinated through TNeGA — there's no direct self-service portal for it.`}
+                    {`${item.name} is a department-facing service coordinated through TNeGA. There's no direct self-service portal for it.`}
                   </p>
                   <a href="/reach-us" className="type-button btn-primary">
                     Avail Service
