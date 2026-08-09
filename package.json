@@ -2,6 +2,7 @@
   "name": "tnega-web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,18 +10,26 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate deploy",
-    "db:seed-admin": "tsx prisma/seed-admin.ts"
+    "db:seed-admin": "tsx prisma/seed-admin.ts",
+    "cms:migrate:create": "payload migrate:create",
+    "cms:migrate": "payload migrate"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.87.1",
+    "@payloadcms/next": "^3.87.1",
+    "@payloadcms/richtext-lexical": "^3.87.1",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.43.0",
+    "graphql": "^16.14.2",
     "next": "16.2.12",
     "next-auth": "^5.0.0-beta.32",
+    "payload": "^3.87.1",
     "prisma": "^6.19.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
