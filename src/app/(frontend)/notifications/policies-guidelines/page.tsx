@@ -9,11 +9,11 @@ import { PoliciesGraphic } from "@/components/heroes/PoliciesGraphic";
 import {
   hero,
   tableHeaders,
-  facets,
-  rows,
+  buildFacets,
   searchPlaceholder,
   noResultsText,
 } from "@/lib/policies-guidelines-content";
+import { getPolicyRows } from "@/lib/cms/policies";
 
 export const metadata: Metadata = {
   title: "Policies & Guidelines | TNeGA",
@@ -21,7 +21,11 @@ export const metadata: Metadata = {
     "Cybersecurity, data and e-Governance standards and guidelines issued by Tamil Nadu e-Governance Agency.",
 };
 
-export default function PoliciesGuidelines() {
+export const revalidate = 60;
+
+export default async function PoliciesGuidelines() {
+  const rows = await getPolicyRows();
+
   return (
     <>
       <TopNav />
@@ -31,7 +35,7 @@ export default function PoliciesGuidelines() {
         <DocumentTable
           rows={rows}
           headers={tableHeaders}
-          facets={facets}
+          facets={buildFacets(rows)}
           searchPlaceholder={searchPlaceholder}
           searchAriaLabel="Search policies and guidelines"
           filterBarLabel="Filter policies and guidelines"

@@ -9,11 +9,11 @@ import { GovernmentOrdersGraphic } from "@/components/heroes/GovernmentOrdersGra
 import {
   hero,
   tableHeaders,
-  facets,
-  rows,
+  buildFacets,
   searchPlaceholder,
   noResultsText,
 } from "@/lib/government-orders-content";
+import { getGovernmentOrderRows } from "@/lib/cms/government-orders";
 
 export const metadata: Metadata = {
   title: "Government Orders | TNeGA",
@@ -21,7 +21,11 @@ export const metadata: Metadata = {
     "Official Government Orders issued by the IT & Digital Services Department and Tamil Nadu e-Governance Agency.",
 };
 
-export default function GovernmentOrders() {
+export const revalidate = 60;
+
+export default async function GovernmentOrders() {
+  const rows = await getGovernmentOrderRows();
+
   return (
     <>
       <TopNav />
@@ -31,7 +35,7 @@ export default function GovernmentOrders() {
         <DocumentTable
           rows={rows}
           headers={tableHeaders}
-          facets={facets}
+          facets={buildFacets(rows)}
           searchPlaceholder={searchPlaceholder}
           searchAriaLabel="Search government orders"
           filterBarLabel="Filter government orders"

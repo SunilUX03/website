@@ -1,39 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { ticker } from "@/lib/content";
+import type { CmsAnnouncement } from "@/lib/cms/announcement-types";
 import { useReducedMotion } from "@/lib/hooks";
 
-function TickerItem({ item }: { item: (typeof ticker)[number] }) {
-  if (item.type === "link") {
-    return (
-      <a
-        href={item.href}
-        className="type-body-sm shrink-0 whitespace-nowrap text-ink underline decoration-hairline-strong underline-offset-4 hover:text-[var(--color-primary-blue)]"
-      >
-        {item.text}
-      </a>
-    );
-  }
+function TickerItem({ item }: { item: CmsAnnouncement }) {
   return (
-    <span className="type-body-sm shrink-0 whitespace-nowrap text-ink">
-      {item.text}{" "}
-      <a
-        href={item.href}
-        className="font-medium text-[var(--color-primary-blue)] underline underline-offset-4"
-      >
-        {item.ctaLabel}
-      </a>
-    </span>
+    <a
+      href={item.href}
+      className="type-body-sm shrink-0 whitespace-nowrap text-ink underline decoration-hairline-strong underline-offset-4 hover:text-[var(--color-primary-blue)]"
+    >
+      {item.heading}
+    </a>
   );
 }
 
-export function Scroller() {
+export function Scroller({ items }: { items: CmsAnnouncement[] }) {
   const reducedMotion = useReducedMotion();
   const [userPaused, setUserPaused] = useState(false);
   const paused = reducedMotion || userPaused;
 
-  const track = [...ticker, ...ticker];
+  if (items.length === 0) return null;
+  const track = [...items, ...items];
 
   return (
     <div className="w-full border-b border-hairline bg-canvas-soft">

@@ -9,7 +9,7 @@ import { CommunityFeed } from "@/components/sections/CommunityFeed";
 import { ReachUs } from "@/components/sections/ReachUs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { getAnnouncements } from "@/lib/cms/announcements";
+import { getAnnouncements, getTickerAnnouncements } from "@/lib/cms/announcements";
 import { getHeroContent } from "@/lib/cms/hero-content";
 import { getLeadershipBand } from "@/lib/cms/leadership-band";
 import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
@@ -25,8 +25,9 @@ import { pillars } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function Home() {
-  const [announcements, hero, leadershipBand, allServiceItems] = await Promise.all([
+  const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems] = await Promise.all([
     getAnnouncements(),
+    getTickerAnnouncements(),
     getHeroContent(),
     getLeadershipBand(),
     getAllServiceItems(),
@@ -38,7 +39,7 @@ export default async function Home() {
       <TopNav />
       <main className="flex-1">
         <Hero hero={hero} />
-        <Scroller />
+        <Scroller items={tickerAnnouncements} />
         <AboutLeadership band={leadershipBand} />
         <Metrics />
         <PillarCards pillarItems={pillarItems} />

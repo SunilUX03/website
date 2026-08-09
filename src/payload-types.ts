@@ -74,6 +74,10 @@ export interface Config {
     'job-openings': JobOpening;
     'team-members': TeamMember;
     services: Service;
+    documents: Document;
+    'government-orders': GovernmentOrder;
+    policies: Policy;
+    'activity-log': ActivityLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +92,10 @@ export interface Config {
     'job-openings': JobOpeningsSelect<false> | JobOpeningsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    documents: DocumentsSelect<false> | DocumentsSelect<true>;
+    'government-orders': GovernmentOrdersSelect<false> | GovernmentOrdersSelect<true>;
+    policies: PoliciesSelect<false> | PoliciesSelect<true>;
+    'activity-log': ActivityLogSelect<false> | ActivityLogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -253,6 +261,14 @@ export interface Announcement {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Show this announcement in the homepage scrolling ticker.
+   */
+  tickerFeatured?: boolean | null;
+  /**
+   * Lower numbers show first in the ticker. Only matters when "Show in ticker" is checked.
+   */
+  tickerOrder?: number | null;
   /**
    * Optional related links shown on the detail page (e.g. to a service or Government Orders).
    */
@@ -515,6 +531,87 @@ export interface Service {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  /**
+   * Shown in the media library list — not on the public site.
+   */
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "government-orders".
+ */
+export interface GovernmentOrder {
+  id: number;
+  /**
+   * e.g. "G.O. (Ms).No. 2"
+   */
+  title: string;
+  year: string;
+  /**
+   * Shown as a badge, e.g. "IT&DS Department"
+   */
+  department: string;
+  file: number | Document;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies".
+ */
+export interface Policy {
+  id: number;
+  /**
+   * e.g. "Cyber Security Policy 2020"
+   */
+  title: string;
+  year: string;
+  /**
+   * Shown as a badge, e.g. "Cyber Security"
+   */
+  category: string;
+  file: number | Document;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity-log".
+ */
+export interface ActivityLog {
+  id: number;
+  userEmail: string;
+  action: 'created' | 'updated' | 'published' | 'unpublished' | 'deleted';
+  /**
+   * e.g. "Announcements", "Services"
+   */
+  section: string;
+  /**
+   * e.g. "Updated "e-Sevai Portal""
+   */
+  summary: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -564,6 +661,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'services';
         value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'documents';
+        value: number | Document;
+      } | null)
+    | ({
+        relationTo: 'government-orders';
+        value: number | GovernmentOrder;
+      } | null)
+    | ({
+        relationTo: 'policies';
+        value: number | Policy;
+      } | null)
+    | ({
+        relationTo: 'activity-log';
+        value: number | ActivityLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -692,6 +805,8 @@ export interface AnnouncementsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  tickerFeatured?: T;
+  tickerOrder?: T;
   links?:
     | T
     | {
@@ -854,6 +969,62 @@ export interface ServicesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents_select".
+ */
+export interface DocumentsSelect<T extends boolean = true> {
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "government-orders_select".
+ */
+export interface GovernmentOrdersSelect<T extends boolean = true> {
+  title?: T;
+  year?: T;
+  department?: T;
+  file?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies_select".
+ */
+export interface PoliciesSelect<T extends boolean = true> {
+  title?: T;
+  year?: T;
+  category?: T;
+  file?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity-log_select".
+ */
+export interface ActivityLogSelect<T extends boolean = true> {
+  userEmail?: T;
+  action?: T;
+  section?: T;
+  summary?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

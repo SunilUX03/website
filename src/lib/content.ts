@@ -18,12 +18,9 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 // different homepage sections that happened to share one static object
 // before this migration.
 
-export const ticker = [
-  { type: "link", text: "SimpleGov launched by Hon'ble CM on 29 May 2025: 10 services live", href: "/notifications/announcements/simplegov-launch" },
-  { type: "cta", text: "Namma Arasu WhatsApp governance: 51 services on 7845252525", ctaLabel: "Message Now", href: "/services/citizen/namma-arasu" },
-  { type: "link", text: "CM Award for e-Governance Students: Applications open", href: "/notifications/announcements/cm-award" },
-  { type: "cta", text: "e-Sevai Helpline: 1800-42-56000", ctaLabel: "Call now", href: "tel:1800-42-56000" },
-] as const;
+// ticker used to live here — it's now derived from Announcements flagged
+// "Show in ticker" (see getTickerAnnouncements in lib/cms/announcements.ts),
+// so it can never drift out of sync with an announcement's own content.
 
 /**
  * The three "Enabling Digital Governance" bands on Home. Each pairs a

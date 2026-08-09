@@ -13,6 +13,10 @@ import { MediaItems } from "./collections/MediaItems";
 import { JobOpenings } from "./collections/JobOpenings";
 import { TeamMembers } from "./collections/TeamMembers";
 import { Services } from "./collections/Services";
+import { Documents } from "./collections/Documents";
+import { GovernmentOrders } from "./collections/GovernmentOrders";
+import { Policies } from "./collections/Policies";
+import { ActivityLog } from "./collections/ActivityLog";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
@@ -32,7 +36,19 @@ export default buildConfig({
     admin: "/cms",
     api: "/api/payload",
   },
-  collections: [CmsUsers, Media, Announcements, MediaItems, JobOpenings, TeamMembers, Services],
+  collections: [
+    CmsUsers,
+    Media,
+    Announcements,
+    MediaItems,
+    JobOpenings,
+    TeamMembers,
+    Services,
+    Documents,
+    GovernmentOrders,
+    Policies,
+    ActivityLog,
+  ],
   globals: [NavContent, BoardContent, HeroContent, LeadershipBandContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
@@ -60,7 +76,7 @@ export default buildConfig({
     // store that works identically once self-hosted later too (it's just
     // a network API, not tied to Vercel's compute).
     vercelBlobStorage({
-      collections: { [Media.slug]: true },
+      collections: { [Media.slug]: true, [Documents.slug]: true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],

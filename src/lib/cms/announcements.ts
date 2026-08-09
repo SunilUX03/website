@@ -57,3 +57,20 @@ export async function getAnnouncementBySlug(slug: string): Promise<CmsAnnounceme
 }
 
 export { yearOf, yearsOf } from "@/lib/cms/announcement-types";
+
+/** Announcements the admin has flagged for the homepage ticker, in the
+ * priority order they set — replaces the old hand-typed `ticker` array
+ * in lib/content.ts, so the ticker never needs a separate manual update
+ * from the announcement it's actually about. */
+export async function getTickerAnnouncements(): Promise<CmsAnnouncement[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "announcements",
+    depth: 0,
+    where: { tickerFeatured: { equals: true } },
+    sort: "tickerOrder",
+    limit: 50,
+    overrideAccess: false,
+  });
+  return result.docs.map(toCmsAnnouncement);
+}

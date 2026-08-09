@@ -109,6 +109,22 @@ export const Announcements: CollectionConfig = {
       ],
     },
     {
+      name: "tickerFeatured",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description: "Show this announcement in the homepage scrolling ticker.",
+      },
+    },
+    {
+      name: "tickerOrder",
+      type: "number",
+      defaultValue: 0,
+      admin: {
+        description: "Lower numbers show first in the ticker. Only matters when \"Show in ticker\" is checked.",
+      },
+    },
+    {
       name: "links",
       type: "array",
       admin: {

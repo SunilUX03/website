@@ -8,6 +8,7 @@ import * as migration_20260809_171259_add_team_members from './20260809_171259_a
 import * as migration_20260809_172326_add_hero_and_leadership_band from './20260809_172326_add_hero_and_leadership_band';
 import * as migration_20260809_173933_add_services from './20260809_173933_add_services';
 import * as migration_20260809_174207_add_suppress_get_started_steps from './20260809_174207_add_suppress_get_started_steps';
+import * as migration_20260809_194046_add_documents_go_policies_activitylog_ticker from './20260809_194046_add_documents_go_policies_activitylog_ticker';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260809_174207_add_suppress_get_started_steps.up,
     down: migration_20260809_174207_add_suppress_get_started_steps.down,
-    name: '20260809_174207_add_suppress_get_started_steps'
+    name: '20260809_174207_add_suppress_get_started_steps',
+  },
+  {
+    up: migration_20260809_194046_add_documents_go_policies_activitylog_ticker.up,
+    down: migration_20260809_194046_add_documents_go_policies_activitylog_ticker.down,
+    name: '20260809_194046_add_documents_go_policies_activitylog_ticker'
   },
 ];
