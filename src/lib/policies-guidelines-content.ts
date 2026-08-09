@@ -1,10 +1,15 @@
 // Content for Policies & Guidelines, ported from the standalone HTML prototype
 // (src_policies-guidelines.html). Table rows, filter options and hero copy were
 // extracted from the prototype markup rather than retyped, so the data
-// matches the source exactly.
+// matches the source exactly. The rows themselves (titles, dates,
+// categories) are still placeholder/demo entries pending a real content
+// brief.
 //
-// Download hrefs are "#" placeholders — the prototype had no real PDF
-// URLs. Swap them for actual document links when those are available.
+// Download hrefs point at /public/documents/policies-guidelines/<row id>.pdf
+// (e.g. policy-01.pdf), matching each row's own `id` above — Next.js
+// serves anything under /public as a static file at that same path, so
+// dropping a real PDF at that exact filename is the only step needed to
+// make a row's download link work; no code change required.
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
 
@@ -60,7 +65,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/CYB/2024/001" },
       { kind: "date", text: "01 Jan 2024" },
       { kind: "badge", text: "Cybersecurity", tone: "pink" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Tamil Nadu Cybersecurity Policy 2024 PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-01.pdf", label: "PDF", ariaLabel: "Download Tamil Nadu Cybersecurity Policy 2024 PDF" },
     ],
   },
   {
@@ -72,7 +77,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/DATA/2023/002" },
       { kind: "date", text: "15 Jun 2023" },
       { kind: "badge", text: "Data Policy", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download State Data Sharing and Accessibility Policy PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-02.pdf", label: "PDF", ariaLabel: "Download State Data Sharing and Accessibility Policy PDF" },
     ],
   },
   {
@@ -84,7 +89,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/STD/2023/003" },
       { kind: "date", text: "01 Mar 2023" },
       { kind: "badge", text: "e-Governance Standards", tone: "violet" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download e-Governance Application Development Standards PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-03.pdf", label: "PDF", ariaLabel: "Download e-Governance Application Development Standards PDF" },
     ],
   },
   {
@@ -96,7 +101,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/CLOUD/2023/004" },
       { kind: "date", text: "01 Feb 2023" },
       { kind: "badge", text: "IT Infrastructure", tone: "amber" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Cloud Computing Policy for Government Departments PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-04.pdf", label: "PDF", ariaLabel: "Download Cloud Computing Policy for Government Departments PDF" },
     ],
   },
   {
@@ -108,7 +113,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/ACC/2022/005" },
       { kind: "date", text: "15 Dec 2022" },
       { kind: "badge", text: "Accessibility", tone: "green" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Website Accessibility Guidelines WCAG 2AA Compliance PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-05.pdf", label: "PDF", ariaLabel: "Download Website Accessibility Guidelines WCAG 2AA Compliance PDF" },
     ],
   },
   {
@@ -120,7 +125,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/SEC/2022/006" },
       { kind: "date", text: "01 Nov 2022" },
       { kind: "badge", text: "Cybersecurity", tone: "pink" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Software Security Audit Guidelines for Departments PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-06.pdf", label: "PDF", ariaLabel: "Download Software Security Audit Guidelines for Departments PDF" },
     ],
   },
   {
@@ -132,7 +137,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/DC/2021/007" },
       { kind: "date", text: "15 Mar 2021" },
       { kind: "badge", text: "IT Infrastructure", tone: "amber" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Data Centre Hosting Policy 2021 PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-07.pdf", label: "PDF", ariaLabel: "Download Data Centre Hosting Policy 2021 PDF" },
     ],
   },
   {
@@ -144,7 +149,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "TNeGA/OD/2021/008" },
       { kind: "date", text: "01 Jan 2021" },
       { kind: "badge", text: "Data Policy", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Open Data Policy Tamil Nadu Government PDF" },
+      { kind: "download", href: "/documents/policies-guidelines/policy-08.pdf", label: "PDF", ariaLabel: "Download Open Data Policy Tamil Nadu Government PDF" },
     ],
   },
 ];

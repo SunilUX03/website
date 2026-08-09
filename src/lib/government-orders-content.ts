@@ -1,10 +1,14 @@
 // Content for Government Orders, ported from the standalone HTML prototype
 // (src_government-orders.html). Table rows, filter options and hero copy were
 // extracted from the prototype markup rather than retyped, so the data
-// matches the source exactly.
+// matches the source exactly. The rows themselves (titles, GO numbers,
+// dates) are still placeholder/demo entries pending a real content brief.
 //
-// Download hrefs are "#" placeholders — the prototype had no real PDF
-// URLs. Swap them for actual document links when those are available.
+// Download hrefs point at /public/documents/government-orders/<row id>.pdf
+// (e.g. go-01.pdf), matching each row's own `id` above — Next.js serves
+// anything under /public as a static file at that same path, so dropping
+// a real PDF at that exact filename is the only step needed to make a
+// row's download link work; no code change required.
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
 
@@ -57,7 +61,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.276, H&FW Dept" },
       { kind: "date", text: "23 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Sanitation Certificate Digitization GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-01.pdf", label: "PDF", ariaLabel: "Download Sanitation Certificate Digitization GO PDF" },
     ],
   },
   {
@@ -69,7 +73,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.64, SW&WW Dept" },
       { kind: "date", text: "19 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Registration of Old Age Homes GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-02.pdf", label: "PDF", ariaLabel: "Download Registration of Old Age Homes GO PDF" },
     ],
   },
   {
@@ -81,7 +85,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.509, Home Dept" },
       { kind: "date", text: "06 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Verification of Characters and Antecedents GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-03.pdf", label: "PDF", ariaLabel: "Download Verification of Characters and Antecedents GO PDF" },
     ],
   },
   {
@@ -93,7 +97,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.221, Agri & FW Dept" },
       { kind: "date", text: "24 Sep 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download NOC for Dryland Non-Agricultural Purposes GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-04.pdf", label: "PDF", ariaLabel: "Download NOC for Dryland Non-Agricultural Purposes GO PDF" },
     ],
   },
   {
@@ -105,7 +109,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.80, SW&WW Dept" },
       { kind: "date", text: "29 Oct 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Registration of Working Women Hostel GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-05.pdf", label: "PDF", ariaLabel: "Download Registration of Working Women Hostel GO PDF" },
     ],
   },
   {
@@ -117,7 +121,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.86, Energy Dept" },
       { kind: "date", text: "29 Aug 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Lift and Escalator License GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-06.pdf", label: "PDF", ariaLabel: "Download Lift and Escalator License GO PDF" },
     ],
   },
   {
@@ -129,7 +133,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.639, Home Dept" },
       { kind: "date", text: "21 Nov 2024" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Fire License GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-07.pdf", label: "PDF", ariaLabel: "Download Fire License GO PDF" },
     ],
   },
   {
@@ -141,7 +145,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.14, IT&DS Dept" },
       { kind: "date", text: "15 Mar 2021" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Data Center Policy 2021 GO PDF" },
+      { kind: "download", href: "/documents/government-orders/go-08.pdf", label: "PDF", ariaLabel: "Download Data Center Policy 2021 GO PDF" },
     ],
   },
   {
@@ -153,7 +157,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.22, IT&DS Dept" },
       { kind: "date", text: "10 Jan 2023" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download e-Office Mandatory Implementation Order PDF" },
+      { kind: "download", href: "/documents/government-orders/go-09.pdf", label: "PDF", ariaLabel: "Download e-Office Mandatory Implementation Order PDF" },
     ],
   },
   {
@@ -165,7 +169,7 @@ export const rows: DocumentRow[] = [
       { kind: "ref", text: "G.O.Ms.No.45, IT&DS Dept" },
       { kind: "date", text: "01 Jun 2023" },
       { kind: "badge", text: "IT&DS Department", tone: "sky" },
-      { kind: "download", href: "#", label: "PDF", ariaLabel: "Download Nambikkai Inaiyam Blockchain Infrastructure Order PDF" },
+      { kind: "download", href: "/documents/government-orders/go-10.pdf", label: "PDF", ariaLabel: "Download Nambikkai Inaiyam Blockchain Infrastructure Order PDF" },
     ],
   },
 ];
