@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      // Where CMS uploads (Media/Documents collections) actually live —
+      // Vercel Blob's public URLs, one subdomain per store. Without this,
+      // next/image throws on any real uploaded photo (only the seed/
+      // placeholder domains above were ever whitelisted), which crashed
+      // the whole page with no error boundary to catch it.
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
     ],
   },
 };
