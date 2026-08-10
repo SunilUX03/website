@@ -31,6 +31,8 @@ export async function addServicesToSpotlight(formData: FormData) {
     collection: "projects-spotlight",
     limit: 200,
     sort: "-order",
+    depth: 0,
+    select: { order: true },
     overrideAccess: true,
   });
   let nextOrder = (existing[0]?.order ?? -1) + 1;
@@ -80,6 +82,44 @@ export async function deleteProjectSpotlight(id: number, label: string) {
   const payload = await getPayloadClient();
   await payload.delete({ collection: "projects-spotlight", id, overrideAccess: true });
   await logActivity(user, "deleted", "Projects Spotlight", `Removed "${label}" from the spotlight`);
+  revalidatePath("/", "layout");
+  redirect("/cms/projects-spotlight");
+}
+
+export async function moveProjectSpotlight(id: number, direction: "up" | "down") {
+  await requireSession();
+  const payload = await getPayloadClient();
+  const { docs } = await payload.find({
+    collection: "projects-spotlight",
+    sort: "order",
+    limit: 200,
+    depth: 0,
+    select: { order: true, _status: true },
+    draft: true,
+    overrideAccess: true,
+  });
+
+  const index = docs.findIndex((d) => d.id === id);
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (index === -1 || swapIndex < 0 || swapIndex >= docs.length) {
+    revalidatePath("/", "layout");
+    redirect("/cms/projects-spotlight");
+  }
+
+  const current = docs[index];
+  const neighbor = docs[swapIndex];
+
+  await Promise.all(
+    [
+      [current, neighbor.order] as const,
+      [neighbor, current.order] as const,
+    ].map(([doc, order]) =>
+      doc._status === "draft"
+        ? payload.update({ collection: "projects-spotlight", id: doc.id, data: { order }, draft: true, overrideAccess: true })
+        : payload.update({ collection: "projects-spotlight", id: doc.id, data: { order }, overrideAccess: true })
+    )
+  );
+
   revalidatePath("/", "layout");
   redirect("/cms/projects-spotlight");
 }

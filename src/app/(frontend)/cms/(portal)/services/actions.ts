@@ -68,9 +68,21 @@ export async function createService(formData: FormData) {
   }
   const { image, ...rest } = data;
 
+  // New services land at the end of the list — reorder with the arrows
+  // on /cms/services afterward if it should appear earlier.
+  const { docs: existing } = await payload.find({
+    collection: "services",
+    sort: "-order",
+    limit: 1,
+    depth: 0,
+    select: { order: true },
+    overrideAccess: true,
+  });
+  const order = (existing[0]?.order ?? -1) + 1;
+
   const doc = publish
-    ? await payload.create({ collection: "services", data: { ...rest, image, _status: "published" }, draft: false, overrideAccess: true })
-    : await payload.create({ collection: "services", data: { ...rest, image, _status: "draft" }, draft: true, overrideAccess: true });
+    ? await payload.create({ collection: "services", data: { ...rest, image, order, _status: "published" }, draft: false, overrideAccess: true })
+    : await payload.create({ collection: "services", data: { ...rest, image, order, _status: "draft" }, draft: true, overrideAccess: true });
 
   await logActivity(user, publish ? "published" : "created", "Services", `Created "${data.name}"`);
   revalidatePath("/", "layout");
@@ -103,6 +115,44 @@ export async function deleteService(id: number, name: string) {
   const payload = await getPayloadClient();
   await payload.delete({ collection: "services", id, overrideAccess: true });
   await logActivity(user, "deleted", "Services", `Deleted "${name}"`);
+  revalidatePath("/", "layout");
+  redirect("/cms/services");
+}
+
+export async function moveService(id: number, direction: "up" | "down") {
+  await requireSession();
+  const payload = await getPayloadClient();
+  const { docs } = await payload.find({
+    collection: "services",
+    sort: "order",
+    limit: 200,
+    depth: 0,
+    select: { order: true, _status: true },
+    draft: true,
+    overrideAccess: true,
+  });
+
+  const index = docs.findIndex((d) => d.id === id);
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (index === -1 || swapIndex < 0 || swapIndex >= docs.length) {
+    revalidatePath("/", "layout");
+    redirect("/cms/services");
+  }
+
+  const current = docs[index];
+  const neighbor = docs[swapIndex];
+
+  await Promise.all(
+    [
+      [current, neighbor.order] as const,
+      [neighbor, current.order] as const,
+    ].map(([doc, order]) =>
+      doc._status === "draft"
+        ? payload.update({ collection: "services", id: doc.id, data: { order }, draft: true, overrideAccess: true })
+        : payload.update({ collection: "services", id: doc.id, data: { order }, overrideAccess: true })
+    )
+  );
+
   revalidatePath("/", "layout");
   redirect("/cms/services");
 }

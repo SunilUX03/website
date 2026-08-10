@@ -389,6 +389,10 @@ export interface Service {
   id: number;
   name: string;
   /**
+   * Controls this item's position on the /services page and anywhere else it's listed. Lower numbers show first.
+   */
+  order: number;
+  /**
    * Used in the page URL. Auto-filled from the name.
    */
   slug: string;
@@ -1012,6 +1016,7 @@ export interface TeamMembersSelect<T extends boolean = true> {
  */
 export interface ServicesSelect<T extends boolean = true> {
   name?: T;
+  order?: T;
   slug?: T;
   description?: T;
   stats?: T;

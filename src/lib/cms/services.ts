@@ -106,6 +106,7 @@ export async function getAllServiceItems(): Promise<CmsServiceItemDetail[]> {
     collection: "services",
     depth: 2,
     limit: 200,
+    sort: "order",
     overrideAccess: false,
   });
   return result.docs.map(toCmsServiceItemDetail);

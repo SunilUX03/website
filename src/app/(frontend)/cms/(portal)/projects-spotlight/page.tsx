@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPayloadClient } from "@/lib/payload-client";
 import type { Service } from "@/payload-types";
+import { moveProjectSpotlight } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -38,9 +39,32 @@ export default async function ProjectsSpotlightListPage() {
             </tr>
           </thead>
           <tbody>
-            {docs.map((doc) => (
+            {docs.map((doc, i) => (
               <tr key={doc.id} className="type-body-sm border-b border-hairline last:border-0">
-                <td className="px-4 py-3 text-[var(--color-muted)]">{doc.order}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1">
+                    <form action={moveProjectSpotlight.bind(null, doc.id, "up")}>
+                      <button
+                        type="submit"
+                        disabled={i === 0}
+                        aria-label="Move up"
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-hairline-strong text-[var(--color-muted)] hover:bg-surface-strong disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↑
+                      </button>
+                    </form>
+                    <form action={moveProjectSpotlight.bind(null, doc.id, "down")}>
+                      <button
+                        type="submit"
+                        disabled={i === docs.length - 1}
+                        aria-label="Move down"
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-hairline-strong text-[var(--color-muted)] hover:bg-surface-strong disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↓
+                      </button>
+                    </form>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-ink">{typeof doc.service === "object" ? (doc.service as Service)?.name : "—"}</td>
                 <td className="px-4 py-3">
                   <span

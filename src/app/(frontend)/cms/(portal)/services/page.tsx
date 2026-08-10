@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPayloadClient } from "@/lib/payload-client";
+import { moveService } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,7 @@ export default async function ServicesListPage() {
   const payload = await getPayloadClient();
   const { docs } = await payload.find({
     collection: "services",
-    sort: "name",
+    sort: "order",
     limit: 200,
     draft: true,
     overrideAccess: true,
@@ -21,11 +22,15 @@ export default async function ServicesListPage() {
           + Add service/project
         </Link>
       </div>
+      <p className="type-body-sm mb-4 max-w-[680px] text-[var(--color-muted)]">
+        Use the arrows to control the order items appear in on the /services page (and anywhere else they&apos;re listed).
+      </p>
 
       <div className="overflow-hidden rounded-xl border border-hairline bg-surface-card">
         <table className="w-full text-left">
           <thead>
             <tr className="type-caption-uppercase border-b border-hairline text-[var(--color-muted)]">
+              <th className="px-4 py-3">Order</th>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Sections</th>
@@ -34,8 +39,32 @@ export default async function ServicesListPage() {
             </tr>
           </thead>
           <tbody>
-            {docs.map((doc) => (
+            {docs.map((doc, i) => (
               <tr key={doc.id} className="type-body-sm border-b border-hairline last:border-0">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1">
+                    <form action={moveService.bind(null, doc.id, "up")}>
+                      <button
+                        type="submit"
+                        disabled={i === 0}
+                        aria-label={`Move ${doc.name} up`}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-hairline-strong text-[var(--color-muted)] hover:bg-surface-strong disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↑
+                      </button>
+                    </form>
+                    <form action={moveService.bind(null, doc.id, "down")}>
+                      <button
+                        type="submit"
+                        disabled={i === docs.length - 1}
+                        aria-label={`Move ${doc.name} down`}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-hairline-strong text-[var(--color-muted)] hover:bg-surface-strong disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↓
+                      </button>
+                    </form>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-ink">{doc.name}</td>
                 <td className="px-4 py-3 text-[var(--color-muted)]">{doc.accessPortalHref ? "Project" : "Service"}</td>
                 <td className="px-4 py-3 text-[var(--color-muted)]">{doc.sections.join(", ")}</td>
@@ -59,7 +88,7 @@ export default async function ServicesListPage() {
             ))}
             {docs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-muted)]">
+                <td colSpan={6} className="px-4 py-8 text-center text-[var(--color-muted)]">
                   No services yet.
                 </td>
               </tr>

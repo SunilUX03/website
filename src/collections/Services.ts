@@ -42,6 +42,7 @@ export const Services: CollectionConfig = {
     useAsTitle: "name",
     defaultColumns: ["name", "sections", "_status"],
   },
+  defaultSort: "order",
   versions: {
     drafts: true,
   },
@@ -56,6 +57,13 @@ export const Services: CollectionConfig = {
   },
   fields: [
     { name: "name", type: "text", required: true },
+    {
+      name: "order",
+      type: "number",
+      required: true,
+      defaultValue: 0,
+      admin: { description: "Controls this item's position on the /services page and anywhere else it's listed. Lower numbers show first." },
+    },
     {
       name: "slug",
       type: "text",
