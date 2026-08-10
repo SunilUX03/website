@@ -54,6 +54,21 @@ const SECTIONS = [
 
 const PRODUCT_TOUR_SLOTS = [0, 1, 2, 3];
 
+// Vercel Functions hard-reject any request body over 4.5MB at the
+// platform level — before this request even reaches the app — and this
+// form can submit the hero photo plus up to 4 product-tour photos in one
+// go, so per-field size limits alone aren't enough. Leave headroom under
+// the 4.5MB ceiling for the rest of the form's text fields.
+const MAX_TOTAL_UPLOAD_BYTES = 4 * 1024 * 1024;
+
+function totalFileBytes(fd: FormData): number {
+  let total = 0;
+  for (const value of fd.values()) {
+    if (value instanceof File) total += value.size;
+  }
+  return total;
+}
+
 function truncate(value: string, max = 60): string {
   const v = value.trim();
   return v.length > max ? `${v.slice(0, max)}…` : v;
@@ -79,8 +94,16 @@ export function ServiceForm({
 
   function submitWithIntent(intent: "draft" | "publish" | "unpublish") {
     setValidationError(null);
+    if (!formRef.current) return;
+    const totalBytes = totalFileBytes(new FormData(formRef.current));
+    if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
+      setValidationError(
+        `The selected photos add up to ${(totalBytes / (1024 * 1024)).toFixed(1)}MB, which is over the ${MAX_TOTAL_UPLOAD_BYTES / (1024 * 1024)}MB combined limit for one save. Use smaller photos, or update the hero photo and product tour photos in separate saves.`
+      );
+      return;
+    }
     if (intentRef.current) intentRef.current.value = intent;
-    formRef.current?.requestSubmit();
+    formRef.current.requestSubmit();
   }
 
   function validateForPublish(fd: FormData): string | null {

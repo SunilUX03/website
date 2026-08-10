@@ -5,10 +5,14 @@ const nextConfig: NextConfig = {
   // Default is 1MB — the Services admin form can submit a hero photo plus
   // up to 4 product-tour photos in one Server Action request, which was
   // silently rejected past the default limit (surfacing as a failed page
-  // load right after clicking Update/Publish).
+  // load right after clicking Update/Publish). Capped at 4mb, not higher:
+  // Vercel Functions hard-reject any request body over 4.5MB at the
+  // platform level regardless of what this option allows, so setting this
+  // above that is misleading — ServiceForm's own client-side size checks
+  // (see MAX_TOTAL_UPLOAD_BYTES) are what actually keep uploads under it.
   experimental: {
     serverActions: {
-      bodySizeLimit: "15mb",
+      bodySizeLimit: "4mb",
     },
   },
   images: {
