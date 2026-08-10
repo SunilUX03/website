@@ -703,9 +703,7 @@ export interface RollOfHonour {
  */
 export interface ProjectsSpotlight {
   id: number;
-  name: string;
-  description: string;
-  image: number | Media;
+  service: number | Service;
   /**
    * Optional small badge, e.g. "MeitY Approved".
    */
@@ -1225,9 +1223,7 @@ export interface RollOfHonourSelect<T extends boolean = true> {
  * via the `definition` "projects-spotlight_select".
  */
 export interface ProjectsSpotlightSelect<T extends boolean = true> {
-  name?: T;
-  description?: T;
-  image?: T;
+  service?: T;
   badge?: T;
   stats?:
     | T

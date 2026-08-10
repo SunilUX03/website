@@ -1,14 +1,17 @@
 import type { CollectionConfig } from "payload";
 
-// Backs the homepage's "Projects Spotlight" carousel — unlike Metrics or
-// the Org Chart, this is a genuine list of highlighted projects with no
-// fixed count, so it's a normal add/edit/delete collection like
-// Announcements or Awards rather than a fixed-shape global.
+// Backs the homepage's "Projects Spotlight" carousel. Each entry points
+// at an existing "services" collection item rather than duplicating its
+// name/description/image — the admin picks which service(s) to feature
+// (see the portal's /cms/projects-spotlight/add screen) and only sets the
+// spotlight-specific extras here: the big carousel stat numbers (which
+// differ in shape from a service's own single joined `stats` string),
+// the CTA buttons, an optional badge, and the carousel order.
 export const ProjectsSpotlight: CollectionConfig = {
   slug: "projects-spotlight",
   admin: {
-    useAsTitle: "name",
-    defaultColumns: ["name", "order", "_status"],
+    useAsTitle: "service",
+    defaultColumns: ["service", "order", "_status"],
   },
   defaultSort: "order",
   versions: {
@@ -24,9 +27,7 @@ export const ProjectsSpotlight: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   fields: [
-    { name: "name", type: "text", required: true },
-    { name: "description", type: "textarea", required: true },
-    { name: "image", type: "upload", relationTo: "media", required: true },
+    { name: "service", type: "relationship", relationTo: "services", required: true, hasMany: false },
     { name: "badge", type: "text", admin: { description: 'Optional small badge, e.g. "MeitY Approved".' } },
     {
       name: "stats",

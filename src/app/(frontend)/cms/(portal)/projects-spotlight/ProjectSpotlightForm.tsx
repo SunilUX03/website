@@ -5,13 +5,13 @@ import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
 
 export type ProjectSpotlightFormValues = {
-  name: string;
-  description: string;
+  serviceName: string;
+  serviceDescription: string;
+  serviceImageUrl?: string;
   badge: string;
   order: number;
   stats: { value: string; suffix: string; label: string }[];
   ctas: { label: string; href: string }[];
-  imageUrl?: string;
   status?: "draft" | "published";
   error?: string;
 };
@@ -32,27 +32,23 @@ export function ProjectSpotlightForm({
       ) : null}
 
       <section className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
-        <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Name</label>
-          <input
-            name="name"
-            defaultValue={values.name}
-            required
-            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-          />
+        <p className="type-caption-uppercase text-[var(--color-muted)]">
+          Linked service <span className="normal-case text-[11px]">(from the Services collection — delete this entry and re-add to change it)</span>
+        </p>
+        <div className="flex items-center gap-4">
+          {values.serviceImageUrl ? (
+            <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-hairline">
+              <Image src={values.serviceImageUrl} alt="" fill className="object-cover" />
+            </div>
+          ) : null}
+          <div>
+            <p className="type-body-strong text-ink">{values.serviceName}</p>
+            <p className="type-caption line-clamp-2 text-[var(--color-muted)]">{values.serviceDescription}</p>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Description</label>
-          <textarea
-            name="description"
-            defaultValue={values.description}
-            required
-            rows={3}
-            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-          />
-        </div>
-
+      <section className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
             Badge <span className="normal-case text-[11px]">(optional, e.g. &quot;MeitY Approved&quot;)</span>
@@ -62,16 +58,6 @@ export function ProjectSpotlightForm({
             defaultValue={values.badge}
             className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
           />
-        </div>
-
-        <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Image</label>
-          {values.imageUrl ? (
-            <div className="relative mb-2 h-28 w-44 overflow-hidden rounded-lg border border-hairline">
-              <Image src={values.imageUrl} alt="" fill className="object-cover" />
-            </div>
-          ) : null}
-          <input type="file" name="image" accept="image/*" className="type-body-sm block" />
         </div>
 
         <div className="max-w-[160px]">

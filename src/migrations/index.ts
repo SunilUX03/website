@@ -15,6 +15,8 @@ import * as migration_20260809_221528_add_metrics_pillars_projects_spotlight fro
 import * as migration_20260809_223632_add_careers_content from './20260809_223632_add_careers_content';
 import * as migration_20260809_224339_add_rti_tenders_content from './20260809_224339_add_rti_tenders_content';
 import * as migration_20260809_225807_add_site_copy_content from './20260809_225807_add_site_copy_content';
+import * as migration_20260810_051920_add_projects_spotlight_service_field from './20260810_051920_add_projects_spotlight_service_field';
+import * as migration_20260810_052059_drop_projects_spotlight_old_fields from './20260810_052059_drop_projects_spotlight_old_fields';
 
 export const migrations = [
   {
@@ -100,6 +102,16 @@ export const migrations = [
   {
     up: migration_20260809_225807_add_site_copy_content.up,
     down: migration_20260809_225807_add_site_copy_content.down,
-    name: '20260809_225807_add_site_copy_content'
+    name: '20260809_225807_add_site_copy_content',
+  },
+  {
+    up: migration_20260810_051920_add_projects_spotlight_service_field.up,
+    down: migration_20260810_051920_add_projects_spotlight_service_field.down,
+    name: '20260810_051920_add_projects_spotlight_service_field',
+  },
+  {
+    up: migration_20260810_052059_drop_projects_spotlight_old_fields.up,
+    down: migration_20260810_052059_drop_projects_spotlight_old_fields.down,
+    name: '20260810_052059_drop_projects_spotlight_old_fields'
   },
 ];

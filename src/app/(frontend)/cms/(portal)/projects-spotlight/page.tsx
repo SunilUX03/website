@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPayloadClient } from "@/lib/payload-client";
+import type { Service } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,7 @@ export default async function ProjectsSpotlightListPage() {
     collection: "projects-spotlight",
     sort: "order",
     limit: 200,
+    depth: 1,
     draft: true,
     overrideAccess: true,
   });
@@ -17,8 +19,8 @@ export default async function ProjectsSpotlightListPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="type-display-sm text-ink">Projects Spotlight</h1>
-        <Link href="/cms/projects-spotlight/new" className="type-button btn-primary">
-          + Add project
+        <Link href="/cms/projects-spotlight/add" className="type-button btn-primary">
+          + Add from Services
         </Link>
       </div>
       <p className="type-body-sm mb-4 max-w-[680px] text-[var(--color-muted)]">
@@ -39,7 +41,7 @@ export default async function ProjectsSpotlightListPage() {
             {docs.map((doc) => (
               <tr key={doc.id} className="type-body-sm border-b border-hairline last:border-0">
                 <td className="px-4 py-3 text-[var(--color-muted)]">{doc.order}</td>
-                <td className="px-4 py-3 text-ink">{doc.name}</td>
+                <td className="px-4 py-3 text-ink">{typeof doc.service === "object" ? (doc.service as Service)?.name : "—"}</td>
                 <td className="px-4 py-3">
                   <span
                     className={
