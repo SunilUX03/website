@@ -5,7 +5,6 @@ import "./lib/patch-shared-array-buffer-fetch";
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 
 import { CmsUsers } from "./collections/CmsUsers";
 import { Media } from "./collections/Media";
@@ -101,15 +100,9 @@ export default buildConfig({
     push: false,
   }),
   sharp,
-  plugins: [
-    // Local disk (Media collection's own `staticDir`) doesn't persist on
-    // Vercel's serverless filesystem — an upload would vanish the moment
-    // that function instance recycled. Vercel Blob is a real, persistent
-    // store that works identically once self-hosted later too (it's just
-    // a network API, not tied to Vercel's compute).
-    vercelBlobStorage({
-      collections: { [Media.slug]: true, [Documents.slug]: true },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    }),
-  ],
+  // No storage plugin — Media/Documents fall back to Payload's own local-
+  // disk storage (their `staticDir` config, under /public). Only correct
+  // on a persistent server with its own disk; this would silently lose
+  // every upload on Vercel's serverless filesystem, which recycles
+  // between invocations. Do not deploy this to the Vercel environment.
 });
