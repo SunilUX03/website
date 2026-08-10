@@ -141,7 +141,11 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
               )}
 
               <div className="flex flex-wrap gap-3">
-                {comingSoon ? (
+                {item.real?.ctaLabel ? (
+                  <a href={item.real.ctaHref || item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
+                    {item.real.ctaLabel}
+                  </a>
+                ) : comingSoon ? (
                   <a href="#contact" className="type-button btn-primary">
                     Coming Soon
                   </a>

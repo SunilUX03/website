@@ -67,7 +67,11 @@ export function ServiceItemCard({
         </p>
 
         <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
-          {item.real?.comingSoon ? (
+          {item.real?.ctaLabel ? (
+            <a href={item.real.ctaHref || item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
+              {item.real.ctaLabel}
+            </a>
+          ) : item.real?.comingSoon ? (
             <a href={item.knowMoreHref} className="type-button btn-primary">
               Coming Soon
             </a>

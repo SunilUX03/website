@@ -18,6 +18,7 @@ import * as migration_20260809_225807_add_site_copy_content from './20260809_225
 import * as migration_20260810_051920_add_projects_spotlight_service_field from './20260810_051920_add_projects_spotlight_service_field';
 import * as migration_20260810_052059_drop_projects_spotlight_old_fields from './20260810_052059_drop_projects_spotlight_old_fields';
 import * as migration_20260810_063607_add_services_order_field from './20260810_063607_add_services_order_field';
+import * as migration_20260810_073754_add_cta_label_href from './20260810_073754_add_cta_label_href';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20260810_063607_add_services_order_field.up,
     down: migration_20260810_063607_add_services_order_field.down,
-    name: '20260810_063607_add_services_order_field'
+    name: '20260810_063607_add_services_order_field',
+  },
+  {
+    up: migration_20260810_073754_add_cta_label_href.up,
+    down: migration_20260810_073754_add_cta_label_href.down,
+    name: '20260810_073754_add_cta_label_href'
   },
 ];

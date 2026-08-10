@@ -414,7 +414,7 @@ export interface Service {
    */
   sections: ('citizen-services' | 'e-governance-projects' | 'services')[];
   /**
-   * Official submitted content for the detail page. Every field here is optional — service-detail-generator.ts fills in sensible generated copy for anything left blank.
+   * This is the actual detail-page content — Key Features, Eligibility, Get Started, FAQs, etc. It must be filled in with the real submitted content before publishing. (Technically nothing here is schema-required, since service-detail-generator.ts can fall back to generic placeholder copy for anything left blank — but that fallback exists as a safety net for content still in progress, not as an acceptable end state for a published page.)
    */
   real?: {
     /**
@@ -540,11 +540,19 @@ export interface Service {
      */
     gatedAccess?: boolean | null;
     /**
+     * Overrides the main button's text (Hero and card), e.g. "Register Now". Leave blank to use the automatic label (Access Portal / Avail Service / Coming Soon).
+     */
+    ctaLabel?: string | null;
+    /**
+     * Where the main button goes when Button text above is set. Leave blank to reuse the Access Portal link.
+     */
+    ctaHref?: string | null;
+    /**
      * Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above).
      */
     relatedCardStats?: string | null;
     /**
-     * Overrides the "Project"/"Service" badge label shown on the page — independent of the Project/Service CTA behaviour, which is still driven by Access Portal Link above.
+     * Small tag shown at the top of the page (e.g. "Project" or "Service") so visitors know what kind of listing this is at a glance. Automatically set to "Project" if Access Portal link is filled in above, otherwise "Service" — only pick a value here to show something different from that automatic behavior (e.g. eOffice has a live portal link but is still labeled "Service").
      */
     typeLabel?: ('Project' | 'Service') | null;
     /**
@@ -1108,6 +1116,8 @@ export interface ServicesSelect<T extends boolean = true> {
         directLinkLabel?: T;
         comingSoon?: T;
         gatedAccess?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
         relatedCardStats?: T;
         typeLabel?: T;
         contact?:

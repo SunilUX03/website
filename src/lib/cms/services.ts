@@ -72,6 +72,8 @@ function toCmsRealContent(doc: Service): CmsRealContent | undefined {
     comingSoon: r.comingSoon ?? undefined,
     relatedCardStats: r.relatedCardStats ?? undefined,
     gatedAccess: r.gatedAccess ?? undefined,
+    ctaLabel: r.ctaLabel ?? undefined,
+    ctaHref: r.ctaHref ?? undefined,
     hideAboutSecondParagraph: r.hideAboutSecondParagraph ?? undefined,
     typeLabel: r.typeLabel ?? undefined,
     faqsMore: r.faqsMore?.length ? r.faqsMore.map((f) => ({ q: f.q, a: f.a })) : undefined,

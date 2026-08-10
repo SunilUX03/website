@@ -34,6 +34,12 @@ export interface CmsRealContent {
   comingSoon?: boolean;
   relatedCardStats?: string;
   gatedAccess?: boolean;
+  /** Free-text override for the main CTA button (Hero and card) — wins
+   * over the automatic Access Portal / Avail Service / Coming Soon
+   * label whenever it's set. */
+  ctaLabel?: string;
+  /** Where `ctaLabel` goes; falls back to `accessPortalHref` if blank. */
+  ctaHref?: string;
   hideAboutSecondParagraph?: boolean;
   typeLabel?: "Project" | "Service";
   faqsMore?: { q: string; a: string }[];

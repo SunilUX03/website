@@ -6,8 +6,19 @@ import { updateService, deleteService } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
 import type { Media } from "@/payload-types";
 
-export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
+function mediaUrl(value: number | Media | null | undefined): string | undefined {
+  return typeof value === "object" && value !== null ? value.url ?? undefined : undefined;
+}
+
+export default async function EditServicePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const { id } = await params;
+  const { saved } = await searchParams;
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
@@ -18,6 +29,12 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
   const boundUpdate = updateService.bind(null, doc.id);
   const boundDelete = deleteService.bind(null, doc.id, doc.name);
   const real = doc.real;
+
+  const productTour = [0, 1, 2, 3].map((i) => {
+    const row = real?.productTour?.[i];
+    if (!row) return { photoId: "", photoUrl: undefined, alt: "" };
+    return { photoId: String(typeof row.photo === "object" ? row.photo?.id ?? "" : row.photo ?? ""), photoUrl: mediaUrl(row.photo), alt: row.alt ?? "" };
+  });
 
   return (
     <div>
@@ -35,6 +52,10 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         ) : null}
       </div>
 
+      {saved ? (
+        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
+      ) : null}
+
       <ServiceForm
         action={boundUpdate}
         values={{
@@ -43,17 +64,34 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
           stats: doc.stats,
           accessPortalHref: doc.accessPortalHref ?? "",
           sections: doc.sections,
-          imageUrl: typeof doc.image === "object" && doc.image ? (doc.image as Media).url ?? undefined : undefined,
+          imageUrl: mediaUrl(doc.image),
           tagline: real?.tagline ?? "",
           aboutSecondParagraph: real?.aboutSecondParagraph ?? "",
+          hideAboutSecondParagraph: real?.hideAboutSecondParagraph ?? false,
           calloutText: real?.calloutText ?? "",
           statistics: real?.statistics?.map((s) => s.value) ?? [],
-          keyFeatures: real?.keyFeatures?.map((s) => s.value) ?? [],
+          keyFeatures:
+            real?.keyFeatures?.map((s, i) => ({ value: s.value, description: real?.keyFeatureDescriptions?.[i]?.value ?? "" })) ?? [],
+          hideStatFeatureCards: real?.hideStatFeatureCards ?? false,
+          aboutLinkModalLabel: real?.aboutLinkModal?.label ?? "",
+          aboutLinkModalTitle: real?.aboutLinkModal?.title ?? "",
+          aboutLinkModalItems: real?.aboutLinkModal?.items?.map((i) => i.value) ?? [],
+          productTour,
+          productTourCaption: real?.productTourCaption ?? "",
           eligibility: real?.eligibility?.map((s) => s.value) ?? [],
           whatYoullNeed: real?.whatYoullNeed?.map((s) => s.value) ?? [],
+          getStartedIntro: real?.getStartedIntro ?? "",
+          getStartedSteps: real?.getStartedSteps?.map((s) => ({ title: s.title, description: s.description })) ?? [],
+          suppressGetStartedSteps: real?.suppressGetStartedSteps ?? false,
+          getStartedOutro: real?.getStartedOutro ?? "",
+          directLinkLabel: real?.directLinkLabel ?? "",
           faqs: real?.faqs?.map((f) => ({ q: f.q, a: f.a })) ?? [],
+          faqsMore: real?.faqsMore?.map((f) => ({ q: f.q, a: f.a })) ?? [],
           comingSoon: real?.comingSoon ?? false,
           gatedAccess: real?.gatedAccess ?? false,
+          ctaLabel: real?.ctaLabel ?? "",
+          ctaHref: real?.ctaHref ?? "",
+          relatedCardStats: real?.relatedCardStats ?? "",
           typeLabel: real?.typeLabel ?? "",
           contactEmail: real?.contact?.email ?? "",
           contactPhone: real?.contact?.phone ?? "",
