@@ -11,6 +11,13 @@ function PlusIcon() {
   );
 }
 
+// Vercel Functions hard-reject any request body over 4.5MB at the
+// platform level (before the app even runs) — a form combining several
+// of these fields (see ServiceForm's product tour) must stay well under
+// that per file, so catch an oversized photo here instead of letting the
+// submit silently 413.
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+
 /** Single-image upload used for both the hero photo and each Product Tour
  * slot: the existing image (or an empty placeholder) with a "+" overlay
  * button that opens the file picker, a live preview of whatever was just
@@ -38,6 +45,7 @@ export function ImageUploadField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [sizeError, setSizeError] = useState<string | null>(null);
 
   const displayUrl = previewUrl ?? currentUrl;
 
@@ -69,6 +77,12 @@ export function ImageUploadField({
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (!file) return;
+          if (file.size > MAX_FILE_BYTES) {
+            setSizeError(`"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)}MB — please choose a photo under ${MAX_FILE_BYTES / (1024 * 1024)}MB.`);
+            e.target.value = "";
+            return;
+          }
+          setSizeError(null);
           setPreviewUrl((old) => {
             if (old) URL.revokeObjectURL(old);
             return URL.createObjectURL(file);
@@ -82,6 +96,7 @@ export function ImageUploadField({
           Selected &quot;{fileName}&quot; — will replace the current photo when you save.
         </p>
       ) : null}
+      {sizeError ? <p className="type-caption font-medium text-[var(--color-error)]">{sizeError}</p> : null}
       {idealSize ? <p className="type-caption text-[var(--color-muted)]">Ideal size: {idealSize}</p> : null}
       {required && !displayUrl ? <p className="type-caption text-[var(--color-error)]">Required</p> : null}
     </div>
