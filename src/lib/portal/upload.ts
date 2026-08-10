@@ -13,18 +13,24 @@ export async function uploadFile(
   if (!file || file.size === 0) return undefined;
   const payload = await getPayloadClient();
   const arrayBuffer = await file.arrayBuffer();
-  // Buffer.from(arrayBuffer) is a zero-copy VIEW over that same memory —
-  // on Vercel's runtime the ArrayBuffer handed back here can be backed by
-  // a SharedArrayBuffer, and that "shared" flag carries straight through
-  // into the view. Vercel Blob's underlying fetch() then rejects the
-  // upload with "ArrayBuffer: SharedArrayBuffer is not allowed." Routing
-  // through a Uint8Array first forces an actual copy into fresh, ordinary
-  // memory (Buffer.from(typedArray) always copies).
+  // On Vercel's runtime, file.arrayBuffer() here can hand back a view
+  // whose underlying memory is still flagged shared even after routing it
+  // through Buffer.from(new Uint8Array(...)) — Buffer.allocUnsafe's own
+  // pooled memory isn't guaranteed non-shared on that runtime, so the
+  // "shared" flag survives the copy and Vercel Blob's underlying fetch()
+  // rejects the upload with "ArrayBuffer: SharedArrayBuffer is not
+  // allowed." The ArrayBuffer constructor is spec-guaranteed to always
+  // produce a plain, non-shared buffer, so allocate one explicitly and
+  // copy the bytes in by hand rather than trusting an intermediate
+  // Buffer/TypedArray allocation to do it.
+  const source = new Uint8Array(arrayBuffer);
+  const plainArrayBuffer = new ArrayBuffer(source.byteLength);
+  new Uint8Array(plainArrayBuffer).set(source);
   const doc = await payload.create({
     collection,
     data: collection === "media" ? { alt: label } : { title: label },
     file: {
-      data: Buffer.from(new Uint8Array(arrayBuffer)),
+      data: Buffer.from(plainArrayBuffer),
       mimetype: file.type,
       name: file.name,
       size: file.size,
