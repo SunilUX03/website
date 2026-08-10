@@ -39,12 +39,18 @@ server to have a persistent disk that survives restarts and redeploys.
    psql "your-new-database-url" -f tnega_backup.sql
    ```
 
-3. **Copy in the uploaded files.** Place the handed-over files into:
-   - `public/media/` (CMS photos)
-   - `public/documents/` (CMS documents/PDFs)
-
-   These must keep their **original filenames** — the database records
-   reference them by filename, so renaming breaks the links.
+3. **Copy in the uploaded files.** These must keep their **original
+   filenames** — the database records reference them by filename, so
+   renaming breaks the links. Two ways to get them:
+   - If you were handed a folder of files already sorted into
+     `media`/`documents`, just copy them into `public/media/` and
+     `public/documents/`.
+   - Otherwise, run `scripts/download-blob-files.mjs` (from the *old*
+     Vercel-hosted setup, with its `BLOB_READ_WRITE_TOKEN`) to pull every
+     file straight out of Vercel Blob into the right folders automatically:
+     ```
+     BLOB_READ_WRITE_TOKEN=vercel_blob_rw_... node scripts/download-blob-files.mjs
+     ```
 
 4. **Set up environment variables.** Copy `.env.sample` to `.env` (or wire
    the same keys into your process manager/systemd config) and fill in real
