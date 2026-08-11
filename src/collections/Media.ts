@@ -15,11 +15,14 @@ export const Media: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   upload: {
-    // `staticDir` only matters if nothing else handles storage. The
-    // vercelBlobStorage plugin (see payload.config.ts) takes over actual
-    // file storage for this collection and disables local-disk writes —
-    // left here only as the inert default if that plugin's ever removed.
-    staticDir: "media",
+    // Local disk storage (see payload.config.ts — no storage plugin is
+    // configured, so this is the actual, active storage). Must be
+    // "public/media", not a bare "media": a bare relative path resolves
+    // to a project-root ./media directory that Next.js never serves and
+    // that doesn't match where already-uploaded files live, which is
+    // exactly what broke every existing image (500s reading a file that
+    // "doesn't exist" because Payload was looking in the wrong folder).
+    staticDir: "public/media",
     imageSizes: [
       { name: "thumbnail", width: 400, height: undefined, position: "centre" },
       { name: "card", width: 1200, height: undefined, position: "centre" },

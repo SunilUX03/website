@@ -12,7 +12,11 @@ export const Documents: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   upload: {
-    staticDir: "documents",
+    // Must match where the bulk-downloaded PDF library actually lives —
+    // see the matching comment in Media.ts for why a bare "documents"
+    // (resolving to a project-root ./documents Next.js never serves) is
+    // wrong.
+    staticDir: "public/documents",
     mimeTypes: ["application/pdf"],
   },
   fields: [
