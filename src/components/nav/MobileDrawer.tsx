@@ -143,7 +143,7 @@ export function MobileDrawer({
               ))}
             </MobileGroup>
 
-            <MobileGroup title="Notifications">
+            <MobileGroup title="Others">
               <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">Updates</p>
               {nav.notificationsUpdates.map((item) => (
                 <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">

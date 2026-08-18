@@ -146,7 +146,7 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
             />
 
             <NavDropdown
-              label="Notifications"
+              label="Others"
               iconTrigger={<MenuIcon className="h-5 w-5" />}
               panelClassName="grid w-[420px] max-w-[90vw] grid-cols-2 gap-4 p-5"
               panel={
