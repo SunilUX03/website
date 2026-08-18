@@ -29,6 +29,29 @@ export const Media: CollectionConfig = {
     ],
     mimeTypes: ["image/*"],
   },
+  // Local (non-cloud-storage) uploads default `doc.url` to Payload's own
+  // API route (/api/payload/media/file/...), which reads the file off
+  // disk inside the request handler at runtime — fine locally, but on
+  // Vercel that handler runs in a serverless function that doesn't have
+  // public/ available for arbitrary dynamic fs reads (only Next's own
+  // static file serving does, which is what actually served every image
+  // before this). Rewriting url/sizes[].url to the plain "/media/..."
+  // path here means every existing `doc.url` read across the codebase
+  // resolves to a static asset in both environments, no server code
+  // involved on either — same fix as Documents.ts.
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (doc.filename) doc.url = `/media/${doc.filename}`;
+        if (doc.sizes) {
+          for (const size of Object.values(doc.sizes) as { filename?: string; url?: string }[]) {
+            if (size?.filename) size.url = `/media/${size.filename}`;
+          }
+        }
+        return doc;
+      },
+    ],
+  },
   fields: [
     {
       name: "alt",

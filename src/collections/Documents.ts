@@ -19,6 +19,18 @@ export const Documents: CollectionConfig = {
     staticDir: "public/documents",
     mimeTypes: ["application/pdf"],
   },
+  // See the matching comment in Media.ts — local uploads default doc.url
+  // to Payload's own API route, which can't read public/ files at
+  // runtime in a Vercel serverless function. This rewrites it to a plain
+  // "/documents/filename.pdf" static path instead.
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (doc.filename) doc.url = `/documents/${doc.filename}`;
+        return doc;
+      },
+    ],
+  },
   fields: [
     {
       name: "title",
