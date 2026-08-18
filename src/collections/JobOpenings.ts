@@ -56,11 +56,11 @@ export const JobOpenings: CollectionConfig = {
       },
     },
     {
-      name: "jdHref",
-      type: "text",
+      name: "jd",
+      type: "upload",
+      relationTo: "documents",
       admin: {
-        description:
-          "Link to the job description PDF, e.g. /documents/careers/role-name.pdf after dropping the file in public/documents/careers/. Leave blank to hide the Download JD button.",
+        description: "Job description PDF (max 4MB). Leave blank to hide the Download JD button on the public page.",
       },
     },
   ],

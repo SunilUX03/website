@@ -29,7 +29,7 @@ export async function updateHeroContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "hero-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "hero-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "hero-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "hero-content", data, draft: true, overrideAccess: true });
   }
@@ -37,5 +37,5 @@ export async function updateHeroContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Homepage Hero", `${action} the homepage Hero`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/hero");
+  redirect("/cms/settings/hero?saved=1");
 }

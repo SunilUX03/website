@@ -39,7 +39,7 @@ export async function updatePillars(existingImageIds: (number | undefined)[], fo
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "pillars-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "pillars-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "pillars-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "pillars-content", data, draft: true, overrideAccess: true });
   }
@@ -47,5 +47,5 @@ export async function updatePillars(existingImageIds: (number | undefined)[], fo
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Pillar Cards", `${action} the pillar cards`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/pillars");
+  redirect("/cms/settings/pillars?saved=1");
 }

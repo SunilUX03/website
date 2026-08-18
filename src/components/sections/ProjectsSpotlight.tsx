@@ -285,6 +285,15 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
 export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
   const isDesktop = useIsDesktop();
 
+  // DesktopSpotlight/MobileSpotlight both index into projects[active] and
+  // take `% projects.length` unconditionally — safe for any count above
+  // zero (this section is already written to handle 2, 3, 4+ items via
+  // .length everywhere), but zero itself (e.g. every spotlighted project's
+  // linked service got deleted from the CMS) would divide by zero / index
+  // undefined and crash the whole homepage, same failure mode as the
+  // pillar-card item lookup. Just hide the section in that case.
+  if (projects.length === 0) return null;
+
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
@@ -303,14 +312,14 @@ export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
               reliably toggle it. Mobile gets a plain right-aligned text
               link — matching the Scroller ticker's "View all →" — since
               the full button was wide enough to wrap below the heading. */}
-          <Link href="/services" className="type-button btn-outline hidden shrink-0 md:inline-flex">
-            View all services
+          <Link href="/initiatives-projects" className="type-button btn-outline hidden shrink-0 md:inline-flex">
+            View all Initiatives &amp; Projects
           </Link>
           <Link
-            href="/services"
+            href="/initiatives-projects"
             className="type-caption shrink-0 whitespace-nowrap font-semibold text-[var(--color-primary-blue)] hover:underline md:hidden"
           >
-            View all services
+            View all Initiatives &amp; Projects
             <span aria-hidden>{" →"}</span>
           </Link>
         </div>

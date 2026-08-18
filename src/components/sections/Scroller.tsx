@@ -8,7 +8,7 @@ function TickerItem({ item }: { item: CmsAnnouncement }) {
   return (
     <a
       href={item.href}
-      className="type-body-sm shrink-0 whitespace-nowrap text-ink underline decoration-hairline-strong underline-offset-4 hover:text-[var(--color-primary-blue)]"
+      className="type-body-sm shrink-0 whitespace-nowrap text-ink hover:text-[var(--color-primary-blue)]"
     >
       {item.heading}
     </a>

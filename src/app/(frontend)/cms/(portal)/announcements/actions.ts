@@ -56,7 +56,7 @@ export async function createAnnouncement(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Announcements", `Created "${data.heading}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/announcements/${doc.id}/edit`);
+  redirect(`/cms/announcements/${doc.id}/edit?saved=1`);
 }
 
 export async function updateAnnouncement(id: number, formData: FormData) {
@@ -68,7 +68,7 @@ export async function updateAnnouncement(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "announcements", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "announcements", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "announcements", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "announcements", id, data, draft: true, overrideAccess: true });
   }
@@ -76,7 +76,7 @@ export async function updateAnnouncement(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Announcements", `${action === "updated" ? "Updated" : action === "published" ? "Published" : "Unpublished"} "${data.heading}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/announcements/${id}/edit`);
+  redirect(`/cms/announcements/${id}/edit?saved=1`);
 }
 
 export async function deleteAnnouncement(id: number, heading: string) {

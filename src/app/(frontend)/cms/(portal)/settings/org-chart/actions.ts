@@ -29,7 +29,7 @@ export async function updateOrgChart(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "org-chart-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "org-chart-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "org-chart-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "org-chart-content", data, draft: true, overrideAccess: true });
   }
@@ -37,5 +37,5 @@ export async function updateOrgChart(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Organisation Structure", `${action} the About page's org chart`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/org-chart");
+  redirect("/cms/settings/org-chart?saved=1");
 }

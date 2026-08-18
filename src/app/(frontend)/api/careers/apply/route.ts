@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { roleOptions } from "@/lib/careers-content";
+import { getPayloadClient } from "@/lib/payload-client";
 
 // Kept under Vercel's ~4.5MB serverless request-body ceiling — see the
 // matching note in ApplicationForm.tsx.
@@ -16,13 +16,13 @@ export async function POST(request: Request) {
   const fullName = String(form.get("fullName") ?? "").trim();
   const email = String(form.get("email") ?? "").trim();
   const phone = String(form.get("phone") ?? "").trim();
-  const roleValue = String(form.get("role") ?? "");
+  const roleId = String(form.get("role") ?? "");
   const coverNote = String(form.get("coverLetter") ?? "").trim();
   const resume = form.get("resume");
 
-  const role = roleOptions.find((r) => r.value === roleValue)?.label;
+  const jobRole = roleId ? await db.jobRole.findUnique({ where: { id: roleId } }) : null;
 
-  if (!fullName || !EMAIL_RE.test(email) || !phone || !role) {
+  if (!fullName || !EMAIL_RE.test(email) || !phone || !jobRole) {
     return NextResponse.json({ error: "Missing or invalid required field." }, { status: 400 });
   }
 
@@ -38,9 +38,26 @@ export async function POST(request: Request) {
 
   const resumeData = Buffer.from(await resume.arrayBuffer());
 
+  // Only counts as a targeted application for a specific job card if a
+  // currently-published opening's role matches (case-insensitively)
+  // what the applicant picked — otherwise it's a general resume with no
+  // matching vacancy, and the Career Portal files it under Resume
+  // Submitted instead of grouping it under a job.
+  const payload = await getPayloadClient();
+  const { docs: publishedOpenings } = await payload.find({
+    collection: "job-openings",
+    limit: 200,
+    depth: 0,
+    overrideAccess: true,
+    where: { _status: { equals: "published" } },
+  });
+  const matchedOpening = publishedOpenings.find(
+    (o) => o.role.trim().toLowerCase() === jobRole.label.trim().toLowerCase()
+  );
+
   await db.jobApplication.create({
     data: {
-      role,
+      role: jobRole.label,
       fullName,
       email,
       phone,
@@ -48,6 +65,7 @@ export async function POST(request: Request) {
       resumeName: resume.name,
       resumeType: resume.type,
       resumeData,
+      matchedJobOpeningId: matchedOpening?.id ?? null,
     },
   });
 

@@ -10,11 +10,11 @@ function slugify(value: string): string {
 /** A single string as one array row — Payload arrays need an object per
  * row, so every string[] field in the old ServiceItem/RealContent shape
  * (statistics, keyFeatures, eligibility, ...) becomes an array of these. */
-const stringListField = (name: string, label?: string) => ({
+const stringListField = (name: string, label?: string, valueRequired = true) => ({
   name,
   type: "array" as const,
   admin: label ? { description: label } : undefined,
-  fields: [{ name: "value", type: "text" as const, required: true }],
+  fields: [{ name: "value", type: "text" as const, required: valueRequired }],
 });
 
 const qaListField = (name: string, label?: string) => ({
@@ -128,7 +128,7 @@ export const Services: CollectionConfig = {
         },
         stringListField("statistics", "One stat per row, e.g. \"273 Government services\"."),
         stringListField("keyFeatures"),
-        stringListField("keyFeatureDescriptions", "Optional, same order as Key Features — a one-line description per feature. Leave a row blank to use the generic fallback for that feature."),
+        stringListField("keyFeatureDescriptions", "Optional, same order as Key Features — a one-line description per feature. Leave a row blank to use the generic fallback for that feature.", false),
         { name: "hideStatFeatureCards", type: "checkbox", defaultValue: false, admin: { description: "Statistics normally also become Key Feature cards — check this when Key Features is already complete on its own." } },
         stringListField("eligibility", "\"You can use this if...\" bullet points."),
         stringListField("whatYoullNeed"),

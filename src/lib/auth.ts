@@ -5,7 +5,7 @@ import { db } from "./db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
-  pages: { signIn: "/admin/login" },
+  pages: { signIn: "/career-portal/login" },
   providers: [
     Credentials({
       credentials: {

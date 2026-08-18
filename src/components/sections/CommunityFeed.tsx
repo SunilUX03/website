@@ -6,7 +6,6 @@ import { socialMedia } from "@/lib/content";
 import type { CmsAnnouncement } from "@/lib/cms/announcements";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
-import { PhotoTile } from "@/components/ui/PhotoTile";
 import { useReducedMotion } from "@/lib/hooks";
 import {
   FacebookIcon,
@@ -26,8 +25,17 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
 
 type FeedPost = SocialPost & { platform: string; href: string };
 
-const DRIFT_SPEED = 22; // px/sec
-const VIEWPORT_H = 480;
+const DRIFT_SPEED = 100 / 1.5; // px/sec — slowed 1.5x from the prior 100, per feedback
+// Bigger top-image cards (per feedback the old small side-thumbnail read
+// as cramped) — the image renders at its own natural aspect ratio at the
+// card's fixed width rather than being cropped to a fixed height, so
+// card height now varies per image. VIEWPORT_H is sized for the common
+// case (a roughly 16:9-ish source photo) to keep at least 3 cards
+// visible at rest; an unusually tall image can push that down for that
+// one card without breaking the layout. SKELETON_H is only the loading
+// placeholder's height, unrelated to any real image.
+const VIEWPORT_H = 860;
+const SKELETON_H = 236;
 const WHEEL_RESUME_MS = 1200;
 const TOUCH_RESUME_MS = 1600;
 
@@ -91,9 +99,9 @@ function VerticalDrift<T>({
   }, [reducedMotion]);
 
   // The actual drift position, tracked as its own float — NOT derived by
-  // reading `el.scrollTop` back each frame. DRIFT_SPEED (22px/sec) means
-  // well under 1px per frame at any normal refresh rate (e.g. ~0.37px at
-  // 60Hz, ~0.18px at 120Hz), but `scrollTop` rounds to a whole pixel on
+  // reading `el.scrollTop` back each frame. DRIFT_SPEED (100px/sec) means
+  // still under 2px per frame at any normal refresh rate (e.g. ~1.67px at
+  // 60Hz, ~0.83px at 120Hz), but `scrollTop` rounds to a whole pixel on
   // read in at least some browsers. Using it as the running total meant
   // each frame recomputed "0 (rounded-down last value) + a sub-pixel
   // increment", which rounds straight back to 0 forever — the drift never
@@ -150,6 +158,17 @@ function VerticalDrift<T>({
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
     paused.current = true;
   };
+  // Distinct from scheduleResume: resumes the instant the cursor leaves a
+  // card, no delay — used for hover, not wheel/touch. Hovering the whole
+  // viewport was tried once before and reverted (see the onWheel/onTouchStart
+  // props below) because it froze the drift for as long as the cursor merely
+  // rested anywhere in the block; scoping the pause to a single card's own
+  // mouseenter/mouseleave (below, on each item wrapper) avoids that — it
+  // only pauses while the cursor is actually over a specific post.
+  const resumeNow = () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    paused.current = false;
+  };
 
   return (
     <div className="relative">
@@ -174,12 +193,14 @@ function VerticalDrift<T>({
       >
         <div ref={trackRef} className="flex flex-col gap-3">
           {loop.map((item, i) => (
-            <div key={getKey(item, i)}>{renderItem(item)}</div>
+            <div key={getKey(item, i)} onMouseEnter={pauseNow} onMouseLeave={resumeNow}>
+              {renderItem(item)}
+            </div>
           ))}
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--color-canvas)] to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--color-canvas)] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[var(--color-canvas)] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[var(--color-canvas)] to-transparent" />
     </div>
   );
 }
@@ -199,7 +220,7 @@ function useMergedSocialFeed(): FeedPost[] | null {
         fetch(platform.apiPath)
           .then((res) => res.json())
           .then((data: { posts: SocialPost[] }) =>
-            data.posts.map((post) => ({ ...post, platform: platform.platform, href: platform.href }))
+            data.posts.map((post) => ({ ...post, platform: platform.platform, href: post.link ?? platform.href }))
           )
           .catch(() => [] as FeedPost[])
       )
@@ -248,28 +269,23 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
               renderItem={(item) => (
                 <a
                   href={item.href}
-                  className="flex items-center gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                  className="block overflow-hidden rounded-xl border border-hairline bg-surface-card transition-colors hover:border-hairline-strong"
                 >
-                  {/* items-center on the row (above) + a bigger thumbnail
-                      here fixes two things at once: the image no longer
-                      sits pinned to the top of a taller text block, and it
-                      now uses more of that vertical space instead of
-                      floating small inside it. Still a fixed-size
-                      rectangle, not a full-width banner — most of these
-                      source photos are low-resolution stock images that
-                      look fine at this size but rough blown up full-width.
-                      Optional: a text-only update (no photo) renders as a
-                      plain full-width row instead of leaving a gap. */}
+                  {/* Full-width top image (not a small side thumbnail) —
+                      per feedback the old thumbnail read as cramped. A
+                      plain <img> at its own natural aspect ratio (width
+                      pinned to the card, height auto) rather than
+                      PhotoTile's fixed-box crop — per feedback the card
+                      should follow whatever shape the uploaded image
+                      actually is, not force every image into one crop. */}
                   {item.image && (
-                    <span className="relative h-24 w-36 shrink-0 overflow-hidden rounded-lg">
-                      <PhotoTile src={item.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="144px" />
-                    </span>
+                    <img src={item.image} alt="" loading="lazy" className="block h-auto w-full" />
                   )}
-                  <span className="min-w-0 flex-1">
+                  <div className="p-4">
                     <span className="type-caption text-[var(--color-muted)]">{item.timestamp}</span>
                     <p className="type-body-strong mt-0.5 truncate text-ink">{item.heading}</p>
                     <p className="type-caption mt-0.5 line-clamp-2 text-[var(--color-body)]">{item.description}</p>
-                  </span>
+                  </div>
                 </a>
               )}
             />
@@ -284,7 +300,11 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
             {posts === null ? (
               <div className="space-y-3" style={{ height: VIEWPORT_H }}>
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="h-24 animate-pulse rounded-xl bg-[var(--color-surface-strong)]" />
+                  <div
+                    key={i}
+                    style={{ height: SKELETON_H }}
+                    className="animate-pulse rounded-xl bg-[var(--color-surface-strong)]"
+                  />
                 ))}
               </div>
             ) : posts.length === 0 ? (
@@ -298,20 +318,20 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
                   return (
                     <a
                       href={post.href}
-                      className="flex items-center gap-3 rounded-xl border border-hairline bg-surface-card p-3 transition-colors hover:border-hairline-strong"
+                      className="block overflow-hidden rounded-xl border border-hairline bg-surface-card transition-colors hover:border-hairline-strong"
                     >
                       {post.image && (
-                        <span className="relative h-24 w-36 shrink-0 overflow-hidden rounded-lg">
-                          <PhotoTile src={post.image} alt="" aspect="aspect-[3/2]" className="h-full w-full" sizes="144px" />
-                          <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
-                            {Icon && <Icon className="h-3 w-3" />}
+                        <div className="relative w-full">
+                          <img src={post.image} alt="" loading="lazy" className="block h-auto w-full" />
+                          <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white text-ink shadow-[0_2px_6px_rgba(12,10,9,0.2)]">
+                            {Icon && <Icon className="h-3.5 w-3.5" />}
                           </span>
-                        </span>
+                        </div>
                       )}
-                      <span className="min-w-0 flex-1">
-                        <p className="type-caption line-clamp-2 text-ink">{post.text}</p>
-                        <span className="type-caption mt-0.5 block text-[var(--color-muted)]">{post.date}</span>
-                      </span>
+                      <div className="p-4">
+                        <p className="type-body-strong line-clamp-2 text-ink">{post.text}</p>
+                        <span className="type-caption mt-1 block text-[var(--color-muted)]">{post.date}</span>
+                      </div>
                     </a>
                   );
                 }}

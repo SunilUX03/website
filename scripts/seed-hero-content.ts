@@ -18,7 +18,7 @@ async function main() {
         { text: "தமிழ்நாடு மின்-ஆளுமை முகமை" },
       ],
       headlineTemplate: "Powering Digital {word} in Tamil Nadu",
-      headlineCycleWords: [{ word: "Governance" }, { word: "Services" }, { word: "Infrastructure" }],
+      headlineCycleWords: [{ word: "Governance" }, { word: "Infrastructure" }, { word: "Services" }],
       tagline: "Building secure, citizen-first Digital Public Infrastructure across Tamil Nadu.",
       _status: "published",
     },

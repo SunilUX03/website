@@ -81,7 +81,11 @@ function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.5, ease: "easeInOut" }}
           >
-            <PhotoTile src={post.image} alt={`${platform.platform} post`} aspect="aspect-auto" className="h-full w-full" />
+            {post.image ? (
+              <PhotoTile src={post.image} alt={`${platform.platform} post`} aspect="aspect-auto" className="h-full w-full" />
+            ) : (
+              <div className="h-full w-full bg-[var(--color-surface-strong)]" />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -102,7 +106,7 @@ function SocialCard({ platform }: { platform: (typeof socialMedia)[number] }) {
         <div className="flex items-center justify-between">
           <span className="type-caption text-[var(--color-muted)]">{post.date}</span>
           <a
-            href={platform.href}
+            href={post.link ?? platform.href}
             className="type-body-sm font-medium text-[var(--color-primary-blue)] hover:underline"
           >
             Read more

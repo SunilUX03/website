@@ -1,11 +1,10 @@
-// Seed/placeholder data behind the same shape a real platform API
-// integration would return, so /api/social/* routes can swap their
-// internals for a real Graph/X/YouTube API call later without the client
-// component (SocialMedia.tsx) needing to change at all.
-//
-// Real API integration requires registering an app + credentials with each
-// platform (Facebook Graph API, X API, YouTube Data API) — flagged as a
-// setup dependency, not something wireable without those credentials.
+// SocialPost is now backed by the "social-posts" CMS collection (manual
+// entry — see src/lib/cms/social-posts.ts and the /cms/social-media
+// portal screens) rather than the seed data below. SOCIAL_SEED itself is
+// no longer read by /api/social/* routes, kept only as illustrative
+// placeholder content pending real API integration with each platform
+// (Facebook Graph API, X API, YouTube Data API — a setup dependency
+// requiring credentials this project doesn't have yet).
 //
 // Images: real, content-appropriate curated stock photos (see
 // lib/stock-photos.ts) rather than random placeholders.
@@ -15,7 +14,11 @@ import { pexelsPhoto, STOCK } from "./stock-photos";
 export interface SocialPost {
   text: string;
   date: string;
-  image: string;
+  /** Optional — a manually-entered post may not have a photo attached. */
+  image?: string;
+  /** Optional per-post link — falls back to the platform's own profile
+   * link (see lib/content.ts `socialMedia`) when not set. */
+  link?: string;
 }
 
 export const SOCIAL_SEED: Record<

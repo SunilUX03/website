@@ -1,5 +1,5 @@
 import { getPayloadClient } from "@/lib/payload-client";
-import type { JobOpening } from "@/payload-types";
+import type { JobOpening, Document } from "@/payload-types";
 
 /** JobOpenings.tsx is a plain server component (no "use client"), so —
  * unlike announcements/media-items — there's no client-bundle reason to
@@ -23,13 +23,14 @@ function formatDeadline(isoDate: string): string {
 }
 
 function toCmsJobOpening(doc: JobOpening): CmsJobOpening {
+  const jd = typeof doc.jd === "object" ? (doc.jd as Document) : undefined;
   return {
     id: doc.id,
     role: doc.role,
     type: doc.type,
     department: doc.department,
     deadline: formatDeadline(doc.deadline),
-    jdHref: doc.jdHref ?? undefined,
+    jdHref: jd?.url ?? undefined,
   };
 }
 
@@ -38,7 +39,7 @@ export async function getJobOpenings(): Promise<CmsJobOpening[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "job-openings",
-    depth: 0,
+    depth: 1,
     sort: "deadline",
     limit: 100,
     overrideAccess: false,

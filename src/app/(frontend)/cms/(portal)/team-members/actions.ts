@@ -33,7 +33,7 @@ export async function createTeamMember(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Team Members", `Created "${data.name}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/team-members/${doc.id}/edit`);
+  redirect(`/cms/team-members/${doc.id}/edit?saved=1`);
 }
 
 export async function updateTeamMember(id: number, formData: FormData) {
@@ -45,7 +45,7 @@ export async function updateTeamMember(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "team-members", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "team-members", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "team-members", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "team-members", id, data, draft: true, overrideAccess: true });
   }
@@ -53,7 +53,7 @@ export async function updateTeamMember(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Team Members", `${action} "${data.name}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/team-members/${id}/edit`);
+  redirect(`/cms/team-members/${id}/edit?saved=1`);
 }
 
 export async function deleteTeamMember(id: number, name: string) {

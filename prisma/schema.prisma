@@ -44,4 +44,24 @@ model JobApplication {
   // else to provision, migrate, or reconnect at handover time.
   resumeData  Bytes
   submittedAt DateTime @default(now())
+  // Set at submission time to the Payload "job-openings" collection id
+  // whose role matched what the applicant selected (Payload owns that
+  // collection, not Prisma — so this is a plain int, not a Prisma
+  // relation). Null means no currently-published opening matched, i.e.
+  // this was a general "no vacancy" resume submission — the Career
+  // Portal's Applications page groups by this id; its Resume Submitted
+  // page is everything where this is null, sorted by role instead.
+  matchedJobOpeningId Int?
+}
+
+// Backs the "Role Applied For" dropdown on the public application form —
+// managed from the Career Portal's Roles page, ordered by `order`. Kept
+// separate from Payload's job-openings collection (see comment above):
+// a role can exist here as an evergreen pipeline option with no active
+// posting, so the two lists are deliberately not the same thing.
+model JobRole {
+  id        String   @id @default(cuid())
+  label     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 }

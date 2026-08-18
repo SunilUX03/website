@@ -11,10 +11,10 @@ export default async function EditAwardPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string }>;
 }) {
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, saved } = await searchParams;
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
@@ -41,6 +41,10 @@ export default async function EditAwardPage({
           </form>
         ) : null}
       </div>
+
+      {saved ? (
+        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
+      ) : null}
 
       <AwardForm
         action={boundUpdate}

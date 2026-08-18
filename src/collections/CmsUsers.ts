@@ -1,8 +1,8 @@
 import type { CollectionConfig } from "payload";
 
-// The CMS's own login — deliberately separate from the Careers HR login
-// (NextAuth + Prisma, at /admin/login). Two unrelated systems reusing the
-// same word "admin" would be confusing; this one lives at /cms.
+// The CMS's own login — deliberately separate from the Career Portal's
+// HR login (NextAuth + Prisma, at /career-portal/login). Two unrelated
+// systems; this one lives at /cms.
 export const CmsUsers: CollectionConfig = {
   slug: "cms-users",
   auth: true,

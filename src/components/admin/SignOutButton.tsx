@@ -6,7 +6,7 @@ export function SignOutButton() {
   return (
     <button
       type="button"
-      onClick={() => signOut({ callbackUrl: "/admin/login" })}
+      onClick={() => signOut({ callbackUrl: "/career-portal/login" })}
       className="type-button btn-outline"
     >
       Sign out

@@ -181,7 +181,7 @@ export async function updateService(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "services", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "services", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "services", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "services", id, data, draft: true, overrideAccess: true });
   }

@@ -5,8 +5,15 @@ import { RollOfHonourForm } from "../../RollOfHonourForm";
 import { updateRollOfHonourEntry, deleteRollOfHonourEntry } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
 
-export default async function EditRollOfHonourEntryPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditRollOfHonourEntryPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const { id } = await params;
+  const { saved } = await searchParams;
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
@@ -32,6 +39,10 @@ export default async function EditRollOfHonourEntryPage({ params }: { params: Pr
           </form>
         ) : null}
       </div>
+
+      {saved ? (
+        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
+      ) : null}
 
       <RollOfHonourForm
         action={boundUpdate}

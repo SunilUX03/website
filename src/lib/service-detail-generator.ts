@@ -13,12 +13,6 @@ const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
   services: "departments",
 };
 
-const SECTION_DISPLAY_NAME: Record<ServiceItemDetail["section"], string> = {
-  "citizen-services": "Citizen Services",
-  "e-governance-projects": "e-Governance Projects",
-  services: "Services",
-};
-
 // Supporting images for the Product Tour carousel — the item's own real
 // photo first, then generic on-theme stock shots from the shared pool
 // (same reuse-across-sections precedent as services-content.ts), never a
@@ -56,7 +50,11 @@ export function generatePullQuote(item: ServiceItemDetail): { quote: string; sou
   const headline = bullets[0] ?? item.name;
   return {
     quote: `${headline}, delivered through ${item.name} as part of TNeGA's push for transparent, accessible digital governance in Tamil Nadu.`,
-    source: `TNeGA, ${SECTION_DISPLAY_NAME[item.section]}`,
+    // Was previously "TNeGA, {section display name}" — the old section
+    // labels (Citizen Services / e-Governance Projects / Services) no
+    // longer correspond to a real destination on /services (see
+    // ServicesTabs), so this attribution is now section-agnostic.
+    source: "TNeGA, Digital Governance Programme",
   };
 }
 

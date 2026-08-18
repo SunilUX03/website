@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 
 export type AwardFormValues = {
   title: string;
@@ -12,6 +13,11 @@ export type AwardFormValues = {
   error?: string;
 };
 
+function truncate(value: string, max = 60): string {
+  const v = value.trim();
+  return v.length > max ? `${v.slice(0, max)}…` : v;
+}
+
 export function AwardForm({
   action,
   values,
@@ -19,15 +25,55 @@ export function AwardForm({
   action: (formData: FormData) => void;
   values: AwardFormValues;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const intentRef = useRef<HTMLInputElement>(null);
+  const [changes, setChanges] = useState<Change[] | null>(null);
+
+  function submitWithIntent(intent: "draft" | "publish" | "unpublish") {
+    if (intentRef.current) intentRef.current.value = intent;
+    formRef.current?.requestSubmit();
+  }
+
+  function computeChanges(fd: FormData): Change[] {
+    const list: Change[] = [];
+    const text = (key: string, label: string, original: string) => {
+      const after = String(fd.get(key) ?? "").trim();
+      if (after !== (original ?? "")) {
+        list.push({ id: key, label, detail: `"${truncate(original) || "(empty)"}" → "${truncate(after) || "(empty)"}"`, sectionId: "section-main" });
+      }
+    };
+    text("title", "Title", values.title);
+    text("year", "Year", values.year);
+    text("description", "Description", values.description);
+    const imageFile = fd.get("image") as File | null;
+    if (imageFile && imageFile.size > 0) {
+      list.push({ id: "image", label: "Image", detail: `New image selected (${imageFile.name})`, sectionId: "section-main" });
+    }
+    return list;
+  }
+
+  function handleUpdateClick() {
+    if (!formRef.current) return;
+    const fd = new FormData(formRef.current);
+    const detected = computeChanges(fd);
+    if (detected.length === 0) {
+      submitWithIntent("publish");
+      return;
+    }
+    setChanges(detected);
+  }
+
   return (
-    <form action={action} className="flex max-w-[560px] flex-col gap-6">
+    <form ref={formRef} action={action} className="flex max-w-[560px] flex-col gap-6">
+      <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+
       {values.error ? (
         <p className="type-body-sm rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
           {values.error}
         </p>
       ) : null}
 
-      <section className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
+      <section id="section-main" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Title</label>
           <input
@@ -71,29 +117,37 @@ export function AwardForm({
       </section>
 
       <div className="flex items-center gap-3">
-        <button type="submit" name="intent" value="draft" className="type-button btn-outline">
+        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
           Save draft
         </button>
         {values.status === "published" ? (
-          <ConfirmSubmitButton
-            name="intent"
-            value="unpublish"
-            confirmMessage="Unpublish this award? It'll disappear from the live site."
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm("Unpublish this award? It'll disappear from the live site.")) submitWithIntent("unpublish");
+            }}
             className="type-button btn-outline"
           >
             Unpublish
-          </ConfirmSubmitButton>
-        ) : (
-          <ConfirmSubmitButton
-            name="intent"
-            value="publish"
-            confirmMessage="Publish this award? It will go live immediately."
-            className="type-button btn-primary"
-          >
-            Publish
-          </ConfirmSubmitButton>
-        )}
+          </button>
+        ) : null}
+        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
+          {values.status === "published" ? "Update" : "Publish"}
+        </button>
       </div>
+
+      {changes ? (
+        <UpdateReviewModal
+          changes={changes}
+          onEdit={() => setChanges(null)}
+          onDiscard={(id) => setChanges((prev) => prev?.filter((c) => c.id !== id) ?? null)}
+          onCancel={() => setChanges(null)}
+          onConfirm={() => {
+            setChanges(null);
+            submitWithIntent("publish");
+          }}
+        />
+      ) : null}
     </form>
   );
 }

@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { SOCIAL_SEED } from "@/lib/social-seed-data";
+import { getSocialPosts } from "@/lib/cms/social-posts";
 
-// Re-fetch at most every 30 min once this calls the real X API, so we
-// respect rate limits instead of hitting it on every page load.
-export const revalidate = 1800;
+export const dynamic = "force-dynamic";
 
-// TODO: once an X API app + bearer token are provisioned, replace the body
-// below with a server-side call to the X API (recent tweets by user)
-// using a token read from process.env — never expose that token to the
-// client. The response shape below is what the client expects regardless
-// of where the data comes from.
 export async function GET() {
-  return NextResponse.json({ posts: SOCIAL_SEED.x });
+  const posts = await getSocialPosts("x");
+  return NextResponse.json({ posts });
 }

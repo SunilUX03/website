@@ -33,13 +33,20 @@ const NAV: NavGroup[] = [
   {
     label: "Careers",
     items: [
+      // Job Openings moved to the standalone Career Portal
+      // (/career-portal/openings) — HR no longer needs CMS access at
+      // all. This entry stays only for the Careers PAGE's own copy
+      // (hero text, application steps), which is unrelated to openings.
       { label: "Page Content", href: "/cms/settings/careers" },
-      { label: "Job Openings", href: "/cms/job-openings" },
     ],
   },
   {
     label: "Services & Projects",
     items: [{ label: "All services", href: "/cms/services" }],
+  },
+  {
+    label: "Social Media",
+    items: [{ label: "Posts", href: "/cms/social-media" }],
   },
   {
     label: "Notifications",

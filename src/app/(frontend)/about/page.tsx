@@ -22,7 +22,7 @@ import { getAboutPageContent } from "@/lib/cms/about-page";
 import { getOrgChart } from "@/lib/cms/org-chart";
 import { getAwards } from "@/lib/cms/awards";
 import { getRollOfHonour } from "@/lib/cms/roll-of-honour";
-import { pillars } from "@/lib/content";
+import { pillars, type PillarLinkItem } from "@/lib/content";
 import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
 import { getMetrics } from "@/lib/cms/metrics";
 import { getPillarsContent } from "@/lib/cms/pillars-content";
@@ -54,8 +54,20 @@ export default async function About() {
       getPillarsContent(),
       getCareersContent(),
     ]);
-  const pillarItems = pillars.map((p) => getServiceItemsByNames(allServiceItems, p.itemNames));
-  const mergedPillars = pillarsChrome.map((chrome, i) => ({ ...chrome, href: pillars[i].href }));
+  const pillarItems: PillarLinkItem[][] = pillars.map((p) =>
+    "items" in p
+      ? p.items
+      : getServiceItemsByNames(allServiceItems, p.itemNames).map((item) => ({
+          name: item.name,
+          description: item.description,
+          href: item.knowMoreHref,
+        }))
+  );
+  const mergedPillars = pillarsChrome.map((chrome, i) => ({
+    ...chrome,
+    href: pillars[i].href,
+    seeAllLabel: "seeAllLabel" in pillars[i] ? pillars[i].seeAllLabel : undefined,
+  }));
 
   return (
     <>

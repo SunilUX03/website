@@ -40,7 +40,7 @@ export async function updateSiteCopy(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "site-copy-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "site-copy-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "site-copy-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "site-copy-content", data, draft: true, overrideAccess: true });
   }
@@ -48,5 +48,5 @@ export async function updateSiteCopy(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Other Page Copy", `${action} the Notifications/Services hero copy and homepage panels`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/site-copy");
+  redirect("/cms/settings/site-copy?saved=1");
 }

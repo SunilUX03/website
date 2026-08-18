@@ -37,7 +37,7 @@ export async function createGovernmentOrder(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Government Orders", `Created "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/government-orders/${doc.id}/edit`);
+  redirect(`/cms/government-orders/${doc.id}/edit?saved=1`);
 }
 
 export async function updateGovernmentOrder(id: number, formData: FormData) {
@@ -49,7 +49,7 @@ export async function updateGovernmentOrder(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "government-orders", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "government-orders", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "government-orders", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "government-orders", id, data, draft: true, overrideAccess: true });
   }
@@ -57,7 +57,7 @@ export async function updateGovernmentOrder(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Government Orders", `${action} "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/government-orders/${id}/edit`);
+  redirect(`/cms/government-orders/${id}/edit?saved=1`);
 }
 
 export async function deleteGovernmentOrder(id: number, title: string) {

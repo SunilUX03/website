@@ -106,7 +106,14 @@ export function ServiceForm({
     formRef.current.requestSubmit();
   }
 
+  // Only gates the FIRST publish of a service — once it's live, an editor
+  // touching up one field (e.g. swapping the card photo) shouldn't get
+  // blocked by an unrelated field like Tagline being empty. Blank
+  // required-content on an already-published service is a separate,
+  // deliberate edit an admin can still make; this isn't meant to police
+  // that on every save.
   function validateForPublish(fd: FormData): string | null {
+    if (values.status === "published") return null;
     const hasRows = (name: string) => fd.has(`${name}.0.value`) || fd.has(`${name}.0.q`) || fd.has(`${name}.0.title`);
     if (!String(fd.get("tagline") ?? "").trim()) return "Add a Tagline before publishing — it's the first thing visitors read.";
     if (!hasRows("keyFeatures")) return "Add at least one Key feature before publishing.";
@@ -330,14 +337,17 @@ export function ServiceForm({
 
       <section id="section-about" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
-          <p className="type-caption-uppercase text-[var(--color-muted)]">About & hero</p>
+          <p className="type-caption-uppercase text-[var(--color-muted)]">This service&apos;s own detail page — About & Hero</p>
           <p className="type-caption mt-1 text-[var(--color-muted)]">
-            This is the real detail-page content — fill it in with the actual submitted copy before publishing.
+            This is the real detail-page content — fill it in with the actual submitted copy before publishing. Not
+            the site&apos;s Home page hero, which is edited separately.
           </p>
         </div>
 
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Tagline</label>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Tagline <span className="normal-case text-[11px]">(the line under this service&apos;s name at the top of its own detail page)</span>
+          </label>
           <input
             name="tagline"
             defaultValue={values.tagline}

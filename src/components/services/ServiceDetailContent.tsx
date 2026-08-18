@@ -19,11 +19,14 @@ import {
 } from "@/lib/service-detail-generator";
 import { getFooterContent } from "@/lib/cms/footer";
 
-const SECTION_LABEL: Record<ServiceItemDetail["section"], string> = {
-  "citizen-services": "Citizen Services",
-  "e-governance-projects": "e-Governance Projects",
-  services: "Services",
-};
+// Every service/project with its own detail page now lives on the
+// standalone /initiatives-projects page regardless of its old `section`
+// tag (citizen-services / e-governance-projects / services) — those tags
+// no longer map to distinct destinations, so the breadcrumb/badge/
+// "View all" link below are section-agnostic rather than keyed off
+// `item.section`.
+const INITIATIVES_LABEL = "Initiatives & Projects";
+const INITIATIVES_HREF = "/initiatives-projects";
 
 // Same icon across every Key Features card by design (per earlier
 // feedback: "features will have the same icon") — a layered-stack glyph
@@ -100,7 +103,7 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
     <>
       <Breadcrumb
         items={[
-          { label: SECTION_LABEL[item.section], href: `/services#${item.section}` },
+          { label: INITIATIVES_LABEL, href: INITIATIVES_HREF },
           { label: item.name },
         ]}
       />
@@ -118,7 +121,7 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
 
         <Container className="relative py-xl md:py-xxl">
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="badge-pill type-caption">{SECTION_LABEL[item.section]}</span>
+            <span className="badge-pill type-caption">{INITIATIVES_LABEL}</span>
             <span className="badge-pill type-caption">{typeLabel}</span>
           </div>
 
@@ -158,8 +161,8 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
                     Avail Service
                   </a>
                 )}
-                <Link href={`/services#${item.section}`} className="type-button btn-outline">
-                  View All {SECTION_LABEL[item.section]}
+                <Link href={INITIATIVES_HREF} className="type-button btn-outline">
+                  View All {INITIATIVES_LABEL}
                 </Link>
               </div>
             </div>
@@ -395,7 +398,7 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
         <section className="bg-canvas-soft">
           <Container className="py-xxl">
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Explore more</p>
-            <h2 className="type-display-md mb-10 text-ink">Related {SECTION_LABEL[item.section]}</h2>
+            <h2 className="type-display-md mb-10 text-ink">Related {INITIATIVES_LABEL}</h2>
 
             <CardCarousel>
               {related.map((sibling) => (

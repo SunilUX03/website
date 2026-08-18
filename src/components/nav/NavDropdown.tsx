@@ -14,6 +14,10 @@ interface NavDropdownProps {
   href?: string;
   panel: ReactNode;
   panelClassName?: string;
+  /** Replaces the default text-label + chevron trigger with a single
+   * icon-only button (the Notifications kebab) — no separate nav-to-href
+   * affordance, since there's no overview page for it to link to. */
+  iconTrigger?: ReactNode;
 }
 
 /**
@@ -25,7 +29,7 @@ interface NavDropdownProps {
  * — its position is measured after mount and clamped to the viewport so
  * wide panels never overflow, while still centering whenever there's room.
  */
-export function NavDropdown({ label, href, panel, panelClassName }: NavDropdownProps) {
+export function NavDropdown({ label, href, panel, panelClassName, iconTrigger }: NavDropdownProps) {
   const [open, setOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [leftPx, setLeftPx] = useState<number | null>(null);
@@ -78,30 +82,45 @@ export function NavDropdown({ label, href, panel, panelClassName }: NavDropdownP
       onMouseLeave={scheduleClose}
     >
       <div className="flex items-center">
-        {href ? (
-          <a
-            href={href}
-            className="type-nav-link py-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
+        {iconTrigger ? (
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls={id}
+            aria-label={label}
+            onClick={() => setOpen((v) => !v)}
+            className="flex items-center p-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
           >
-            {label}
-          </a>
+            {iconTrigger}
+          </button>
         ) : (
-          <span className="type-nav-link py-2 text-ink">{label}</span>
+          <>
+            {href ? (
+              <a
+                href={href}
+                className="type-nav-link py-2 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
+              >
+                {label}
+              </a>
+            ) : (
+              <span className="type-nav-link py-2 text-ink">{label}</span>
+            )}
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-controls={id}
+              aria-label={`Toggle ${label} menu`}
+              onClick={() => setOpen((v) => !v)}
+              className="flex items-center py-2 pl-1 pr-0.5 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
+            >
+              <ChevronDownIcon
+                className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                  open ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          </>
         )}
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={id}
-          aria-label={`Toggle ${label} menu`}
-          onClick={() => setOpen((v) => !v)}
-          className="flex items-center py-2 pl-1 pr-0.5 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
-        >
-          <ChevronDownIcon
-            className={`h-3.5 w-3.5 transition-transform duration-200 ${
-              open ? "rotate-180" : ""
-            }`}
-          />
-        </button>
       </div>
       <AnimatePresence>
         {open && (

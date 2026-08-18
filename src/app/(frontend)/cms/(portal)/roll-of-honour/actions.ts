@@ -28,7 +28,7 @@ export async function createRollOfHonourEntry(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Roll of Honour", `Created "${data.designation}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/roll-of-honour/${doc.id}/edit`);
+  redirect(`/cms/roll-of-honour/${doc.id}/edit?saved=1`);
 }
 
 export async function updateRollOfHonourEntry(id: number, formData: FormData) {
@@ -40,7 +40,7 @@ export async function updateRollOfHonourEntry(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "roll-of-honour", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "roll-of-honour", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "roll-of-honour", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "roll-of-honour", id, data, draft: true, overrideAccess: true });
   }
@@ -48,7 +48,7 @@ export async function updateRollOfHonourEntry(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Roll of Honour", `${action} "${data.designation}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/roll-of-honour/${id}/edit`);
+  redirect(`/cms/roll-of-honour/${id}/edit?saved=1`);
 }
 
 export async function deleteRollOfHonourEntry(id: number, designation: string) {

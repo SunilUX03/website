@@ -34,7 +34,7 @@ export async function updateTendersContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "tenders-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "tenders-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "tenders-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "tenders-content", data, draft: true, overrideAccess: true });
   }
@@ -42,5 +42,5 @@ export async function updateTendersContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Tenders Page", `${action} the Tenders page content`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/tenders");
+  redirect("/cms/settings/tenders?saved=1");
 }

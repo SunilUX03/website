@@ -21,6 +21,7 @@ import { LegalPages } from "./collections/LegalPages";
 import { Awards } from "./collections/Awards";
 import { RollOfHonour } from "./collections/RollOfHonour";
 import { ProjectsSpotlight } from "./collections/ProjectsSpotlight";
+import { SocialPosts } from "./collections/SocialPosts";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
@@ -65,6 +66,7 @@ export default buildConfig({
     Awards,
     RollOfHonour,
     ProjectsSpotlight,
+    SocialPosts,
   ],
   globals: [
     NavContent,

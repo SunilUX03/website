@@ -7,8 +7,15 @@ import { updateAnnouncement, deleteAnnouncement } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
 import type { Media } from "@/payload-types";
 
-export default async function EditAnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAnnouncementPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const { id } = await params;
+  const { saved } = await searchParams;
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
@@ -34,6 +41,10 @@ export default async function EditAnnouncementPage({ params }: { params: Promise
           </form>
         ) : null}
       </div>
+
+      {saved ? (
+        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
+      ) : null}
 
       <AnnouncementForm
         action={boundUpdate}

@@ -9,12 +9,20 @@ import { NavDropdown, DropdownLink } from "./NavDropdown";
 import { AccessibilityIcon, HomeIcon, MenuIcon } from "./icons";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
+import { useHeaderHeightVar } from "@/lib/hooks";
+// Static imports (not "/images/..." string paths) — Next fingerprints the
+// built filename by content hash, so replacing either file on disk always
+// produces a new URL instead of silently reusing a stale cached copy at
+// the old one.
+import tnEmblem from "../../../public/images/tn-emblem.png";
+import tnegaMark from "../../../public/images/logos/tnega-mark.png";
 
 export function MainNav({ nav }: { nav: CmsNavContent }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
   const { openPanel, panelOpen } = useAccessibilityPrefs();
+  useHeaderHeightVar();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,14 +49,12 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
         >
           <a
             href="/"
-            className="flex items-center gap-3"
+            className="flex min-w-0 items-center gap-3"
             aria-label="TNeGA, Tamil Nadu e-Governance Agency home"
           >
             <Image
-              src="/images/tn-emblem.png"
+              src={tnEmblem}
               alt="Government of Tamil Nadu emblem"
-              width={178}
-              height={186}
               priority
               className={clsx(
                 "w-auto transition-[height] duration-200",
@@ -63,22 +69,40 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
               )}
             />
             <Image
-              src="/images/logos/tnega-mark.png"
+              src={tnegaMark}
               alt=""
               aria-hidden
-              width={512}
-              height={512}
               priority
               className={clsx(
+                // Matches the TN emblem's own box height. The mark's own
+                // circle band is ~82.5% of its canvas height vs the
+                // emblem's ~97.4% (baked-in "TNeGA" text below the circle
+                // eats the rest), so the circle itself still reads
+                // slightly smaller than the emblem at equal box heights —
+                // accepted per explicit direction rather than compensated
+                // with a CSS scale multiplier (that was tried once before
+                // and overshot).
                 "w-auto shrink-0 transition-[height] duration-200",
                 scrolled ? "h-14" : "h-[4.5rem]"
               )}
             />
-            <span className="leading-tight">
-              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)] md:text-lg">
-                TNeGA
+            {/* min-w-0 lets this column actually shrink within the flex
+                row instead of forcing the row wider than the header —
+                without it the Tamil wordmark (several words, no short
+                abbreviated form the way "TNeGA" was) wrapped across 3-4
+                lines on mobile and blew out the header's fixed height.
+                gap-1 + leading-[1.6] on the Tamil line (not the tighter
+                leading-tight this used to share with the English line
+                below it) — Tamil's taller vowel signs were getting
+                clipped at the top by too short a line box. */}
+            <span className="flex min-w-0 flex-col gap-1">
+              <span
+                lang="ta"
+                className="block truncate text-[15px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] md:text-[16px]"
+              >
+                தமிழ்நாடு மின்-ஆளுமை முகமை
               </span>
-              <span className="type-caption hidden text-[var(--color-muted)] sm:block">
+              <span className="hidden truncate text-[15px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:block md:text-[16px]">
                 Tamil Nadu e-Governance Agency
               </span>
             </span>
@@ -123,6 +147,7 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
 
             <NavDropdown
               label="Notifications"
+              iconTrigger={<MenuIcon className="h-5 w-5" />}
               panelClassName="grid w-[420px] max-w-[90vw] grid-cols-2 gap-4 p-5"
               panel={
                 <>
@@ -154,7 +179,7 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
               href="/reach-us"
               className="type-button btn-primary shadow-[0_4px_14px_rgba(29,63,143,0.35)]"
             >
-              Reach us
+              Contact us
             </a>
           </nav>
 
@@ -169,38 +194,42 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
         </div>
       </div>
 
-      {/* Floating quick-access menu button — appears once the page is
-          scrolled, on every breakpoint (not just mobile), so the full
-          drawer menu is reachable without scrolling back up to the header. */}
-      <button
-        type="button"
-        onClick={() => setDrawerOpen(true)}
-        aria-label="Open menu"
+      {/* Floating quick-access controls — appear once the page is
+          scrolled, on every breakpoint (not just mobile), so both the
+          accessibility panel and the full drawer menu stay reachable
+          without scrolling back up to the header. A single flex row
+          (rather than two independently right-offset buttons) so the
+          accessibility control can grow into a labeled pill without the
+          menu button's position needing to be hand-tuned to match. */}
+      <div
         className={clsx(
-          "fixed right-5 top-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-hairline bg-surface-card text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-all duration-200 hover:bg-[var(--color-surface-strong)] md:right-8 md:top-6",
+          "fixed right-5 top-5 z-40 flex items-center gap-3 transition-all duration-200 md:right-8 md:top-6",
           scrolled ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       >
-        <MenuIcon className="h-5 w-5" />
-      </button>
+        <button
+          type="button"
+          onClick={(e) => openPanel(e.currentTarget)}
+          aria-label="Accessibility options"
+          aria-pressed={panelOpen}
+          className={clsx(
+            "flex h-11 items-center gap-2 rounded-full border px-4 text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-colors hover:bg-[var(--color-surface-strong)]",
+            panelOpen ? "border-[var(--color-primary-blue)] bg-[var(--color-surface-strong)]" : "border-hairline bg-surface-card"
+          )}
+        >
+          <AccessibilityIcon className="h-5 w-5 shrink-0" />
+          <span className="type-body-sm font-medium">Accessibility</span>
+        </button>
 
-      {/* Floating accessibility button — the top bar's "Accessibility"
-          control scrolls away with it; once scrolled, this is what's
-          actually reachable without scrolling back up. Sits just left of
-          the floating menu button, same appear-on-scroll behaviour. */}
-      <button
-        type="button"
-        onClick={(e) => openPanel(e.currentTarget)}
-        aria-label="Accessibility options"
-        aria-pressed={panelOpen}
-        className={clsx(
-          "fixed right-[68px] top-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-all duration-200 hover:bg-[var(--color-surface-strong)] md:right-[84px] md:top-6",
-          panelOpen ? "border-[var(--color-primary-blue)] bg-[var(--color-surface-strong)]" : "border-hairline bg-surface-card",
-          scrolled ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-      >
-        <AccessibilityIcon className="h-5 w-5" />
-      </button>
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open menu"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hairline bg-surface-card text-ink shadow-[0_4px_14px_rgba(12,10,9,0.16)] transition-colors hover:bg-[var(--color-surface-strong)]"
+        >
+          <MenuIcon className="h-5 w-5" />
+        </button>
+      </div>
 
       <MobileDrawer nav={nav} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>

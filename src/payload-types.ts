@@ -82,6 +82,7 @@ export interface Config {
     awards: Award;
     'roll-of-honour': RollOfHonour;
     'projects-spotlight': ProjectsSpotlight;
+    'social-posts': SocialPost;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -104,6 +105,7 @@ export interface Config {
     awards: AwardsSelect<false> | AwardsSelect<true>;
     'roll-of-honour': RollOfHonourSelect<false> | RollOfHonourSelect<true>;
     'projects-spotlight': ProjectsSpotlightSelect<false> | ProjectsSpotlightSelect<true>;
+    'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -350,12 +352,34 @@ export interface JobOpening {
    */
   deadline: string;
   /**
-   * Link to the job description PDF, e.g. /documents/careers/role-name.pdf after dropping the file in public/documents/careers/. Leave blank to hide the Download JD button.
+   * Job description PDF (max 4MB). Leave blank to hide the Download JD button on the public page.
    */
-  jdHref?: string | null;
+  jd?: (number | null) | Document;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  /**
+   * Shown in the media library list — not on the public site.
+   */
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -441,7 +465,7 @@ export interface Service {
      */
     keyFeatureDescriptions?:
       | {
-          value: string;
+          value?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -566,28 +590,6 @@ export interface Service {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents".
- */
-export interface Document {
-  id: number;
-  /**
-   * Shown in the media library list — not on the public site.
-   */
-  title: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -754,6 +756,30 @@ export interface ProjectsSpotlight {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-posts".
+ */
+export interface SocialPost {
+  id: number;
+  platform: 'facebook' | 'instagram' | 'x' | 'youtube' | 'linkedin';
+  /**
+   * The post's caption/text, as shown on the Home page feed.
+   */
+  text: string;
+  /**
+   * The date this was actually posted.
+   */
+  date: string;
+  image?: (number | null) | Media;
+  /**
+   * Link to the actual post. Leave blank to link to the platform's profile page instead.
+   */
+  link?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -835,6 +861,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects-spotlight';
         value: number | ProjectsSpotlight;
+      } | null)
+    | ({
+        relationTo: 'social-posts';
+        value: number | SocialPost;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -999,7 +1029,7 @@ export interface JobOpeningsSelect<T extends boolean = true> {
   type?: T;
   department?: T;
   deadline?: T;
-  jdHref?: T;
+  jd?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1256,6 +1286,20 @@ export interface ProjectsSpotlightSelect<T extends boolean = true> {
         id?: T;
       };
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-posts_select".
+ */
+export interface SocialPostsSelect<T extends boolean = true> {
+  platform?: T;
+  text?: T;
+  date?: T;
+  image?: T;
+  link?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

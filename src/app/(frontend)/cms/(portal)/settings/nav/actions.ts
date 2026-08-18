@@ -26,7 +26,7 @@ export async function updateNavContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "nav-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "nav-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "nav-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "nav-content", data, draft: true, overrideAccess: true });
   }
@@ -34,5 +34,5 @@ export async function updateNavContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Site Navigation", `${action} the header navigation`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/nav");
+  redirect("/cms/settings/nav?saved=1");
 }

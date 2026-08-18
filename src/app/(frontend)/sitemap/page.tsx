@@ -25,9 +25,9 @@ const SITEMAP: { heading: string; links: { label: string; href: string }[] }[] =
   {
     heading: "Services",
     links: [
-      { label: "Citizen Services", href: "/services#citizen-services" },
-      { label: "e-Governance Projects", href: "/services#e-governance-projects" },
-      { label: "Services", href: "/services#services" },
+      { label: "Citizen Services", href: "/citizen-services" },
+      { label: "Services to Government", href: "/services-to-government" },
+      { label: "Initiatives & Projects", href: "/initiatives-projects" },
     ],
   },
   {

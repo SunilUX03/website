@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { roleOptions } from "@/lib/careers-content";
+
+export type ApplicationRole = { id: string; label: string };
 
 // Kept under Vercel's ~4.5MB serverless request-body ceiling, since
 // that's where this runs until handover — raise this once the app is
@@ -65,7 +66,7 @@ function Field({
 const inputBase =
   "h-11 w-full rounded-md border bg-surface-card px-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-[var(--color-muted-soft)] focus:border-ink";
 
-export function ApplicationForm() {
+export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -228,8 +229,8 @@ export function ApplicationForm() {
                     }}
                   >
                     <option value="">Select a role</option>
-                    {roleOptions.map((r) => (
-                      <option key={r.value} value={r.value}>
+                    {roles.map((r) => (
+                      <option key={r.id} value={r.id}>
                         {r.label}
                       </option>
                     ))}

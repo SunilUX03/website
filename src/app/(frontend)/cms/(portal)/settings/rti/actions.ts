@@ -47,7 +47,7 @@ export async function updateRtiContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "rti-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "rti-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "rti-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "rti-content", data, draft: true, overrideAccess: true });
   }
@@ -55,5 +55,5 @@ export async function updateRtiContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "RTI Page", `${action} the RTI page content`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/rti");
+  redirect("/cms/settings/rti?saved=1");
 }

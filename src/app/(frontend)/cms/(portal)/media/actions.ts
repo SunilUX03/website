@@ -40,7 +40,7 @@ export async function createMediaItem(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Media & Press", `Created "${data.caption}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/media/${doc.id}/edit`);
+  redirect(`/cms/media/${doc.id}/edit?saved=1`);
 }
 
 export async function updateMediaItem(id: number, formData: FormData) {
@@ -52,7 +52,7 @@ export async function updateMediaItem(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "media-items", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "media-items", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "media-items", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "media-items", id, data, draft: true, overrideAccess: true });
   }
@@ -60,7 +60,7 @@ export async function updateMediaItem(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Media & Press", `${action} "${data.caption}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/media/${id}/edit`);
+  redirect(`/cms/media/${id}/edit?saved=1`);
 }
 
 export async function deleteMediaItem(id: number, caption: string) {

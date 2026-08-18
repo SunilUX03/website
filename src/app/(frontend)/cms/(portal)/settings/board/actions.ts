@@ -38,7 +38,7 @@ export async function updateBoardContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "board-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "board-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "board-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "board-content", data, draft: true, overrideAccess: true });
   }
@@ -46,5 +46,5 @@ export async function updateBoardContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Governing Board", `${action} the Governing Board`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/board");
+  redirect("/cms/settings/board?saved=1");
 }

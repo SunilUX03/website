@@ -32,7 +32,7 @@ export async function updateFooterContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "footer-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "footer-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "footer-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "footer-content", data, draft: true, overrideAccess: true });
   }
@@ -40,5 +40,5 @@ export async function updateFooterContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Footer", `${action} the site footer`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/footer");
+  redirect("/cms/settings/footer?saved=1");
 }

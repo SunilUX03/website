@@ -19,6 +19,8 @@ import * as migration_20260810_051920_add_projects_spotlight_service_field from 
 import * as migration_20260810_052059_drop_projects_spotlight_old_fields from './20260810_052059_drop_projects_spotlight_old_fields';
 import * as migration_20260810_063607_add_services_order_field from './20260810_063607_add_services_order_field';
 import * as migration_20260810_073754_add_cta_label_href from './20260810_073754_add_cta_label_href';
+import * as migration_20260810_160700_job_openings_jd_upload from './20260810_160700_job_openings_jd_upload';
+import * as migration_20260810_161500_add_social_posts from './20260810_161500_add_social_posts';
 
 export const migrations = [
   {
@@ -125,5 +127,15 @@ export const migrations = [
     up: migration_20260810_073754_add_cta_label_href.up,
     down: migration_20260810_073754_add_cta_label_href.down,
     name: '20260810_073754_add_cta_label_href'
+  },
+  {
+    up: migration_20260810_160700_job_openings_jd_upload.up,
+    down: migration_20260810_160700_job_openings_jd_upload.down,
+    name: '20260810_160700_job_openings_jd_upload'
+  },
+  {
+    up: migration_20260810_161500_add_social_posts.up,
+    down: migration_20260810_161500_add_social_posts.down,
+    name: '20260810_161500_add_social_posts'
   },
 ];

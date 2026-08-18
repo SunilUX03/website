@@ -45,6 +45,29 @@ export function useIsDesktop(breakpoint = 768): boolean | null {
   return isDesktop;
 }
 
+/** Measures the page's single `<header>` element and republishes its
+ * height as the `--header-height` CSS custom property on the document
+ * root, live across resizes (the header's own height changes on scroll —
+ * see MainNav's `scrolled` state). Lets any section size itself relative
+ * to "the rest of the first viewport" via `calc(100dvh - var(--header-height))`
+ * without either component needing to know about the other directly. */
+export function useHeaderHeightVar(): void {
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (!header) return;
+    const set = () => {
+      document.documentElement.style.setProperty(
+        "--header-height",
+        `${header.getBoundingClientRect().height}px`
+      );
+    };
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, []);
+}
+
 /** Fires `onEnter` once, the first time the element scrolls into view. */
 export function useInViewOnce<T extends HTMLElement>(
   options: IntersectionObserverInit = { threshold: 0.3 }

@@ -37,7 +37,7 @@ export async function createPolicy(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Policies & Guidelines", `Created "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/policies/${doc.id}/edit`);
+  redirect(`/cms/policies/${doc.id}/edit?saved=1`);
 }
 
 export async function updatePolicy(id: number, formData: FormData) {
@@ -49,7 +49,7 @@ export async function updatePolicy(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "policies", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "policies", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "policies", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "policies", id, data, draft: true, overrideAccess: true });
   }
@@ -57,7 +57,7 @@ export async function updatePolicy(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Policies & Guidelines", `${action} "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/policies/${id}/edit`);
+  redirect(`/cms/policies/${id}/edit?saved=1`);
 }
 
 export async function deletePolicy(id: number, title: string) {

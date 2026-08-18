@@ -9,53 +9,59 @@ import { useReducedMotion } from "@/lib/hooks";
 
 type Leader = CmsLeader;
 
-// Both photo slots are this wide regardless of leader size — the CM's
-// photo fills it, the Minister's smaller photo sits flush-left inside it.
-// Without this, the smaller photo made the Minister's name/title start
-// further left than the CM's, so the two rows' text never lined up.
-const PHOTO_SLOT = 100;
-
-function LeaderSignature({ leader, size }: { leader: Leader; size: "lg" | "sm" }) {
-  const px = size === "lg" ? 100 : 76;
+// Square photo, name and designation stacked underneath and centered —
+// matches the ELCOT-site reference the redesign was asked to follow,
+// replacing the old circular "signed by" strip layout. `photoSize` and
+// `textWidth` are independent: the Minister's photo runs smaller than
+// the CM's (per feedback), but its designation is much longer ("Hon'ble
+// Minister for Artificial Intelligence, Information Technology and
+// Digital Services") and needs a wider text column to wrap to 2 lines
+// rather than 3 — tying that column to the smaller photo width would
+// have made the wrap worse, not better.
+function LeaderCard({ leader, photoSize, textWidth }: { leader: Leader; photoSize: number; textWidth: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="flex w-full items-center gap-3 md:w-auto"
+      // shrink-0 is load-bearing: without it, the row's default flex-shrink
+      // let this column get compressed under the center text block's
+      // demand for space, which silently undid `textWidth` and pushed the
+      // designation back to 3 lines. The paragraph below can reflow
+      // narrower gracefully; a name/photo column should not.
+      //
+      // items-stretch (not items-center) — align-items:center on a flex
+      // column shrink-wraps every child to its own content width instead
+      // of the column's set width, so the designation <p> had nothing to
+      // wrap against and collapsed to its narrowest possible line. The
+      // fixed-size photo below is unaffected (it has its own explicit
+      // width/height) and gets `mx-auto` to stay centered now that the
+      // column itself no longer centers it.
+      className="flex shrink-0 flex-col items-stretch text-center"
+      style={{ width: textWidth, maxWidth: "100%" }}
     >
       <div
-        className="flex shrink-0 items-center justify-start"
-        style={{ width: PHOTO_SLOT, height: PHOTO_SLOT }}
+        className="mx-auto overflow-hidden rounded-2xl border border-hairline shadow-[0_6px_14px_rgba(12,10,9,0.14)]"
+        style={{ width: photoSize, height: photoSize }}
       >
-        <div
-          className="overflow-hidden rounded-full border border-hairline shadow-[0_6px_14px_rgba(12,10,9,0.14)]"
-          style={{ width: px, height: px }}
-        >
-          <Image
-            src={leader.photo}
-            alt={leader.name}
-            width={px}
-            height={px}
-            className="h-full w-full object-cover"
-            style={{ objectPosition: leader.photoPosition }}
-          />
-        </div>
+        <Image
+          src={leader.photo}
+          alt={leader.name}
+          width={photoSize}
+          height={photoSize}
+          className="h-full w-full object-cover"
+          style={{ objectPosition: leader.photoPosition }}
+        />
       </div>
-      <div className="text-left">
-        <p className={`text-ink ${size === "lg" ? "type-title-sm" : "type-body-strong"}`}>{leader.name}</p>
-        <p className="type-caption mt-0.5 text-[var(--color-muted)]">{leader.title}</p>
-      </div>
+      <p className="type-title-sm mt-4 text-ink">{leader.name}</p>
+      <p className="type-caption mt-1 text-[var(--color-muted)]">{leader.title}</p>
     </motion.div>
   );
 }
 
-/**
- * The CM/Minister-led "about TNeGA" band — the message (heading +
- * description) leads, with the two leaders appearing underneath as a
- * quiet "signed by" strip rather than large flanking portraits.
- */
+/** The CM/Minister-led "about TNeGA" band — square leader portraits flank
+ * the heading/description on desktop, matching the reference layout. */
 export function AboutLeadership({ band }: { band: CmsLeadershipBand }) {
   const [cm, minister] = band.leaders;
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -87,40 +93,23 @@ export function AboutLeadership({ band }: { band: CmsLeadershipBand }) {
 
       <motion.div style={{ y, scale, opacity }}>
         <Container className="relative py-xxl md:py-section">
-          <div className="mx-auto max-w-[640px] text-center">
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About TNeGA</p>
-            {/* leading-[1.4] overrides type-display-lg's own tight 1.17 —
-                at that line-height the "g" descender in "Leading" was
-                getting clipped by the line box. */}
-            <h2 className="type-display-lg mb-5 font-bold leading-[1.4] text-[var(--color-primary-blue)]">
-              Leading Digital Tamil Nadu
-            </h2>
-            <p className="type-body-md text-[var(--color-body)]">{band.description}</p>
+          {/* CM and Minister flank the message on desktop (matching the
+              reference layout); stack top-to-bottom on mobile in the same
+              left-to-right reading order: CM, message, Minister. */}
+          <div className="mx-auto flex max-w-[1080px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-center md:gap-10">
+            <LeaderCard leader={cm} photoSize={220} textWidth={220} />
 
-            <div aria-hidden className="mx-auto my-8 h-[2px] w-20 rounded-full bg-[var(--color-hairline-strong)]" />
-          </div>
-
-          {/* Deliberately its own, wider block rather than nesting inside
-              the 640px copy column above: at the larger photo sizes, the
-              full titles ("Hon'ble Chief Minister of Tamil Nadu", "Hon'ble
-              Minister of IT&DS") need more than 640px to stay on one line
-              next to their photos, while the paragraph above still wants
-              the narrower, more readable column. */}
-          <div className="mx-auto max-w-[860px] text-center">
-            {/* The fixed width below is deliberate, not a guess at "roughly
-                centered": a row sized by its own content would center
-                itself independently of the other row, so with names of
-                different lengths the two photos land at different
-                x-positions. A shared fixed width on both rows is what
-                guarantees the photos share one left edge on mobile.
-                330px (capped to 100% for narrower screens) is wide enough
-                that "Thiru C. Joseph Vijay" next to the 100px CM photo
-                still fits on one line instead of wrapping. */}
-            <div className="mx-auto flex w-[min(330px,100%)] flex-col items-stretch gap-5 md:w-auto md:flex-row md:items-center md:justify-center md:gap-8">
-              <LeaderSignature leader={cm} size="lg" />
-              <div aria-hidden className="hidden h-12 w-px bg-[var(--color-hairline-strong)] md:block" />
-              <LeaderSignature leader={minister} size="sm" />
+            <div className="max-w-[560px] text-center">
+              {/* leading-[1.4] overrides type-display-lg's own tight 1.17 —
+                  at that line-height the "g" descender in "Leading" was
+                  getting clipped by the line box. */}
+              <h2 className="type-display-lg mb-5 font-bold leading-[1.4] text-[var(--color-primary-blue)]">
+                Leading Digital Tamil Nadu
+              </h2>
+              <p className="type-body-md text-[var(--color-body)]">{band.description}</p>
             </div>
+
+            <LeaderCard leader={minister} photoSize={143} textWidth={300} />
           </div>
         </Container>
       </motion.div>

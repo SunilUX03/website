@@ -7,11 +7,9 @@ import type { GlobalConfig } from "payload";
 //
 // Deliberately NOT here: the hero's decorative orb colours/positions and
 // its "View Openings" anchor href (presentational/structural, stay in
-// lib/careers-content.ts), and the application form's role dropdown
-// (roleOptions) — kept a hand-kept static list, not coupled to the CMS
-// Job Openings collection, per the same reasoning already applied
-// elsewhere: a typo or renamed role there shouldn't silently break the
-// existing Prisma-backed application form.
+// lib/careers-content.ts), and the application form's role dropdown —
+// that's the Career Portal's Roles page (Prisma JobRole), not this CMS
+// global, since HR now manages the whole Careers pipeline from there.
 export const CareersContent: GlobalConfig = {
   slug: "careers-content",
   admin: {

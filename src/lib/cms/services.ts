@@ -15,8 +15,8 @@ function mediaUrl(value: number | Media | null | undefined): string {
   return typeof value === "object" && value !== null ? value.url ?? "" : "";
 }
 
-function toStringArray(value: { value: string }[] | null | undefined): string[] {
-  return value?.map((v) => v.value) ?? [];
+function toStringArray(value: { value?: string | null }[] | null | undefined): string[] {
+  return value?.map((v) => v.value ?? "") ?? [];
 }
 
 /** Whether the original static data would have set a `real` block at

@@ -32,7 +32,7 @@ export async function updateLegalPage(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "legal-pages", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "legal-pages", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "legal-pages", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "legal-pages", id, data, draft: true, overrideAccess: true });
   }
@@ -40,5 +40,5 @@ export async function updateLegalPage(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Legal Pages", `${action} "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/legal-pages/${id}/edit`);
+  redirect(`/cms/legal-pages/${id}/edit?saved=1`);
 }

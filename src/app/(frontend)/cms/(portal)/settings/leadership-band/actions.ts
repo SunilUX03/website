@@ -43,7 +43,7 @@ export async function updateLeadershipBand(existingPhotoIds: [number | undefined
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "leadership-band-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "leadership-band-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "leadership-band-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "leadership-band-content", data, draft: true, overrideAccess: true });
   }
@@ -51,5 +51,5 @@ export async function updateLeadershipBand(existingPhotoIds: [number | undefined
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Leadership Band", `${action} the homepage leadership band`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/leadership-band");
+  redirect("/cms/settings/leadership-band?saved=1");
 }

@@ -11,6 +11,7 @@ import { ApplicationForm } from "@/components/careers/ApplicationForm";
 import { heroOrbs } from "@/lib/careers-content";
 import { getJobOpenings } from "@/lib/cms/job-openings";
 import { getCareersContent } from "@/lib/cms/careers-content";
+import { db } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Careers | TNeGA",
@@ -21,7 +22,11 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Careers() {
-  const [openings, careers] = await Promise.all([getJobOpenings(), getCareersContent()]);
+  const [openings, careers, roles] = await Promise.all([
+    getJobOpenings(),
+    getCareersContent(),
+    db.jobRole.findMany({ orderBy: { order: "asc" }, select: { id: true, label: true } }),
+  ]);
 
   return (
     <>
@@ -38,7 +43,7 @@ export default async function Careers() {
         />
         <JobOpenings openings={openings} openingsNote={careers.openingsNote} />
         <HowToApply applicationSteps={careers.applicationSteps} />
-        <ApplicationForm />
+        <ApplicationForm roles={roles} />
       </main>
       <Footer />
       <ScrollToTop />

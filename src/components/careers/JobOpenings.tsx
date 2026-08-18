@@ -36,6 +36,17 @@ export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpenin
       <Container>
         <SectionHead heading="Current Openings" id="openings-heading" />
 
+        {openings.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-hairline bg-surface-card px-lg py-2xl text-center">
+            <p className="type-title-sm text-[var(--color-body-strong)]">No active job openings currently</p>
+            <p className="type-body-sm max-w-[48ch] text-[var(--color-muted)]">
+              But you can submit your resume below and we will reach out if any role that fits comes up.
+            </p>
+            <a href="#apply" className="type-button btn-primary mt-2">
+              Submit your resume
+            </a>
+          </div>
+        ) : (
         <ul role="list" className="grid gap-lg md:grid-cols-2">
           {openings.map((job) => (
             <li
@@ -87,6 +98,7 @@ export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpenin
             </li>
           ))}
         </ul>
+        )}
 
         <p className="type-body-sm mt-xl text-[var(--color-muted)]">
           {openingsNote}

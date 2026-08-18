@@ -36,7 +36,7 @@ export async function createAward(formData: FormData) {
 
   await logActivity(user, publish ? "published" : "created", "Awards", `Created "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/awards/${doc.id}/edit`);
+  redirect(`/cms/awards/${doc.id}/edit?saved=1`);
 }
 
 export async function updateAward(id: number, existingImageId: number | undefined, formData: FormData) {
@@ -54,7 +54,7 @@ export async function updateAward(id: number, existingImageId: number | undefine
   if (intent === "publish") {
     await payload.update({ collection: "awards", id, data: { ...finalData, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "awards", id, data: { ...finalData, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "awards", id, data: { ...finalData, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "awards", id, data: finalData, draft: true, overrideAccess: true });
   }
@@ -62,7 +62,7 @@ export async function updateAward(id: number, existingImageId: number | undefine
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Awards", `${action} "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/awards/${id}/edit`);
+  redirect(`/cms/awards/${id}/edit?saved=1`);
 }
 
 export async function deleteAward(id: number, title: string) {

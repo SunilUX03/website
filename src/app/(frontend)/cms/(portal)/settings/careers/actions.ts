@@ -32,7 +32,7 @@ export async function updateCareersContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "careers-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "careers-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "careers-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "careers-content", data, draft: true, overrideAccess: true });
   }
@@ -40,5 +40,5 @@ export async function updateCareersContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Careers Page", `${action} the Careers page content`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/careers");
+  redirect("/cms/settings/careers?saved=1");
 }

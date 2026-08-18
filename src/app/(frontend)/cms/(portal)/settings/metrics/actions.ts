@@ -31,7 +31,7 @@ export async function updateMetrics(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "metrics-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "metrics-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "metrics-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "metrics-content", data, draft: true, overrideAccess: true });
   }
@@ -39,5 +39,5 @@ export async function updateMetrics(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Homepage Metrics", `${action} the homepage metrics`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/metrics");
+  redirect("/cms/settings/metrics?saved=1");
 }

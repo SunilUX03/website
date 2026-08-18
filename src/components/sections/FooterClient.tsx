@@ -14,6 +14,25 @@ import {
 } from "@/components/ui/SocialIcons";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
 import { WebInfoManagerModal } from "@/components/legal/WebInfoManagerModal";
+// Static imports, same reasoning as MainNav.tsx — content-hashed URLs so
+// replacing either file on disk can never be masked by a stale image cache.
+import tnEmblem from "../../../public/images/tn-emblem.png";
+import tnegaMark from "../../../public/images/logos/tnega-mark.png";
+
+// The other two site pillars, mirrored here as static nav (not CMS
+// content) below the Citizen Services column — same reasoning as
+// BOTTOM_LINKS: structural navigation, not editorial copy. "Services to
+// Govt" is a single heading-link straight to its page (the page itself
+// already lists all of its services); "Initiatives & Projects" is the
+// same curated 5 shown in the homepage pillar card and Projects
+// Spotlight (see lib/content.ts / scripts/tmp-update-spotlight.ts),
+// linking straight to each project's own detail page.
+const FOOTER_INITIATIVES: { label: string; href: string }[] = [
+  { label: "Nambikkai Inaiyam", href: "/services/nambikkai-inaiyam" },
+  { label: "DBT", href: "/services/dbt-direct-benefit-transfer-portal" },
+  { label: "Namma Arasu", href: "/services/namma-arasu" },
+  { label: "TNSSP", href: "/services/tnssp" },
+];
 
 const BOTTOM_LINKS: { label: string; href?: string }[] = [
   { label: "Privacy Policy", href: "/privacy-policy" },
@@ -72,20 +91,19 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
               two different TNeGA logo files. */}
           <div className="flex items-center gap-3">
             <Image
-              src="/images/tn-emblem.png"
+              src={tnEmblem}
               alt="Government of Tamil Nadu emblem"
-              width={178}
-              height={186}
-              className="h-12 w-auto"
+              className="h-14 w-auto"
             />
             <span aria-hidden className="h-11 w-px shrink-0 bg-hairline-strong" />
             <Image
-              src="/images/logos/tnega-mark.png"
+              src={tnegaMark}
               alt=""
               aria-hidden
-              width={512}
-              height={512}
-              className="h-12 w-auto shrink-0"
+              // Same box height as the TN emblem, and now matches the top
+              // nav's own (unscrolled) logo height exactly — see
+              // MainNav.tsx for why a CSS scale-up was tried and reverted.
+              className="h-14 w-auto shrink-0"
             />
             <span className="leading-tight">
               <span className="type-title-md block font-semibold text-[var(--color-primary-blue)] md:text-lg">
@@ -155,8 +173,31 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
 
         <div>
           <p className="type-title-sm mb-4 text-ink">Citizen Services</p>
+          <ul className="mb-6 flex flex-col gap-2">
+            {footer.citizenServices.map((link) => {
+              const external = link.href.startsWith("http");
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className="type-body-sm text-[var(--color-body)] hover:text-ink"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          <a href="/services-to-government" className="type-title-sm mb-4 block text-ink hover:text-[var(--color-primary-blue)]">
+            Services to Govt
+          </a>
+
+          <p className="type-title-sm mb-4 text-ink">Initiatives &amp; Projects</p>
           <ul className="flex flex-col gap-2">
-            {footer.citizenServices.map((link) => (
+            {FOOTER_INITIATIVES.map((link) => (
               <li key={link.href}>
                 <a href={link.href} className="type-body-sm text-[var(--color-body)] hover:text-ink">
                   {link.label}

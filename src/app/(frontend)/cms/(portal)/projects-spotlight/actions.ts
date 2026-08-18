@@ -65,7 +65,7 @@ export async function updateProjectSpotlight(id: number, formData: FormData) {
   if (intent === "publish") {
     await payload.update({ collection: "projects-spotlight", id, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "projects-spotlight", id, data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.update({ collection: "projects-spotlight", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.update({ collection: "projects-spotlight", id, data, draft: true, overrideAccess: true });
   }
@@ -73,7 +73,7 @@ export async function updateProjectSpotlight(id: number, formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Projects Spotlight", `${action} a spotlight entry`);
   revalidatePath("/", "layout");
-  redirect(`/cms/projects-spotlight/${id}/edit`);
+  redirect(`/cms/projects-spotlight/${id}/edit?saved=1`);
 }
 
 export async function deleteProjectSpotlight(id: number, label: string) {

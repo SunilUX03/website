@@ -81,17 +81,22 @@ export function getServiceItemsBySection(
 }
 
 /** Resolves a list of item names (as referenced by Home's pillar bands)
- * to the canonical service items — same throw-rather-than-silently-drop
- * behavior as the original services-content.ts helper. */
+ * to the canonical service items. Logs and skips rather than throwing —
+ * this used to throw on a miss (to catch a typo/rename during content
+ * work), but that meant one CMS item going missing (a mistaken delete,
+ * a database rollback, anything outside a content edit gone wrong) took
+ * the entire homepage down for every visitor. A missing pillar-card item
+ * is a visible content bug worth fixing; it shouldn't be a 500. */
 export function getServiceItemsByNames(
   items: CmsServiceItemDetail[],
   names: string[]
 ): CmsServiceItemDetail[] {
-  return names.map((name) => {
+  return names.flatMap((name) => {
     const item = items.find((candidate) => candidate.name === name);
     if (!item) {
-      throw new Error(`Unknown service item "${name}". Expected one of: ${items.map((i) => i.name).join(", ")}`);
+      console.error(`getServiceItemsByNames: no service item named "${name}" — skipping. Available: ${items.map((i) => i.name).join(", ")}`);
+      return [];
     }
-    return item;
+    return [item];
   });
 }

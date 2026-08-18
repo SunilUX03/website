@@ -40,7 +40,7 @@ export async function updateAboutPageContent(formData: FormData) {
   if (intent === "publish") {
     await payload.updateGlobal({ slug: "about-page-content", data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "about-page-content", data: { ...data, _status: "draft" }, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "about-page-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
     await payload.updateGlobal({ slug: "about-page-content", data, draft: true, overrideAccess: true });
   }
@@ -48,5 +48,5 @@ export async function updateAboutPageContent(formData: FormData) {
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "About Page", `${action} the About page content`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/about");
+  redirect("/cms/settings/about?saved=1");
 }
