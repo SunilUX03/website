@@ -22,7 +22,7 @@ const services: Service[] = [
   },
   {
     id: "security-audit",
-    name: "Security Audit",
+    name: "IT Security Audit",
     description:
       "Mandatory IT security audits for Government websites, apps, APIs and cloud applications through CERT-In empanelled agencies.",
   },
@@ -135,12 +135,19 @@ export function ServicesToGovernmentContent({ heroId = "services-to-government" 
       {/* Department contacts */}
       <section className="bg-canvas">
         <Container className="py-xxl md:py-section">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Department Contacts</p>
-          <h2 className="type-display-sm mb-2 text-ink">Who to reach out to</h2>
-          <p className="type-body-sm mb-8 max-w-[64ch] text-[var(--color-muted)]">
-            Each Government Department is assigned a Project Manager (PM) at TNeGA. Contact them directly,
-            or raise a ticket above.
-          </p>
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Contact for departments</p>
+              <h2 className="type-display-sm mb-2 text-ink">Whom to reach out</h2>
+              <p className="type-body-sm max-w-[64ch] text-[var(--color-muted)]">
+                Each Government Department is assigned a Project Manager (PM) at TNeGA. Contact them directly,
+                or raise a ticket here.
+              </p>
+            </div>
+            <a href="#" className="type-button btn-primary shrink-0">
+              Raise a Ticket
+            </a>
+          </div>
 
           {/* Desktop/tablet: a real table. Mobile: a horizontally-
               scrolling 4-column table is awkward to use on a phone —
@@ -151,6 +158,7 @@ export function ServicesToGovernmentContent({ heroId = "services-to-government" 
             <table className="w-full min-w-[720px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-hairline bg-canvas-soft">
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">S.No</th>
                   <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Department</th>
                   <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Contact</th>
                   <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Email</th>
@@ -158,8 +166,9 @@ export function ServicesToGovernmentContent({ heroId = "services-to-government" 
                 </tr>
               </thead>
               <tbody>
-                {departmentContacts.map((row) => (
+                {departmentContacts.map((row, i) => (
                   <tr key={row.department} className="border-b border-hairline last:border-0 hover:bg-canvas-soft">
+                    <td className="type-body-sm px-5 py-3 text-[var(--color-muted)]">{i + 1}</td>
                     <td className="type-body-sm px-5 py-3 text-ink">{row.department}</td>
                     <td className="type-body-sm px-5 py-3 text-[var(--color-body)]">{row.contact}</td>
                     <td className="px-5 py-3">
@@ -179,9 +188,9 @@ export function ServicesToGovernmentContent({ heroId = "services-to-government" 
           </div>
 
           <div className="flex flex-col gap-3 md:hidden">
-            {departmentContacts.map((row) => (
+            {departmentContacts.map((row, i) => (
               <div key={row.department} className="rounded-xl border border-hairline p-4">
-                <p className="type-body-strong mb-2 text-ink">{row.department}</p>
+                <p className="type-body-strong mb-2 text-ink">{i + 1}. {row.department}</p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span className="type-caption text-[var(--color-muted)]">{row.contact}</span>
                   <a href={`mailto:${row.email}`} className="type-caption text-[var(--color-primary-blue)] hover:underline">
