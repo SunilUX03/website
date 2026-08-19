@@ -1,9 +1,10 @@
 # How to Set Up This Project on the Server
 
-Follow these steps in order. You should have received 3 files along with
-this code: a `.sql` file (the database), and a zip of `media` +
-`documents` folders (the uploaded photos/files). You'll also get some
-secret values (passwords/keys) separately — keep those private.
+Follow these steps in order. You should have received the code (as a zip
+or a git clone — either way, the uploaded photos/documents are already
+included inside its `public/media` and `public/documents` folders, no
+separate zip needed) and a `.sql` file (the database). You'll also get
+some secret values (passwords/keys) separately — keep those private.
 
 ## Step 1: Unzip the code
 
@@ -37,21 +38,16 @@ Now load the provided `.sql` file into your new database:
 psql "postgresql://tnega:the-password-you-set@localhost:5432/tnega" -f tnega_backup.sql
 ```
 
-## Step 3: Add the uploaded photos/files
+## Step 3: Confirm the photos/documents came with the code
 
-Unzip the `media` + `documents` folder you were given. Put the two
-folders inside the project's `public` folder, so it looks like this:
-
-```
-project-folder/
-  public/
-    media/       <- goes here
-    documents/   <- goes here
-```
+The uploaded photos and PDFs are already included in the code itself —
+check that `public/media/` and `public/documents/` inside the project
+folder are not empty. Nothing to unzip or copy here; this step is just
+a sanity check before moving on.
 
 ## Step 4: Add the secret values
 
-Copy the file `.env.sample` and rename the copy to `.env`. Open it and
+Copy the file `.env.example` and rename the copy to `.env`. Open it and
 fill in the real values you were given for:
 
 - `DATABASE_URL`
