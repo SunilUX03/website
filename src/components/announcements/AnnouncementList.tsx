@@ -82,7 +82,7 @@ export function AnnouncementList({
         label={filterBarLabel}
       />
 
-      <section className="py-xxl md:py-section" aria-label="All announcements">
+      <section id="all-announcements" className="scroll-mt-24 py-xxl md:py-section" aria-label="All announcements">
         <Container>
           <SectionHead heading={listHeading} id="announcements-heading" />
 

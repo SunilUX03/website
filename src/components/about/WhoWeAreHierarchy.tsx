@@ -48,7 +48,6 @@ export function WhoWeAreHierarchy({
       <Container className="py-xxl md:py-section">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[55%_45%] lg:items-center lg:gap-12">
           <div>
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Who We Are</p>
             <h2 className="type-display-lg mb-5 text-ink">{whoWeAre.heading}</h2>
             <p className="type-body-md max-w-[62ch] text-[var(--color-body)]">
               {whoWeAre.paragraph}

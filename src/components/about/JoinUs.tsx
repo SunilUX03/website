@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { JoinUsGraphic } from "@/components/heroes/JoinUsGraphic";
 import type { CmsCareersContent } from "@/lib/cms/careers-content";
 import type { CmsJobOpening } from "@/lib/cms/job-openings";
 
@@ -24,6 +25,11 @@ export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; op
           </div>
 
           <div className="flex flex-col gap-3">
+            {featured.length === 0 && (
+              <div className="flex justify-center">
+                <JoinUsGraphic />
+              </div>
+            )}
             {featured.map((job) => (
               <div key={job.id} className="card-feature flex items-center justify-between gap-4">
                 <div>

@@ -165,7 +165,7 @@ export function MediaTabs({
         label={filterBarLabel}
       />
 
-      <section className="py-xxl md:py-section" aria-label="Media gallery">
+      <section id="photos-videos" className="scroll-mt-24 py-xxl md:py-section" aria-label="Media gallery">
         <Container>
           <div
             role="tablist"

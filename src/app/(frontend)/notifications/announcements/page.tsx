@@ -30,7 +30,14 @@ export default async function Announcements() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Announcements" }]} />
-        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<AnnouncementsGraphic />} />
+        <PageHero
+          eyebrow={hero.eyebrow}
+          heading={hero.heading}
+          body={hero.body}
+          cta={{ label: "View All Announcements", href: "#all-announcements" }}
+          orbs={heroOrbs}
+          graphic={<AnnouncementsGraphic />}
+        />
         <AnnouncementList announcements={announcements} facets={buildFacets(announcements)} />
       </main>
       <Footer />

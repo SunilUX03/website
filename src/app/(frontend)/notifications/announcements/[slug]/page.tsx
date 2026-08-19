@@ -7,7 +7,6 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { PhotoTile } from "@/components/ui/PhotoTile";
 import { getAnnouncementBySlug, getAnnouncements } from "@/lib/cms/announcements";
 
 /**
@@ -110,40 +109,50 @@ export default async function AnnouncementPage({ params }: Params) {
               All announcements
             </Link>
 
-            <div className="flex flex-wrap items-center gap-sm">
-              {announcement.category ? (
-                <span className="badge-pill type-caption-uppercase">
-                  {announcement.category}
-                </span>
-              ) : null}
-              <span className="type-caption-uppercase text-[var(--color-muted)]">
-                {announcement.timestamp}
-              </span>
-            </div>
+            {/* Text beside the image (not stacked) on desktop, so the
+                photo reads as a companion to the title rather than a
+                banner underneath it. The image itself is a plain <img>
+                at its own natural aspect ratio (no PhotoTile fixed-crop
+                box) — the whole photo shows, sized to fit the column
+                rather than cropped to a fixed 16:9. */}
+            <div
+              className={
+                announcement.image
+                  ? "grid grid-cols-1 items-start gap-xl lg:grid-cols-[1fr_360px]"
+                  : undefined
+              }
+            >
+              <div>
+                <div className="flex flex-wrap items-center gap-sm">
+                  {announcement.category ? (
+                    <span className="badge-pill type-caption-uppercase">
+                      {announcement.category}
+                    </span>
+                  ) : null}
+                  <span className="type-caption-uppercase text-[var(--color-muted)]">
+                    {announcement.timestamp}
+                  </span>
+                </div>
 
-            <h1 className="type-display-lg mt-base max-w-[24ch] text-ink">
-              {announcement.heading}
-            </h1>
+                <h1 className="type-display-lg mt-base max-w-[24ch] text-ink">
+                  {announcement.heading}
+                </h1>
 
-            <p className="type-body-md mt-lg max-w-[65ch] text-[var(--color-body)]">
-              {announcement.description}
-            </p>
+                <p className="type-body-md mt-lg max-w-[65ch] text-[var(--color-body)]">
+                  {announcement.description}
+                </p>
+              </div>
 
-            {/* Same optional-image contract as the card/list view — a
-                text-only update (no photo) just skips this rather than
-                leaving a gap. Was only ever shown on the card before this,
-                so opening the full announcement lost the photo entirely. */}
-            {announcement.image ? (
-              <div className="relative mt-xl max-w-[720px] overflow-hidden rounded-xl border border-hairline">
-                <PhotoTile
+              {/* Optional — a text-only update (no photo) just skips this
+                  rather than leaving a gap. */}
+              {announcement.image ? (
+                <img
                   src={announcement.image}
                   alt=""
-                  aspect="aspect-[16/9]"
-                  sizes="(min-width: 1024px) 720px, 100vw"
-                  priority
+                  className="block w-full rounded-xl border border-hairline"
                 />
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </Container>
         </section>
 

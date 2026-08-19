@@ -32,7 +32,14 @@ export default async function MediaPress() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Media & Press" }]} />
-        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<MediaGraphic />} />
+        <PageHero
+          eyebrow={hero.eyebrow}
+          heading={hero.heading}
+          body={hero.body}
+          cta={{ label: "View All Media", href: "#photos-videos" }}
+          orbs={heroOrbs}
+          graphic={<MediaGraphic />}
+        />
         <MediaTabs photos={photos} videos={videos} facets={buildFacets(items)} />
       </main>
       <Footer />

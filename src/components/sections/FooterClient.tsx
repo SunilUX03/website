@@ -105,11 +105,17 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
               // MainNav.tsx for why a CSS scale-up was tried and reverted.
               className="h-14 w-auto shrink-0"
             />
-            <span className="leading-tight">
-              <span className="type-title-md block font-semibold text-[var(--color-primary-blue)] md:text-lg">
-                TNeGA
+            {/* Same bilingual wordmark as MainNav.tsx, not a separate
+                "TNeGA" + caption treatment — header and footer now carry
+                identical branding, not just the same logo files. */}
+            <span className="flex min-w-0 flex-col gap-1">
+              <span
+                lang="ta"
+                className="block truncate text-[15px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] md:text-[16px]"
+              >
+                தமிழ்நாடு மின்-ஆளுமை முகமை
               </span>
-              <span className="type-caption text-[var(--color-muted)]">
+              <span className="hidden truncate text-[15px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:block md:text-[16px]">
                 Tamil Nadu e-Governance Agency
               </span>
             </span>

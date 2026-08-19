@@ -26,7 +26,7 @@ function compareValues(a: string, b: string): number {
   return a.localeCompare(b);
 }
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 10;
 
 function SortIcon({ direction }: { direction: "asc" | "desc" | null }) {
   return (
@@ -162,7 +162,7 @@ export function DocumentTable({
         label={filterBarLabel}
       />
 
-      <section className="pb-section pt-xxl" aria-label={tableLabel}>
+      <section id="document-table" className="scroll-mt-24 pb-section pt-xxl" aria-label={tableLabel}>
         <Container>
           {/* ── Mobile: one card per row, no horizontal scrolling ──
               The table's column headers (where sorting normally lives)

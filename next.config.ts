@@ -15,6 +15,20 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "4mb",
     },
   },
+  // withPayload() already externalizes "sharp" (so it's resolved from
+  // node_modules at runtime instead of being bundled), but sharp loads its
+  // platform-specific native binary (@img/sharp-linux-x64 on Vercel) via a
+  // runtime require() Next's output file tracer can't follow statically.
+  // For small, isolated route bundles (e.g. /api/social/[platform]) that
+  // miss picking it up incidentally the way the much larger main app
+  // bundle does, this throws "Could not load the sharp module ...
+  // libvips-cpp.so: cannot open shared object file" in production only —
+  // works locally because the dev server doesn't do this kind of
+  // per-route file tracing. Explicitly including the binary's files for
+  // every route is the documented fix for this exact class of bug.
+  outputFileTracingIncludes: {
+    "/**/*": ["./node_modules/@img/sharp-linux-x64/**/*", "./node_modules/@img/sharp-libvips-linux-x64/**/*"],
+  },
   images: {
     remotePatterns: [
       {

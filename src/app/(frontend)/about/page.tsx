@@ -4,7 +4,6 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { AboutHero } from "@/components/about/AboutHero";
 import { WhoWeAreHierarchy } from "@/components/about/WhoWeAreHierarchy";
 import { VisionMission } from "@/components/about/VisionMission";
-import { PillarCards } from "@/components/sections/PillarCards";
 import { OrgChart } from "@/components/about/OrgChart";
 import { LeadershipTeam } from "@/components/about/LeadershipTeam";
 import { BoardOfDirectors } from "@/components/about/BoardOfDirectors";
@@ -22,10 +21,7 @@ import { getAboutPageContent } from "@/lib/cms/about-page";
 import { getOrgChart } from "@/lib/cms/org-chart";
 import { getAwards } from "@/lib/cms/awards";
 import { getRollOfHonour } from "@/lib/cms/roll-of-honour";
-import { pillars, type PillarLinkItem } from "@/lib/content";
-import { getAllServiceItems, getServiceItemsByNames } from "@/lib/cms/services";
 import { getMetrics } from "@/lib/cms/metrics";
-import { getPillarsContent } from "@/lib/cms/pillars-content";
 import { getCareersContent } from "@/lib/cms/careers-content";
 
 export const metadata: Metadata = {
@@ -40,34 +36,18 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const [openings, board, members, allServiceItems, aboutPage, orgChart, awards, rollOfHonour, metrics, pillarsChrome, careers] =
+  const [openings, board, members, aboutPage, orgChart, awards, rollOfHonour, metrics, careers] =
     await Promise.all([
       getJobOpenings(),
       getBoardContent(),
       getTeamMembers(),
-      getAllServiceItems(),
       getAboutPageContent(),
       getOrgChart(),
       getAwards(),
       getRollOfHonour(),
       getMetrics(),
-      getPillarsContent(),
       getCareersContent(),
     ]);
-  const pillarItems: PillarLinkItem[][] = pillars.map((p) =>
-    "items" in p
-      ? p.items
-      : getServiceItemsByNames(allServiceItems, p.itemNames).map((item) => ({
-          name: item.name,
-          description: item.description,
-          href: item.knowMoreHref,
-        }))
-  );
-  const mergedPillars = pillarsChrome.map((chrome, i) => ({
-    ...chrome,
-    href: pillars[i].href,
-    seeAllLabel: "seeAllLabel" in pillars[i] ? pillars[i].seeAllLabel : undefined,
-  }));
 
   return (
     <>
@@ -77,7 +57,6 @@ export default async function About() {
         <AboutHero aboutHero={aboutPage.hero} />
         <WhoWeAreHierarchy whoWeAre={aboutPage.whoWeAre} hierarchy={aboutPage.hierarchy} />
         <VisionMission visionMission={aboutPage.visionMission} />
-        <PillarCards pillars={mergedPillars} pillarItems={pillarItems} />
         <Metrics metrics={metrics} />
         <OrgChart orgChart={orgChart} />
         <LeadershipTeam members={members} />

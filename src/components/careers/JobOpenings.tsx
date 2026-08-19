@@ -37,7 +37,7 @@ export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpenin
         <SectionHead heading="Current Openings" id="openings-heading" />
 
         {openings.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-hairline bg-surface-card px-lg py-2xl text-center">
+          <div className="flex flex-col items-center gap-sm rounded-xl border border-hairline bg-surface-card px-lg py-xxl text-center">
             <p className="type-title-sm text-[var(--color-body-strong)]">No active job openings currently</p>
             <p className="type-body-sm max-w-[48ch] text-[var(--color-muted)]">
               But you can submit your resume below and we will reach out if any role that fits comes up.

@@ -33,7 +33,14 @@ export default async function PoliciesGuidelines() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Policies & Guidelines" }]} />
-        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<PoliciesGraphic />} />
+        <PageHero
+          eyebrow={hero.eyebrow}
+          heading={hero.heading}
+          body={hero.body}
+          cta={{ label: "View All", href: "#document-table" }}
+          orbs={heroOrbs}
+          graphic={<PoliciesGraphic />}
+        />
         <DocumentTable
           rows={rows}
           headers={tableHeaders}

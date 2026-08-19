@@ -33,7 +33,14 @@ export default async function GovernmentOrders() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Government Orders" }]} />
-        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<GovernmentOrdersGraphic />} />
+        <PageHero
+          eyebrow={hero.eyebrow}
+          heading={hero.heading}
+          body={hero.body}
+          cta={{ label: "View All", href: "#document-table" }}
+          orbs={heroOrbs}
+          graphic={<GovernmentOrdersGraphic />}
+        />
         <DocumentTable
           rows={rows}
           headers={tableHeaders}

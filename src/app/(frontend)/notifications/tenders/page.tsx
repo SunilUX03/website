@@ -36,9 +36,16 @@ export default async function Tenders() {
       <TopNav />
       <main className="flex-1">
         <Breadcrumb items={[{ label: "Notifications" }, { label: "Tenders" }]} />
-        <PageHero eyebrow={hero.eyebrow} heading={hero.heading} body={hero.body} orbs={heroOrbs} graphic={<TendersGraphic />} />
+        <PageHero
+          eyebrow={hero.eyebrow}
+          heading={hero.heading}
+          body={hero.body}
+          cta={{ label: "View Tenders", href: "#tender-portal" }}
+          orbs={heroOrbs}
+          graphic={<TendersGraphic />}
+        />
 
-        <section className="bg-canvas-soft py-xxl md:py-section">
+        <section id="tender-portal" className="scroll-mt-24 bg-canvas-soft py-xxl md:py-section">
           <Container>
             <SectionHead heading={tenderPortal.heading} sub={tenderPortal.sub} align="center" />
 

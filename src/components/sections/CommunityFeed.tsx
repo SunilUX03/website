@@ -25,7 +25,7 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
 
 type FeedPost = SocialPost & { platform: string; href: string };
 
-const DRIFT_SPEED = 100 / 1.5; // px/sec — slowed 1.5x from the prior 100, per feedback
+const DRIFT_SPEED = 100 / 1.5 / 1.5; // px/sec — slowed another 1.5x per feedback
 // Bigger top-image cards (per feedback the old small side-thumbnail read
 // as cramped) — the image renders at its own natural aspect ratio at the
 // card's fixed width rather than being cropped to a fixed height, so
