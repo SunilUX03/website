@@ -14,7 +14,8 @@ async function main() {
     slug: "footer-content",
     data: {
       description: "Powering Digital Governance in Tamil Nadu",
-      address: "2nd & 7th Floor, PT Lee Chengalvarayan Naicker Building, 807, Anna Salai, Chennai, 600 002",
+      address:
+        "Tamil Nadu e-Governance Agency\n2nd & 7th Floor, P.T.LEE Chengalvaraya Naicker Building,\nAnna Salai, Chennai - 600 002. Opp. LIC Building",
       phone: "044-4016 4900",
       email: "tnega@tn.gov.in",
       socialLinks: [

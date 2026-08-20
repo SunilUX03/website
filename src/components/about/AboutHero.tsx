@@ -57,9 +57,6 @@ export function AboutHero({ aboutHero }: { aboutHero: { eyebrow: string; headlin
       <Container className="relative py-xxl md:py-section">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[54%_46%] lg:gap-8">
           <div>
-            <p className="type-caption-uppercase mb-4 text-[var(--color-muted)]">
-              {aboutHero.eyebrow}
-            </p>
             <AnimatedHeadline text={aboutHero.headline} />
             <p className="type-body-md mt-6 max-w-[60ch] text-[var(--color-body)]">
               {aboutHero.description}

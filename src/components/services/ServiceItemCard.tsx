@@ -23,8 +23,13 @@ export function ServiceItemCard({
     // the CTA row below uses mt-auto against that full height so buttons
     // land in the same place across a row instead of trailing right after
     // a short/long description.
+    // Fixed height (not h-full) — inside a multi-row grid, h-full only
+    // stretches a card to match its own row's tallest sibling, so cards
+    // in a shorter row still end up a different height than cards in a
+    // taller row. A fixed height keeps every card the same size
+    // regardless of which row or which sibling's content it sits next to.
     <div
-      className={`card-feature group relative flex h-full flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(12,10,9,0.14)] ${className ?? ""}`}
+      className={`card-feature group relative flex h-[560px] flex-col overflow-hidden !p-0 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(12,10,9,0.14)] ${className ?? ""}`}
     >
       {/* Whole card is a "Know More" target — absolute + z-0 so it sits
           behind the CTA buttons below (they get their own z-10 stacking
@@ -51,7 +56,7 @@ export function ServiceItemCard({
         />
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="type-title-md mb-2 text-ink">{item.name}</h3>
+        <h3 className="type-title-md mb-2 line-clamp-2 text-ink">{item.name}</h3>
         <p className="type-body-sm line-clamp-4 text-[var(--color-body)]">{cardDescription}</p>
         <Link
           href={item.knowMoreHref}

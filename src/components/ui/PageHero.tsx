@@ -32,7 +32,7 @@ export function PageHero({
   eyebrow: string;
   heading: string;
   body: string;
-  cta?: { label: string; href: string };
+  cta?: { label: string; href: string; external?: boolean };
   graphic?: ReactNode;
   orbs: readonly [OrbPlacement, OrbPlacement];
   id?: string;
@@ -63,7 +63,11 @@ export function PageHero({
             </p>
             {cta ? (
               <div className="mt-xl">
-                <a href={cta.href} className="type-button btn-primary">
+                <a
+                  href={cta.href}
+                  className="type-button btn-primary"
+                  {...(cta.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
                   {cta.label}
                 </a>
               </div>

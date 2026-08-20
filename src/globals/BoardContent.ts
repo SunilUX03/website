@@ -7,7 +7,9 @@ import type { GlobalConfig } from "payload";
 const seatFields = (roleDefault: string) => [
   { name: "role" as const, type: "text" as const, required: true, defaultValue: roleDefault },
   { name: "name" as const, type: "text" as const, required: true },
-  { name: "title" as const, type: "text" as const, required: true },
+  // Optional: seats can hold just a designation (no confirmed appointee
+  // name yet), in which case there's no secondary line to show.
+  { name: "title" as const, type: "text" as const, required: false },
 ];
 
 export const BoardContent: GlobalConfig = {
@@ -41,7 +43,7 @@ export const BoardContent: GlobalConfig = {
       },
       fields: [
         { name: "name", type: "text", required: true },
-        { name: "title", type: "text", required: true },
+        { name: "title", type: "text", required: false },
         {
           name: "isPlaceholder",
           type: "checkbox",

@@ -52,19 +52,25 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
             className="flex min-w-0 items-center gap-3"
             aria-label="TNeGA, Tamil Nadu e-Governance Agency home"
           >
+            {/* Both logos + the divider are hidden below sm — on a phone
+                width they alone ate ~170px of the row, leaving the
+                wordmark only ~120px to work with (not enough for either
+                line even at a tiny font size). Dropping them on mobile
+                gives the wordmark the room it actually needs; both lines
+                render there instead. */}
             <Image
               src={tnEmblem}
               alt="Government of Tamil Nadu emblem"
               priority
               className={clsx(
-                "w-auto transition-[height] duration-200",
+                "hidden w-auto transition-[height] duration-200 sm:block",
                 scrolled ? "h-14" : "h-[4.5rem]"
               )}
             />
             <span
               aria-hidden
               className={clsx(
-                "w-px shrink-0 bg-hairline-strong transition-[height] duration-200",
+                "hidden w-px shrink-0 bg-hairline-strong transition-[height] duration-200 sm:block",
                 scrolled ? "h-11" : "h-14"
               )}
             />
@@ -82,7 +88,7 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
                 // accepted per explicit direction rather than compensated
                 // with a CSS scale multiplier (that was tried once before
                 // and overshot).
-                "w-auto shrink-0 transition-[height] duration-200",
+                "hidden w-auto shrink-0 transition-[height] duration-200 sm:block",
                 scrolled ? "h-14" : "h-[4.5rem]"
               )}
             />
@@ -94,15 +100,18 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
                 gap-1 + leading-[1.6] on the Tamil line (not the tighter
                 leading-tight this used to share with the English line
                 below it) — Tamil's taller vowel signs were getting
-                clipped at the top by too short a line box. */}
+                clipped at the top by too short a line box. Both lines
+                always render (no breakpoint hides the English one) —
+                text-[12px] on mobile, stepping up at sm/md once the
+                logos return and share the row again. */}
             <span className="flex min-w-0 flex-col gap-1">
               <span
                 lang="ta"
-                className="block truncate text-[15px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] md:text-[16px]"
+                className="block truncate text-[12px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]"
               >
                 தமிழ்நாடு மின்-ஆளுமை முகமை
               </span>
-              <span className="hidden truncate text-[15px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:block md:text-[16px]">
+              <span className="block truncate text-[12px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]">
                 Tamil Nadu e-Governance Agency
               </span>
             </span>

@@ -5,6 +5,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { getFooterContent } from "@/lib/cms/footer";
+import { obfuscateEmail } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Contact Us | TNeGA",
@@ -65,7 +66,7 @@ export default async function ReachUs() {
           <Container className="relative py-xl md:py-xxl">
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Support</p>
             <h1 className="type-display-lg mb-4 text-ink">Contact Us</h1>
-            <p className="type-body-md max-w-[64ch] text-[var(--color-body)]">
+            <p className="type-body-md md:whitespace-nowrap text-[var(--color-body)]">
               Reach the Tamil Nadu e-Governance Agency through any of the channels below.
             </p>
           </Container>
@@ -90,7 +91,7 @@ export default async function ReachUs() {
                 </span>
                 <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">Email</p>
                 <a href={`mailto:${footer.email}`} className="type-title-md text-ink hover:text-[var(--color-primary-blue)]">
-                  {footer.email}
+                  {obfuscateEmail(footer.email)}
                 </a>
               </div>
 
@@ -99,7 +100,7 @@ export default async function ReachUs() {
                   <PinIcon />
                 </span>
                 <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">Registered Office</p>
-                <p className="type-body-md mb-3 text-ink">{footer.address}</p>
+                <p className="type-body-md mb-3 whitespace-pre-line text-ink">{footer.address}</p>
                 <a
                   href={footer.mapsHref}
                   target="_blank"

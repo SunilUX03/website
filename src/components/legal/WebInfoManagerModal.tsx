@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { obfuscateEmail } from "@/lib/format";
 
 function CloseIcon() {
   return (
@@ -83,7 +84,7 @@ export function WebInfoManagerModal({
               <p className="type-body-sm text-ink">
                 Email:{" "}
                 <a href={`mailto:${email}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
-                  {email}
+                  {obfuscateEmail(email)}
                 </a>
               </p>
             </div>

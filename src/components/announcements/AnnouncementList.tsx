@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { PhotoTile } from "@/components/ui/PhotoTile";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
 import type { Facet } from "@/components/documents/FilterBar";
 import {
@@ -91,30 +90,26 @@ export function AnnouncementList({
               {noResultsText}
             </p>
           ) : (
-            <ul role="list" className="grid gap-lg sm:grid-cols-2 lg:grid-cols-4">
+            // Pinterest-style masonry via CSS columns — each photo keeps its
+            // own natural aspect ratio (not a fixed crop), so cards flow at
+            // whatever height their image actually is instead of a uniform
+            // grid row height. break-inside-avoid keeps each card from
+            // being split across two columns.
+            <ul role="list" className="columns-1 gap-lg sm:columns-2 lg:columns-4">
               {visible.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="mb-lg break-inside-avoid">
                   <Link
                     href={item.href}
-                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
+                    className="group flex flex-col overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
                   >
-                    {/* Fixed 3:2 crop (not each photo's natural size) so
-                        every card is the same compact height — 4 fit in one
-                        row/glance on desktop instead of a couple of
-                        variable-height, full-size photos filling the
-                        screen. Not every announcement has an image — a
-                        text-only update renders without this block rather
-                        than an empty crop. */}
+                    {/* Not every announcement has an image — a text-only
+                        update renders without this block rather than an
+                        empty crop. */}
                     {item.image && (
-                      <PhotoTile
-                        src={item.image}
-                        alt=""
-                        aspect="aspect-[3/2]"
-                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      />
+                      <img src={item.image} alt="" className="block h-auto w-full" />
                     )}
 
-                    <span className="flex h-full flex-col gap-sm p-base">
+                    <span className="flex flex-col gap-sm p-base">
                       <span className="type-caption-uppercase text-[var(--color-muted)]">
                         {item.timestamp}
                       </span>

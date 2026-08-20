@@ -15,7 +15,7 @@ export default async function BoardSettingsPage({
 
   const memberRows = (doc.members ?? []).map((m) => ({
     name: m.name,
-    title: m.title,
+    title: m.title ?? "",
     isPlaceholder: m.isPlaceholder ? "true" : "false",
   }));
 

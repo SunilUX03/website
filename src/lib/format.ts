@@ -16,3 +16,12 @@ export function formatIndianNumber(value: number): string {
 export function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3);
 }
+
+/**
+ * Anti-scraping display format for an email address (e.g.
+ * "tnega@tn.gov.in" -> "tnega[at]tn[dot]gov[dot]in"). Only for visible
+ * text — the real address must still be used in `mailto:` hrefs.
+ */
+export function obfuscateEmail(email: string): string {
+  return email.replace(/@/g, "[at]").replace(/\./g, "[dot]");
+}

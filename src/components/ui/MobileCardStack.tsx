@@ -20,6 +20,13 @@ const RECEDE_Y = -8; // % upward per level behind
 const RECEDE_SCALE = 0.05; // scale lost per level behind
 const RECEDE_OPACITY = 0.4; // opacity floor for the deepest visible card
 
+// The next (not-yet-active) card rests peeking ~18% up from below instead
+// of fully hidden, so users can tell there's more to scroll through. The
+// transition-in branch below starts from this same point (not 100%/0)
+// so the two branches meet with no visual jump at the delta===1 boundary.
+const NEXT_PEEK = 18; // % up from fully hidden, at rest
+const NEXT_PEEK_OPACITY = 0.55;
+
 /**
  * Shared mobile card-deck scroll animation.
  *
@@ -103,16 +110,24 @@ export function MobileCardStack<T>({
           let opacity: number;
           let zIndex: number;
 
-          if (delta >= 1) {
+          if (delta >= 2) {
+            // Further out than the immediate next card: stays fully
+            // hidden, otherwise every not-yet-reached card would peek at
+            // the same resting spot and overlap identically.
             translateY = 100;
             scale = 1;
             opacity = 0;
             zIndex = 0;
+          } else if (delta >= 1) {
+            translateY = 100 - NEXT_PEEK;
+            scale = 1;
+            opacity = NEXT_PEEK_OPACITY;
+            zIndex = 1;
           } else if (delta > 0) {
             const t = easeInOut(1 - delta);
-            translateY = lerp(100, 0, t);
+            translateY = lerp(100 - NEXT_PEEK, 0, t);
             scale = 1;
-            opacity = lerp(0, 1, Math.min(t * 1.4, 1));
+            opacity = lerp(NEXT_PEEK_OPACITY, 1, Math.min(t * 1.4, 1));
             zIndex = 10 + i;
           } else {
             const behind = -delta;

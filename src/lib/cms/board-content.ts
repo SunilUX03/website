@@ -29,7 +29,7 @@ export const getBoardContent = unstable_cache(
         name: doc.memberSecretary?.name ?? "",
         title: doc.memberSecretary?.title ?? "",
       },
-      members: doc.members?.map((m) => ({ name: m.name, title: m.title, isPlaceholder: m.isPlaceholder ?? false })) ?? [],
+      members: doc.members?.map((m) => ({ name: m.name, title: m.title ?? "", isPlaceholder: m.isPlaceholder ?? false })) ?? [],
     };
   },
   ["board-content"],

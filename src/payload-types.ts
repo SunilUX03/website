@@ -1399,12 +1399,12 @@ export interface BoardContent {
   chairman: {
     role: string;
     name: string;
-    title: string;
+    title?: string | null;
   };
   memberSecretary: {
     role: string;
     name: string;
-    title: string;
+    title?: string | null;
   };
   /**
    * Regular Governing Board members, shown in the carousel below the two seats above.
@@ -1412,7 +1412,7 @@ export interface BoardContent {
   members?:
     | {
         name: string;
-        title: string;
+        title?: string | null;
         /**
          * Check if this name is a placeholder rather than the real, confirmed appointee — a reminder for editors to replace it once the real name is available. Doesn't change what's shown on the site.
          */

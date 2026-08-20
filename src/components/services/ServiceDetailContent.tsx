@@ -18,6 +18,7 @@ import {
   generateScreenshotImages,
 } from "@/lib/service-detail-generator";
 import { getFooterContent } from "@/lib/cms/footer";
+import { obfuscateEmail } from "@/lib/format";
 
 // Every service/project with its own detail page now lives on the
 // standalone /initiatives-projects page regardless of its old `section`
@@ -427,12 +428,12 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
             <div className="card-feature">
               <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Email</h3>
               <a href={`mailto:${contactEmail}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
-                {contactEmail}
+                {obfuscateEmail(contactEmail)}
               </a>
             </div>
             <div className="card-feature">
               <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Office</h3>
-              <p className="type-body-sm text-[var(--color-body)]">{footer.address}</p>
+              <p className="type-body-sm whitespace-pre-line text-[var(--color-body)]">{footer.address}</p>
             </div>
           </div>
         </Container>

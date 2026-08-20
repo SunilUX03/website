@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { CmsFooterContent } from "@/lib/cms/footer-types";
 import { Container } from "@/components/ui/Container";
-import { formatIndianNumber } from "@/lib/format";
+import { formatIndianNumber, obfuscateEmail } from "@/lib/format";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -122,7 +122,7 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
           </div>
 
           <p className="type-body-sm text-[var(--color-body)]">{footer.description}</p>
-          <p className="type-body-sm text-[var(--color-body)]">{footer.address}</p>
+          <p className="type-body-sm whitespace-pre-line text-[var(--color-body)]">{footer.address}</p>
 
           <a
             href={footer.mapsHref}
@@ -141,7 +141,7 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
           </p>
           <p className="type-body-sm text-[var(--color-body)]">
             <a href={`mailto:${footer.email}`} className="hover:text-ink">
-              {footer.email}
+              {obfuscateEmail(footer.email)}
             </a>
           </p>
 

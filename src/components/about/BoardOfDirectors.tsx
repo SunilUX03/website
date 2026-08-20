@@ -23,7 +23,7 @@ function SeatCard({
     >
       <p className="type-caption-uppercase text-[var(--color-primary-blue)]">{role}</p>
       <p className="type-body-strong text-ink">{name}</p>
-      <p className="type-caption text-[var(--color-muted)]">{title}</p>
+      {title ? <p className="type-caption text-[var(--color-muted)]">{title}</p> : null}
     </div>
   );
 }

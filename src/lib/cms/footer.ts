@@ -27,7 +27,7 @@ export const getFooterContent = unstable_cache(
     return {
       description: doc.description,
       address: doc.address,
-      mapsHref: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(doc.address),
+      mapsHref: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(doc.address.replace(/\n+/g, " ")),
       phone: doc.phone,
       email: doc.email,
       socialLinks: doc.socialLinks?.map((l) => ({ label: l.label, href: l.href })) ?? [],

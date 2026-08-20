@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { obfuscateEmail } from "@/lib/format";
 
 type ConnectWithUs = { email: string; social: { label: string; href: string }[] };
 
@@ -15,7 +16,7 @@ export function ConnectWithUs({ connectWithUs }: { connectWithUs: ConnectWithUs 
               href={`mailto:${connectWithUs.email}`}
               className="type-title-sm text-[var(--color-primary-blue)] hover:underline"
             >
-              {connectWithUs.email}
+              {obfuscateEmail(connectWithUs.email)}
             </a>
           </div>
 
