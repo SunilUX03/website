@@ -295,7 +295,7 @@ export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
   if (projects.length === 0) return null;
 
   return (
-    <section className="bg-canvas">
+    <section className="bg-[#eaf2fb]">
       <Container className="py-xxl md:py-section">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>

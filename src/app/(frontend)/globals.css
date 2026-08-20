@@ -391,12 +391,16 @@
     padding: 9px 19px;
     height: 40px;
     white-space: nowrap;
-    transition: border-color 150ms ease, background-color 150ms ease;
+    transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
   }
+  /* Brand-blue hover, not the generic ink/grey fill this used to be —
+     matches btn-primary's own blue interactive language instead of
+     reading as an unrelated neutral hover state. */
   .btn-outline:hover,
   .btn-outline:focus-visible {
-    border-color: var(--color-ink);
-    background-color: var(--color-surface-strong);
+    border-color: var(--color-primary-blue);
+    background-color: color-mix(in srgb, var(--color-primary-blue) 8%, white);
+    color: var(--color-primary-blue);
   }
 
   .card-feature {

@@ -69,13 +69,16 @@ function CyclingWord({ words, reducedMotion }: { words: string[]; reducedMotion:
   );
 }
 
-// Soft atmospheric wash (peach / lavender / sky) instead of the previous
-// node-graph backdrop — background color only, no motion, no cursor
-// interaction, per explicit feedback.
+// Atmospheric wash using the TNeGA logo mark's own magenta-to-blue swirl
+// (~#ff4cff to ~#0071ff) instead of the previous orange/peach-led
+// palette — same three-orb structure and fade-to-canvas falloff as
+// before. First pass at full saturation read as harsh; this pulls the
+// mix back to a soft pastel tint of the same hues instead — colorful and
+// on-brand without being straining to look at.
 const ATMOSPHERE_BACKGROUND = [
-  "radial-gradient(760px 420px at 22% -6%, color-mix(in srgb, var(--color-gradient-peach) 55%, transparent), transparent 60%)",
-  "radial-gradient(620px 460px at 85% 8%, color-mix(in srgb, var(--color-gradient-lavender) 45%, transparent), transparent 62%)",
-  "radial-gradient(900px 620px at 60% 115%, color-mix(in srgb, var(--color-gradient-sky) 55%, transparent), transparent 65%)",
+  "radial-gradient(760px 420px at 22% -6%, color-mix(in srgb, #ff4cff 32%, transparent), transparent 60%)",
+  "radial-gradient(620px 460px at 85% 8%, color-mix(in srgb, #9147ff 28%, transparent), transparent 62%)",
+  "radial-gradient(900px 620px at 60% 115%, color-mix(in srgb, #0071ff 32%, transparent), transparent 65%)",
   "var(--color-canvas)",
 ].join(", ");
 

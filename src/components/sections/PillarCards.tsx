@@ -64,7 +64,7 @@ function PillarCard({ pillar, items, bannerImage }: {
         <img src={bannerImage} alt="" loading="lazy" className="block h-auto w-full shrink-0" />
       )}
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="type-title-md mb-2 text-ink">{pillar.title}</h3>
+        <h3 className="type-title-md mb-2 text-[var(--color-primary-blue)]">{pillar.title}</h3>
         {/* Plain stacked block, not spread across the available height —
             an earlier justify-around pass (to avoid dead space under a
             short 2-item list) put visibly more air between Citizen
@@ -103,7 +103,7 @@ export function PillarCards({ pillars, pillarItems }: { pillars: Pillar[]; pilla
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
           Enabling Digital Governance
         </p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-balance text-ink">
+        <h2 className="type-display-lg mb-10 lg:whitespace-nowrap text-ink">
           How TNeGA powers governance across Tamil Nadu
         </h2>
 

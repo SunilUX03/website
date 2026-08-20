@@ -82,7 +82,7 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
   const { openPanel } = useAccessibilityPrefs();
 
   return (
-    <footer className="border-t border-hairline bg-canvas">
+    <footer className="border-t border-hairline bg-[#ebedee]">
       <Container className="grid grid-cols-1 gap-10 py-xxl md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-8">
         <div className="flex flex-col gap-4">
           {/* Identical mark composition to the top nav (MainNav): state
