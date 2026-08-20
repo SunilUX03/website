@@ -83,6 +83,7 @@ export interface Config {
     'roll-of-honour': RollOfHonour;
     'projects-spotlight': ProjectsSpotlight;
     'social-posts': SocialPost;
+    'department-contacts': DepartmentContact;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +107,7 @@ export interface Config {
     'roll-of-honour': RollOfHonourSelect<false> | RollOfHonourSelect<true>;
     'projects-spotlight': ProjectsSpotlightSelect<false> | ProjectsSpotlightSelect<true>;
     'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
+    'department-contacts': DepartmentContactsSelect<false> | DepartmentContactsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -129,6 +131,7 @@ export interface Config {
     'rti-content': RtiContent;
     'tenders-content': TendersContent;
     'site-copy-content': SiteCopyContent;
+    'services-to-government-content': ServicesToGovernmentContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -144,6 +147,7 @@ export interface Config {
     'rti-content': RtiContentSelect<false> | RtiContentSelect<true>;
     'tenders-content': TendersContentSelect<false> | TendersContentSelect<true>;
     'site-copy-content': SiteCopyContentSelect<false> | SiteCopyContentSelect<true>;
+    'services-to-government-content': ServicesToGovernmentContentSelect<false> | ServicesToGovernmentContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -780,6 +784,27 @@ export interface SocialPost {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "department-contacts".
+ */
+export interface DepartmentContact {
+  id: number;
+  department: string;
+  /**
+   * The assigned Project Manager, e.g. "PM I"
+   */
+  contact: string;
+  email: string;
+  phone: string;
+  /**
+   * Lower numbers show first.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -865,6 +890,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'social-posts';
         value: number | SocialPost;
+      } | null)
+    | ({
+        relationTo: 'department-contacts';
+        value: number | DepartmentContact;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1300,6 +1329,20 @@ export interface SocialPostsSelect<T extends boolean = true> {
   date?: T;
   image?: T;
   link?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "department-contacts_select".
+ */
+export interface DepartmentContactsSelect<T extends boolean = true> {
+  department?: T;
+  contact?: T;
+  email?: T;
+  phone?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1836,6 +1879,40 @@ export interface SiteCopyContent {
   createdAt?: string | null;
 }
 /**
+ * The Services to Government page: hero, the 4 service blocks, and the contact table's intro copy.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-to-government-content".
+ */
+export interface ServicesToGovernmentContent {
+  id: number;
+  hero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  services?:
+    | {
+        name: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  tableIntro: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  raiseTicketLabel: string;
+  /**
+   * Where both "Raise a Ticket" buttons link to.
+   */
+  raiseTicketHref: string;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav-content_select".
  */
@@ -2253,6 +2330,39 @@ export interface SiteCopyContentSelect<T extends boolean = true> {
         ctaLabel?: T;
         id?: T;
       };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-to-government-content_select".
+ */
+export interface ServicesToGovernmentContentSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  services?:
+    | T
+    | {
+        name?: T;
+        description?: T;
+        id?: T;
+      };
+  tableIntro?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  raiseTicketLabel?: T;
+  raiseTicketHref?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

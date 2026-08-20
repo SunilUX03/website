@@ -42,7 +42,11 @@ const NAV: NavGroup[] = [
   },
   {
     label: "Services & Projects",
-    items: [{ label: "All services", href: "/cms/services" }],
+    items: [
+      { label: "All services", href: "/cms/services" },
+      { label: "Services to Government Page", href: "/cms/settings/services-to-government" },
+      { label: "Department Contacts", href: "/cms/department-contacts" },
+    ],
   },
   {
     label: "Social Media",

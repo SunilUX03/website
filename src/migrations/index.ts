@@ -21,6 +21,7 @@ import * as migration_20260810_063607_add_services_order_field from './20260810_
 import * as migration_20260810_073754_add_cta_label_href from './20260810_073754_add_cta_label_href';
 import * as migration_20260810_160700_job_openings_jd_upload from './20260810_160700_job_openings_jd_upload';
 import * as migration_20260810_161500_add_social_posts from './20260810_161500_add_social_posts';
+import * as migration_20260820_190000_add_department_contacts_services_to_government from './20260820_190000_add_department_contacts_services_to_government';
 
 export const migrations = [
   {
@@ -137,5 +138,10 @@ export const migrations = [
     up: migration_20260810_161500_add_social_posts.up,
     down: migration_20260810_161500_add_social_posts.down,
     name: '20260810_161500_add_social_posts'
+  },
+  {
+    up: migration_20260820_190000_add_department_contacts_services_to_government.up,
+    down: migration_20260820_190000_add_department_contacts_services_to_government.down,
+    name: '20260820_190000_add_department_contacts_services_to_government'
   },
 ];
