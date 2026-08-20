@@ -90,12 +90,19 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
               footer carry the exact same government identity rather than
               two different TNeGA logo files. */}
           <div className="flex items-center gap-3">
+            {/* Same reasoning as MainNav.tsx: the two logos + divider ate
+                enough width on a phone-size column that the wordmark had
+                only ~190px to work with, so the Tamil line rendered
+                half-cut and the English line (hidden below sm) didn't
+                render at all. Hiding the marks below sm and always
+                rendering both lines at a smaller mobile size fixes both —
+                the logos return once the column has room to share. */}
             <Image
               src={tnEmblem}
               alt="Government of Tamil Nadu emblem"
-              className="h-14 w-auto"
+              className="hidden h-14 w-auto sm:block"
             />
-            <span aria-hidden className="h-11 w-px shrink-0 bg-hairline-strong" />
+            <span aria-hidden className="hidden h-11 w-px shrink-0 bg-hairline-strong sm:block" />
             <Image
               src={tnegaMark}
               alt=""
@@ -103,19 +110,21 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
               // Same box height as the TN emblem, and now matches the top
               // nav's own (unscrolled) logo height exactly — see
               // MainNav.tsx for why a CSS scale-up was tried and reverted.
-              className="h-14 w-auto shrink-0"
+              className="hidden h-14 w-auto shrink-0 sm:block"
             />
             {/* Same bilingual wordmark as MainNav.tsx, not a separate
                 "TNeGA" + caption treatment — header and footer now carry
-                identical branding, not just the same logo files. */}
+                identical branding, not just the same logo files. Both
+                lines always render; text-[12px] on mobile, stepping up at
+                sm/md once the logos return and share the row again. */}
             <span className="flex min-w-0 flex-col gap-1">
               <span
                 lang="ta"
-                className="block truncate text-[15px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] md:text-[16px]"
+                className="block truncate text-[12px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]"
               >
                 தமிழ்நாடு மின்-ஆளுமை முகமை
               </span>
-              <span className="hidden truncate text-[15px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:block md:text-[16px]">
+              <span className="block truncate text-[12px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]">
                 Tamil Nadu e-Governance Agency
               </span>
             </span>
@@ -271,7 +280,7 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
             type="button"
             onClick={() => setWebInfoOpen(true)}
             className="type-body-sm underline-offset-2 hover:underline"
-            style={{ color: "#0284c7" }}
+            style={{ color: "var(--color-primary-blue)" }}
           >
             Web Information Manager: Tamil Nadu e-Governance Agency
           </button>

@@ -161,9 +161,18 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
   const [interactionPaused, setInteractionPaused] = useState(false);
+  // Per project, not global — switching cards should always land back on
+  // the clamped state rather than carrying an earlier card's "expanded"
+  // choice over to the next one. Reset on `active` itself (not just from
+  // goTo) since the auto-advance timer below moves `active` directly.
+  const [descExpanded, setDescExpanded] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const rafRef = useRef(0);
   const startRef = useRef(0);
+
+  useEffect(() => {
+    setDescExpanded(false);
+  }, [active]);
 
   useEffect(() => {
     if (reducedMotion || interactionPaused) return;
@@ -191,6 +200,7 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
     pauseAutoAdvance();
     setActive((index + projects.length) % projects.length);
     setProgress(0);
+    setDescExpanded(false);
   };
 
   const project = projects[active];
@@ -206,7 +216,10 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
           taller 3:4 crop cut off their edges. Full image, separate legible
           panel; no cropping, no competing text. */}
       <div className="relative aspect-video w-full overflow-hidden">
-        <div className="absolute inset-x-3 top-3 z-10 flex gap-1">
+        {/* Bottom of the card's own image, not the top — per feedback,
+            the indicator at the top read as belonging to the *next*
+            card rather than the one currently on screen. */}
+        <div className="absolute inset-x-3 bottom-3 z-10 flex gap-1">
           {projects.map((p, i) => (
             <div key={p.id} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/40">
               <div
@@ -257,7 +270,28 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
           <span className="badge-pill mb-3">{project.badge}</span>
         )}
         <h3 className="type-title-md mb-2 text-ink">{project.name}</h3>
-        <p className="type-body-sm mb-4 text-[var(--color-body)]">{project.description}</p>
+        {/* Clamped to 3 lines with a Read More toggle so the card's
+            height stays consistent regardless of description length —
+            without this, longer descriptions pushed the stats/CTA rows
+            down by a different amount on every card. */}
+        <p
+          className={
+            descExpanded
+              ? "type-body-sm mb-4 text-[var(--color-body)]"
+              : "type-body-sm mb-1 line-clamp-3 text-[var(--color-body)]"
+          }
+        >
+          {project.description}
+        </p>
+        {!descExpanded && (
+          <button
+            type="button"
+            onClick={() => setDescExpanded(true)}
+            className="type-caption mb-4 font-semibold text-[var(--color-primary-blue)] hover:underline"
+          >
+            Read More
+          </button>
+        )}
 
         <div className="mb-4 flex flex-wrap gap-x-6 gap-y-2">
           {project.stats.map((stat) => (

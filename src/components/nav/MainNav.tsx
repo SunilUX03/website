@@ -43,75 +43,83 @@ export function MainNav({ nav }: { nav: CmsNavContent }) {
       >
         <div
           className={clsx(
-            "mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 transition-[height] duration-200 md:px-10",
-            scrolled ? "h-20" : "h-24"
+            "mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 py-3 transition-[height] duration-200 sm:gap-0 sm:py-0 md:px-10",
+            scrolled ? "sm:h-20" : "sm:h-24"
           )}
         >
           <a
             href="/"
-            className="flex min-w-0 items-center gap-3"
+            className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-3"
             aria-label="TNeGA, Tamil Nadu e-Governance Agency home"
           >
-            {/* Both logos + the divider are hidden below sm — on a phone
-                width they alone ate ~170px of the row, leaving the
-                wordmark only ~120px to work with (not enough for either
-                line even at a tiny font size). Dropping them on mobile
-                gives the wordmark the room it actually needs; both lines
-                render there instead. */}
-            <Image
-              src={tnEmblem}
-              alt="Government of Tamil Nadu emblem"
-              priority
-              className={clsx(
-                "hidden w-auto transition-[height] duration-200 sm:block",
-                scrolled ? "h-14" : "h-[4.5rem]"
-              )}
-            />
-            <span
-              aria-hidden
-              className={clsx(
-                "hidden w-px shrink-0 bg-hairline-strong transition-[height] duration-200 sm:block",
-                scrolled ? "h-11" : "h-14"
-              )}
-            />
-            <Image
-              src={tnegaMark}
-              alt=""
-              aria-hidden
-              priority
-              className={clsx(
-                // Matches the TN emblem's own box height. The mark's own
-                // circle band is ~82.5% of its canvas height vs the
-                // emblem's ~97.4% (baked-in "TNeGA" text below the circle
-                // eats the rest), so the circle itself still reads
-                // slightly smaller than the emblem at equal box heights —
-                // accepted per explicit direction rather than compensated
-                // with a CSS scale multiplier (that was tried once before
-                // and overshot).
-                "hidden w-auto shrink-0 transition-[height] duration-200 sm:block",
-                scrolled ? "h-14" : "h-[4.5rem]"
-              )}
-            />
+            {/* Both logos used to be hidden below sm because at their
+                full size they alone ate ~170px of a ~290px-wide mobile
+                row, leaving the wordmark only ~120px — not enough for
+                either line. Per feedback, hiding them wasn't acceptable
+                (logos need to stay visible on mobile too), so instead:
+                the logos+divider become their own compact row (shrunk
+                down, `sm:contents` un-wraps them back into the shared
+                row once there's width to spare) and the wordmark drops
+                to a second row underneath on mobile only. The header's
+                own height switches from a fixed h-20/h-24 to auto (via
+                py-3) below sm so it can grow to fit two rows, then locks
+                back to the fixed height at sm+ where it's a single row
+                again. */}
+            <span className="flex items-center gap-2 sm:contents">
+              <Image
+                src={tnEmblem}
+                alt="Government of Tamil Nadu emblem"
+                priority
+                className={clsx(
+                  "w-auto transition-[height] duration-200",
+                  scrolled ? "h-8 sm:h-14" : "h-9 sm:h-[4.5rem]"
+                )}
+              />
+              <span
+                aria-hidden
+                className={clsx(
+                  "w-px shrink-0 bg-hairline-strong transition-[height] duration-200",
+                  scrolled ? "h-6 sm:h-11" : "h-7 sm:h-14"
+                )}
+              />
+              <Image
+                src={tnegaMark}
+                alt=""
+                aria-hidden
+                priority
+                className={clsx(
+                  // Matches the TN emblem's own box height. The mark's own
+                  // circle band is ~82.5% of its canvas height vs the
+                  // emblem's ~97.4% (baked-in "TNeGA" text below the circle
+                  // eats the rest), so the circle itself still reads
+                  // slightly smaller than the emblem at equal box heights —
+                  // accepted per explicit direction rather than compensated
+                  // with a CSS scale multiplier (that was tried once before
+                  // and overshot).
+                  "w-auto shrink-0 transition-[height] duration-200",
+                  scrolled ? "h-8 sm:h-14" : "h-9 sm:h-[4.5rem]"
+                )}
+              />
+            </span>
             {/* min-w-0 lets this column actually shrink within the flex
                 row instead of forcing the row wider than the header —
                 without it the Tamil wordmark (several words, no short
                 abbreviated form the way "TNeGA" was) wrapped across 3-4
-                lines on mobile and blew out the header's fixed height.
-                gap-1 + leading-[1.6] on the Tamil line (not the tighter
-                leading-tight this used to share with the English line
-                below it) — Tamil's taller vowel signs were getting
-                clipped at the top by too short a line box. Both lines
-                always render (no breakpoint hides the English one) —
-                text-[12px] on mobile, stepping up at sm/md once the
-                logos return and share the row again. */}
-            <span className="flex min-w-0 flex-col gap-1">
+                lines. gap on the Tamil line uses leading-[1.5] (not the
+                tighter leading this shares with the English line below
+                it) — Tamil's taller vowel signs were getting clipped at
+                the top by too short a line box. Both lines always
+                render — a smaller text-[11px] on mobile now that the
+                logos sit on their own row above, stepping up at sm/md
+                once the logos rejoin the row. */}
+            <span className="flex min-w-0 flex-col gap-0.5 sm:gap-1">
               <span
                 lang="ta"
-                className="block truncate text-[12px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]"
+                className="block truncate text-[11px] font-semibold leading-[1.5] text-[var(--color-primary-blue)] sm:text-[15px] sm:leading-[1.6] md:text-[16px]"
               >
                 தமிழ்நாடு மின்-ஆளுமை முகமை
               </span>
-              <span className="block truncate text-[12px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]">
+              <span className="block truncate text-[11px] font-semibold leading-[1.3] text-[var(--color-primary-blue)] sm:text-[15px] sm:leading-[1.4] md:text-[16px]">
                 Tamil Nadu e-Governance Agency
               </span>
             </span>
