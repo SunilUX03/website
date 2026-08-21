@@ -5,17 +5,23 @@ import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 
 const SOCIAL_PLATFORMS = ["Facebook", "X", "YouTube", "Instagram", "LinkedIn"] as const;
-const linkFields = [{ key: "label", label: "Label" }, { key: "href", label: "URL" }];
+const linkFields = [
+  { key: "label", label: "Label" },
+  { key: "href", label: "URL" },
+  { key: "taLabel", label: "Label (Tamil)" },
+];
 
 export type FooterContentFormValues = {
   description: string;
+  descriptionTa: string;
   address: string;
+  addressTa: string;
   phone: string;
   email: string;
   socialLinks: { label: string; href: string }[];
-  quickLinks: { label: string; href: string }[];
-  citizenServices: { label: string; href: string }[];
-  helpSupport: { label: string; href: string }[];
+  quickLinks: { label: string; href: string; taLabel: string }[];
+  citizenServices: { label: string; href: string; taLabel: string }[];
+  helpSupport: { label: string; href: string; taLabel: string }[];
   status?: "draft" | "published";
 };
 
@@ -60,21 +66,23 @@ export function FooterContentForm({
         list.push({ id: key, label, detail: `"${truncate(original) || "(empty)"}" → "${truncate(after) || "(empty)"}"`, sectionId });
       }
     };
-    const rows = (name: string, label: string, original: unknown[], sectionId: string) => {
-      const after = reconstructRows(fd, name, ["label", "href"]);
+    const rows = (name: string, label: string, original: unknown[], sectionId: string, keys: string[] = ["label", "href"]) => {
+      const after = reconstructRows(fd, name, keys);
       if (JSON.stringify(after) !== JSON.stringify(original)) {
         list.push({ id: name, label, detail: `${original.length} → ${after.length} item${after.length === 1 ? "" : "s"}`, sectionId });
       }
     };
 
     text("description", "Description", values.description, "section-basics");
+    text("descriptionTa", "Description (Tamil)", values.descriptionTa, "section-basics");
     text("address", "Address", values.address, "section-basics");
+    text("addressTa", "Address (Tamil)", values.addressTa, "section-basics");
     text("phone", "Phone", values.phone, "section-basics");
     text("email", "Email", values.email, "section-basics");
     rows("socialLinks", "Social links", values.socialLinks, "section-social");
-    rows("quickLinks", "Quick Links column", values.quickLinks, "section-quick");
-    rows("citizenServices", "Citizen Services column", values.citizenServices, "section-citizen");
-    rows("helpSupport", "Help & Support column", values.helpSupport, "section-help");
+    rows("quickLinks", "Quick Links column", values.quickLinks, "section-quick", ["label", "href", "taLabel"]);
+    rows("citizenServices", "Citizen Services column", values.citizenServices, "section-citizen", ["label", "href", "taLabel"]);
+    rows("helpSupport", "Help & Support column", values.helpSupport, "section-help", ["label", "href", "taLabel"]);
     return list;
   }
 
@@ -99,8 +107,16 @@ export function FooterContentForm({
           <input name="description" defaultValue={values.description} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
         </div>
         <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Description (Tamil)</label>
+          <input name="descriptionTa" defaultValue={values.descriptionTa} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+        </div>
+        <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Address</label>
           <textarea name="address" defaultValue={values.address} required rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+        </div>
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Address (Tamil)</label>
+          <textarea name="addressTa" defaultValue={values.addressTa} lang="ta" rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

@@ -14,7 +14,7 @@ const stringListField = (name: string, label?: string, valueRequired = true) => 
   name,
   type: "array" as const,
   admin: label ? { description: label } : undefined,
-  fields: [{ name: "value", type: "text" as const, required: valueRequired }],
+  fields: [{ name: "value", type: "text" as const, required: valueRequired, localized: true as const }],
 });
 
 const qaListField = (name: string, label?: string) => ({
@@ -22,8 +22,8 @@ const qaListField = (name: string, label?: string) => ({
   type: "array" as const,
   admin: label ? { description: label } : undefined,
   fields: [
-    { name: "q", type: "text" as const, required: true },
-    { name: "a", type: "textarea" as const, required: true },
+    { name: "q", type: "text" as const, required: true, localized: true as const },
+    { name: "a", type: "textarea" as const, required: true, localized: true as const },
   ],
 });
 
@@ -56,7 +56,7 @@ export const Services: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   fields: [
-    { name: "name", type: "text", required: true },
+    { name: "name", type: "text", required: true, localized: true },
     {
       name: "order",
       type: "number",
@@ -84,12 +84,14 @@ export const Services: CollectionConfig = {
       name: "description",
       type: "textarea",
       required: true,
+      localized: true,
       admin: { description: "Shown on the card and as the About section's opening paragraph." },
     },
     {
       name: "stats",
       type: "text",
       required: true,
+      localized: true,
       admin: { description: 'A single " · "-joined line, e.g. "273 Services · 25,277 Centres · ...".' },
     },
     { name: "image", type: "upload", relationTo: "media", required: true },
@@ -124,6 +126,7 @@ export const Services: CollectionConfig = {
         {
           name: "tagline",
           type: "text",
+          localized: true,
           admin: { description: "Short hero-only line. Falls back to the description above when blank." },
         },
         stringListField("statistics", "One stat per row, e.g. \"273 Government services\"."),
@@ -134,16 +137,16 @@ export const Services: CollectionConfig = {
         stringListField("whatYoullNeed"),
         qaListField("faqs"),
         qaListField("faqsMore", "Extra FAQs shown behind a \"View more\" toggle."),
-        { name: "aboutSecondParagraph", type: "textarea" },
+        { name: "aboutSecondParagraph", type: "textarea", localized: true },
         { name: "hideAboutSecondParagraph", type: "checkbox", defaultValue: false },
-        { name: "calloutText", type: "text", admin: { description: "A plain callout line in the About section, instead of a generated pull-quote." } },
+        { name: "calloutText", type: "text", localized: true, admin: { description: "A plain callout line in the About section, instead of a generated pull-quote." } },
         {
           name: "aboutLinkModal",
           type: "group",
           admin: { description: "Optional link in the About section that opens a modal listing items, e.g. a schemes list." },
           fields: [
-            { name: "label", type: "text" },
-            { name: "title", type: "text" },
+            { name: "label", type: "text", localized: true },
+            { name: "title", type: "text", localized: true },
             stringListField("items"),
           ],
         },
@@ -153,17 +156,17 @@ export const Services: CollectionConfig = {
           admin: { description: "Real product screenshots. Leave empty to show a generated stock-photo carousel instead." },
           fields: [
             { name: "photo", type: "upload", relationTo: "media", required: true },
-            { name: "alt", type: "text", required: true },
+            { name: "alt", type: "text", required: true, localized: true },
           ],
         },
-        { name: "productTourCaption", type: "text" },
+        { name: "productTourCaption", type: "text", localized: true },
         {
           name: "getStartedSteps",
           type: "array",
           admin: { description: "Overrides the generated \"How to access\" steps. Leave empty and check \"Hide steps\" below for an intro/outro-only Get Started section with no numbered steps." },
           fields: [
-            { name: "title", type: "text", required: true },
-            { name: "description", type: "textarea", required: true },
+            { name: "title", type: "text", required: true, localized: true },
+            { name: "description", type: "textarea", required: true, localized: true },
           ],
         },
         {
@@ -172,14 +175,15 @@ export const Services: CollectionConfig = {
           defaultValue: false,
           admin: { description: "Hide the numbered Get Started steps entirely (e.g. intro/outro prose only, like eOffice) rather than showing generated fallback steps." },
         },
-        { name: "getStartedIntro", type: "textarea" },
-        { name: "getStartedOutro", type: "textarea" },
-        { name: "directLinkLabel", type: "text", admin: { description: "Label for the Get Started direct-link button (projects only). Defaults to \"Open\"." } },
+        { name: "getStartedIntro", type: "textarea", localized: true },
+        { name: "getStartedOutro", type: "textarea", localized: true },
+        { name: "directLinkLabel", type: "text", localized: true, admin: { description: "Label for the Get Started direct-link button (projects only). Defaults to \"Open\"." } },
         { name: "comingSoon", type: "checkbox", defaultValue: false, admin: { description: "Marks a pre-launch project: CTAs become \"Coming Soon\" / \"Contact TNeGA\"." } },
         { name: "gatedAccess", type: "checkbox", defaultValue: false, admin: { description: "Marks an access-gated project (staff login, not public self-service): CTAs become \"Avail Service\" → /reach-us." } },
         {
           name: "ctaLabel",
           type: "text",
+          localized: true,
           admin: {
             description: "Overrides the main button's text (Hero and card), e.g. \"Register Now\". Leave blank to use the automatic label (Access Portal / Avail Service / Coming Soon).",
           },
@@ -191,7 +195,7 @@ export const Services: CollectionConfig = {
             description: "Where the main button goes when Button text above is set. Leave blank to reuse the Access Portal link.",
           },
         },
-        { name: "relatedCardStats", type: "text", admin: { description: "Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above)." } },
+        { name: "relatedCardStats", type: "text", localized: true, admin: { description: "Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above)." } },
         {
           name: "typeLabel",
           type: "select",

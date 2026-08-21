@@ -38,6 +38,7 @@ export const MediaItems: CollectionConfig = {
       name: "caption",
       type: "text",
       required: true,
+      localized: true,
       admin: {
         description: "Shown under the thumbnail on the media grid.",
       },
@@ -45,6 +46,7 @@ export const MediaItems: CollectionConfig = {
     {
       name: "altText",
       type: "text",
+      localized: true,
       admin: {
         description: "Accessibility description of the image. Falls back to the caption if left blank.",
       },

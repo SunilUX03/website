@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload-client";
 import type { CmsFooterContent } from "@/lib/cms/footer-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsFooterContent, FooterLink } from "@/lib/cms/footer-types";
 
@@ -20,9 +21,9 @@ const EMPTY: CmsFooterContent = {
  * declare no `revalidate` of their own — same unstable_cache treatment
  * as nav-content.ts for the same reason. */
 export const getFooterContent = unstable_cache(
-  async (): Promise<CmsFooterContent> => {
+  async (locale: Locale = "en"): Promise<CmsFooterContent> => {
     const payload = await getPayloadClient();
-    const doc = await payload.findGlobal({ slug: "footer-content", depth: 0, overrideAccess: false });
+    const doc = await payload.findGlobal({ slug: "footer-content", locale, depth: 0, overrideAccess: false });
     if (!doc) return EMPTY;
     return {
       description: doc.description,

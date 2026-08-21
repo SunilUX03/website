@@ -11,7 +11,13 @@ export default async function NavSettingsPage({
 }) {
   const { saved } = await searchParams;
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "nav-content", draft: true, overrideAccess: true });
+  const [doc, docTa] = await Promise.all([
+    payload.findGlobal({ slug: "nav-content", draft: true, overrideAccess: true }),
+    payload.findGlobal({ slug: "nav-content", locale: "ta", draft: true, overrideAccess: true }),
+  ]);
+
+  const zip = <T extends { label: string; href: string }>(en: T[] | null | undefined, ta: T[] | null | undefined) =>
+    (en ?? []).map((row, i) => ({ label: row.label, href: row.href, taLabel: ta?.[i]?.label ?? "" }));
 
   return (
     <div>
@@ -26,10 +32,11 @@ export default async function NavSettingsPage({
         action={updateNavContent}
         values={{
           govLabel: doc.govLabel,
-          about: doc.about ?? [],
-          services: doc.services ?? [],
-          notificationsUpdates: doc.notificationsUpdates ?? [],
-          notificationsDocuments: doc.notificationsDocuments ?? [],
+          govLabelTa: docTa.govLabel ?? "",
+          about: zip(doc.about, docTa.about),
+          services: zip(doc.services, docTa.services),
+          notificationsUpdates: zip(doc.notificationsUpdates, docTa.notificationsUpdates),
+          notificationsDocuments: zip(doc.notificationsDocuments, docTa.notificationsDocuments),
           status: doc._status as "draft" | "published",
         }}
       />

@@ -5,7 +5,7 @@ const linkGroup = (name: string, description: string) => ({
   type: "array" as const,
   admin: { description },
   fields: [
-    { name: "label" as const, type: "text" as const, required: true },
+    { name: "label" as const, type: "text" as const, required: true, localized: true },
     { name: "href" as const, type: "text" as const, required: true },
   ],
 });
@@ -26,8 +26,8 @@ export const FooterContent: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
-    { name: "description", type: "text", required: true },
-    { name: "address", type: "textarea", required: true },
+    { name: "description", type: "text", required: true, localized: true },
+    { name: "address", type: "textarea", required: true, localized: true },
     { name: "phone", type: "text", required: true },
     { name: "email", type: "text", required: true },
     {

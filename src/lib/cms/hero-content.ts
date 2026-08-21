@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload-client";
 import type { CmsHeroContent } from "@/lib/cms/hero-content-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsHeroContent } from "@/lib/cms/hero-content-types";
 
@@ -12,9 +13,9 @@ const EMPTY: CmsHeroContent = {
 };
 
 export const getHeroContent = unstable_cache(
-  async (): Promise<CmsHeroContent> => {
+  async (locale: Locale = "en"): Promise<CmsHeroContent> => {
     const payload = await getPayloadClient();
-    const doc = await payload.findGlobal({ slug: "hero-content", depth: 0, overrideAccess: false });
+    const doc = await payload.findGlobal({ slug: "hero-content", locale, depth: 0, overrideAccess: false });
     if (!doc) return EMPTY;
     return {
       agencyLabelCycle: doc.agencyLabelCycle?.map((l) => l.text) ?? [],

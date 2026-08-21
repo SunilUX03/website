@@ -22,6 +22,8 @@ import * as migration_20260810_073754_add_cta_label_href from './20260810_073754
 import * as migration_20260810_160700_job_openings_jd_upload from './20260810_160700_job_openings_jd_upload';
 import * as migration_20260810_161500_add_social_posts from './20260810_161500_add_social_posts';
 import * as migration_20260820_190000_add_department_contacts_services_to_government from './20260820_190000_add_department_contacts_services_to_government';
+import * as migration_20260820_210000_add_localization_pilot from './20260820_210000_add_localization_pilot';
+import * as migration_20260821_070657_full_localization from './20260821_070657_full_localization';
 
 export const migrations = [
   {
@@ -127,21 +129,31 @@ export const migrations = [
   {
     up: migration_20260810_073754_add_cta_label_href.up,
     down: migration_20260810_073754_add_cta_label_href.down,
-    name: '20260810_073754_add_cta_label_href'
+    name: '20260810_073754_add_cta_label_href',
   },
   {
     up: migration_20260810_160700_job_openings_jd_upload.up,
     down: migration_20260810_160700_job_openings_jd_upload.down,
-    name: '20260810_160700_job_openings_jd_upload'
+    name: '20260810_160700_job_openings_jd_upload',
   },
   {
     up: migration_20260810_161500_add_social_posts.up,
     down: migration_20260810_161500_add_social_posts.down,
-    name: '20260810_161500_add_social_posts'
+    name: '20260810_161500_add_social_posts',
   },
   {
     up: migration_20260820_190000_add_department_contacts_services_to_government.up,
     down: migration_20260820_190000_add_department_contacts_services_to_government.down,
-    name: '20260820_190000_add_department_contacts_services_to_government'
+    name: '20260820_190000_add_department_contacts_services_to_government',
+  },
+  {
+    up: migration_20260820_210000_add_localization_pilot.up,
+    down: migration_20260820_210000_add_localization_pilot.down,
+    name: '20260820_210000_add_localization_pilot',
+  },
+  {
+    up: migration_20260821_070657_full_localization.up,
+    down: migration_20260821_070657_full_localization.down,
+    name: '20260821_070657_full_localization'
   },
 ];

@@ -36,10 +36,12 @@ export const TeamMembers: CollectionConfig = {
       name: "designation",
       type: "text",
       required: true,
+      localized: true,
     },
     {
       name: "subject",
       type: "text",
+      localized: true,
       admin: {
         description: 'Department/division, e.g. "GIS" or "Procurement/ DRO". Leave blank for the CEO.',
       },

@@ -27,7 +27,7 @@ export const Policies: CollectionConfig = {
   fields: [
     { name: "title", type: "text", required: true, admin: { description: 'e.g. "Cyber Security Policy 2020"' } },
     { name: "year", type: "text", required: true },
-    { name: "category", type: "text", required: true, admin: { description: 'Shown as a badge, e.g. "Cyber Security"' } },
+    { name: "category", type: "text", required: true, localized: true, admin: { description: 'Shown as a badge, e.g. "Cyber Security"' } },
     { name: "file", type: "upload", relationTo: "documents", required: true },
   ],
 };

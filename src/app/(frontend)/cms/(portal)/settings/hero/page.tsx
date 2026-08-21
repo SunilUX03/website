@@ -11,7 +11,10 @@ export default async function HeroSettingsPage({
 }) {
   const { error, saved } = await searchParams;
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "hero-content", draft: true, overrideAccess: true });
+  const [doc, docTa] = await Promise.all([
+    payload.findGlobal({ slug: "hero-content", draft: true, overrideAccess: true }),
+    payload.findGlobal({ slug: "hero-content", locale: "ta", draft: true, overrideAccess: true }),
+  ]);
 
   return (
     <div>
@@ -32,8 +35,13 @@ export default async function HeroSettingsPage({
         values={{
           agencyLabelCycle: doc.agencyLabelCycle?.map((r) => ({ text: r.text })) ?? [],
           headlineTemplate: doc.headlineTemplate,
-          headlineCycleWords: doc.headlineCycleWords?.map((r) => ({ word: r.word })) ?? [],
+          headlineTemplateTa: docTa.headlineTemplate ?? "",
+          headlineCycleWords: (doc.headlineCycleWords ?? []).map((r, i) => ({
+            word: r.word,
+            taWord: docTa.headlineCycleWords?.[i]?.word ?? "",
+          })),
           tagline: doc.tagline,
+          taglineTa: docTa.tagline ?? "",
           status: doc._status as "draft" | "published",
         }}
       />

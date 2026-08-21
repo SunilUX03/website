@@ -20,9 +20,9 @@ export const Awards: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   fields: [
-    { name: "title", type: "text", required: true },
+    { name: "title", type: "text", required: true, localized: true },
     { name: "year", type: "text", required: true },
-    { name: "description", type: "textarea", required: true },
+    { name: "description", type: "textarea", required: true, localized: true },
     { name: "image", type: "upload", relationTo: "media", required: true },
   ],
 };

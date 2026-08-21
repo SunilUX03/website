@@ -22,9 +22,9 @@ export const ServicesToGovernmentContent: GlobalConfig = {
       name: "hero",
       type: "group",
       fields: [
-        { name: "eyebrow", type: "text", required: true },
-        { name: "heading", type: "text", required: true },
-        { name: "body", type: "textarea", required: true },
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+        { name: "body", type: "textarea", required: true, localized: true },
       ],
     },
     {
@@ -33,17 +33,17 @@ export const ServicesToGovernmentContent: GlobalConfig = {
       minRows: 4,
       maxRows: 4,
       fields: [
-        { name: "name", type: "text", required: true },
-        { name: "description", type: "textarea", required: true },
+        { name: "name", type: "text", required: true, localized: true },
+        { name: "description", type: "textarea", required: true, localized: true },
       ],
     },
     {
       name: "tableIntro",
       type: "group",
       fields: [
-        { name: "eyebrow", type: "text", required: true },
-        { name: "heading", type: "text", required: true },
-        { name: "body", type: "textarea", required: true },
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+        { name: "body", type: "textarea", required: true, localized: true },
       ],
     },
     {
@@ -51,6 +51,7 @@ export const ServicesToGovernmentContent: GlobalConfig = {
       type: "text",
       required: true,
       defaultValue: "Raise a Ticket",
+      localized: true,
     },
     {
       name: "raiseTicketHref",

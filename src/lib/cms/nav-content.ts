@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload-client";
+import type { Locale } from "@/lib/locale";
 
 export type NavLink = { label: string; href: string };
 
@@ -27,9 +28,9 @@ const EMPTY: CmsNavContent = {
  * self-revalidates every 60s without having to add `export const
  * revalidate` to every single page.tsx in the app. */
 export const getNavContent = unstable_cache(
-  async (): Promise<CmsNavContent> => {
+  async (locale: Locale = "en"): Promise<CmsNavContent> => {
     const payload = await getPayloadClient();
-    const doc = await payload.findGlobal({ slug: "nav-content", depth: 0, overrideAccess: false });
+    const doc = await payload.findGlobal({ slug: "nav-content", locale, depth: 0, overrideAccess: false });
     if (!doc) return EMPTY;
     return {
       govLabel: doc.govLabel,

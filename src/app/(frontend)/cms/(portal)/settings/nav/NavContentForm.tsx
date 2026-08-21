@@ -4,14 +4,19 @@ import { useRef, useState } from "react";
 import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 
-const linkFields = [{ key: "label", label: "Label" }, { key: "href", label: "URL" }];
+const linkFields = [
+  { key: "label", label: "Label" },
+  { key: "href", label: "URL" },
+  { key: "taLabel", label: "Label (Tamil)" },
+];
 
 export type NavContentFormValues = {
   govLabel: string;
-  about: { label: string; href: string }[];
-  services: { label: string; href: string }[];
-  notificationsUpdates: { label: string; href: string }[];
-  notificationsDocuments: { label: string; href: string }[];
+  govLabelTa: string;
+  about: { label: string; href: string; taLabel: string }[];
+  services: { label: string; href: string; taLabel: string }[];
+  notificationsUpdates: { label: string; href: string; taLabel: string }[];
+  notificationsDocuments: { label: string; href: string; taLabel: string }[];
   status?: "draft" | "published";
 };
 
@@ -57,13 +62,14 @@ export function NavContentForm({
       }
     };
     const rows = (name: string, label: string, original: unknown[], sectionId: string) => {
-      const after = reconstructRows(fd, name, ["label", "href"]);
+      const after = reconstructRows(fd, name, ["label", "href", "taLabel"]);
       if (JSON.stringify(after) !== JSON.stringify(original)) {
         list.push({ id: name, label, detail: `${original.length} → ${after.length} link${after.length === 1 ? "" : "s"}`, sectionId });
       }
     };
 
     text("govLabel", "Government link label", values.govLabel, "section-gov");
+    text("govLabelTa", "Government link label (Tamil)", values.govLabelTa, "section-gov");
     rows("about", "About menu", values.about, "section-about");
     rows("services", "Services menu", values.services, "section-services");
     rows("notificationsUpdates", "Notifications — Updates column", values.notificationsUpdates, "section-notif-updates");
@@ -86,16 +92,27 @@ export function NavContentForm({
     <form ref={formRef} action={action} className="flex max-w-[680px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
 
-      <section id="section-gov" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
-          Government link label <span className="normal-case text-[11px]">(top bar, links to tn.gov.in)</span>
-        </label>
-        <input
-          name="govLabel"
-          defaultValue={values.govLabel}
-          required
-          className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-        />
+      <section id="section-gov" className="scroll-mt-6 flex flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Government link label <span className="normal-case text-[11px]">(top bar, links to tn.gov.in)</span>
+          </label>
+          <input
+            name="govLabel"
+            defaultValue={values.govLabel}
+            required
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Government link label (Tamil)</label>
+          <input
+            name="govLabelTa"
+            defaultValue={values.govLabelTa}
+            lang="ta"
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
       </section>
 
       <section id="section-about" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">

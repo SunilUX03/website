@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload-client";
+import type { Locale } from "@/lib/locale";
 
 export type CmsPageHero = { eyebrow: string; heading: string; body: string };
 export type CmsReachUsPanel = { eyebrow: string; title: string; description: string; ctaLabel: string };
@@ -14,9 +15,9 @@ export type CmsSiteCopy = {
 };
 
 export const getSiteCopy = unstable_cache(
-  async (): Promise<CmsSiteCopy> => {
+  async (locale: Locale = "en"): Promise<CmsSiteCopy> => {
     const payload = await getPayloadClient();
-    const doc = await payload.findGlobal({ slug: "site-copy-content", overrideAccess: false });
+    const doc = await payload.findGlobal({ slug: "site-copy-content", locale, overrideAccess: false });
     return {
       announcementsHero: doc.announcementsHero,
       governmentOrdersHero: doc.governmentOrdersHero,

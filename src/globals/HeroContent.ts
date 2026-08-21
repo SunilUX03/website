@@ -31,12 +31,13 @@ export const HeroContent: GlobalConfig = {
       admin: {
         description: "The bold masthead line the hero cycles through, e.g. the English and Tamil agency name.",
       },
-      fields: [{ name: "text", type: "text", required: true }],
+      fields: [{ name: "text", type: "text", required: true, localized: true }],
     },
     {
       name: "headlineTemplate",
       type: "text",
       required: true,
+      localized: true,
       admin: {
         description:
           'The headline, with {word} marking where the animated cycling word goes — e.g. "Powering Digital {word} in Tamil Nadu".',
@@ -57,12 +58,13 @@ export const HeroContent: GlobalConfig = {
       admin: {
         description: 'Words that cycle through the {word} placeholder above, e.g. "Governance", "Services".',
       },
-      fields: [{ name: "word", type: "text", required: true }],
+      fields: [{ name: "word", type: "text", required: true, localized: true }],
     },
     {
       name: "tagline",
       type: "textarea",
       required: true,
+      localized: true,
     },
   ],
 };

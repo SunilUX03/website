@@ -11,7 +11,13 @@ export default async function FooterSettingsPage({
 }) {
   const { saved } = await searchParams;
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "footer-content", draft: true, overrideAccess: true });
+  const [doc, docTa] = await Promise.all([
+    payload.findGlobal({ slug: "footer-content", draft: true, overrideAccess: true }),
+    payload.findGlobal({ slug: "footer-content", locale: "ta", draft: true, overrideAccess: true }),
+  ]);
+
+  const zip = <T extends { label: string; href: string }>(en: T[] | null | undefined, ta: T[] | null | undefined) =>
+    (en ?? []).map((row, i) => ({ label: row.label, href: row.href, taLabel: ta?.[i]?.label ?? "" }));
 
   return (
     <div>
@@ -26,13 +32,15 @@ export default async function FooterSettingsPage({
         action={updateFooterContent}
         values={{
           description: doc.description,
+          descriptionTa: docTa.description ?? "",
           address: doc.address,
+          addressTa: docTa.address ?? "",
           phone: doc.phone,
           email: doc.email,
           socialLinks: doc.socialLinks ?? [],
-          quickLinks: doc.quickLinks ?? [],
-          citizenServices: doc.citizenServices ?? [],
-          helpSupport: doc.helpSupport ?? [],
+          quickLinks: zip(doc.quickLinks, docTa.quickLinks),
+          citizenServices: zip(doc.citizenServices, docTa.citizenServices),
+          helpSupport: zip(doc.helpSupport, docTa.helpSupport),
           status: doc._status as "draft" | "published",
         }}
       />

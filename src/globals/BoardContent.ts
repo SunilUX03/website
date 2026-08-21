@@ -5,11 +5,12 @@ import type { GlobalConfig } from "payload";
 // seats, not one-of-many documents, matching the shape the component
 // already renders (governingBoard.chairman/memberSecretary/members).
 const seatFields = (roleDefault: string) => [
-  { name: "role" as const, type: "text" as const, required: true, defaultValue: roleDefault },
+  { name: "role" as const, type: "text" as const, required: true, defaultValue: roleDefault, localized: true as const },
+  // Person's own name — kept as-is across locales, not translated.
   { name: "name" as const, type: "text" as const, required: true },
   // Optional: seats can hold just a designation (no confirmed appointee
   // name yet), in which case there's no secondary line to show.
-  { name: "title" as const, type: "text" as const, required: false },
+  { name: "title" as const, type: "text" as const, required: false, localized: true as const },
 ];
 
 export const BoardContent: GlobalConfig = {
@@ -43,7 +44,7 @@ export const BoardContent: GlobalConfig = {
       },
       fields: [
         { name: "name", type: "text", required: true },
-        { name: "title", type: "text", required: false },
+        { name: "title", type: "text", required: false, localized: true },
         {
           name: "isPlaceholder",
           type: "checkbox",

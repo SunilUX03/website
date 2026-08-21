@@ -1,9 +1,9 @@
 import type { GlobalConfig } from "payload";
 
 const pageHeroFields = [
-  { name: "eyebrow" as const, type: "text" as const, required: true },
-  { name: "heading" as const, type: "text" as const, required: true },
-  { name: "body" as const, type: "textarea" as const, required: true },
+  { name: "eyebrow" as const, type: "text" as const, required: true, localized: true },
+  { name: "heading" as const, type: "text" as const, required: true, localized: true },
+  { name: "body" as const, type: "textarea" as const, required: true, localized: true },
 ];
 
 // A catch-all for small bits of page copy that were missed when their
@@ -38,10 +38,10 @@ export const SiteCopyContent: GlobalConfig = {
       maxRows: 2,
       admin: { description: "The homepage's 2 promo panels: Reach Us and Current Openings." },
       fields: [
-        { name: "eyebrow", type: "text", required: true },
-        { name: "title", type: "text", required: true },
-        { name: "description", type: "textarea", required: true },
-        { name: "ctaLabel", type: "text", required: true },
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "title", type: "text", required: true, localized: true },
+        { name: "description", type: "textarea", required: true, localized: true },
+        { name: "ctaLabel", type: "text", required: true, localized: true },
       ],
     },
   ],

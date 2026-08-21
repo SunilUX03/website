@@ -52,6 +52,19 @@ export default buildConfig({
     admin: "/cms",
     api: "/api/payload",
   },
+  // English/Tamil content localization. Being rolled out incrementally,
+  // collection by collection (see fields marked `localized: true`) —
+  // starting with the site-wide chrome (nav, footer, hero, small page-hero
+  // copy) since it's on every page, before extending to the rest of the
+  // CMS. A field left un-marked just isn't translatable yet, not broken.
+  localization: {
+    locales: [
+      { label: "English", code: "en" },
+      { label: "தமிழ்", code: "ta" },
+    ],
+    defaultLocale: "en",
+    fallback: true,
+  },
   collections: [
     CmsUsers,
     Media,

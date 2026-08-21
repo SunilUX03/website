@@ -15,6 +15,7 @@ import {
 } from "@/lib/government-orders-content";
 import { getGovernmentOrderRows } from "@/lib/cms/government-orders";
 import { getSiteCopy } from "@/lib/cms/site-copy";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Government Orders | TNeGA",
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function GovernmentOrders() {
-  const [rows, siteCopy] = await Promise.all([getGovernmentOrderRows(), getSiteCopy()]);
+  const locale = await getLocale();
+  const [rows, siteCopy] = await Promise.all([getGovernmentOrderRows(), getSiteCopy(locale)]);
   const hero = siteCopy.governmentOrdersHero;
 
   return (

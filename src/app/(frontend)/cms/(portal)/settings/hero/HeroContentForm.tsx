@@ -5,10 +5,15 @@ import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 
 export type HeroContentFormValues = {
+  // Deliberately not offered in Tamil here — it already cycles between
+  // the English and Tamil agency names as two array entries regardless
+  // of site locale, a design choice from before localization existed.
   agencyLabelCycle: { text: string }[];
   headlineTemplate: string;
-  headlineCycleWords: { word: string }[];
+  headlineTemplateTa: string;
+  headlineCycleWords: { word: string; taWord: string }[];
   tagline: string;
+  taglineTa: string;
   status?: "draft" | "published";
 };
 
@@ -62,8 +67,10 @@ export function HeroContentForm({
 
     rows("agencyLabelCycle", ["text"], "Agency name cycle", values.agencyLabelCycle, "section-agency");
     text("headlineTemplate", "Headline", values.headlineTemplate, "section-headline");
-    rows("headlineCycleWords", ["word"], "Headline cycle words", values.headlineCycleWords, "section-words");
+    text("headlineTemplateTa", "Headline (Tamil)", values.headlineTemplateTa, "section-headline");
+    rows("headlineCycleWords", ["word", "taWord"], "Headline cycle words", values.headlineCycleWords, "section-words");
     text("tagline", "Tagline", values.tagline, "section-tagline");
+    text("taglineTa", "Tagline (Tamil)", values.taglineTa, "section-tagline");
     return list;
   }
 
@@ -94,38 +101,63 @@ export function HeroContentForm({
         />
       </section>
 
-      <section id="section-headline" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
-          Headline <span className="normal-case text-[11px]">(use {"{word}"} exactly once, where the animated word goes)</span>
-        </label>
-        <input
-          name="headlineTemplate"
-          defaultValue={values.headlineTemplate}
-          required
-          placeholder="Powering Digital {word} in Tamil Nadu"
-          className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-        />
+      <section id="section-headline" className="scroll-mt-6 flex flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Headline <span className="normal-case text-[11px]">(use {"{word}"} exactly once, where the animated word goes)</span>
+          </label>
+          <input
+            name="headlineTemplate"
+            defaultValue={values.headlineTemplate}
+            required
+            placeholder="Powering Digital {word} in Tamil Nadu"
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Headline (Tamil) <span className="normal-case text-[11px]">(use {"{word}"} exactly once — Tamil doesn&apos;t case-mark it, so pick a phrasing that reads naturally as a bare noun)</span>
+          </label>
+          <input
+            name="headlineTemplateTa"
+            defaultValue={values.headlineTemplateTa}
+            lang="ta"
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
       </section>
 
       <section id="section-words" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
         <label className="type-caption-uppercase mb-2 block text-[var(--color-muted)]">Words that cycle through {"{word}"}</label>
         <RepeatableRows
           name="headlineCycleWords"
-          fields={[{ key: "word", label: "Word" }]}
+          fields={[{ key: "word", label: "Word" }, { key: "taWord", label: "Word (Tamil)" }]}
           initialRows={values.headlineCycleWords}
           addLabel="+ Add word"
         />
       </section>
 
-      <section id="section-tagline" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Tagline</label>
-        <textarea
-          name="tagline"
-          defaultValue={values.tagline}
-          required
-          rows={2}
-          className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-        />
+      <section id="section-tagline" className="scroll-mt-6 flex flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Tagline</label>
+          <textarea
+            name="tagline"
+            defaultValue={values.tagline}
+            required
+            rows={2}
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
+        <div>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Tagline (Tamil)</label>
+          <textarea
+            name="taglineTa"
+            defaultValue={values.taglineTa}
+            lang="ta"
+            rows={2}
+            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+          />
+        </div>
       </section>
 
       <div className="flex items-center gap-3">

@@ -43,18 +43,19 @@ export const LegalPages: CollectionConfig = {
         description: "Which page this content backs — matches a fixed route, not a URL you can change.",
       },
     },
-    { name: "title", type: "text", required: true },
-    { name: "eyebrow", type: "text", defaultValue: "Legal" },
-    { name: "intro", type: "textarea" },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "eyebrow", type: "text", defaultValue: "Legal", localized: true },
+    { name: "intro", type: "textarea", localized: true },
     {
       name: "sections",
       type: "array",
       fields: [
-        { name: "heading", type: "text", required: true },
+        { name: "heading", type: "text", required: true, localized: true },
         {
           name: "body",
           type: "textarea",
           required: true,
+          localized: true,
           admin: {
             description: 'Separate paragraphs with a blank line. A paragraph where every line starts with "- " renders as a bullet list.',
           },

@@ -16,6 +16,7 @@ import { getMetrics } from "@/lib/cms/metrics";
 import { getPillarsContent } from "@/lib/cms/pillars-content";
 import { getProjectsSpotlight } from "@/lib/cms/projects-spotlight";
 import { pillars, type PillarLinkItem } from "@/lib/content";
+import { getLocale } from "@/lib/locale";
 
 // Announcements now come from the CMS (a live DB query, not a static
 // import Next can see through), so this page would otherwise be
@@ -27,11 +28,12 @@ import { pillars, type PillarLinkItem } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function Home() {
+  const locale = await getLocale();
   const [announcements, tickerAnnouncements, hero, leadershipBand, allServiceItems, metrics, pillarsChrome, projectsSpotlight] =
     await Promise.all([
       getAnnouncements(),
       getTickerAnnouncements(),
-      getHeroContent(),
+      getHeroContent(locale),
       getLeadershipBand(),
       getAllServiceItems(),
       getMetrics(),

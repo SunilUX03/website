@@ -19,6 +19,7 @@ import {
 } from "@/lib/service-detail-generator";
 import { getFooterContent } from "@/lib/cms/footer";
 import { obfuscateEmail } from "@/lib/format";
+import { getLocale } from "@/lib/locale";
 
 // Every service/project with its own detail page now lives on the
 // standalone /initiatives-projects page regardless of its old `section`
@@ -78,7 +79,8 @@ function DocIcon({ className }: { className?: string }) {
 }
 
 export async function ServiceDetailContent({ item, related }: { item: ServiceItemDetail; related: ServiceItemDetail[] }) {
-  const footer = await getFooterContent();
+  const locale = await getLocale();
+  const footer = await getFooterContent(locale);
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
   const typeLabel = item.real?.typeLabel ?? (isProject ? "Project" : "Service");

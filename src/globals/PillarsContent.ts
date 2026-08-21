@@ -26,9 +26,9 @@ export const PillarsContent: GlobalConfig = {
       minRows: 3,
       maxRows: 3,
       fields: [
-        { name: "title", type: "text", required: true },
-        { name: "description", type: "textarea", required: true },
-        { name: "linkLabel", type: "text", required: true },
+        { name: "title", type: "text", required: true, localized: true },
+        { name: "description", type: "textarea", required: true, localized: true },
+        { name: "linkLabel", type: "text", required: true, localized: true },
         { name: "bannerImage", type: "upload", relationTo: "media" },
       ],
     },

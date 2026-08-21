@@ -116,7 +116,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ta') | ('en' | 'ta')[];
   globals: {
     'nav-content': NavContent;
     'board-content': BoardContent;
@@ -149,7 +149,7 @@ export interface Config {
     'site-copy-content': SiteCopyContentSelect<false> | SiteCopyContentSelect<true>;
     'services-to-government-content': ServicesToGovernmentContentSelect<false> | ServicesToGovernmentContentSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'ta';
   widgets: {
     collections: CollectionsWidget;
   };

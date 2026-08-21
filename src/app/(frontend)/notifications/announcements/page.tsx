@@ -9,6 +9,7 @@ import { AnnouncementList } from "@/components/announcements/AnnouncementList";
 import { buildFacets, heroOrbs } from "@/lib/announcements-content";
 import { getAnnouncements } from "@/lib/cms/announcements";
 import { getSiteCopy } from "@/lib/cms/site-copy";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Announcements | TNeGA",
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Announcements() {
-  const [announcements, siteCopy] = await Promise.all([getAnnouncements(), getSiteCopy()]);
+  const locale = await getLocale();
+  const [announcements, siteCopy] = await Promise.all([getAnnouncements(), getSiteCopy(locale)]);
   const hero = siteCopy.announcementsHero;
 
   return (

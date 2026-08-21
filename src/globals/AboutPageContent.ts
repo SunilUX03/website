@@ -22,17 +22,17 @@ export const AboutPageContent: GlobalConfig = {
       name: "hero",
       type: "group",
       fields: [
-        { name: "eyebrow", type: "text", required: true },
-        { name: "headline", type: "text", required: true },
-        { name: "description", type: "textarea", required: true },
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "headline", type: "text", required: true, localized: true },
+        { name: "description", type: "textarea", required: true, localized: true },
       ],
     },
     {
       name: "whoWeAre",
       type: "group",
       fields: [
-        { name: "heading", type: "text", required: true },
-        { name: "paragraph", type: "textarea", required: true },
+        { name: "heading", type: "text", required: true, localized: true },
+        { name: "paragraph", type: "textarea", required: true, localized: true },
       ],
     },
     {
@@ -40,7 +40,7 @@ export const AboutPageContent: GlobalConfig = {
       type: "array",
       admin: { description: "The reporting-line boxes shown below Who We Are, top to bottom." },
       fields: [
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
         { name: "emphasized", type: "checkbox", defaultValue: false, admin: { description: "Highlight this box (used for TNeGA itself)." } },
       ],
     },
@@ -49,9 +49,9 @@ export const AboutPageContent: GlobalConfig = {
       type: "array",
       admin: { description: "Normally exactly two: Vision and Mission." },
       fields: [
-        { name: "label", type: "text", required: true },
-        { name: "title", type: "text", required: true },
-        { name: "description", type: "textarea", required: true },
+        { name: "label", type: "text", required: true, localized: true },
+        { name: "title", type: "text", required: true, localized: true },
+        { name: "description", type: "textarea", required: true, localized: true },
       ],
     },
     {

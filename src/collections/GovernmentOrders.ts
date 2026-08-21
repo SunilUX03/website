@@ -26,7 +26,7 @@ export const GovernmentOrders: CollectionConfig = {
   fields: [
     { name: "title", type: "text", required: true, admin: { description: 'e.g. "G.O. (Ms).No. 2"' } },
     { name: "year", type: "text", required: true },
-    { name: "department", type: "text", required: true, admin: { description: 'Shown as a badge, e.g. "IT&DS Department"' } },
+    { name: "department", type: "text", required: true, localized: true, admin: { description: 'Shown as a badge, e.g. "IT&DS Department"' } },
     { name: "file", type: "upload", relationTo: "documents", required: true },
   ],
 };

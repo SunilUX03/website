@@ -24,6 +24,7 @@ export const LeadershipBandContent: GlobalConfig = {
       name: "description",
       type: "textarea",
       required: true,
+      localized: true,
     },
     {
       name: "leaders",
@@ -36,7 +37,7 @@ export const LeadershipBandContent: GlobalConfig = {
       },
       fields: [
         { name: "name", type: "text", required: true },
-        { name: "title", type: "text", required: true },
+        { name: "title", type: "text", required: true, localized: true },
         { name: "photo", type: "upload", relationTo: "media", required: true },
         {
           name: "photoPosition",

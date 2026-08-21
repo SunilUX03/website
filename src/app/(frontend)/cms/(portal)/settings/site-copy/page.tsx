@@ -11,8 +11,14 @@ export default async function SiteCopySettingsPage({
 }) {
   const { error, saved } = await searchParams;
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "site-copy-content", draft: true, overrideAccess: true });
+  const [doc, docTa] = await Promise.all([
+    payload.findGlobal({ slug: "site-copy-content", draft: true, overrideAccess: true }),
+    payload.findGlobal({ slug: "site-copy-content", locale: "ta", draft: true, overrideAccess: true }),
+  ]);
   const panels = doc.reachUsPanels ?? [];
+  const panelsTa = docTa.reachUsPanels ?? [];
+
+  const emptyHero = { eyebrow: "", heading: "", body: "" };
 
   return (
     <div>
@@ -35,15 +41,26 @@ export default async function SiteCopySettingsPage({
         action={updateSiteCopy}
         values={{
           announcementsHero: doc.announcementsHero,
+          announcementsHeroTa: docTa.announcementsHero ?? emptyHero,
           governmentOrdersHero: doc.governmentOrdersHero,
+          governmentOrdersHeroTa: docTa.governmentOrdersHero ?? emptyHero,
           policiesHero: doc.policiesHero,
+          policiesHeroTa: docTa.policiesHero ?? emptyHero,
           mediaHero: doc.mediaHero,
+          mediaHeroTa: docTa.mediaHero ?? emptyHero,
           servicesHero: doc.servicesHero,
+          servicesHeroTa: docTa.servicesHero ?? emptyHero,
           reachUsPanels: Array.from({ length: 2 }, (_, i) => ({
             eyebrow: panels[i]?.eyebrow ?? "",
             title: panels[i]?.title ?? "",
             description: panels[i]?.description ?? "",
             ctaLabel: panels[i]?.ctaLabel ?? "",
+          })),
+          reachUsPanelsTa: Array.from({ length: 2 }, (_, i) => ({
+            eyebrow: panelsTa[i]?.eyebrow ?? "",
+            title: panelsTa[i]?.title ?? "",
+            description: panelsTa[i]?.description ?? "",
+            ctaLabel: panelsTa[i]?.ctaLabel ?? "",
           })),
           status: doc._status as "draft" | "published",
         }}

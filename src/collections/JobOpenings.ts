@@ -31,12 +31,14 @@ export const JobOpenings: CollectionConfig = {
       name: "role",
       type: "text",
       required: true,
+      localized: true,
     },
     {
       name: "type",
       type: "text",
       required: true,
       defaultValue: "Contract",
+      localized: true,
       admin: {
         description: 'Employment type shown as a small badge, e.g. "Contract" or "Full-time".',
       },
@@ -45,6 +47,7 @@ export const JobOpenings: CollectionConfig = {
       name: "department",
       type: "text",
       required: true,
+      localized: true,
     },
     {
       name: "deadline",

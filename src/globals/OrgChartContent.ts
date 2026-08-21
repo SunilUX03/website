@@ -1,14 +1,15 @@
 import type { GlobalConfig } from "payload";
 
 const branchFields = [
-  { name: "director" as const, type: "text" as const, required: true },
+  { name: "director" as const, type: "text" as const, required: true, localized: true as const },
   {
     name: "engineer" as const,
     type: "text" as const,
+    localized: true as const,
     admin: { description: "Leave blank to draw a pass-through line instead of a box at this level (as the Project Director branch does)." },
   },
-  { name: "manager" as const, type: "text" as const, required: true },
-  { name: "base" as const, type: "text" as const, required: true },
+  { name: "manager" as const, type: "text" as const, required: true, localized: true as const },
+  { name: "base" as const, type: "text" as const, required: true, localized: true as const },
 ];
 
 // Backs the CEO -> JCEO -> six-branch organisation chart on the About

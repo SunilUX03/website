@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { getFooterContent } from "@/lib/cms/footer";
 import { obfuscateEmail } from "@/lib/format";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Contact Us | TNeGA",
@@ -46,7 +47,8 @@ function PinIcon() {
 }
 
 export default async function ReachUs() {
-  const footer = await getFooterContent();
+  const locale = await getLocale();
+  const footer = await getFooterContent(locale);
 
   return (
     <>

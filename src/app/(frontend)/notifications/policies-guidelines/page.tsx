@@ -15,6 +15,7 @@ import {
 } from "@/lib/policies-guidelines-content";
 import { getPolicyRows } from "@/lib/cms/policies";
 import { getSiteCopy } from "@/lib/cms/site-copy";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Policies & Guidelines | TNeGA",
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function PoliciesGuidelines() {
-  const [rows, siteCopy] = await Promise.all([getPolicyRows(), getSiteCopy()]);
+  const locale = await getLocale();
+  const [rows, siteCopy] = await Promise.all([getPolicyRows(), getSiteCopy(locale)]);
   const hero = siteCopy.policiesHero;
 
   return (

@@ -18,11 +18,17 @@ export type PanelCopy = { eyebrow: string; title: string; description: string; c
 
 export type SiteCopyFormValues = {
   announcementsHero: HeroCopy;
+  announcementsHeroTa: HeroCopy;
   governmentOrdersHero: HeroCopy;
+  governmentOrdersHeroTa: HeroCopy;
   policiesHero: HeroCopy;
+  policiesHeroTa: HeroCopy;
   mediaHero: HeroCopy;
+  mediaHeroTa: HeroCopy;
   servicesHero: HeroCopy;
+  servicesHeroTa: HeroCopy;
   reachUsPanels: PanelCopy[];
+  reachUsPanelsTa: PanelCopy[];
   status?: "draft" | "published";
 };
 
@@ -58,18 +64,27 @@ export function SiteCopyForm({
 
     for (const { key, label } of HEROES) {
       const hero = values[key];
+      const heroTa = values[`${key}Ta` as const];
       text(`${key}Eyebrow`, `${label} — eyebrow`, hero.eyebrow, `section-${key}`);
       text(`${key}Heading`, `${label} — heading`, hero.heading, `section-${key}`);
       text(`${key}Body`, `${label} — body`, hero.body, `section-${key}`);
+      text(`${key}EyebrowTa`, `${label} — eyebrow (Tamil)`, heroTa.eyebrow, `section-${key}`);
+      text(`${key}HeadingTa`, `${label} — heading (Tamil)`, heroTa.heading, `section-${key}`);
+      text(`${key}BodyTa`, `${label} — body (Tamil)`, heroTa.body, `section-${key}`);
     }
 
     for (let i = 0; i < 2; i++) {
       const p = values.reachUsPanels[i];
+      const pTa = values.reachUsPanelsTa[i];
       const sectionId = `section-panel${i}`;
       text(`panel${i}Eyebrow`, `${PANEL_NAMES[i]} — eyebrow`, p?.eyebrow ?? "", sectionId);
       text(`panel${i}Title`, `${PANEL_NAMES[i]} — title`, p?.title ?? "", sectionId);
       text(`panel${i}Description`, `${PANEL_NAMES[i]} — description`, p?.description ?? "", sectionId);
       text(`panel${i}CtaLabel`, `${PANEL_NAMES[i]} — button text`, p?.ctaLabel ?? "", sectionId);
+      text(`panel${i}EyebrowTa`, `${PANEL_NAMES[i]} — eyebrow (Tamil)`, pTa?.eyebrow ?? "", sectionId);
+      text(`panel${i}TitleTa`, `${PANEL_NAMES[i]} — title (Tamil)`, pTa?.title ?? "", sectionId);
+      text(`panel${i}DescriptionTa`, `${PANEL_NAMES[i]} — description (Tamil)`, pTa?.description ?? "", sectionId);
+      text(`panel${i}CtaLabelTa`, `${PANEL_NAMES[i]} — button text (Tamil)`, pTa?.ctaLabel ?? "", sectionId);
     }
 
     return list;
@@ -92,6 +107,7 @@ export function SiteCopyForm({
 
       {HEROES.map(({ key, label }) => {
         const hero = values[key];
+        const heroTa = values[`${key}Ta` as const];
         return (
           <section key={key} id={`section-${key}`} className="flex scroll-mt-6 flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
             <p className="type-caption-uppercase text-[var(--color-muted)]">{label}</p>
@@ -100,18 +116,30 @@ export function SiteCopyForm({
               <input name={`${key}Eyebrow`} defaultValue={hero.eyebrow} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
             </div>
             <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Eyebrow (Tamil)</label>
+              <input name={`${key}EyebrowTa`} defaultValue={heroTa.eyebrow} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
+            <div>
               <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Heading</label>
               <input name={`${key}Heading`} defaultValue={hero.heading} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
+            <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Heading (Tamil)</label>
+              <input name={`${key}HeadingTa`} defaultValue={heroTa.heading} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
             </div>
             <div>
               <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Body</label>
               <textarea name={`${key}Body`} defaultValue={hero.body} required rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
             </div>
+            <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Body (Tamil)</label>
+              <textarea name={`${key}BodyTa`} defaultValue={heroTa.body} lang="ta" rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
           </section>
         );
       })}
 
-      {Array.from({ length: 2 }, (_, i) => values.reachUsPanels[i]).map((panel, i) => (
+      {Array.from({ length: 2 }, (_, i) => ({ en: values.reachUsPanels[i], ta: values.reachUsPanelsTa[i] })).map(({ en: panel, ta: panelTa }, i) => (
         <section key={i} id={`section-panel${i}`} className="flex scroll-mt-6 flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
           <p className="type-caption-uppercase text-[var(--color-muted)]">Homepage — {PANEL_NAMES[i]}</p>
           <div className="grid grid-cols-2 gap-3">
@@ -120,17 +148,35 @@ export function SiteCopyForm({
               <input name={`panel${i}Eyebrow`} defaultValue={panel?.eyebrow ?? ""} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
             </div>
             <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Eyebrow (Tamil)</label>
+              <input name={`panel${i}EyebrowTa`} defaultValue={panelTa?.eyebrow ?? ""} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
+            <div>
               <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Title</label>
               <input name={`panel${i}Title`} defaultValue={panel?.title ?? ""} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
+            <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Title (Tamil)</label>
+              <input name={`panel${i}TitleTa`} defaultValue={panelTa?.title ?? ""} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
             </div>
           </div>
           <div>
             <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Description</label>
             <textarea name={`panel${i}Description`} defaultValue={panel?.description ?? ""} required rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
           </div>
-          <div className="max-w-[240px]">
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Button text</label>
-            <input name={`panel${i}CtaLabel`} defaultValue={panel?.ctaLabel ?? ""} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+          <div>
+            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Description (Tamil)</label>
+            <textarea name={`panel${i}DescriptionTa`} defaultValue={panelTa?.description ?? ""} lang="ta" rows={2} className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Button text</label>
+              <input name={`panel${i}CtaLabel`} defaultValue={panel?.ctaLabel ?? ""} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
+            <div>
+              <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Button text (Tamil)</label>
+              <input name={`panel${i}CtaLabelTa`} defaultValue={panelTa?.ctaLabel ?? ""} lang="ta" className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
+            </div>
           </div>
         </section>
       ))}

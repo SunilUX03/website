@@ -28,7 +28,7 @@ export const ProjectsSpotlight: CollectionConfig = {
   },
   fields: [
     { name: "service", type: "relationship", relationTo: "services", required: true, hasMany: false },
-    { name: "badge", type: "text", admin: { description: 'Optional small badge, e.g. "MeitY Approved".' } },
+    { name: "badge", type: "text", localized: true, admin: { description: 'Optional small badge, e.g. "MeitY Approved".' } },
     {
       name: "stats",
       type: "array",
@@ -36,7 +36,7 @@ export const ProjectsSpotlight: CollectionConfig = {
       fields: [
         { name: "value", type: "number", required: true },
         { name: "suffix", type: "text", admin: { description: 'e.g. " Crore+", "%"' } },
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
       ],
     },
     {
@@ -44,7 +44,7 @@ export const ProjectsSpotlight: CollectionConfig = {
       type: "array",
       admin: { description: "The buttons shown on the card, e.g. \"Login to Portal\" / \"Know more\"." },
       fields: [
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
         { name: "href", type: "text", required: true },
       ],
     },

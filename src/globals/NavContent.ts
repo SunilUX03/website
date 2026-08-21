@@ -10,7 +10,7 @@ const linkGroup = (label: string) => ({
   name: label,
   type: "array" as const,
   fields: [
-    { name: "label", type: "text" as const, required: true },
+    { name: "label", type: "text" as const, required: true, localized: true },
     { name: "href", type: "text" as const, required: true },
   ],
 });
@@ -32,6 +32,7 @@ export const NavContent: GlobalConfig = {
       name: "govLabel",
       type: "text",
       required: true,
+      localized: true,
       admin: {
         description: "Top bar link label to tn.gov.in, e.g. \"தமிழ்நாடு அரசு | Government of Tamil Nadu\".",
       },

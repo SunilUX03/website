@@ -27,9 +27,9 @@ export const RollOfHonour: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   fields: [
-    { name: "designation", type: "text", required: true },
+    { name: "designation", type: "text", required: true, localized: true },
     { name: "name", type: "text" },
-    { name: "range", type: "text", admin: { description: 'e.g. "July 2026 – Present"' } },
+    { name: "range", type: "text", localized: true, admin: { description: 'e.g. "July 2026 – Present"' } },
     {
       name: "order",
       type: "number",

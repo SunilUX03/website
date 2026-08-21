@@ -27,7 +27,7 @@ export const MetricsContent: GlobalConfig = {
         { name: "decimals", type: "number", admin: { description: "Decimal places to show, e.g. 2 for 24.27. Leave blank for a whole number." } },
         { name: "prefix", type: "text", admin: { description: 'e.g. "₹"' } },
         { name: "suffix", type: "text", admin: { description: 'e.g. "+", " Cr", " Lakh"' } },
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
       ],
     },
   ],

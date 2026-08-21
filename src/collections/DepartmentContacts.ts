@@ -27,7 +27,7 @@ export const DepartmentContacts: CollectionConfig = {
     delete: ({ req: { user } }) => user?.role === "admin",
   },
   fields: [
-    { name: "department", type: "text", required: true },
+    { name: "department", type: "text", required: true, localized: true },
     { name: "contact", type: "text", required: true, admin: { description: 'The assigned Project Manager, e.g. "PM I"' } },
     { name: "email", type: "email", required: true },
     { name: "phone", type: "text", required: true },

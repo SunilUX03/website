@@ -9,6 +9,7 @@ import { MediaTabs } from "@/components/media/MediaTabs";
 import { buildFacets, heroOrbs } from "@/lib/media-content";
 import { getMediaItems } from "@/lib/cms/media-items";
 import { getSiteCopy } from "@/lib/cms/site-copy";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Media & Press | TNeGA",
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function MediaPress() {
-  const [items, siteCopy] = await Promise.all([getMediaItems(), getSiteCopy()]);
+  const locale = await getLocale();
+  const [items, siteCopy] = await Promise.all([getMediaItems(), getSiteCopy(locale)]);
   const photos = items.filter((item) => item.type === "photo");
   const videos = items.filter((item) => item.type === "video");
   const hero = siteCopy.mediaHero;

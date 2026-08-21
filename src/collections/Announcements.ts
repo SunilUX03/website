@@ -40,6 +40,7 @@ export const Announcements: CollectionConfig = {
       name: "heading",
       type: "text",
       required: true,
+      localized: true,
     },
     {
       name: "slug",
@@ -72,6 +73,7 @@ export const Announcements: CollectionConfig = {
       name: "description",
       type: "textarea",
       required: true,
+      localized: true,
       admin: {
         description: "Short summary shown on the announcement card (homepage and listing page).",
       },
@@ -86,6 +88,7 @@ export const Announcements: CollectionConfig = {
     {
       name: "category",
       type: "text",
+      localized: true,
       admin: {
         description: 'Short label shown above the headline on the detail page, e.g. "Service Launch".',
       },
@@ -93,6 +96,7 @@ export const Announcements: CollectionConfig = {
     {
       name: "body",
       type: "richText",
+      localized: true,
       admin: {
         description: "Full announcement body, shown on its own page. Leave blank to show only the summary.",
       },
@@ -104,7 +108,7 @@ export const Announcements: CollectionConfig = {
         description: 'Optional "at a glance" figures shown on the detail page (e.g. Services live: 10).',
       },
       fields: [
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
         { name: "value", type: "text", required: true },
       ],
     },
