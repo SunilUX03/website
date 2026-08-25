@@ -7,6 +7,7 @@ import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReview
 const CONTACT_NAMES = ["Appellate Authority", "Public Information Officer"];
 
 export type RtiContact = {
+  id?: string;
   badge: string;
   tone: string;
   name: string;
@@ -19,7 +20,7 @@ export type RtiContentFormValues = {
   heroHeading: string;
   heroBody: string;
   contacts: RtiContact[];
-  disclosures: { sno: string; item: string; rowsText: string }[];
+  disclosures: { id?: string; sno: string; item: string; rowsText: string }[];
   fileHeading: string;
   fileSub: string;
   fileBody: string;
@@ -30,6 +31,11 @@ export type RtiContentFormValues = {
   filePhone: string;
   filePhoneHref: string;
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -49,12 +55,61 @@ function reconstructRows(fd: FormData, name: string, keys: string[]): Record<str
   return rows;
 }
 
+/** A non-localized field (ctaHref/email/phone/phoneHref inside howToFile)
+ * that's a sibling of localized fields within the same group. Editable on
+ * the English tab; on the Tamil tab it's shown read-only with a hidden
+ * input carrying the current shared value forward, so it's never blanked
+ * by an absent field on a Tamil-locale save. */
+function LockedField({
+  name,
+  label,
+  value,
+  locale,
+  required,
+}: {
+  name: string;
+  label: string;
+  value: string;
+  locale: "en" | "ta";
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+        {label}
+        {locale === "ta" ? <span className="normal-case text-[11px]"> (same for both languages — edit from English)</span> : null}
+      </label>
+      {locale === "en" ? (
+        <input
+          name={name}
+          defaultValue={value}
+          required={required}
+          className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+        />
+      ) : (
+        <>
+          <input type="hidden" name={name} value={value} />
+          <input
+            value={value}
+            disabled
+            className="w-full rounded-lg border border-hairline bg-canvas-soft px-3 py-2 text-[var(--color-muted)]"
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
 export function RtiContentForm({
   action,
   values,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: RtiContentFormValues;
+  /** Which locale this save writes to — set by the page from `?locale=`
+   * and carried through as a hidden field the server action reads. */
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -89,7 +144,8 @@ export function RtiContentForm({
     }
 
     const afterDisclosures = reconstructRows(fd, "disclosures", ["sno", "item", "rowsText"]);
-    if (JSON.stringify(afterDisclosures) !== JSON.stringify(values.disclosures)) {
+    const beforeDisclosures = values.disclosures.map((d) => ({ sno: d.sno, item: d.item, rowsText: d.rowsText }));
+    if (JSON.stringify(afterDisclosures) !== JSON.stringify(beforeDisclosures)) {
       list.push({ id: "disclosures", label: "Section 4(1)(b) disclosures", detail: `${values.disclosures.length} → ${afterDisclosures.length} row${afterDisclosures.length === 1 ? "" : "s"}`, sectionId: "section-disclosures" });
     }
 
@@ -120,6 +176,8 @@ export function RtiContentForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[720px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       <section id="section-hero" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <p className="type-caption-uppercase text-[var(--color-muted)]">Hero</p>
@@ -139,6 +197,7 @@ export function RtiContentForm({
 
       {Array.from({ length: 2 }, (_, i) => values.contacts[i]).map((contact, i) => (
         <section key={i} id={`section-contact${i}`} className="flex scroll-mt-6 flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
+          {contact?.id ? <input type="hidden" name={`contact${i}Id`} value={contact.id} /> : null}
           <p className="type-caption-uppercase text-[var(--color-muted)]">Contact {i + 1} — {CONTACT_NAMES[i]}</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -208,48 +267,26 @@ export function RtiContentForm({
             <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Button text</label>
             <input name="fileCtaLabel" defaultValue={values.fileCtaLabel} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
           </div>
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Button link</label>
-            <input name="fileCtaHref" defaultValue={values.fileCtaHref} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
-          </div>
+          <LockedField name="fileCtaHref" label="Button link" value={values.fileCtaHref} locale={locale} required />
         </div>
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Redirect note</label>
           <input name="fileRedirectNote" defaultValue={values.fileRedirectNote} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Email</label>
-            <input name="fileEmail" defaultValue={values.fileEmail} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
-          </div>
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Phone (display)</label>
-            <input name="filePhone" defaultValue={values.filePhone} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
-          </div>
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Phone (tel: link)</label>
-            <input name="filePhoneHref" defaultValue={values.filePhoneHref} required className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]" />
-          </div>
+          <LockedField name="fileEmail" label="Email" value={values.fileEmail} locale={locale} required />
+          <LockedField name="filePhone" label="Phone (display)" value={values.filePhone} locale={locale} required />
+          <LockedField name="filePhoneHref" label="Phone (tel: link)" value={values.filePhoneHref} locale={locale} required />
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish? The RTI page will revert to whatever was last published.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

@@ -21,6 +21,13 @@ export const LeadershipBandContent: GlobalConfig = {
   },
   fields: [
     {
+      name: "heading",
+      type: "text",
+      required: true,
+      localized: true,
+      admin: { description: 'The band\'s heading, e.g. "Leading Digital Tamil Nadu".' },
+    },
+    {
       name: "description",
       type: "textarea",
       required: true,

@@ -18,6 +18,7 @@ import {
   generateScreenshotImages,
 } from "@/lib/service-detail-generator";
 import { getFooterContent } from "@/lib/cms/footer";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 import { obfuscateEmail } from "@/lib/format";
 import { getLocale } from "@/lib/locale";
 
@@ -27,7 +28,6 @@ import { getLocale } from "@/lib/locale";
 // no longer map to distinct destinations, so the breadcrumb/badge/
 // "View all" link below are section-agnostic rather than keyed off
 // `item.section`.
-const INITIATIVES_LABEL = "Initiatives & Projects";
 const INITIATIVES_HREF = "/initiatives-projects";
 
 // Same icon across every Key Features card by design (per earlier
@@ -80,10 +80,21 @@ function DocIcon({ className }: { className?: string }) {
 
 export async function ServiceDetailContent({ item, related }: { item: ServiceItemDetail; related: ServiceItemDetail[] }) {
   const locale = await getLocale();
+  const isTa = locale === "ta";
+  const initiativesLabel = isTa ? "முயற்சிகள் & திட்டங்கள்" : "Initiatives & Projects";
   const footer = await getFooterContent(locale);
+  const siteCopy = await getSiteCopy(locale);
+  const viewAllLabel = siteCopy.viewAllInitiativesButton?.label || `View All ${initiativesLabel}`;
+  const viewAllHref = siteCopy.viewAllInitiativesButton?.href || INITIATIVES_HREF;
   const bullets = statsToBullets(item.stats);
   const isProject = item.type === "project";
-  const typeLabel = item.real?.typeLabel ?? (isProject ? "Project" : "Service");
+  // `real.typeLabel` is a plain (non-localized) CMS override — when an
+  // editor sets it explicitly it always shows in the language they typed
+  // it in; only the generated default below is locale-aware. typeLabel is
+  // a required field going forward (every item is a Project or an
+  // Initiative, no more "Service"), so this fallback only matters for the
+  // rare item with no `real` content at all.
+  const typeLabel = item.real?.typeLabel ?? (isProject ? (isTa ? "திட்டம்" : "Project") : (isTa ? "முயற்சி" : "Initiative"));
   const comingSoon = item.real?.comingSoon ?? false;
   const heroTagline = item.real?.tagline ?? item.description;
   const secondParagraph = generateAboutSecondParagraph(item);
@@ -99,16 +110,34 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
   // a wide aspect is fine.
   const realProductTour = item.real?.productTour;
   const screenshotImages = realProductTour ?? generateScreenshotImages(item);
-  const productTourCaption = item.real?.productTourCaption ?? "Illustrative photos. Production screenshots will be added soon.";
   const contactEmail = item.real?.contact?.email ?? footer.email;
   const contactPhone = item.real?.contact?.phone ?? footer.phone;
+  const chrome = siteCopy.serviceDetailFooterHeadings;
+
+  const aboutEyebrow = item.real?.aboutEyebrow || (isTa ? `${typeLabel} பற்றி` : `About the ${typeLabel.toLowerCase()}`);
+  const aboutHeading = item.real?.aboutHeading || (isTa ? `${item.name} என்ன செய்கிறது` : `What ${item.name} does`);
+  const featuresEyebrow = item.real?.featuresEyebrow || (isTa ? "திறன்கள்" : "Capabilities");
+  const featuresHeading = item.real?.featuresHeading || (isTa ? "முக்கிய அம்சங்கள்" : "Key Features");
+  const productTourHeading = item.real?.productTourHeading || (isTa ? `${item.name} பார்வை` : `A look at ${item.name}`);
+  const eligibilityEyebrow = item.real?.eligibilityEyebrow || (isTa ? "தகுதி" : "Eligibility");
+  const eligibilityHeading = item.real?.eligibilityHeading || (isTa ? "யார் பயன்படுத்தலாம்" : "Who can use this");
+  const eligibilityWhoHeading = item.real?.eligibilityWhoHeading || (isTa ? "இவை பொருந்தினால் நீங்கள் இதைப் பயன்படுத்தலாம்" : "You can use this if");
+  const eligibilityDocsHeading = item.real?.eligibilityDocsHeading || (isTa ? "உங்களுக்கு தேவையானவை" : "What you'll need");
+  const getStartedEyebrow = item.real?.getStartedEyebrow || (isTa ? "தொடங்குதல்" : "Get started");
+  const getStartedHeading = item.real?.getStartedHeading || (isTa ? `${item.name} ஐ எவ்வாறு அணுகுவது` : `How to access ${item.name}`);
+  const directLinkPortalLabel =
+    item.real?.directLinkPortalLabel ||
+    (isTa ? `${item.name} போர்ட்டல்` : item.name.endsWith("Portal") ? item.name : `${item.name} Portal`);
+  const faqEyebrow = item.real?.faqEyebrow || (isTa ? "கேள்விகள்" : "Questions");
+  const faqHeading = item.real?.faqHeading || (isTa ? "அடிக்கடி கேட்கப்படும் கேள்விகள்" : "Frequently asked questions");
   return (
     <>
       <Breadcrumb
         items={[
-          { label: INITIATIVES_LABEL, href: INITIATIVES_HREF },
+          { label: initiativesLabel, href: INITIATIVES_HREF },
           { label: item.name },
         ]}
+        locale={locale}
       />
 
       {/* ---------- Hero ---------- */}
@@ -124,7 +153,6 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
 
         <Container className="relative py-xl md:py-xxl">
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="badge-pill type-caption">{INITIATIVES_LABEL}</span>
             <span className="badge-pill type-caption">{typeLabel}</span>
           </div>
 
@@ -148,31 +176,31 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
 
               <div className="flex flex-wrap gap-3">
                 {item.real?.ctaLabel ? (
-                  <a href={item.real.ctaHref || item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
+                  <a href={item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
                     {item.real.ctaLabel}
                   </a>
                 ) : comingSoon ? (
                   <a href="#contact" className="type-button btn-primary">
-                    Coming Soon
+                    {isTa ? "விரைவில்" : "Coming Soon"}
                   </a>
                 ) : isProject && !item.real?.gatedAccess ? (
                   <a href={item.accessPortalHref} className="type-button btn-primary">
-                    Access Portal
+                    {isTa ? "போர்ட்டலை அணுகவும்" : "Access Portal"}
                   </a>
                 ) : (
                   <a href="/reach-us" className="type-button btn-primary">
-                    Avail Service
+                    {isTa ? "சேவையைப் பெறவும்" : "Avail Service"}
                   </a>
                 )}
-                <Link href={INITIATIVES_HREF} className="type-button btn-outline">
-                  View All {INITIATIVES_LABEL}
+                <Link href={viewAllHref} className="type-button btn-outline">
+                  {viewAllLabel}
                 </Link>
               </div>
             </div>
 
-            {/* A visible tinted frame plus a soft ambient glow behind it —
-                the frame guarantees the "floating" effect reads regardless
-                of the photo's own colors, the glow behind adds depth. */}
+            {/* A soft ambient glow behind the photo for depth — no tinted
+                frame/mat around the image itself, per feedback that it
+                read as an unwanted border. */}
             <div className="relative">
               <div
                 aria-hidden
@@ -182,21 +210,14 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
                     "radial-gradient(circle at 30% 30%, var(--color-gradient-sky) 0%, transparent 60%), radial-gradient(circle at 70% 75%, var(--color-gradient-lavender) 0%, transparent 60%)",
                 }}
               />
-              <div
-                className="relative rounded-2xl p-3"
-                style={{
-                  background: "linear-gradient(135deg, var(--color-surface-strong) 0%, var(--color-canvas-soft) 100%)",
-                }}
-              >
-                <PhotoTile
-                  src={item.image}
-                  alt={item.name}
-                  aspect="aspect-[3/2]"
-                  className="rounded-xl shadow-[0_16px_40px_rgba(12,10,9,0.16)]"
-                  sizes="(min-width: 1024px) 45vw, 100vw"
-                  priority
-                />
-              </div>
+              <PhotoTile
+                src={item.image}
+                alt={item.name}
+                aspect="aspect-[3/2]"
+                className="relative rounded-2xl shadow-[0_16px_40px_rgba(12,10,9,0.16)]"
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                priority
+              />
             </div>
           </div>
         </Container>
@@ -205,8 +226,8 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
       {/* ---------- About ---------- */}
       <section className="bg-canvas-soft">
         <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">About the {typeLabel.toLowerCase()}</p>
-          <h2 className="type-display-md mb-10 text-ink">What {item.name} does</h2>
+          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{aboutEyebrow}</p>
+          <h2 className="type-display-md mb-10 text-ink">{aboutHeading}</h2>
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr]">
             <div className="flex flex-col gap-4">
@@ -219,6 +240,7 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
                   label={item.real.aboutLinkModal.label}
                   title={item.real.aboutLinkModal.title}
                   items={item.real.aboutLinkModal.items}
+                  locale={locale}
                 />
               )}
             </div>
@@ -240,7 +262,7 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
               ) : (
                 <>
                   <p className="type-body-md text-ink">{pullQuote.quote}</p>
-                  <p className="type-caption mt-4 text-[var(--color-muted)]">Source: {pullQuote.source}</p>
+                  <p className="type-caption mt-4 text-[var(--color-muted)]">{isTa ? "ஆதாரம்" : "Source"}: {pullQuote.source}</p>
                 </>
               )}
             </div>
@@ -249,81 +271,86 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
       </section>
 
       {/* ---------- Features ---------- */}
-      <section className="bg-canvas">
-        <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Capabilities</p>
-          <h2 className="type-display-md mb-10 text-ink">Key Features</h2>
+      {!item.real?.hideFeaturesSection && (
+        <section className="bg-canvas">
+          <Container className="py-xxl">
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{featuresEyebrow}</p>
+            <h2 className="type-display-md mb-10 text-ink">{featuresHeading}</h2>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="card-feature transition-all duration-300 hover:-translate-y-1 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)]"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary-blue)] text-white">
-                  <FeatureIcon className="h-6 w-6" />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {features.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="card-feature transition-all duration-300 hover:-translate-y-1 hover:border-hairline-strong hover:shadow-[0_10px_30px_rgba(29,63,143,0.10)]"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary-blue)] text-white">
+                    <FeatureIcon className="h-6 w-6" />
+                  </div>
+                  <h3 className="type-title-sm mb-1.5 text-ink">{feature.title}</h3>
+                  <p className="type-body-sm text-[var(--color-muted)]">{feature.description}</p>
                 </div>
-                <h3 className="type-title-sm mb-1.5 text-ink">{feature.title}</h3>
-                <p className="type-body-sm text-[var(--color-muted)]">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* ---------- Product tour (illustrative) ---------- */}
-      <section className="bg-canvas-soft">
-        <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Product tour</p>
-          <h2 className="type-display-md mb-10 text-ink">A look at {item.name}</h2>
+      {!item.real?.hideProductTourSection && (
+        <section className="bg-canvas-soft">
+          <Container className="py-xxl">
+            <h2 className="type-display-md mb-10 text-ink">{productTourHeading}</h2>
 
-          <ScreenshotCarousel images={screenshotImages} />
-          <p className="type-caption mt-3 text-center text-[var(--color-muted)]">{productTourCaption}</p>
-        </Container>
-      </section>
+            <ScreenshotCarousel images={screenshotImages} locale={locale} showCaptions={Boolean(realProductTour)} />
+          </Container>
+        </section>
+      )}
 
       {/* ---------- Eligibility ---------- */}
-      <section className="bg-canvas">
-        <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Eligibility</p>
-          <h2 className="type-display-md mb-10 text-ink">Who can use this</h2>
+      {!item.real?.hideEligibilitySection && (
+        <section className="bg-canvas">
+          <Container className="py-xxl">
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{eligibilityEyebrow}</p>
+            <h2 className="type-display-md mb-10 text-ink">{eligibilityHeading}</h2>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="card-feature">
-              <h3 className="type-title-sm mb-4 text-ink">You can use this if</h3>
-              <ul className="flex flex-col gap-3">
-                {eligibility.who.map((line) => (
-                  <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#dcfce7] text-[#15803d]">
-                      <CheckIcon className="h-4 w-4" />
-                    </span>
-                    {line}
-                  </li>
-                ))}
-              </ul>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="card-feature">
+                <h3 className="type-title-sm mb-4 text-ink">{eligibilityWhoHeading}</h3>
+                <ul className="flex flex-col gap-3">
+                  {eligibility.who.map((line) => (
+                    <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#dcfce7] text-[#15803d]">
+                        <CheckIcon className="h-4 w-4" />
+                      </span>
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="card-feature">
+                <h3 className="type-title-sm mb-4 text-ink">{eligibilityDocsHeading}</h3>
+                <ul className="flex flex-col gap-3">
+                  {eligibility.docs.map((line) => (
+                    <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
+                        <DocIcon className="h-4 w-4" />
+                      </span>
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="card-feature">
-              <h3 className="type-title-sm mb-4 text-ink">What you&apos;ll need</h3>
-              <ul className="flex flex-col gap-3">
-                {eligibility.docs.map((line) => (
-                  <li key={line} className="type-body-sm flex items-start gap-3 text-[var(--color-body)]">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-strong)] text-[var(--color-primary-blue)]">
-                      <DocIcon className="h-4 w-4" />
-                    </span>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
+      )}
 
       {/* ---------- How to Access ---------- */}
+      {!item.real?.hideGetStartedSection && (
       <section className="bg-canvas-soft">
         <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Get started</p>
-          <h2 className="type-display-md mb-10 text-ink">How to access {item.name}</h2>
+          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{getStartedEyebrow}</p>
+          <h2 className="type-display-md mb-10 text-ink">{getStartedHeading}</h2>
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr]">
             <div>
@@ -351,34 +378,43 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
             <div className="card-feature h-fit">
               {comingSoon ? (
                 <>
-                  <h3 className="type-title-sm mb-3 text-ink">Launching soon</h3>
+                  <h3 className="type-title-sm mb-3 text-ink">{isTa ? "விரைவில் தொடங்கப்படும்" : "Launching soon"}</h3>
                   <p className="type-body-sm mb-4 text-[var(--color-body)]">
-                    {`${item.name} isn't live yet. Reach out to TNeGA for launch updates.`}
+                    {isTa
+                      ? `${item.name} இன்னும் செயல்பாட்டில் இல்லை. தொடக்க தகவல்களுக்கு TNeGA-வை தொடர்பு கொள்ளவும்.`
+                      : `${item.name} isn't live yet. Reach out to TNeGA for launch updates.`}
                   </p>
                   <a href="#contact" className="type-button btn-primary">
-                    Contact TNeGA
+                    {isTa ? "TNeGA-வை தொடர்பு கொள்ளவும்" : "Contact TNeGA"}
                   </a>
                 </>
               ) : isProject ? (
                 <>
-                  <h3 className="type-title-sm mb-3 text-ink">Direct link</h3>
+                  <h3 className="type-title-sm mb-3 text-ink">{isTa ? "நேரடி இணைப்பு" : "Direct link"}</h3>
                   <div className="flex items-center justify-between gap-3 rounded-lg border border-hairline-strong bg-canvas px-4 py-3">
                     <span className="type-body-sm font-semibold text-[var(--color-primary-blue)]">
-                      {item.name.endsWith("Portal") ? item.name : `${item.name} Portal`}
+                      {directLinkPortalLabel}
                     </span>
-                    <a href={item.accessPortalHref} className="type-button btn-primary !h-9 !px-4">
-                      {item.real?.directLinkLabel ?? "Open"}
+                    <a
+                      href={item.accessPortalHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="type-button btn-primary !h-9 !px-4"
+                    >
+                      {item.real?.directLinkLabel ?? (isTa ? "திறக்கவும்" : "Open")}
                     </a>
                   </div>
                 </>
               ) : (
                 <>
-                  <h3 className="type-title-sm mb-3 text-ink">Availability</h3>
+                  <h3 className="type-title-sm mb-3 text-ink">{isTa ? "கிடைக்கும் தன்மை" : "Availability"}</h3>
                   <p className="type-body-sm mb-4 text-[var(--color-body)]">
-                    {`${item.name} is a department-facing service coordinated through TNeGA. There's no direct self-service portal for it.`}
+                    {isTa
+                      ? `${item.name} என்பது TNeGA மூலம் ஒருங்கிணைக்கப்படும் ஒரு துறை சார்ந்த சேவையாகும். இதற்கு நேரடி சுய-சேவை போர்ட்டல் இல்லை.`
+                      : `${item.name} is a department-facing service coordinated through TNeGA. There's no direct self-service portal for it.`}
                   </p>
                   <a href="/reach-us" className="type-button btn-primary">
-                    Avail Service
+                    {isTa ? "சேவையைப் பெறவும்" : "Avail Service"}
                   </a>
                 </>
               )}
@@ -386,27 +422,30 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
           </div>
         </Container>
       </section>
+      )}
 
       {/* ---------- FAQ ---------- */}
-      <section className="bg-canvas">
-        <Container className="max-w-[840px] py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Questions</p>
-          <h2 className="type-display-md mb-10 text-ink">Frequently asked questions</h2>
-          <FaqAccordion faqs={faqs} moreFaqs={faqsMore} />
-        </Container>
-      </section>
+      {!item.real?.hideFaqSection && (
+        <section className="bg-canvas">
+          <Container className="max-w-[840px] py-xxl">
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{faqEyebrow}</p>
+            <h2 className="type-display-md mb-10 text-ink">{faqHeading}</h2>
+            <FaqAccordion faqs={faqs} moreFaqs={faqsMore} locale={locale} />
+          </Container>
+        </section>
+      )}
 
       {/* ---------- Related ---------- */}
       {related.length > 0 && (
         <section className="bg-canvas-soft">
           <Container className="py-xxl">
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Explore more</p>
-            <h2 className="type-display-md mb-10 text-ink">Related {INITIATIVES_LABEL}</h2>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{chrome.exploreMoreEyebrow}</p>
+            <h2 className="type-display-md mb-10 text-ink">{chrome.exploreMoreHeading}</h2>
 
             <CardCarousel>
               {related.map((sibling) => (
                 <div key={sibling.slug} data-carousel-item className="w-[300px] shrink-0 snap-start sm:w-[340px]">
-                  <ServiceItemCard item={sibling} />
+                  <ServiceItemCard item={sibling} locale={locale} />
                 </div>
               ))}
             </CardCarousel>
@@ -417,24 +456,24 @@ export async function ServiceDetailContent({ item, related }: { item: ServiceIte
       {/* ---------- Contact ---------- */}
       <section id="contact" className="bg-canvas scroll-mt-24">
         <Container className="py-xxl">
-          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Support</p>
-          <h2 className="type-display-md mb-10 text-ink">Contact &amp; support</h2>
+          <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{chrome.supportEyebrow}</p>
+          <h2 className="type-display-md mb-10 text-ink">{chrome.supportHeading}</h2>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="card-feature">
-              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Helpline</h3>
+              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">{chrome.helplineLabel}</h3>
               <a href={`tel:${contactPhone.replace(/\s|-/g, "")}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
                 {contactPhone}
               </a>
             </div>
             <div className="card-feature">
-              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Email</h3>
+              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">{chrome.emailLabel}</h3>
               <a href={`mailto:${contactEmail}`} className="type-body-strong text-ink hover:text-[var(--color-primary-blue)]">
                 {obfuscateEmail(contactEmail)}
               </a>
             </div>
             <div className="card-feature">
-              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Office</h3>
+              <h3 className="type-caption-uppercase mb-2 text-[var(--color-muted)]">{chrome.officeLabel}</h3>
               <p className="type-body-sm whitespace-pre-line text-[var(--color-body)]">{footer.address}</p>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import type { Locale } from "@/lib/locale";
 
 /** Shared shell for the Help & Support pages (Help, Feedback, Terms &
  * Conditions, Site Map, Privacy Policy, Disclaimer, Terms of Use) — a
@@ -15,18 +16,20 @@ export function LegalPageShell({
   heading,
   intro,
   children,
+  locale = "en",
 }: {
   breadcrumbLabel: string;
   eyebrow: string;
   heading: string;
   intro?: string;
   children: ReactNode;
+  locale?: Locale;
 }) {
   return (
     <>
       <TopNav />
       <main className="flex-1" id="main-content">
-        <Breadcrumb items={[{ label: breadcrumbLabel }]} />
+        <Breadcrumb items={[{ label: breadcrumbLabel }]} locale={locale} />
         <section className="bg-canvas">
           <Container className="py-xl md:py-xxl">
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{eyebrow}</p>

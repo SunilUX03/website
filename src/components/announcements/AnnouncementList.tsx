@@ -7,13 +7,15 @@ import { SectionHead } from "@/components/ui/SectionHead";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
 import type { Facet } from "@/components/documents/FilterBar";
 import {
-  filterBarLabel,
-  listHeading,
-  noResultsText,
-  searchAriaLabel,
-  searchPlaceholder,
+  getFilterBarLabel,
+  getListHeading,
+  getNoResultsText,
+  getSearchAriaLabel,
+  getSearchPlaceholder,
 } from "@/lib/announcements-content";
 import { type CmsAnnouncement, yearOf } from "@/lib/cms/announcement-types";
+import type { Locale } from "@/lib/locale";
+import { getUiStrings } from "@/lib/ui-strings";
 
 /**
  * Full announcements listing, with the same search + year filter used on
@@ -44,10 +46,14 @@ function ArrowIcon() {
 export function AnnouncementList({
   announcements,
   facets,
+  locale = "en",
 }: {
   announcements: CmsAnnouncement[];
   facets: Facet[];
+  locale?: Locale;
 }) {
+  const isTa = locale === "ta";
+  const t = getUiStrings(locale);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>(() =>
     Object.fromEntries(facets.map((f) => [f.id, f.initial]))
@@ -76,18 +82,18 @@ export function AnnouncementList({
         onFacetChange={(id, value) =>
           setSelected((prev) => ({ ...prev, [id]: value }))
         }
-        searchPlaceholder={searchPlaceholder}
-        searchAriaLabel={searchAriaLabel}
-        label={filterBarLabel}
+        searchPlaceholder={getSearchPlaceholder(locale)}
+        searchAriaLabel={getSearchAriaLabel(locale)}
+        label={getFilterBarLabel(locale)}
       />
 
-      <section id="all-announcements" className="scroll-mt-24 py-xxl md:py-section" aria-label="All announcements">
+      <section id="all-announcements" className="scroll-mt-24 py-xxl md:py-section" aria-label={isTa ? "அனைத்து அறிவிப்புகளும்" : "All announcements"}>
         <Container>
-          <SectionHead heading={listHeading} id="announcements-heading" />
+          <SectionHead heading={getListHeading(locale)} id="announcements-heading" />
 
           {visible.length === 0 ? (
             <p className="rounded-xl border border-hairline bg-surface-card px-lg py-xxl text-center text-sm text-[var(--color-muted)]">
-              {noResultsText}
+              {getNoResultsText(locale)}
             </p>
           ) : (
             // Pinterest-style masonry via CSS columns — each photo keeps its
@@ -123,7 +129,7 @@ export function AnnouncementList({
                       </p>
 
                       <span className="type-body-strong mt-auto inline-flex items-center gap-xs pt-xs text-[var(--color-primary-blue)] transition-colors group-hover:text-[var(--color-primary-blue-active)]">
-                        Read more
+                        {isTa ? "மேலும் அறிக" : "Read more"}
                         <ArrowIcon />
                       </span>
                     </span>
@@ -137,9 +143,7 @@ export function AnnouncementList({
             className="mt-lg text-[13px] text-[var(--color-muted)]"
             aria-live="polite"
           >
-            {visible.length === 0
-              ? "No entries found"
-              : `Showing 1 to ${visible.length} of ${announcements.length} entries`}
+            {visible.length === 0 ? t.noEntriesFound : t.showingEntries(1, visible.length, announcements.length)}
           </p>
         </Container>
       </section>

@@ -5,6 +5,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { getFooterContent } from "@/lib/cms/footer";
+import { getSiteCopy } from "@/lib/cms/site-copy";
 import { obfuscateEmail } from "@/lib/format";
 import { getLocale } from "@/lib/locale";
 
@@ -48,13 +49,14 @@ function PinIcon() {
 
 export default async function ReachUs() {
   const locale = await getLocale();
-  const footer = await getFooterContent(locale);
+  const [footer, siteCopy] = await Promise.all([getFooterContent(locale), getSiteCopy(locale)]);
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1" id="main-content">
-        <Breadcrumb items={[{ label: "Contact Us" }]} />
+        <Breadcrumb items={[{ label: isTa ? "எங்களைத் தொடர்பு கொள்ளுங்கள்" : "Contact Us" }]} locale={locale} />
 
         <section className="relative overflow-hidden bg-canvas">
           <div
@@ -66,11 +68,9 @@ export default async function ReachUs() {
             }}
           />
           <Container className="relative py-xl md:py-xxl">
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Support</p>
-            <h1 className="type-display-lg mb-4 text-ink">Contact Us</h1>
-            <p className="type-body-md md:whitespace-nowrap text-[var(--color-body)]">
-              Reach the Tamil Nadu e-Governance Agency through any of the channels below.
-            </p>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{siteCopy.reachUsHero.eyebrow}</p>
+            <h1 className="type-display-lg mb-4 text-ink">{siteCopy.reachUsHero.heading}</h1>
+            <p className="type-body-md md:whitespace-nowrap text-[var(--color-body)]">{siteCopy.reachUsHero.body}</p>
           </Container>
         </section>
 
@@ -81,7 +81,7 @@ export default async function ReachUs() {
                 <span className="voice-icon-circular mb-4 flex h-12 w-12 items-center justify-center text-ink">
                   <PhoneIcon />
                 </span>
-                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">Helpline</p>
+                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">{isTa ? "உதவி எண்" : "Helpline"}</p>
                 <a href={`tel:${footer.phone.replace(/\s|-/g, "")}`} className="type-title-md text-ink hover:text-[var(--color-primary-blue)]">
                   {footer.phone}
                 </a>
@@ -91,7 +91,7 @@ export default async function ReachUs() {
                 <span className="voice-icon-circular mb-4 flex h-12 w-12 items-center justify-center text-ink">
                   <MailIcon />
                 </span>
-                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">Email</p>
+                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">{isTa ? "மின்னஞ்சல்" : "Email"}</p>
                 <a href={`mailto:${footer.email}`} className="type-title-md text-ink hover:text-[var(--color-primary-blue)]">
                   {obfuscateEmail(footer.email)}
                 </a>
@@ -101,7 +101,9 @@ export default async function ReachUs() {
                 <span className="voice-icon-circular mb-4 flex h-12 w-12 items-center justify-center text-ink">
                   <PinIcon />
                 </span>
-                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">Registered Office</p>
+                <p className="type-caption-uppercase mb-1.5 text-[var(--color-muted)]">
+                  {isTa ? "பதிவு செய்யப்பட்ட அலுவலகம்" : "Registered Office"}
+                </p>
                 <p className="type-body-md mb-3 whitespace-pre-line text-ink">{footer.address}</p>
                 <a
                   href={footer.mapsHref}
@@ -109,7 +111,7 @@ export default async function ReachUs() {
                   rel="noopener noreferrer"
                   className="type-body-sm font-medium text-[var(--color-primary-blue)] hover:text-[var(--color-primary-blue-active)]"
                 >
-                  View Directions →
+                  {isTa ? "வழிகளைக் காண்க →" : "View Directions →"}
                 </a>
               </div>
             </div>
@@ -119,16 +121,20 @@ export default async function ReachUs() {
         <section className="bg-canvas">
           <Container className="py-xxl md:py-section">
             <div className="mx-auto max-w-[640px] rounded-xl border border-hairline bg-surface-card p-6 text-center md:p-8">
-              <h2 className="type-title-md mb-2 text-ink">Looking for something specific?</h2>
+              <h2 className="type-title-md mb-2 text-ink">
+                {isTa ? "குறிப்பிட்ட ஒன்றைத் தேடுகிறீர்களா?" : "Looking for something specific?"}
+              </h2>
               <p className="type-body-sm mb-5 text-[var(--color-muted)]">
-                General queries and feedback can also go through the channels below.
+                {isTa
+                  ? "பொது கேள்விகள் மற்றும் கருத்துகளை கீழே உள்ள சேனல்கள் மூலமும் அனுப்பலாம்."
+                  : "General queries and feedback can also go through the channels below."}
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a href="/feedback" className="type-button btn-primary">
-                  Share Feedback
+                  {isTa ? "கருத்து பகிரவும்" : "Share Feedback"}
                 </a>
                 <a href="/help" className="type-button btn-outline">
-                  Visit Help Centre
+                  {isTa ? "உதவி மையத்தைப் பார்வையிடவும்" : "Visit Help Centre"}
                 </a>
               </div>
             </div>

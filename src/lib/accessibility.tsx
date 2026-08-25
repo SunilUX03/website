@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { trackAccessibility } from "@/lib/analytics-client";
 
 const STORAGE_KEY = "tnega-a11y-prefs";
 
@@ -180,29 +181,66 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
 
   const value: AccessibilityContextValue = {
     ...prefs,
-    increaseFontScale: () =>
-      setPrefs((p) => ({ ...p, fontScale: Math.min(FONT_SCALE_MAX, +(p.fontScale + FONT_SCALE_STEP).toFixed(2)) })),
-    decreaseFontScale: () =>
-      setPrefs((p) => ({ ...p, fontScale: Math.max(FONT_SCALE_MIN, +(p.fontScale - FONT_SCALE_STEP).toFixed(2)) })),
-    toggleTextSpacing: () => setPrefs((p) => ({ ...p, textSpacing: !p.textSpacing })),
-    toggleLineHeightBoost: () => setPrefs((p) => ({ ...p, lineHeightBoost: !p.lineHeightBoost })),
-    toggleDyslexiaFont: () => setPrefs((p) => ({ ...p, dyslexiaFont: !p.dyslexiaFont })),
-    toggleAdhdMode: () => setPrefs((p) => ({ ...p, adhdMode: !p.adhdMode })),
-    cycleSaturation: () =>
+    increaseFontScale: () => {
+      trackAccessibility("font_scale");
+      setPrefs((p) => ({ ...p, fontScale: Math.min(FONT_SCALE_MAX, +(p.fontScale + FONT_SCALE_STEP).toFixed(2)) }));
+    },
+    decreaseFontScale: () => {
+      trackAccessibility("font_scale");
+      setPrefs((p) => ({ ...p, fontScale: Math.max(FONT_SCALE_MIN, +(p.fontScale - FONT_SCALE_STEP).toFixed(2)) }));
+    },
+    toggleTextSpacing: () => {
+      trackAccessibility("text_spacing");
+      setPrefs((p) => ({ ...p, textSpacing: !p.textSpacing }));
+    },
+    toggleLineHeightBoost: () => {
+      trackAccessibility("line_height_boost");
+      setPrefs((p) => ({ ...p, lineHeightBoost: !p.lineHeightBoost }));
+    },
+    toggleDyslexiaFont: () => {
+      trackAccessibility("dyslexia_font");
+      setPrefs((p) => ({ ...p, dyslexiaFont: !p.dyslexiaFont }));
+    },
+    toggleAdhdMode: () => {
+      trackAccessibility("adhd_mode");
+      setPrefs((p) => ({ ...p, adhdMode: !p.adhdMode }));
+    },
+    cycleSaturation: () => {
+      trackAccessibility("saturation");
       setPrefs((p) => {
         const next = SATURATION_CYCLE[(SATURATION_CYCLE.indexOf(p.saturation) + 1) % SATURATION_CYCLE.length];
         return { ...p, saturation: next };
-      }),
-    setTheme: (theme: Theme) => setPrefs((p) => ({ ...p, theme: p.theme === theme ? "normal" : theme })),
-    toggleHighlightLinks: () => setPrefs((p) => ({ ...p, highlightLinks: !p.highlightLinks })),
-    toggleSpeakOnHover: () => setPrefs((p) => ({ ...p, speakOnHover: !p.speakOnHover })),
-    toggleCursorLarge: () => setPrefs((p) => ({ ...p, cursorLarge: !p.cursorLarge })),
-    togglePauseAnimation: () => setPrefs((p) => ({ ...p, pauseAnimation: !p.pauseAnimation })),
-    toggleHideImages: () => setPrefs((p) => ({ ...p, hideImages: !p.hideImages })),
+      });
+    },
+    setTheme: (theme: Theme) => {
+      trackAccessibility(`theme_${theme}`);
+      setPrefs((p) => ({ ...p, theme: p.theme === theme ? "normal" : theme }));
+    },
+    toggleHighlightLinks: () => {
+      trackAccessibility("highlight_links");
+      setPrefs((p) => ({ ...p, highlightLinks: !p.highlightLinks }));
+    },
+    toggleSpeakOnHover: () => {
+      trackAccessibility("speak_on_hover");
+      setPrefs((p) => ({ ...p, speakOnHover: !p.speakOnHover }));
+    },
+    toggleCursorLarge: () => {
+      trackAccessibility("cursor_large");
+      setPrefs((p) => ({ ...p, cursorLarge: !p.cursorLarge }));
+    },
+    togglePauseAnimation: () => {
+      trackAccessibility("pause_animation");
+      setPrefs((p) => ({ ...p, pauseAnimation: !p.pauseAnimation }));
+    },
+    toggleHideImages: () => {
+      trackAccessibility("hide_images");
+      setPrefs((p) => ({ ...p, hideImages: !p.hideImages }));
+    },
     reset: () => setPrefs(DEFAULT_PREFS),
     panelOpen,
     panelTrigger,
     openPanel: (trigger: HTMLElement | null) => {
+      trackAccessibility("panel_opened");
       setPanelTrigger(trigger);
       setPanelOpen(true);
     },

@@ -1,6 +1,7 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { Award, Media } from "@/payload-types";
 import type { CmsAward } from "@/lib/cms/about-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsAward } from "@/lib/cms/about-types";
 
@@ -14,10 +15,11 @@ function toCmsAward(doc: Award): CmsAward {
   };
 }
 
-export async function getAwards(): Promise<CmsAward[]> {
+export async function getAwards(locale: Locale = "en"): Promise<CmsAward[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "awards",
+    locale,
     depth: 1,
     sort: "-year",
     limit: 100,

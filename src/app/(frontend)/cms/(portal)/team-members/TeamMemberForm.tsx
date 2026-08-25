@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
+import { ImageUploadField } from "@/components/portal/ImageUploadField";
 
 export type TeamMemberFormValues = {
   name: string;
@@ -11,6 +11,11 @@ export type TeamMemberFormValues = {
   order: number;
   photoUrl?: string;
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -21,9 +26,13 @@ function truncate(value: string, max = 60): string {
 export function TeamMemberForm({
   action,
   values,
+  error,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: TeamMemberFormValues;
+  error?: string;
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -45,7 +54,6 @@ export function TeamMemberForm({
     text("name", "Name", values.name);
     text("designation", "Designation", values.designation);
     text("subject", "Department/division", values.subject);
-    text("order", "Order", String(values.order));
     const photoFile = fd.get("photo") as File | null;
     if (photoFile && photoFile.size > 0) {
       list.push({ id: "photo", label: "Photo", detail: `New photo selected (${photoFile.name})`, sectionId: "section-main" });
@@ -67,6 +75,14 @@ export function TeamMemberForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[560px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
+
+      {error ? (
+        <p className="type-body-sm mb-4 max-w-[680px] rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
+          {error}
+        </p>
+      ) : null}
 
       <section id="section-main" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
@@ -104,44 +120,24 @@ export function TeamMemberForm({
 
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Photo</label>
-          {values.photoUrl ? (
-            <div className="relative mb-2 h-24 w-24 overflow-hidden rounded-full border border-hairline">
-              <Image src={values.photoUrl} alt="" fill className="object-cover" />
-            </div>
-          ) : null}
-          <input type="file" name="photo" accept="image/*" className="type-body-sm block" />
+          <ImageUploadField name="photo" currentUrl={values.photoUrl} aspect="h-24 w-24" shape="circle" />
         </div>
 
-        <div className="max-w-[160px]">
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
-            Order <span className="normal-case text-[11px]">(0 = shows first, normally the CEO)</span>
-          </label>
-          <input
-            type="number"
-            name="order"
-            defaultValue={values.order}
-            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-          />
-        </div>
+        {/* Order is set via the ↑/↓ arrows on the Team Members list, not
+            edited here — matching Services' pattern, so there's exactly
+            one place an admin goes to reorder cards, not two that could
+            disagree. Still submitted as a hidden field so a save doesn't
+            reset this member's position. */}
+        <input type="hidden" name="order" value={values.order} />
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish this team member? They'll disappear from the live site.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

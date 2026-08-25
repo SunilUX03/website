@@ -24,25 +24,32 @@ export const revalidate = 60;
 
 export default async function MediaPress() {
   const locale = await getLocale();
-  const [items, siteCopy] = await Promise.all([getMediaItems(), getSiteCopy(locale)]);
+  const [items, siteCopy] = await Promise.all([getMediaItems(locale), getSiteCopy(locale)]);
   const photos = items.filter((item) => item.type === "photo");
   const videos = items.filter((item) => item.type === "video");
   const hero = siteCopy.mediaHero;
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Notifications" }, { label: "Media & Press" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "ஊடகம் & பத்திரிகை" : "Media & Press" },
+          ]}
+        />
         <PageHero
           eyebrow={hero.eyebrow}
           heading={hero.heading}
           body={hero.body}
-          cta={{ label: "View All Media", href: "#photos-videos" }}
+          cta={{ label: isTa ? "அனைத்து ஊடகத்தையும் காண்க" : "View All Media", href: "#photos-videos" }}
           orbs={heroOrbs}
           graphic={<MediaGraphic />}
         />
-        <MediaTabs photos={photos} videos={videos} facets={buildFacets(items)} />
+        <MediaTabs photos={photos} videos={videos} facets={buildFacets(items, locale)} locale={locale} />
       </main>
       <Footer />
       <ScrollToTop />

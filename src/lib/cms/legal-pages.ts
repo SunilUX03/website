@@ -1,5 +1,6 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { LegalPage } from "@/payload-types";
+import type { Locale } from "@/lib/locale";
 
 export type LegalSectionData = { heading: string; paragraphs: { text: string; isList: boolean }[] };
 
@@ -37,10 +38,11 @@ function toCmsLegalPage(doc: LegalPage): CmsLegalPage {
   };
 }
 
-export async function getLegalPage(slug: string): Promise<CmsLegalPage | null> {
+export async function getLegalPage(slug: string, locale: Locale = "en"): Promise<CmsLegalPage | null> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "legal-pages",
+    locale,
     where: { slug: { equals: slug } },
     limit: 1,
     overrideAccess: false,

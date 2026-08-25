@@ -35,11 +35,6 @@ async function main() {
         heading: "News, Events & Media from TNeGA",
         body: "Stay updated with the latest photos, videos and press coverage from Tamil Nadu e-Governance Agency.",
       },
-      servicesHero: {
-        eyebrow: "What We Build",
-        heading: "Initiatives Powering Tamil Nadu's Digital Future",
-        body: "From citizen-facing portals to department platforms and emerging technology, TNeGA builds, operates and scales digital governance across Tamil Nadu.",
-      },
       reachUsPanels: [
         {
           eyebrow: "Support",

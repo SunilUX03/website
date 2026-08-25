@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LegalPageContent } from "@/components/legal/LegalPageContent";
 import { getLegalPage } from "@/lib/cms/legal-pages";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Disclaimer | TNeGA",
@@ -11,7 +12,14 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Disclaimer() {
-  const page = await getLegalPage("disclaimer");
+  const locale = await getLocale();
+  const page = await getLegalPage("disclaimer", locale);
   if (!page) notFound();
-  return <LegalPageContent page={page} breadcrumbLabel="Disclaimer" />;
+  return (
+    <LegalPageContent
+      page={page}
+      breadcrumbLabel={locale === "ta" ? "பொறுப்புத் துறப்பு" : "Disclaimer"}
+      locale={locale}
+    />
+  );
 }

@@ -6,20 +6,32 @@ import { getPayloadClient } from "@/lib/payload-client";
 import { requireSession } from "@/lib/portal/auth";
 import { logActivity } from "@/lib/portal/activity-log";
 import { parseRepeatable, str } from "@/lib/portal/form-utils";
+import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
-type LinkRow = { label: string; href: string; taLabel: string };
-type Rows = { quickLinks: LinkRow[]; citizenServices: LinkRow[]; helpSupport: LinkRow[] };
+type LinkRow = { id?: string; label: string; href: string };
 
-function readRows(formData: FormData): Rows {
-  const keys = ["label", "href", "taLabel"];
-  return {
-    quickLinks: parseRepeatable(formData, "quickLinks", keys) as LinkRow[],
-    citizenServices: parseRepeatable(formData, "citizenServices", keys) as LinkRow[],
-    helpSupport: parseRepeatable(formData, "helpSupport", keys) as LinkRow[],
-  };
+// `href` isn't localized, but Payload validates the full array-row shape
+// on every locale update, so each row's (unchanged) href is resupplied
+// here alongside its label regardless of which locale is being saved.
+// phone/email/socialLinks aren't localized at all, so they're written
+// the same way on every save without any locale-specific handling.
+//
+// quickLinks/citizenServices/helpSupport rows are kept as full objects
+// (id included when present) all the way through — Payload keys each
+// row's per-locale `label` text by the row's own id, so a row
+// resubmitted without its id is treated as brand new and the *other*
+// locale's translation for that row is silently wiped. See
+// RepeatableRows.tsx / form-utils.ts's parseRepeatable for how the id
+// round-trips through the hidden input on each row.
+function readRows(formData: FormData, name: string): LinkRow[] {
+  return parseRepeatable(formData, name, ["label", "href"]) as LinkRow[];
 }
 
-function buildEnData(formData: FormData, rows: Rows) {
+function withId(row: LinkRow) {
+  return { ...(row.id ? { id: row.id } : {}), label: row.label, href: row.href };
+}
+
+function buildData(formData: FormData) {
   return {
     description: str(formData, "description"),
     address: str(formData, "address"),
@@ -29,64 +41,38 @@ function buildEnData(formData: FormData, rows: Rows) {
       label: "Facebook" | "X" | "YouTube" | "Instagram" | "LinkedIn";
       href: string;
     }[],
-    quickLinks: rows.quickLinks.map((r) => ({ label: r.label, href: r.href })),
-    citizenServices: rows.citizenServices.map((r) => ({ label: r.label, href: r.href })),
-    helpSupport: rows.helpSupport.map((r) => ({ label: r.label, href: r.href })),
-  };
-}
-
-// phone/email/socialLinks aren't localized, so they're left out of the
-// Tamil payload entirely — href isn't localized either but still needs
-// to be resupplied per row, same reasoning as nav-content's actions.ts.
-//
-// `withId` re-attaches the row id Payload just assigned on the EN write
-// (enRows, same order) to each Tamil row. Array rows share one id across
-// locales — submitting a Tamil-locale array update WITHOUT that id makes
-// Payload treat every row as brand new, silently deleting the English
-// locale data that lived on the old row. Always save EN first, then pass
-// its resulting rows in here before saving TA.
-function withId<T extends { id?: string | null }>(enRows: T[], row: Omit<T, "id">, i: number): T {
-  const id = enRows[i]?.id;
-  return (id ? { ...row, id } : row) as T;
-}
-
-function buildTaData(formData: FormData, rows: Rows, enResult: { quickLinks?: { id?: string | null }[] | null; citizenServices?: { id?: string | null }[] | null; helpSupport?: { id?: string | null }[] | null }) {
-  return {
-    description: str(formData, "descriptionTa"),
-    address: str(formData, "addressTa"),
-    quickLinks: rows.quickLinks.map((r, i) => withId(enResult.quickLinks ?? [], { label: r.taLabel, href: r.href }, i)),
-    citizenServices: rows.citizenServices.map((r, i) => withId(enResult.citizenServices ?? [], { label: r.taLabel, href: r.href }, i)),
-    helpSupport: rows.helpSupport.map((r, i) => withId(enResult.helpSupport ?? [], { label: r.taLabel, href: r.href }, i)),
+    quickLinks: readRows(formData, "quickLinks").map(withId),
+    citizenServices: readRows(formData, "citizenServices").map(withId),
+    initiativesProjects: readRows(formData, "initiativesProjects").map(withId),
+    helpSupport: readRows(formData, "helpSupport").map(withId),
   };
 }
 
 export async function updateFooterContent(formData: FormData) {
   const user = await requireSession();
   const payload = await getPayloadClient();
-  const rows = readRows(formData);
-  const enData = buildEnData(formData, rows);
+  const data = buildData(formData);
   const intent = formData.get("intent");
+  const locale = formData.get("locale") === "ta" ? "ta" : "en";
 
-  let enResult;
-  if (intent === "publish") {
-    enResult = await payload.updateGlobal({ slug: "footer-content", data: { ...enData, _status: "published" }, overrideAccess: true });
-  } else if (intent === "unpublish") {
-    enResult = await payload.updateGlobal({ slug: "footer-content", data: { ...enData, _status: "draft" }, draft: false, overrideAccess: true });
-  } else {
-    enResult = await payload.updateGlobal({ slug: "footer-content", data: enData, draft: true, overrideAccess: true });
+  // Catches a save built from a stale page load (e.g. a locale tab left
+  // open since before someone else's edit) before it can silently
+  // overwrite whatever changed in the meantime — see staleness.ts.
+  const current = await payload.findGlobal({ slug: "footer-content", depth: 0, draft: true, overrideAccess: true });
+  if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
+    redirect(`/cms/settings/footer?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
   }
 
-  const taData = buildTaData(formData, rows, enResult);
   if (intent === "publish") {
-    await payload.updateGlobal({ slug: "footer-content", locale: "ta", data: taData, overrideAccess: true });
+    await payload.updateGlobal({ slug: "footer-content", locale, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "footer-content", locale: "ta", data: taData, draft: false, overrideAccess: true });
+    await payload.updateGlobal({ slug: "footer-content", locale, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
-    await payload.updateGlobal({ slug: "footer-content", locale: "ta", data: taData, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "footer-content", locale, data, draft: true, overrideAccess: true });
   }
 
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Footer", `${action} the site footer`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/footer?saved=1");
+  redirect(`/cms/settings/footer?locale=${locale}&saved=1`);
 }

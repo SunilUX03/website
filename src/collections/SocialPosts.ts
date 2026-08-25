@@ -11,7 +11,7 @@ export const SocialPosts: CollectionConfig = {
     useAsTitle: "text",
     defaultColumns: ["platform", "text", "date", "_status"],
   },
-  defaultSort: "-date",
+  defaultSort: "order",
   versions: {
     drafts: true,
   },
@@ -41,6 +41,7 @@ export const SocialPosts: CollectionConfig = {
       name: "text",
       type: "textarea",
       required: true,
+      localized: true,
       admin: { description: "The post's caption/text, as shown on the Home page feed." },
     },
     {
@@ -54,6 +55,13 @@ export const SocialPosts: CollectionConfig = {
       name: "link",
       type: "text",
       admin: { description: "Link to the actual post. Leave blank to link to the platform's profile page instead." },
+    },
+    {
+      name: "order",
+      type: "number",
+      required: true,
+      defaultValue: 0,
+      admin: { description: "Controls display order within each platform's feed. Lower numbers show first." },
     },
   ],
 };

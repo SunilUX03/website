@@ -2,12 +2,14 @@ import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import type { CmsRtiContact, CmsRtiDisclosureGroup, CmsRtiContent } from "@/lib/cms/rti-content";
+import type { Locale } from "@/lib/locale";
 
-export function KeyContacts({ contacts }: { contacts: CmsRtiContact[] }) {
+export function KeyContacts({ contacts, locale = "en" }: { contacts: CmsRtiContact[]; locale?: Locale }) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>
-        <SectionHead heading="Key Contacts" id="contacts-heading" />
+        <SectionHead heading={isTa ? "முக்கிய தொடர்புகள்" : "Key Contacts"} id="contacts-heading" />
 
         <div className="grid gap-lg md:grid-cols-2">
           {contacts.map((contact) => (
@@ -66,13 +68,21 @@ export function KeyContacts({ contacts }: { contacts: CmsRtiContact[] }) {
   );
 }
 
-export function DisclosureTable({ disclosures }: { disclosures: CmsRtiDisclosureGroup[] }) {
+export function DisclosureTable({ disclosures, locale = "en" }: { disclosures: CmsRtiDisclosureGroup[]; locale?: Locale }) {
+  const isTa = locale === "ta";
+  const headers = isTa
+    ? ["வ.எண்", "பொருள்", "வெளிப்படுத்தல் விவரங்கள்", "தகவல்"]
+    : ["S.No", "Item", "Details of Disclosure", "Information"];
   return (
     <section className="py-xxl md:py-section">
       <Container>
         <SectionHead
-          heading="RTI Act 2005: Disclosures under Section 4(1)(b)"
-          sub="Mandatory proactive disclosures as required under the Right to Information Act, 2005."
+          heading={isTa ? "RTI சட்டம் 2005: பிரிவு 4(1)(b) இன் கீழ் வெளிப்படுத்தல்கள்" : "RTI Act 2005: Disclosures under Section 4(1)(b)"}
+          sub={
+            isTa
+              ? "தகவல் அறியும் உரிமைச் சட்டம், 2005-ன் கீழ் தேவைப்படும் கட்டாய முன்கூட்டிய வெளிப்படுத்தல்கள்."
+              : "Mandatory proactive disclosures as required under the Right to Information Act, 2005."
+          }
           id="disclosure-heading"
         />
 
@@ -80,11 +90,11 @@ export function DisclosureTable({ disclosures }: { disclosures: CmsRtiDisclosure
           <div className="overflow-x-auto">
             <table
               className="w-full min-w-[740px] border-collapse text-sm"
-              aria-label="RTI Act 2005 Section 4(1)(b) disclosures"
+              aria-label={isTa ? "RTI சட்டம் 2005 பிரிவு 4(1)(b) வெளிப்படுத்தல்கள்" : "RTI Act 2005 Section 4(1)(b) disclosures"}
             >
               <thead className="border-b border-hairline bg-canvas">
                 <tr>
-                  {["S.No", "Item", "Details of Disclosure", "Information"].map(
+                  {headers.map(
                     (h) => (
                       <th
                         key={h}
@@ -123,7 +133,7 @@ export function DisclosureTable({ disclosures }: { disclosures: CmsRtiDisclosure
                       <td
                         className={clsx(
                           "border-t border-hairline-soft px-4 py-4 text-sm",
-                          row.info === "Not Applicable"
+                          row.info === "Not Applicable" || row.info === "பொருந்தாது"
                             ? "text-[var(--color-muted-soft)]"
                             : "text-[var(--color-body)]"
                         )}
@@ -156,7 +166,8 @@ function ExternalIcon() {
   );
 }
 
-export function HowToFileRti({ howToFile }: { howToFile: CmsRtiContent["howToFile"] }) {
+export function HowToFileRti({ howToFile, locale = "en" }: { howToFile: CmsRtiContent["howToFile"]; locale?: Locale }) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>
@@ -191,22 +202,44 @@ export function HowToFileRti({ howToFile }: { howToFile: CmsRtiContent["howToFil
             <hr className="w-full border-t border-hairline" />
 
             <p className="type-body-sm text-[var(--color-muted)]">
-              For queries regarding RTI, contact the Public Information Officer
-              at{" "}
-              <a
-                href={`mailto:${howToFile.email}`}
-                className="font-medium text-ink hover:underline"
-              >
-                {howToFile.email}
-              </a>{" "}
-              or call{" "}
-              <a
-                href={howToFile.phoneHref}
-                className="font-medium text-ink hover:underline"
-              >
-                {howToFile.phone}
-              </a>
-              .
+              {isTa ? (
+                <>
+                  RTI தொடர்பான கேள்விகளுக்கு, பொது தகவல் அலுவலரை{" "}
+                  <a
+                    href={`mailto:${howToFile.email}`}
+                    className="font-medium text-ink hover:underline"
+                  >
+                    {howToFile.email}
+                  </a>{" "}
+                  அல்லது{" "}
+                  <a
+                    href={howToFile.phoneHref}
+                    className="font-medium text-ink hover:underline"
+                  >
+                    {howToFile.phone}
+                  </a>{" "}
+                  என்ற எண்ணில் தொடர்பு கொள்ளவும்.
+                </>
+              ) : (
+                <>
+                  For queries regarding RTI, contact the Public Information Officer
+                  at{" "}
+                  <a
+                    href={`mailto:${howToFile.email}`}
+                    className="font-medium text-ink hover:underline"
+                  >
+                    {howToFile.email}
+                  </a>{" "}
+                  or call{" "}
+                  <a
+                    href={howToFile.phoneHref}
+                    className="font-medium text-ink hover:underline"
+                  >
+                    {howToFile.phone}
+                  </a>
+                  .
+                </>
+              )}
             </p>
           </div>
         </div>

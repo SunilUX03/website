@@ -1,6 +1,11 @@
 export type CmsPillarChrome = {
   title: string;
-  description: string;
   linkLabel: string;
   bannerImage: string | null;
+};
+
+export type CmsPillarsContent = {
+  eyebrow: string;
+  heading: string;
+  pillars: CmsPillarChrome[];
 };

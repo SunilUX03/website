@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { obfuscateEmail } from "@/lib/format";
+import type { Locale } from "@/lib/locale";
 
 function CloseIcon() {
   return (
@@ -17,12 +18,15 @@ export function WebInfoManagerModal({
   onClose,
   phone,
   email,
+  locale = "en",
 }: {
   open: boolean;
   onClose: () => void;
   phone: string;
   email: string;
+  locale?: Locale;
 }) {
+  const isTa = locale === "ta";
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -56,14 +60,16 @@ export function WebInfoManagerModal({
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <p id="web-info-manager-title" className="type-title-md text-ink">
-                  Web Information Manager
+                  {isTa ? "இணைய தகவல் மேலாளர்" : "Web Information Manager"}
                 </p>
-                <p className="type-caption mt-0.5 text-[var(--color-muted)]">Tamil Nadu e-Governance Agency</p>
+                <p className="type-caption mt-0.5 text-[var(--color-muted)]">
+                  {isTa ? "தமிழ்நாடு மின்-ஆளுமை முகமை" : "Tamil Nadu e-Governance Agency"}
+                </p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close"
+                aria-label={isTa ? "மூடு" : "Close"}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] hover:bg-[var(--color-surface-strong)] hover:text-ink"
               >
                 <CloseIcon />
@@ -71,18 +77,20 @@ export function WebInfoManagerModal({
             </div>
 
             <p className="type-body-sm mb-4 text-[var(--color-body)]">
-              For queries related to this website&apos;s content or technical issues, please contact:
+              {isTa
+                ? "இந்த இணையதளத்தின் உள்ளடக்கம் அல்லது தொழில்நுட்பச் சிக்கல்கள் தொடர்பான கேள்விகளுக்கு, தொடர்பு கொள்ளவும்:"
+                : "For queries related to this website's content or technical issues, please contact:"}
             </p>
 
             <div className="flex flex-col gap-2">
               <p className="type-body-sm text-ink">
-                Helpline:{" "}
+                {isTa ? "உதவி எண்: " : "Helpline: "}
                 <a href={`tel:${phone.replace(/\s|-/g, "")}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
                   {phone}
                 </a>
               </p>
               <p className="type-body-sm text-ink">
-                Email:{" "}
+                {isTa ? "மின்னஞ்சல்: " : "Email: "}
                 <a href={`mailto:${email}`} className="font-medium text-[var(--color-primary-blue)] hover:underline">
                   {obfuscateEmail(email)}
                 </a>
@@ -90,7 +98,7 @@ export function WebInfoManagerModal({
             </div>
 
             <button type="button" onClick={onClose} className="type-button btn-outline mt-6 w-full">
-              Close
+              {isTa ? "மூடு" : "Close"}
             </button>
           </motion.div>
         </>

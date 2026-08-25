@@ -3,18 +3,19 @@
 import { useRef, useState } from "react";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 
-export type OrgChartBranch = {
-  director: string;
-  engineer: string;
-  manager: string;
-  base: string;
-};
+export type OrgChartNode = { id?: string; label: string; sublabel: string; muted: boolean };
+export type OrgChartBranch = { title: string; subtitle: string; nodes: OrgChartNode[] };
 
 export type OrgChartFormValues = {
-  topPrimary: string;
-  topSecondary: string;
+  topLabel: string;
+  jceoLabel: string;
   branches: OrgChartBranch[];
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -22,12 +23,24 @@ function truncate(value: string, max = 60): string {
   return v.length > max ? `${v.slice(0, max)}…` : v;
 }
 
+/** One node per line: "Label :: Sublabel" renders a boxed card; a bare
+ * line with no " :: " renders as a plain grey row (an individual-
+ * contributor role between the numbered/lettered boxes). Same
+ * plain-text-one-item-per-line convention used elsewhere in this admin
+ * (RTI contacts, legal-page bullet lists) — a fully dynamic add/remove-row
+ * UI isn't worth building for a list that can run to 18 rows per branch. */
+function nodesToText(nodes: OrgChartNode[]): string {
+  return nodes.map((n) => (n.muted ? n.label : `${n.label} :: ${n.sublabel}`)).join("\n");
+}
+
 export function OrgChartForm({
   action,
   values,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: OrgChartFormValues;
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -46,15 +59,14 @@ export function OrgChartForm({
         list.push({ id: key, label, detail: `"${truncate(original) || "(empty)"}" → "${truncate(after) || "(empty)"}"`, sectionId });
       }
     };
-    text("topPrimary", "Top box", values.topPrimary, "section-top");
-    text("topSecondary", "Second box", values.topSecondary, "section-top");
-    for (let i = 0; i < 6; i++) {
+    text("topLabel", "Top box", values.topLabel, "section-top");
+    text("jceoLabel", "Second box", values.jceoLabel, "section-top");
+    for (let i = 0; i < 7; i++) {
       const b = values.branches[i];
       const sectionId = `section-branch${i}`;
-      text(`branch${i}Director`, `Branch ${i + 1} director-level box`, b?.director ?? "", sectionId);
-      text(`branch${i}Engineer`, `Branch ${i + 1} engineer-level box`, b?.engineer ?? "", sectionId);
-      text(`branch${i}Manager`, `Branch ${i + 1} manager-level box`, b?.manager ?? "", sectionId);
-      text(`branch${i}Base`, `Branch ${i + 1} base-level box`, b?.base ?? "", sectionId);
+      text(`branch${i}Title`, `Branch ${i + 1} title`, b?.title ?? "", sectionId);
+      text(`branch${i}Subtitle`, `Branch ${i + 1} subtitle`, b?.subtitle ?? "", sectionId);
+      text(`branch${i}Nodes`, `Branch ${i + 1} staff list`, nodesToText(b?.nodes ?? []), sectionId);
     }
     return list;
   }
@@ -73,13 +85,15 @@ export function OrgChartForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[680px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       <section id="section-top" className="grid scroll-mt-6 grid-cols-2 gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Top box (e.g. CEO)</label>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Top box (e.g. Chief Executive Officer)</label>
           <input
-            name="topPrimary"
-            defaultValue={values.topPrimary}
+            name="topLabel"
+            defaultValue={values.topLabel}
             required
             className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
           />
@@ -87,74 +101,64 @@ export function OrgChartForm({
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Second box (e.g. JCEO)</label>
           <input
-            name="topSecondary"
-            defaultValue={values.topSecondary}
+            name="jceoLabel"
+            defaultValue={values.jceoLabel}
             required
             className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
           />
         </div>
       </section>
 
-      {Array.from({ length: 6 }, (_, i) => values.branches[i]).map((branch, i) => (
+      {Array.from({ length: 7 }, (_, i) => values.branches[i]).map((branch, i) => (
         <section key={i} id={`section-branch${i}`} className="flex scroll-mt-6 flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
           <p className="type-caption-uppercase text-[var(--color-muted)]">Branch {i + 1}</p>
           <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Director-level box</label>
+            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Title (e.g. Software Product Engineering)</label>
             <input
-              name={`branch${i}Director`}
-              defaultValue={branch?.director ?? ""}
+              name={`branch${i}Title`}
+              defaultValue={branch?.title ?? ""}
+              required
+              className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+            />
+          </div>
+          <div>
+            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Subtitle (e.g. GM – Technical)</label>
+            <input
+              name={`branch${i}Subtitle`}
+              defaultValue={branch?.subtitle ?? ""}
               required
               className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
             />
           </div>
           <div>
             <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
-              Engineer-level box <span className="normal-case text-[11px]">(leave blank to skip this level for this branch)</span>
+              Staff list <span className="normal-case text-[11px]">— one role per line. Write "Short code :: Role title" for a boxed card (e.g. "Proc 1 :: Sr. Consultant"), or just the role name alone for a plain grey row (e.g. "Asst. System Engineer").</span>
             </label>
-            <input
-              name={`branch${i}Engineer`}
-              defaultValue={branch?.engineer ?? ""}
-              className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+            <textarea
+              name={`branch${i}Nodes`}
+              defaultValue={nodesToText(branch?.nodes ?? [])}
+              rows={8}
+              className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 font-mono text-[13px] outline-none focus:border-[var(--color-primary-blue)]"
             />
-          </div>
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Manager-level box</label>
-            <input
-              name={`branch${i}Manager`}
-              defaultValue={branch?.manager ?? ""}
-              required
-              className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-            />
-          </div>
-          <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Base-level box</label>
-            <input
-              name={`branch${i}Base`}
-              defaultValue={branch?.base ?? ""}
-              required
-              className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-            />
+            {/* Row ids in the same top-to-bottom order as the textarea's
+                lines above, so an unchanged line keeps its existing
+                Payload row id on save (see actions.ts's parseNodes) —
+                without this, every save would treat every line as a
+                brand-new row and silently wipe that row's other-locale
+                translation, the same bug already found and fixed
+                elsewhere in this CMS. */}
+            <input type="hidden" name={`branch${i}NodeIds`} value={(branch?.nodes ?? []).map((n) => n.id ?? "").join("\n")} />
           </div>
         </section>
       ))}
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish? The About page's org chart will revert to whatever was last published.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

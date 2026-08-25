@@ -22,7 +22,7 @@
 // whether they're a fixed curated link (Citizen Services, Services to
 // Government) or derived from a live Services collection record (the
 // Initiatives & Projects pillar, resolved in page.tsx via
-// getServiceItemsByNames). `external` marks links that leave the site
+// getServiceItemsBySlugs). `external` marks links that leave the site
 // entirely (a target/rel difference, not just a styling one).
 export type PillarLinkItem = {
   name: string;
@@ -42,9 +42,9 @@ export type PillarLinkItem = {
 // lists (not derived from the Services collection) — each links straight
 // to the destination the redesign asked for rather than a detail page.
 // The third pillar (Initiatives & Projects) still resolves its items from
-// live Services records by name in page.tsx via getServiceItemsByNames.
-type CuratedPillar = { href: string; items: PillarLinkItem[]; seeAllLabel?: string };
-type DerivedPillar = { href: string; itemNames: string[]; seeAllLabel?: string };
+// live Services records by slug in page.tsx via getServiceItemsBySlugs.
+type CuratedPillar = { href: string; items: PillarLinkItem[] };
+type DerivedPillar = { href: string; itemSlugs: string[] };
 
 export const pillars: (CuratedPillar | DerivedPillar)[] = [
   {
@@ -88,15 +88,18 @@ export const pillars: (CuratedPillar | DerivedPillar)[] = [
         href: "/services-to-government#aadhaar-services",
       },
     ] satisfies PillarLinkItem[],
-    seeAllLabel: "See all Services to Government",
   },
   {
     href: "/initiatives-projects",
     // "Initiatives & Projects" — a curated 5 (of the full catalogue on
     // /services) chosen to read as the agency's flagship, most
     // recognizable projects rather than shared infrastructure services.
-    itemNames: ["GRAINS", "Namma Arasu", "TNSSP", "Nambikkai Inaiyam", "DBT (Direct Benefit Transfer Portal)"],
-    seeAllLabel: "See all Initiatives & Projects",
+    // Slugs, not names — names are locale-translated once fetched for
+    // "ta" and would never match these English literals under that
+    // locale (this pillar used to silently drop 3 of its 5 items on the
+    // Tamil homepage for exactly that reason). Slugs are stable and
+    // unlocalized, same reasoning as /initiatives-projects's own list.
+    itemSlugs: ["grains", "namma-arasu", "tnssp", "nambikkai-inaiyam", "dbt-direct-benefit-transfer-portal"],
   },
 ];
 

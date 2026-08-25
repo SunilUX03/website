@@ -2,18 +2,21 @@ import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { ServicesToGovernmentGraphic } from "@/components/heroes/ServicesToGovernmentGraphic";
 import type { CmsServicesToGovernmentContent } from "@/lib/cms/services-to-government";
-import type { CmsDepartmentContact } from "@/lib/cms/department-contacts";
+import type { Locale } from "@/lib/locale";
 
 const heroOrbs = [
   { color: "sky", className: "-left-20 -top-24 h-[420px] w-[420px]" },
   { color: "peach", className: "-bottom-16 right-[60px] h-[360px] w-[360px]" },
 ] as const;
 
-// Fixed anchor slugs for the 4 service cards, by position — not sourced
-// from the CMS array's own (random) row ids. The Home page's "Services to
-// Government" pillar card deep-links straight to these anchors (see
-// lib/content.ts), so they need to stay stable even if an editor renames
-// a service's copy in the CMS; only reordering the 4 rows would move them.
+// Fixed anchor slugs for the first 4 service cards, by position — not
+// sourced from the CMS array's own (random) row ids. The Home page's
+// "Services to Government" pillar card deep-links straight to these
+// anchors (see lib/content.ts), so they need to stay stable even if an
+// editor renames a service's copy in the CMS; only reordering these rows
+// would move them. `services` is now a growable CMS array (no more fixed
+// 4-row cap), so any 5th+ row falls back to a per-row anchor derived from
+// its own id instead of one of these hardcoded slugs.
 const SERVICE_ANCHOR_IDS = [
   "software-development-procurement",
   "security-audit",
@@ -21,25 +24,27 @@ const SERVICE_ANCHOR_IDS = [
   "aadhaar-services",
 ] as const;
 
-/** The full Services to Government page content (hero, 4 services,
- * department table) — shared between the standalone /services-to-government
+/** The full Services to Government page content (hero, services,
+ * department contacts) — shared between the standalone /services-to-government
  * page and the "Services to Government" tab on /services, so the two
  * never drift apart. `heroId` defaults to "services-to-government" (the
  * tab-embedded case); the standalone page overrides it to "main-content"
  * to keep the skip-to-content link's target on the page's own hero.
- * `content`/`departmentContacts` come from the CMS (services-to-government-
- * content global + department-contacts collection) — previously hardcoded
- * here directly. */
+ * `content` (hero, services, tableIntro, raiseTicket*, departmentContacts)
+ * comes entirely from the services-to-government-content CMS global —
+ * departmentContacts used to be a separate "department-contacts"
+ * collection fetched independently; it's now one array field on this same
+ * global, so there's a single CMS screen for the whole page. */
 export function ServicesToGovernmentContent({
   heroId = "services-to-government",
   content,
-  departmentContacts,
+  locale = "en",
 }: {
   heroId?: string;
   content: CmsServicesToGovernmentContent;
-  departmentContacts: CmsDepartmentContact[];
+  locale?: Locale;
 }) {
-  const { hero, services, tableIntro, raiseTicketLabel, raiseTicketHref } = content;
+  const { hero, services, tableIntro, tableColumnHeaders, raiseTicketLabel, raiseTicketHref, departmentContacts } = content;
   return (
     <>
       <PageHero
@@ -57,7 +62,7 @@ export function ServicesToGovernmentContent({
         <Container className="py-xxl md:py-section">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {services.map((service, i) => (
-              <div key={service.id} id={SERVICE_ANCHOR_IDS[i] ?? service.id} className="card-feature scroll-mt-28">
+              <div key={service.id} id={SERVICE_ANCHOR_IDS[i] ?? `service-${service.id}`} className="card-feature scroll-mt-28">
                 <p className="type-title-sm mb-2 text-ink">{service.name}</p>
                 <p className="type-body-sm text-[var(--color-body)]">{service.description}</p>
               </div>
@@ -89,11 +94,11 @@ export function ServicesToGovernmentContent({
             <table className="w-full min-w-[720px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-hairline bg-canvas-soft">
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">S.No</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Department</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Contact</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Email</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Phone</th>
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.serialNumber}</th>
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.department}</th>
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.contact}</th>
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.email}</th>
+                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.phone}</th>
                 </tr>
               </thead>
               <tbody>

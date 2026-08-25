@@ -1,17 +1,19 @@
 import { Container } from "@/components/ui/Container";
 import { obfuscateEmail } from "@/lib/format";
+import type { Locale } from "@/lib/locale";
 
 type ConnectWithUs = { email: string; social: { label: string; href: string }[] };
 
-export function ConnectWithUs({ connectWithUs }: { connectWithUs: ConnectWithUs }) {
+export function ConnectWithUs({ connectWithUs, locale = "en" }: { connectWithUs: ConnectWithUs; locale?: Locale }) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
         <div className="card-feature mx-auto flex w-full max-w-[576px] flex-col items-center gap-6 px-5 py-10 text-center sm:px-10">
-          <h2 className="type-display-sm text-ink">Connect With Us</h2>
+          <h2 className="type-display-sm text-ink">{isTa ? "எங்களுடன் இணையுங்கள்" : "Connect With Us"}</h2>
 
           <div>
-            <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Write to Us</p>
+            <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">{isTa ? "எமக்கு எழுதுங்கள்" : "Write to Us"}</p>
             <a
               href={`mailto:${connectWithUs.email}`}
               className="type-title-sm text-[var(--color-primary-blue)] hover:underline"
@@ -21,7 +23,7 @@ export function ConnectWithUs({ connectWithUs }: { connectWithUs: ConnectWithUs 
           </div>
 
           <div>
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Follow Us</p>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{isTa ? "எங்களைப் பின்தொடருங்கள்" : "Follow Us"}</p>
             <div className="flex flex-wrap justify-center gap-3">
               {connectWithUs.social.map((s) => (
                 <a
@@ -38,7 +40,7 @@ export function ConnectWithUs({ connectWithUs }: { connectWithUs: ConnectWithUs 
           </div>
 
           <a href="/reach-us" className="type-button btn-primary mt-2">
-            Reach us
+            {isTa ? "எங்களைத் தொடர்பு கொள்ளுங்கள்" : "Reach us"}
           </a>
         </div>
       </Container>

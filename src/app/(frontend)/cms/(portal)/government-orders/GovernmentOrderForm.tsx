@@ -2,13 +2,20 @@
 
 import { useRef, useState } from "react";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
+import { DocumentUploadField } from "@/components/portal/DocumentUploadField";
 
 export type GovernmentOrderFormValues = {
   title: string;
   year: string;
   department: string;
+  fileName?: string;
   fileUrl?: string;
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -20,10 +27,12 @@ export function GovernmentOrderForm({
   action,
   values,
   error,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: GovernmentOrderFormValues;
   error?: string;
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -66,6 +75,8 @@ export function GovernmentOrderForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[560px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       {error ? (
         <p className="type-body-sm rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
@@ -112,32 +123,17 @@ export function GovernmentOrderForm({
 
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">PDF file</label>
-          {values.fileUrl ? (
-            <a href={values.fileUrl} target="_blank" rel="noopener noreferrer" className="type-body-sm mb-2 block text-[var(--color-primary-blue)] underline">
-              Current file
-            </a>
-          ) : null}
-          <input type="file" name="file" accept="application/pdf" className="type-body-sm block" />
+          <DocumentUploadField name="file" currentName={values.fileName} currentUrl={values.fileUrl} />
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Hide this from the public site?")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Hide from public
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

@@ -5,67 +5,28 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import { getLocale } from "@/lib/locale";
+import { getSiteMap } from "@/lib/cms/site-map";
 
 export const metadata: Metadata = {
   title: "Site Map | TNeGA",
   description: "A full list of pages on the Tamil Nadu e-Governance Agency website.",
 };
 
-const SITEMAP: { heading: string; links: { label: string; href: string }[] }[] = [
-  { heading: "Home", links: [{ label: "Home", href: "/" }] },
-  {
-    heading: "About",
-    links: [
-      { label: "Overview", href: "/about" },
-      { label: "Leadership", href: "/about#leadership" },
-      { label: "Organisation structure", href: "/about#organisation-structure" },
-      { label: "Careers", href: "/about/careers" },
-    ],
-  },
-  {
-    heading: "Services",
-    links: [
-      { label: "Citizen Services", href: "/citizen-services" },
-      { label: "Services to Government", href: "/services-to-government" },
-      { label: "Initiatives & Projects", href: "/initiatives-projects" },
-    ],
-  },
-  {
-    heading: "Notifications",
-    links: [
-      { label: "Announcements", href: "/notifications/announcements" },
-      { label: "Media & Press", href: "/notifications/media-press" },
-      { label: "RTI", href: "/notifications/rti" },
-      { label: "Tenders", href: "/notifications/tenders" },
-      { label: "Government Orders", href: "/notifications/government-orders" },
-      { label: "Policies & Guidelines", href: "/notifications/policies-guidelines" },
-    ],
-  },
-  {
-    heading: "Help & Support",
-    links: [
-      { label: "Help", href: "/help" },
-      { label: "Feedback", href: "/feedback" },
-      { label: "Contact Us", href: "/reach-us" },
-      { label: "Terms & Conditions", href: "/terms-conditions" },
-      { label: "Privacy Policy", href: "/privacy-policy" },
-      { label: "Disclaimer", href: "/disclaimer" },
-      { label: "Terms of Use", href: "/terms-of-use" },
-      { label: "Site Map", href: "/sitemap" },
-    ],
-  },
-];
+export default async function SiteMapPage() {
+  const locale = await getLocale();
+  const isTa = locale === "ta";
+  const SITEMAP = await getSiteMap(locale);
 
-export default function SiteMapPage() {
   return (
     <>
       <TopNav />
       <main className="flex-1" id="main-content">
-        <Breadcrumb items={[{ label: "Site Map" }]} />
+        <Breadcrumb items={[{ label: isTa ? "தள வரைபடம்" : "Site Map" }]} locale={locale} />
         <section className="bg-canvas">
           <Container className="py-xl md:py-xxl">
-            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Navigate</p>
-            <h1 className="type-display-lg text-ink">Site Map</h1>
+            <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{isTa ? "வழிசெலுத்தல்" : "Navigate"}</p>
+            <h1 className="type-display-lg text-ink">{isTa ? "தள வரைபடம்" : "Site Map"}</h1>
           </Container>
         </section>
         <section className="bg-canvas-soft">

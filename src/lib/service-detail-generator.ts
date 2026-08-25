@@ -64,21 +64,14 @@ export interface GeneratedFeature {
 }
 
 export function generateFeatures(item: ServiceItemDetail): GeneratedFeature[] {
-  // Real content (from the official PDF) takes precedence: its own
-  // Statistics feed the same "stat card" slot the generated fallback uses,
-  // and its Key Features replace the generic structural cards below.
+  // Real content (from the official PDF) takes precedence: Key Features
+  // is its own independent list, never mixed with Statistics (a separate
+  // section of its own) — no relationship between the two.
   if (item.real) {
-    const statFeatures: GeneratedFeature[] = item.real.hideStatFeatureCards
-      ? []
-      : item.real.statistics.map((stat) => ({
-          title: stat,
-          description: `A key statistic for ${item.name}.`,
-        }));
-    const realFeatures: GeneratedFeature[] = item.real.keyFeatures.map((feature, i) => ({
+    return item.real.keyFeatures.map((feature, i) => ({
       title: feature,
       description: item.real?.keyFeatureDescriptions?.[i] ?? `A core capability of ${item.name}.`,
     }));
-    return [...statFeatures, ...realFeatures];
   }
 
   const bullets = statsToBullets(item.stats);

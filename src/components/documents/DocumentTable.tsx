@@ -6,6 +6,8 @@ import { Container } from "@/components/ui/Container";
 import { Cell } from "./Cells";
 import { FilterBar, matchesFacets } from "./FilterBar";
 import type { DocumentCell, DocumentFacet, DocumentRow } from "./types";
+import type { Locale } from "@/lib/locale";
+import { getUiStrings } from "@/lib/ui-strings";
 
 /** The text a cell sorts by — the same text every cell kind already
  * displays, so sorting never contradicts what's on screen. */
@@ -70,6 +72,7 @@ export function DocumentTable({
   filterBarLabel,
   tableLabel,
   noResultsText,
+  locale = "en",
 }: {
   rows: DocumentRow[];
   headers: string[];
@@ -79,7 +82,9 @@ export function DocumentTable({
   filterBarLabel: string;
   tableLabel: string;
   noResultsText: string;
+  locale?: Locale;
 }) {
+  const t = getUiStrings(locale);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>(() =>
     Object.fromEntries(facets.map((f) => [f.id, f.initial]))
@@ -143,11 +148,12 @@ export function DocumentTable({
 
   const countText =
     visible.length === 0
-      ? "No entries found"
-      : `Showing ${(currentPage - 1) * PAGE_SIZE + 1} to ${Math.min(
-          currentPage * PAGE_SIZE,
+      ? t.noEntriesFound
+      : t.showingEntries(
+          (currentPage - 1) * PAGE_SIZE + 1,
+          Math.min(currentPage * PAGE_SIZE, visible.length),
           visible.length
-        )} of ${visible.length} entries`;
+        );
 
   return (
     <>
@@ -170,7 +176,7 @@ export function DocumentTable({
               sort control instead of just inheriting the desktop one. */}
           <div className="mb-base flex items-center gap-2 md:hidden">
             <label htmlFor="mobile-sort" className="type-caption shrink-0 text-[var(--color-muted)]">
-              Sort by
+              {t.sortBy}
             </label>
             <select
               id="mobile-sort"
@@ -187,7 +193,7 @@ export function DocumentTable({
               }}
               className="h-9 flex-1 rounded-md border border-hairline-strong bg-surface-card px-2.5 text-sm text-ink"
             >
-              <option value="">Original order</option>
+              <option value="">{t.originalOrder}</option>
               {headers.map((h, i) =>
                 h.toLowerCase() === "download" ? null : (
                   <option key={h} value={i}>
@@ -203,7 +209,7 @@ export function DocumentTable({
                   setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
                   setPage(1);
                 }}
-                aria-label={`Toggle sort direction, currently ${sortDirection === "asc" ? "ascending" : "descending"}`}
+                aria-label={t.toggleSortDirection(sortDirection === "asc" ? t.ascending : t.descending)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-hairline-strong bg-surface-card text-[var(--color-body-strong)]"
               >
                 <SortIcon direction={sortDirection} />
@@ -285,7 +291,7 @@ export function DocumentTable({
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage <= 1}
-                  aria-label="Previous page"
+                  aria-label={t.previousPage}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-hairline-strong text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
@@ -299,7 +305,7 @@ export function DocumentTable({
                   type="button"
                   onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
                   disabled={currentPage >= pageCount}
-                  aria-label="Next page"
+                  aria-label={t.nextPage}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-hairline-strong text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
@@ -332,7 +338,11 @@ export function DocumentTable({
                               "inline-flex items-center gap-1 transition-colors hover:text-[var(--color-body-strong)]",
                               active && "text-[var(--color-body-strong)]"
                             )}
-                            aria-label={`Sort by ${h}${active ? (sortDirection === "asc" ? ", ascending" : ", descending") : ""}`}
+                            aria-label={
+                              active
+                                ? t.sortByColumnWithDirection(h, sortDirection === "asc" ? t.ascending : t.descending)
+                                : t.sortByColumn(h)
+                            }
                           >
                             {h}
                             <SortIcon direction={active ? sortDirection : null} />
@@ -378,12 +388,12 @@ export function DocumentTable({
                 {countText}
               </p>
 
-              <nav className="flex items-center gap-xxs" aria-label="Table pagination">
+              <nav className="flex items-center gap-xxs" aria-label={t.tablePagination}>
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage <= 1}
-                  aria-label="Previous page"
+                  aria-label={t.previousPage}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">
@@ -395,7 +405,7 @@ export function DocumentTable({
                     key={n}
                     type="button"
                     onClick={() => setPage(n)}
-                    aria-label={`Page ${n}`}
+                    aria-label={t.page(n)}
                     aria-current={n === currentPage ? "page" : undefined}
                     className={clsx(
                       "inline-flex h-8 w-8 items-center justify-center rounded-sm border text-[13px] font-medium",
@@ -411,7 +421,7 @@ export function DocumentTable({
                   type="button"
                   onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
                   disabled={currentPage >= pageCount}
-                  aria-label="Next page"
+                  aria-label={t.nextPage}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-transparent text-[13px] font-medium text-[var(--color-body-strong)] disabled:opacity-35"
                 >
                   <svg viewBox="0 0 16 16" aria-hidden className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.5]">

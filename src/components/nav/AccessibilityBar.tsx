@@ -3,13 +3,15 @@
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
+import { ExternalLinkIcon } from "@/components/ui/ExternalLinkIcon";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
-import { AccessibilityIcon, ExternalLinkArrow } from "./icons";
+import { AccessibilityIcon } from "./icons";
 import type { Locale } from "@/lib/locale";
 
 export function AccessibilityBar({ govLabel, locale }: { govLabel: string; locale: Locale }) {
   const router = useRouter();
   const { panelOpen, openPanel } = useAccessibilityPrefs();
+  const isTa = locale === "ta";
 
   // Sets a plain preference cookie (no auth/security concern — just
   // which language to render) and asks the server to re-render with it.
@@ -30,12 +32,12 @@ export function AccessibilityBar({ govLabel, locale }: { govLabel: string; local
           className="flex min-w-0 items-center gap-1 text-[var(--color-muted)] hover:text-ink"
         >
           <span className="truncate">{govLabel}</span>
-          <ExternalLinkArrow className="h-3 w-3 shrink-0" />
+          <ExternalLinkIcon className="h-3 w-3 shrink-0" />
         </a>
 
         <div className="hidden items-center gap-4 text-[var(--color-muted)] sm:flex">
           <a href="#main-content" className="hover:text-ink">
-            Skip to content
+            {isTa ? "உள்ளடக்கத்திற்குச் செல்லவும்" : "Skip to content"}
           </a>
           <span aria-hidden className="h-3 w-px bg-hairline-strong" />
           <button
@@ -48,7 +50,7 @@ export function AccessibilityBar({ govLabel, locale }: { govLabel: string; local
             )}
           >
             <AccessibilityIcon className="h-4 w-4" />
-            Accessibility
+            {isTa ? "அணுகல்தன்மை" : "Accessibility"}
           </button>
           <span aria-hidden className="h-3 w-px bg-hairline-strong" />
           <button
@@ -84,7 +86,7 @@ export function AccessibilityBar({ govLabel, locale }: { govLabel: string; local
                 ? "border-[var(--color-primary-blue)] text-[var(--color-primary-blue)]"
                 : "border-hairline-strong text-[var(--color-muted)]"
             )}
-            aria-label="Accessibility options"
+            aria-label={isTa ? "அணுகல்தன்மை விருப்பங்கள்" : "Accessibility options"}
           >
             <AccessibilityIcon className="h-3.5 w-3.5" />
           </button>

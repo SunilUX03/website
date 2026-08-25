@@ -1,6 +1,7 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { TeamMember, Media } from "@/payload-types";
 import { type CmsTeamMember } from "@/lib/cms/team-member-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsTeamMember } from "@/lib/cms/team-member-types";
 
@@ -16,10 +17,11 @@ function toCmsTeamMember(doc: TeamMember): CmsTeamMember {
 }
 
 /** Published team members, CEO first (see `order` in the collection). */
-export async function getTeamMembers(): Promise<CmsTeamMember[]> {
+export async function getTeamMembers(locale: Locale = "en"): Promise<CmsTeamMember[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "team-members",
+    locale,
     depth: 1,
     sort: "order",
     limit: 100,

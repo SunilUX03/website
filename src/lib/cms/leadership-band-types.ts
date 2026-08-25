@@ -7,6 +7,7 @@ export type CmsLeader = {
 };
 
 export type CmsLeadershipBand = {
+  heading: string;
   description: string;
   leaders: CmsLeader[];
 };

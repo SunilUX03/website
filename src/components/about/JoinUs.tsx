@@ -3,12 +3,22 @@ import { Container } from "@/components/ui/Container";
 import { JoinUsGraphic } from "@/components/heroes/JoinUsGraphic";
 import type { CmsCareersContent } from "@/lib/cms/careers-content";
 import type { CmsJobOpening } from "@/lib/cms/job-openings";
+import type { Locale } from "@/lib/locale";
 
 // Reuses the real Careers page data (the "careers-content" CMS global +
 // the CMS openings) rather than duplicating it — this is a teaser,
 // /about/careers stays the source of truth for the full list and the
 // application flow.
-export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; openings: CmsJobOpening[] }) {
+export function JoinUs({
+  hero,
+  openings,
+  locale = "en",
+}: {
+  hero: CmsCareersContent["hero"];
+  openings: CmsJobOpening[];
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   const featured = openings.slice(0, 3);
 
   return (
@@ -20,7 +30,7 @@ export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; op
             <h2 className="type-display-lg mb-4 text-ink">{hero.heading}</h2>
             <p className="type-body-md mb-6 max-w-[48ch] text-[var(--color-body)]">{hero.body}</p>
             <Link href="/about/careers" className="type-button btn-primary">
-              View Openings
+              {isTa ? "காலியிடங்களைக் காண்க" : "View Openings"}
             </Link>
           </div>
 
@@ -42,7 +52,7 @@ export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; op
                   href="/about/careers"
                   className="type-button btn-outline shrink-0 !h-9 !px-4"
                 >
-                  Apply
+                  {isTa ? "விண்ணப்பிக்கவும்" : "Apply"}
                 </Link>
               </div>
             ))}
@@ -51,7 +61,9 @@ export function JoinUs({ hero, openings }: { hero: CmsCareersContent["hero"]; op
                 href="/about/careers"
                 className="type-body-sm text-center text-[var(--color-primary-blue)] hover:text-[var(--color-primary-blue-active)]"
               >
-                +{openings.length - featured.length} more open roles
+                {isTa
+                  ? `+${openings.length - featured.length} மேலும் திறந்த பணியிடங்கள்`
+                  : `+${openings.length - featured.length} more open roles`}
               </Link>
             )}
           </div>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
+import { ImageUploadField } from "@/components/portal/ImageUploadField";
 
 export type AnnouncementFormValues = {
   heading: string;
@@ -12,11 +12,16 @@ export type AnnouncementFormValues = {
   category: string;
   body: string;
   imageUrl?: string;
-  facts: { label: string; value: string }[];
-  links: { label: string; href: string }[];
+  facts: { id?: string; label: string; value: string }[];
+  links: { id?: string; label: string; href: string }[];
   tickerFeatured: boolean;
   tickerOrder: number;
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -39,9 +44,16 @@ function reconstructRows(fd: FormData, name: string, keys: string[]): Record<str
 export function AnnouncementForm({
   action,
   values,
+  error,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: AnnouncementFormValues;
+  error?: string;
+  /** Which locale this save writes to — set by the page from `?locale=`
+   * and carried through as a hidden field the server action reads. See
+   * ServiceForm.tsx for the full explanation of this pattern. */
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -82,8 +94,8 @@ export function AnnouncementForm({
     if (imageFile && imageFile.size > 0) {
       list.push({ id: "image", label: "Photo", detail: `New photo selected (${imageFile.name})`, sectionId: "section-main" });
     }
-    rows("facts", ["label", "value"], "Facts", values.facts);
-    rows("links", ["label", "href"], "Related links", values.links);
+    rows("facts", ["label", "value"], "Facts", values.facts.map((r) => ({ label: r.label, value: r.value })));
+    rows("links", ["label", "href"], "Related links", values.links.map((r) => ({ label: r.label, href: r.href })));
     checkbox("tickerFeatured", "Show in homepage ticker", values.tickerFeatured);
     text("tickerOrder", "Ticker priority", String(values.tickerOrder));
 
@@ -104,6 +116,14 @@ export function AnnouncementForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[720px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
+
+      {error ? (
+        <p className="type-body-sm mb-4 max-w-[680px] rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
+          {error}
+        </p>
+      ) : null}
 
       <section id="section-main" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
@@ -155,12 +175,7 @@ export function AnnouncementForm({
 
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Photo (optional)</label>
-          {values.imageUrl ? (
-            <div className="relative mb-2 h-32 w-52 overflow-hidden rounded-lg border border-hairline">
-              <Image src={values.imageUrl} alt="" fill className="object-cover" />
-            </div>
-          ) : null}
-          <input type="file" name="image" accept="image/*" className="type-body-sm block" />
+          <ImageUploadField name="image" currentUrl={values.imageUrl} />
         </div>
 
         <div>
@@ -218,23 +233,13 @@ export function AnnouncementForm({
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish this announcement? It will disappear from the live site.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { requireSession, logout } from "@/lib/portal/auth";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
+import { PortalBreadcrumb } from "@/components/portal/PortalBreadcrumb";
+import { ToastListener } from "@/components/portal/ToastListener";
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const user = await requireSession();
@@ -28,8 +31,14 @@ export default async function PortalLayout({ children }: { children: React.React
             </form>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto px-6 py-8">{children}</main>
+        <main className="flex-1 overflow-y-auto px-6 py-8">
+          <PortalBreadcrumb />
+          {children}
+        </main>
       </div>
+      <Suspense fallback={null}>
+        <ToastListener />
+      </Suspense>
     </div>
   );
 }

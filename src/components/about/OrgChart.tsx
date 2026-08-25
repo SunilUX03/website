@@ -1,47 +1,43 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import type { CmsOrgChart } from "@/lib/cms/about-types";
+import type { CmsOrgChart, CmsOrgChartNode, CmsSectionHeading } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { useIsDesktop } from "@/lib/hooks";
+import type { Locale } from "@/lib/locale";
 
 /**
- * TNeGA organisation structure: CEO -> JCEO -> six parallel branches.
- * Five branches share the same 4-level shape (Joint Director/DRO ->
- * System Engineer/Deputy Collector -> Project Manager -> ASE); the sixth
- * (Project Director) skips the second level, per the official chart.
+ * TNeGA organisation structure: CEO -> JCEO -> seven parallel divisions,
+ * each with its own sequential staff chain of variable length (2 rows for
+ * Quality Control & Audit, 18 for Project Division) — the real reporting
+ * structure, not a fixed shape, so each branch's `nodes` array is
+ * genuinely variable-length rather than 3 fixed levels.
  *
- * Only CEO, JCEO, and the six Joint Director-level boxes show by default.
- * A single centered "View Full Structure" toggle reveals every branch's
- * remaining levels together — not one dropdown per branch.
+ * Every box at every level — CEO/JCEO, division headers, and every staff
+ * row including the individual-contributor ones — renders at the exact
+ * same fixed width (its grid column) and fixed height, regardless of how
+ * much text it holds. Per explicit feedback: varying box sizes by content
+ * length read as messy: content that overflows a fixed height clamps
+ * (line-clamp) rather than growing the box.
  *
- * Desktop: the JCEO -> six-branches fan-out is the one genuinely branching
- * connector, so instead of computing it from CSS percentages (which drifted
- * out of alignment at some widths), it's drawn as an SVG overlay using each
- * box's actual measured position (via getBoundingClientRect, re-measured on
- * resize) — the same measured-DOM technique already used by the About
- * page's "What We Do" orbit diagram. Each branch's own expand panel is a
- * single sequential column, so it's simple stacked divs, no measurement
- * needed. Mobile stacks everything on one vertical spine with the same
- * single shared toggle, so the collapsed view stays short and the full
- * hierarchy is still one tap away.
+ * Only the CEO/JCEO boxes and each division's own title/subtitle header
+ * show by default. A single centered "View Full Structure" toggle reveals
+ * every division's staff list together — not one dropdown per branch.
+ *
+ * Desktop: the JCEO -> seven-division fan-out is the one genuinely
+ * branching connector, so instead of computing it from CSS percentages
+ * (which drifted out of alignment at some widths), it's drawn as an SVG
+ * overlay using each header box's actual measured position (via
+ * getBoundingClientRect, re-measured on resize) — the same measured-DOM
+ * technique already used by the About page's "What We Do" orbit diagram.
+ * Each branch's own expand panel is a single sequential column, so it's
+ * simple stacked divs, no measurement needed. Mobile stacks everything on
+ * one vertical spine with the same single shared toggle, so the collapsed
+ * view stays short and the full hierarchy is still one tap away.
  */
 
-type BoxVariant = "top" | "default" | "muted";
-
-function boxClassName(variant: BoxVariant) {
-  if (variant === "top") {
-    return "org-box flex min-h-[52px] items-center justify-center rounded-xl bg-[var(--color-primary-blue)] px-3 py-2.5 text-center";
-  }
-  if (variant === "muted") {
-    return "org-box flex min-h-[52px] items-center justify-center rounded-xl border border-hairline bg-canvas-soft px-3 py-2.5 text-center";
-  }
-  return "org-box flex min-h-[52px] items-center justify-center rounded-xl border border-hairline bg-surface-card px-3 py-2.5 text-center";
-}
-
-function boxTextClassName(variant: BoxVariant) {
-  return variant === "top" ? "type-caption font-semibold text-white" : "type-caption font-medium text-ink";
-}
+const HEADER_HEIGHT = "h-[92px]";
+const NODE_HEIGHT = "h-[60px]";
 
 function ChevronIcon({ className }: { className?: string }) {
   return (
@@ -51,14 +47,46 @@ function ChevronIcon({ className }: { className?: string }) {
   );
 }
 
-function TopRow({ items }: { items: string[] }) {
+function TopBox({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center gap-3">
-      {items.map((label) => (
-        <div key={label} className={`${boxClassName("top")} w-[160px]`}>
-          <p className={boxTextClassName("top")}>{label}</p>
-        </div>
-      ))}
+    <div className={`org-box flex ${NODE_HEIGHT} w-[220px] items-center justify-center rounded-xl bg-[var(--color-primary-blue)] px-3 py-2 text-center`}>
+      <p className="type-caption line-clamp-2 font-semibold text-white">{label}</p>
+    </div>
+  );
+}
+
+function HeaderBox({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div
+      className={`org-box flex ${HEADER_HEIGHT} w-full flex-col items-center justify-center gap-1 rounded-xl border border-[var(--color-primary-blue)] bg-[var(--color-surface-strong)] px-2.5 py-2 text-center`}
+    >
+      <p className="type-caption line-clamp-2 font-semibold leading-tight text-ink">{title}</p>
+      <p className="text-[11px] font-semibold leading-tight text-[var(--color-primary-blue)]">{subtitle}</p>
+    </div>
+  );
+}
+
+// A single staff row inside a branch's expand panel. Every row gets the
+// same fixed-size box — numbered/lettered roles (bold label + role
+// sublabel) and individual-contributor roles (one plain line) alike —
+// only the text weight/color differs, per feedback that unboxed plain
+// rows read as inconsistent with the rest of the chart.
+function NodeBox({ node }: { node: CmsOrgChartNode }) {
+  if (node.muted) {
+    return (
+      <div
+        className={`org-box flex ${NODE_HEIGHT} w-full items-center justify-center rounded-xl border border-hairline bg-canvas-soft px-2.5 py-2 text-center`}
+      >
+        <p className="type-caption line-clamp-2 text-[var(--color-muted)]">{node.label}</p>
+      </div>
+    );
+  }
+  return (
+    <div
+      className={`org-box flex ${NODE_HEIGHT} w-full flex-col items-center justify-center gap-0.5 rounded-xl border border-hairline bg-surface-card px-2.5 py-2 text-center`}
+    >
+      <p className="type-caption line-clamp-1 font-semibold leading-tight text-ink">{node.label}</p>
+      {node.sublabel ? <p className="line-clamp-1 text-[11px] leading-tight text-[var(--color-muted)]">{node.sublabel}</p> : null}
     </div>
   );
 }
@@ -66,7 +94,8 @@ function TopRow({ items }: { items: string[] }) {
 // Single, shared control for every branch at once — "View Full Structure"
 // / "Show Fewer Levels", matching the tone of Roll of Honour's own
 // "View full history" toggle elsewhere on this page.
-function StructureToggle({ expanded, onClick }: { expanded: boolean; onClick: () => void }) {
+function StructureToggle({ expanded, onClick, locale = "en" }: { expanded: boolean; onClick: () => void; locale?: Locale }) {
+  const isTa = locale === "ta";
   return (
     <button
       type="button"
@@ -74,22 +103,22 @@ function StructureToggle({ expanded, onClick }: { expanded: boolean; onClick: ()
       aria-expanded={expanded}
       className="type-body-sm mx-auto flex items-center gap-1.5 rounded-full border border-dashed border-hairline-strong bg-canvas-soft px-4 py-2 text-[var(--color-primary-blue)] transition-colors hover:border-[var(--color-primary-blue)] hover:bg-[var(--color-surface-strong)]"
     >
-      {expanded ? "Show Fewer Levels" : "View Full Structure"}
+      {expanded
+        ? isTa
+          ? "குறைவான நிலைகளைக் காட்டு"
+          : "Show Fewer Levels"
+        : isTa
+          ? "முழு அமைப்பையும் காண்க"
+          : "View Full Structure"}
       <ChevronIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
     </button>
   );
 }
 
-// A branch's own remaining levels — always a single sequential column
-// (never a fan-out), so plain stacked divs with a thin connector line
-// between each are exact regardless of width; no measurement needed here.
-function BranchPanel({
-  branch,
-  isOpen,
-}: {
-  branch: CmsOrgChart["branches"][number];
-  isOpen: boolean;
-}) {
+// A branch's own staff list — always a single sequential column (never a
+// fan-out), so plain stacked divs with a thin connector line between each
+// are exact regardless of width; no measurement needed here.
+function BranchPanel({ nodes, isOpen }: { nodes: CmsOrgChartNode[]; isOpen: boolean }) {
   return (
     <div
       className="grid w-full transition-all duration-500 ease-out"
@@ -97,22 +126,12 @@ function BranchPanel({
     >
       <div className="overflow-hidden">
         <div className="flex flex-col items-stretch">
-          {branch.engineer && (
-            <>
-              <div aria-hidden className="mx-auto h-4 w-px bg-hairline-strong" />
-              <div className={boxClassName("default")}>
-                <p className={boxTextClassName("default")}>{branch.engineer}</p>
-              </div>
-            </>
-          )}
-          <div aria-hidden className="mx-auto h-4 w-px bg-hairline-strong" />
-          <div className={boxClassName("default")}>
-            <p className={boxTextClassName("default")}>{branch.manager}</p>
-          </div>
-          <div aria-hidden className="mx-auto h-4 w-px bg-hairline-strong" />
-          <div className={boxClassName("muted")}>
-            <p className={boxTextClassName("muted")}>{branch.base}</p>
-          </div>
+          {nodes.map((node, i) => (
+            <div key={i} className="flex flex-col items-stretch">
+              <div aria-hidden className="mx-auto h-3 w-px bg-hairline-strong" />
+              <NodeBox node={node} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -127,7 +146,7 @@ interface FanLines {
   dropXs: number[];
 }
 
-function DesktopTree({ orgChart }: { orgChart: CmsOrgChart }) {
+function DesktopTree({ orgChart, locale = "en" }: { orgChart: CmsOrgChart; locale?: Locale }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const jceoRef = useRef<HTMLDivElement | null>(null);
   const boxRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -170,9 +189,12 @@ function DesktopTree({ orgChart }: { orgChart: CmsOrgChart }) {
   }, [measure]);
 
   return (
-    <div ref={containerRef} className="relative mx-auto flex max-w-[1100px] flex-col items-center">
-      <div ref={jceoRef}>
-        <TopRow items={orgChart.top} />
+    <div ref={containerRef} className="relative mx-auto flex max-w-[1400px] flex-col items-center">
+      <div className="flex flex-col items-center gap-3">
+        <TopBox label={orgChart.topLabel} />
+        <div ref={jceoRef}>
+          <TopBox label={orgChart.jceoLabel} />
+        </div>
       </div>
 
       {lines && (
@@ -207,59 +229,79 @@ function DesktopTree({ orgChart }: { orgChart: CmsOrgChart }) {
               ref={(el) => {
                 boxRefs.current[i] = el;
               }}
-              className={boxClassName("default")}
             >
-              <p className={boxTextClassName("default")}>{branch.director}</p>
+              <HeaderBox title={branch.title} subtitle={branch.subtitle} />
             </div>
-            <BranchPanel branch={branch} isOpen={expanded} />
+            <BranchPanel nodes={branch.nodes} isOpen={expanded} />
           </div>
         ))}
       </div>
 
       <div className="mt-6">
-        <StructureToggle expanded={expanded} onClick={() => setExpanded((v) => !v)} />
+        <StructureToggle expanded={expanded} onClick={() => setExpanded((v) => !v)} locale={locale} />
       </div>
     </div>
   );
 }
 
-function MobileNode({ label, variant = "default" }: { label: string; variant?: BoxVariant }) {
+function MobileTopNode({ label }: { label: string }) {
   return (
     <div className="relative pl-10">
       <span
         aria-hidden
         className="absolute left-4 top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas"
       />
-      <div className={boxClassName(variant)}>
-        <p className={boxTextClassName(variant)}>{label}</p>
-      </div>
+      <TopBox label={label} />
     </div>
   );
 }
 
-function MobileTree({ orgChart }: { orgChart: CmsOrgChart }) {
+function MobileHeaderNode({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div className="relative pl-10">
+      <span
+        aria-hidden
+        className="absolute left-4 top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas"
+      />
+      <HeaderBox title={title} subtitle={subtitle} />
+    </div>
+  );
+}
+
+function MobileStaffNode({ node }: { node: CmsOrgChartNode }) {
+  return (
+    <div className="relative pl-10">
+      <span
+        aria-hidden
+        className="absolute left-4 top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary-blue)] ring-4 ring-canvas"
+      />
+      <NodeBox node={node} />
+    </div>
+  );
+}
+
+function MobileTree({ orgChart, locale = "en" }: { orgChart: CmsOrgChart; locale?: Locale }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="relative">
       <div aria-hidden className="absolute bottom-3 left-4 top-3 w-px bg-hairline-strong" />
       <div className="flex flex-col gap-3">
-        {orgChart.top.map((label) => (
-          <MobileNode key={label} label={label} variant="top" />
-        ))}
+        <MobileTopNode label={orgChart.topLabel} />
+        <MobileTopNode label={orgChart.jceoLabel} />
 
         {orgChart.branches.map((branch, i) => (
           <div key={i} className="flex flex-col gap-3">
-            <MobileNode label={branch.director} />
+            <MobileHeaderNode title={branch.title} subtitle={branch.subtitle} />
             <div
               className="grid transition-all duration-500 ease-out"
               style={{ gridTemplateRows: expanded ? "1fr" : "0fr", opacity: expanded ? 1 : 0 }}
             >
               <div className="overflow-hidden">
                 <div className="flex flex-col gap-3">
-                  {branch.engineer && <MobileNode label={branch.engineer} />}
-                  <MobileNode label={branch.manager} />
-                  <MobileNode label={branch.base} variant="muted" />
+                  {branch.nodes.map((node, ni) => (
+                    <MobileStaffNode key={ni} node={node} />
+                  ))}
                 </div>
               </div>
             </div>
@@ -268,23 +310,31 @@ function MobileTree({ orgChart }: { orgChart: CmsOrgChart }) {
       </div>
 
       <div className="relative mt-4 pl-10">
-        <StructureToggle expanded={expanded} onClick={() => setExpanded((v) => !v)} />
+        <StructureToggle expanded={expanded} onClick={() => setExpanded((v) => !v)} locale={locale} />
       </div>
     </div>
   );
 }
 
-export function OrgChart({ orgChart }: { orgChart: CmsOrgChart }) {
+export function OrgChart({
+  orgChart,
+  section,
+  locale = "en",
+}: {
+  orgChart: CmsOrgChart;
+  section: CmsSectionHeading;
+  locale?: Locale;
+}) {
   const isDesktop = useIsDesktop();
 
   return (
     <section id="organisation-structure" className="scroll-mt-24 bg-canvas">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Organisation Structure</p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">How TNeGA is organised</h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{section.eyebrow}</p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">{section.heading}</h2>
 
-        {isDesktop === true && <DesktopTree orgChart={orgChart} />}
-        {isDesktop === false && <MobileTree orgChart={orgChart} />}
+        {isDesktop === true && <DesktopTree orgChart={orgChart} locale={locale} />}
+        {isDesktop === false && <MobileTree orgChart={orgChart} locale={locale} />}
       </Container>
 
       <style>{`

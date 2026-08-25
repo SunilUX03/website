@@ -1,17 +1,20 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { MetricsForm } from "./MetricsForm";
 import { updateMetrics } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function MetricsSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "metrics-content", draft: true, overrideAccess: true });
+  const doc = await payload.findGlobal({ slug: "metrics-content", locale, draft: true, overrideAccess: true });
   const metrics = doc.metrics ?? [];
 
   return (
@@ -26,21 +29,22 @@ export default async function MetricsSettingsPage({
           {error}
         </p>
       ) : null}
-      {saved ? (
-        <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+
+      <LocaleTabs basePath="/cms/settings/metrics" current={locale} />
 
       <MetricsForm
+        key={locale}
         action={updateMetrics}
+        locale={locale}
         values={{
+          heading: doc.heading,
           metrics: Array.from({ length: 6 }, (_, i) => ({
+            id: metrics[i]?.id ?? undefined,
+            metric: metrics[i]?.metric ?? "",
             label: metrics[i]?.label ?? "",
-            value: metrics[i]?.value ?? "",
-            decimals: metrics[i]?.decimals ?? "",
-            prefix: metrics[i]?.prefix ?? "",
-            suffix: metrics[i]?.suffix ?? "",
           })),
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

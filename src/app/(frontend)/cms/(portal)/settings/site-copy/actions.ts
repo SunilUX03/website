@@ -5,9 +5,18 @@ import { redirect } from "next/navigation";
 import { getPayloadClient } from "@/lib/payload-client";
 import { requireSession } from "@/lib/portal/auth";
 import { logActivity } from "@/lib/portal/activity-log";
-import { str } from "@/lib/portal/form-utils";
+import { str, optionalStr } from "@/lib/portal/form-utils";
+import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
-const HERO_KEYS = ["announcementsHero", "governmentOrdersHero", "policiesHero", "mediaHero", "servicesHero"] as const;
+const HERO_KEYS = [
+  "announcementsHero",
+  "governmentOrdersHero",
+  "policiesHero",
+  "mediaHero",
+  "citizenServicesHero",
+  "initiativesProjectsHero",
+  "reachUsHero",
+] as const;
 
 function buildHero(formData: FormData, key: string) {
   return {
@@ -17,47 +26,20 @@ function buildHero(formData: FormData, key: string) {
   };
 }
 
-function buildHeroTa(formData: FormData, key: string) {
-  return {
-    eyebrow: str(formData, `${key}EyebrowTa`),
-    heading: str(formData, `${key}HeadingTa`),
-    body: str(formData, `${key}BodyTa`),
-  };
-}
-
 function buildData(formData: FormData) {
   const data: Record<string, unknown> = {};
   for (const key of HERO_KEYS) {
     data[key] = buildHero(formData, key);
   }
-  data.reachUsPanels = [0, 1].map((i) => ({
-    eyebrow: str(formData, `panel${i}Eyebrow`),
-    title: str(formData, `panel${i}Title`),
-    description: str(formData, `panel${i}Description`),
-    ctaLabel: str(formData, `panel${i}CtaLabel`),
-  }));
-  return data;
-}
-
-// `enPanels` is Payload's just-saved EN result — reachUsPanels rows share
-// one id across locales, so a Tamil-locale array update without that id
-// makes Payload treat every row as brand new, silently deleting the
-// English locale data on the old row. Always save EN first, then pass its
-// resulting reachUsPanels in here before saving TA.
-function buildTaData(formData: FormData, enPanels: { id?: string | null }[]) {
-  const data: Record<string, unknown> = {};
-  for (const key of HERO_KEYS) {
-    data[key] = buildHeroTa(formData, key);
-  }
   data.reachUsPanels = [0, 1].map((i) => {
-    const row = {
-      eyebrow: str(formData, `panel${i}EyebrowTa`),
-      title: str(formData, `panel${i}TitleTa`),
-      description: str(formData, `panel${i}DescriptionTa`),
-      ctaLabel: str(formData, `panel${i}CtaLabelTa`),
+    const id = optionalStr(formData, `panel${i}Id`);
+    return {
+      ...(id ? { id } : {}),
+      eyebrow: str(formData, `panel${i}Eyebrow`),
+      title: str(formData, `panel${i}Title`),
+      description: str(formData, `panel${i}Description`),
+      ctaLabel: str(formData, `panel${i}CtaLabel`),
     };
-    const id = enPanels[i]?.id;
-    return id ? { id, ...row } : row;
   });
   return data;
 }
@@ -67,27 +49,26 @@ export async function updateSiteCopy(formData: FormData) {
   const payload = await getPayloadClient();
   const data = buildData(formData);
   const intent = formData.get("intent");
+  const locale = formData.get("locale") === "ta" ? "ta" : "en";
 
-  let enResult;
-  if (intent === "publish") {
-    enResult = await payload.updateGlobal({ slug: "site-copy-content", data: { ...data, _status: "published" }, overrideAccess: true });
-  } else if (intent === "unpublish") {
-    enResult = await payload.updateGlobal({ slug: "site-copy-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
-  } else {
-    enResult = await payload.updateGlobal({ slug: "site-copy-content", data, draft: true, overrideAccess: true });
+  // Catches a save built from a stale page load (e.g. a locale tab left
+  // open since before someone else's edit) before it can silently
+  // overwrite whatever changed in the meantime — see staleness.ts.
+  const current = await payload.findGlobal({ slug: "site-copy-content", depth: 0, draft: true, overrideAccess: true });
+  if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
+    redirect(`/cms/settings/site-copy?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
   }
 
-  const taData = buildTaData(formData, enResult.reachUsPanels ?? []);
   if (intent === "publish") {
-    await payload.updateGlobal({ slug: "site-copy-content", locale: "ta", data: taData, overrideAccess: true });
+    await payload.updateGlobal({ slug: "site-copy-content", locale, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "site-copy-content", locale: "ta", data: taData, draft: false, overrideAccess: true });
+    await payload.updateGlobal({ slug: "site-copy-content", locale, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
-    await payload.updateGlobal({ slug: "site-copy-content", locale: "ta", data: taData, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "site-copy-content", locale, data, draft: true, overrideAccess: true });
   }
 
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Other Page Copy", `${action} the Notifications/Services hero copy and homepage panels`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/site-copy?saved=1");
+  redirect(`/cms/settings/site-copy?locale=${locale}&saved=1`);
 }

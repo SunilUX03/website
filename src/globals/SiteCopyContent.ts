@@ -30,7 +30,35 @@ export const SiteCopyContent: GlobalConfig = {
     { name: "governmentOrdersHero", type: "group", fields: pageHeroFields },
     { name: "policiesHero", type: "group", fields: pageHeroFields },
     { name: "mediaHero", type: "group", fields: pageHeroFields },
-    { name: "servicesHero", type: "group", fields: pageHeroFields },
+    // `servicesHero` (singular) was superseded when /services split into
+    // three standalone pages — replaced by one hero per page below rather
+    // than kept as a single orphaned field none of the three read.
+    { name: "citizenServicesHero", type: "group", fields: pageHeroFields },
+    { name: "initiativesProjectsHero", type: "group", fields: pageHeroFields },
+    { name: "reachUsHero", type: "group", fields: pageHeroFields },
+    {
+      name: "viewAllInitiativesButton",
+      type: "group",
+      admin: { description: 'The "View All Initiatives & Projects" button shown on every service/project detail page.' },
+      fields: [
+        { name: "label", type: "text", required: true, localized: true },
+        { name: "href", type: "text", required: true, admin: { description: "Where the button links to." } },
+      ],
+    },
+    {
+      name: "serviceDetailFooterHeadings",
+      type: "group",
+      admin: { description: "The last two sections on every service/project detail page (Explore More, Contact & Support) — shared across every item, not per-item." },
+      fields: [
+        { name: "exploreMoreEyebrow", type: "text", required: true, localized: true },
+        { name: "exploreMoreHeading", type: "text", required: true, localized: true },
+        { name: "supportEyebrow", type: "text", required: true, localized: true },
+        { name: "supportHeading", type: "text", required: true, localized: true },
+        { name: "helplineLabel", type: "text", required: true, localized: true },
+        { name: "emailLabel", type: "text", required: true, localized: true },
+        { name: "officeLabel", type: "text", required: true, localized: true },
+      ],
+    },
     {
       name: "reachUsPanels",
       type: "array",

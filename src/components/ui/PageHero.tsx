@@ -32,7 +32,7 @@ export function PageHero({
   eyebrow: string;
   heading: string;
   body: string;
-  cta?: { label: string; href: string; external?: boolean };
+  cta?: { label: string; href: string; external?: boolean; analyticsLabel?: string };
   graphic?: ReactNode;
   orbs: readonly [OrbPlacement, OrbPlacement];
   id?: string;
@@ -67,6 +67,7 @@ export function PageHero({
                   href={cta.href}
                   className="type-button btn-primary"
                   {...(cta.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(cta.analyticsLabel ? { "data-track": cta.analyticsLabel, "data-track-type": "conversion" } : {})}
                 >
                   {cta.label}
                 </a>

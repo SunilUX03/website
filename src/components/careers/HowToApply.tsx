@@ -1,21 +1,31 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import type { CmsCareersContent } from "@/lib/cms/careers-content";
+import type { Locale } from "@/lib/locale";
 
-export function HowToApply({ applicationSteps }: { applicationSteps: CmsCareersContent["applicationSteps"] }) {
+export function HowToApply({
+  applicationSteps,
+  section,
+  locale = "en",
+}: {
+  applicationSteps: CmsCareersContent["applicationSteps"];
+  section: CmsCareersContent["howToApplySection"];
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas-soft py-xxl md:py-section">
       <Container>
         <SectionHead
-          heading="How to Apply"
-          sub="A simple four step process to join our team."
+          heading={section.heading}
+          sub={section.sub}
           id="how-heading"
           align="center"
         />
 
         <ol
           className="grid gap-lg sm:grid-cols-2 lg:grid-cols-4"
-          aria-label="Application steps"
+          aria-label={isTa ? "விண்ணப்ப படிகள்" : "Application steps"}
         >
           {applicationSteps.map((step, i) => (
             <li

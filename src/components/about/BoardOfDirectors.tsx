@@ -1,8 +1,10 @@
 "use client";
 
 import type { CmsBoardContent } from "@/lib/cms/board-content";
+import type { CmsSectionHeading } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
+import type { Locale } from "@/lib/locale";
 
 function SeatCard({
   role,
@@ -28,12 +30,21 @@ function SeatCard({
   );
 }
 
-export function BoardOfDirectors({ board }: { board: CmsBoardContent }) {
+export function BoardOfDirectors({
+  board,
+  section,
+  locale = "en",
+}: {
+  board: CmsBoardContent;
+  section: CmsSectionHeading;
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Governing Board</p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Governing TNeGA&apos;s mission</h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{section.eyebrow}</p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">{section.heading}</h2>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SeatCard
@@ -50,15 +61,15 @@ export function BoardOfDirectors({ board }: { board: CmsBoardContent }) {
           />
         </div>
 
-        <p className="type-caption-uppercase mb-3 mt-8 text-[var(--color-muted)]">Members</p>
+        <p className="type-caption-uppercase mb-3 mt-8 text-[var(--color-muted)]">{isTa ? "உறுப்பினர்கள்" : "Members"}</p>
         <AutoCarousel>
-          {board.members.map((member) => (
+          {board.members.map((member, i) => (
             <div
-              key={member.title}
+              key={member.id ?? i}
               data-carousel-item
               className="w-3/4 max-w-[300px] shrink-0 snap-center sm:w-[280px]"
             >
-              <SeatCard role="Member" name={member.name} title={member.title} />
+              <SeatCard role={isTa ? "உறுப்பினர்" : "Member"} name={member.name} title={member.title} />
             </div>
           ))}
         </AutoCarousel>

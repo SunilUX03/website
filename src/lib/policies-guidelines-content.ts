@@ -15,38 +15,54 @@
 // both are kept as separate rows rather than guessing which one to drop.
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
+import type { Locale } from "@/lib/locale";
 
 export const heroOrbs = [
   { color: "sky", className: "-left-20 -top-20 h-[400px] w-[400px]" },
   { color: "rose", className: "-bottom-16 right-[100px] h-[360px] w-[360px]" },
 ] as const;
 
-export const tableHeaders = ["Title", "Ref No", "Date", "Category", "Download"];
+export function getTableHeaders(locale: Locale): string[] {
+  return locale === "ta"
+    ? ["தலைப்பு", "குறியீட்டு எண்", "தேதி", "வகை", "பதிவிறக்கு"]
+    : ["Title", "Ref No", "Date", "Category", "Download"];
+}
 
 /** Year and category options are derived from the rows themselves (see
  * lib/cms/policies.ts), not hand-listed here — a hardcoded list would
  * silently stop covering a new policy added through the CMS from a year
  * or category not already in this list. */
-export function buildFacets(rows: DocumentRow[]): DocumentFacet[] {
+export function buildFacets(rows: DocumentRow[], locale: Locale): DocumentFacet[] {
   const years = Array.from(new Set(rows.map((r) => r.facets.year).filter(Boolean))).sort((a, b) => Number(b) - Number(a));
   const cats = Array.from(new Set(rows.map((r) => r.facets.cat).filter(Boolean))).sort();
   return [
     {
       id: "year",
       kind: "select",
-      ariaLabel: "Filter by year",
+      ariaLabel: locale === "ta" ? "ஆண்டு வாரியாக வடிகட்டு" : "Filter by year",
       initial: "all",
-      options: [{ value: "all", label: "All Years" }, ...years.map((y) => ({ value: y, label: y }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து ஆண்டுகளும்" : "All Years" },
+        ...years.map((y) => ({ value: y, label: y })),
+      ],
     },
     {
       id: "cat",
       kind: "select",
-      ariaLabel: "Filter by category",
+      ariaLabel: locale === "ta" ? "வகை வாரியாக வடிகட்டு" : "Filter by category",
       initial: "all",
-      options: [{ value: "all", label: "All Categories" }, ...cats.map((c) => ({ value: c, label: c }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து வகைகளும்" : "All Categories" },
+        ...cats.map((c) => ({ value: c, label: c })),
+      ],
     },
   ];
 }
 
-export const searchPlaceholder = "Search policies and guidelines...";
-export const noResultsText = "No policies match your filters.";
+export function getSearchPlaceholder(locale: Locale): string {
+  return locale === "ta" ? "கொள்கைகள் & வழிகாட்டுதல்களைத் தேடுங்கள்..." : "Search policies and guidelines...";
+}
+
+export function getNoResultsText(locale: Locale): string {
+  return locale === "ta" ? "உங்கள் வடிகட்டிகளுடன் பொருந்தும் கொள்கைகள் இல்லை." : "No policies match your filters.";
+}

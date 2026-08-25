@@ -46,6 +46,7 @@ export const FooterContent: GlobalConfig = {
     },
     linkGroup("quickLinks", "Quick Links column."),
     linkGroup("citizenServices", "Citizen Services column."),
+    linkGroup("initiativesProjects", "Initiatives & Projects column."),
     linkGroup("helpSupport", "Help & Support column."),
   ],
 };

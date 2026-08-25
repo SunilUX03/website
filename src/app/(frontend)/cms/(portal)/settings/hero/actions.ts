@@ -5,64 +5,80 @@ import { redirect } from "next/navigation";
 import { getPayloadClient } from "@/lib/payload-client";
 import { requireSession } from "@/lib/portal/auth";
 import { logActivity } from "@/lib/portal/activity-log";
+import { uploadFile, resolveUploadValue } from "@/lib/portal/upload";
 import { parseRepeatable, str } from "@/lib/portal/form-utils";
+import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
-function buildData(formData: FormData) {
+// Every localized array field's rows are kept as full objects (id
+// included when present) all the way through, rather than collapsed to
+// plain strings — Payload keys each row's per-locale text by the row's
+// own id, so a row resubmitted without its id is treated as brand new
+// and the *other* locale's translation for that row is silently wiped.
+// See RepeatableRows.tsx / form-utils.ts's parseRepeatable for how the
+// id round-trips through the hidden input on each row.
+async function buildData(formData: FormData, existing: { mapImageId?: number; backgroundImageId?: number }) {
+  const agencyLabelCycleRows = parseRepeatable(formData, "agencyLabelCycle", ["text"]);
+  const headlineCycleWordRows = parseRepeatable(formData, "headlineCycleWords", ["word"]);
+
+  const mapImageFile = formData.get("mapImage") as File | null;
+  const mapImageId = await uploadFile("media", mapImageFile, "Hero map image");
+  const mapImageValue = resolveUploadValue(formData, "mapImage", mapImageId);
+
+  const backgroundImageFile = formData.get("backgroundImage") as File | null;
+  const backgroundImageId = await uploadFile("media", backgroundImageFile, "Hero background image");
+  const backgroundImageValue = resolveUploadValue(formData, "backgroundImage", backgroundImageId);
+
   return {
-    agencyLabelCycle: parseRepeatable(formData, "agencyLabelCycle", ["text"]) as { text: string }[],
+    agencyLabelCycle: agencyLabelCycleRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), text: r.text })),
     headlineTemplate: str(formData, "headlineTemplate"),
-    headlineCycleWords: parseRepeatable(formData, "headlineCycleWords", ["word", "taWord"]) as { word: string; taWord: string }[],
+    headlineCycleWords: headlineCycleWordRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), word: r.word })),
     tagline: str(formData, "tagline"),
-  };
-}
-
-// `withId` re-attaches the row id Payload just assigned on the EN write
-// (enWords, same order) to each Tamil row. Array rows share one id across
-// locales — submitting a Tamil-locale array update WITHOUT that id makes
-// Payload treat every row as brand new, silently deleting the English
-// locale data that lived on the old row. Always save EN first, then pass
-// its resulting headlineCycleWords in here before saving TA.
-function buildTaData(formData: FormData, words: { word: string; taWord: string }[], enWords: { id?: string | null }[]) {
-  return {
-    headlineTemplate: str(formData, "headlineTemplateTa"),
-    headlineCycleWords: words.map((w, i) => {
-      const id = enWords[i]?.id;
-      return id ? { id, word: w.taWord } : { word: w.taWord };
-    }),
-    tagline: str(formData, "taglineTa"),
+    mapImage: mapImageValue !== undefined ? mapImageValue : existing.mapImageId,
+    backgroundImage: backgroundImageValue !== undefined ? backgroundImageValue : existing.backgroundImageId,
   };
 }
 
 export async function updateHeroContent(formData: FormData) {
   const user = await requireSession();
   const payload = await getPayloadClient();
-  const data = buildData(formData);
   const intent = formData.get("intent");
+  const locale = formData.get("locale") === "ta" ? "ta" : "en";
+
+  // Catches a save built from a stale page load (e.g. a locale tab left
+  // open since before someone else's edit) before it can silently
+  // overwrite whatever changed in the meantime — see staleness.ts.
+  const current = await payload.findGlobal({ slug: "hero-content", depth: 0, draft: true, overrideAccess: true });
+  if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
+    redirect(`/cms/settings/hero?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
+  }
+
+  const data = await buildData(formData, {
+    mapImageId: typeof current.mapImage === "number" ? current.mapImage : current.mapImage?.id,
+    backgroundImageId: typeof current.backgroundImage === "number" ? current.backgroundImage : current.backgroundImage?.id,
+  });
+
+  if (!data.mapImage) {
+    redirect(`/cms/settings/hero?locale=${locale}&error=${encodeURIComponent("The map image is required.")}`);
+  }
 
   if (!data.headlineTemplate.includes("{word}")) {
-    redirect(`/cms/settings/hero?error=${encodeURIComponent('The headline must contain the placeholder "{word}" exactly once.')}`);
+    redirect(
+      `/cms/settings/hero?locale=${locale}&error=${encodeURIComponent('The headline must contain the placeholder "{word}" exactly once.')}`
+    );
   }
 
-  let enResult;
-  if (intent === "publish") {
-    enResult = await payload.updateGlobal({ slug: "hero-content", data: { ...data, _status: "published" }, overrideAccess: true });
-  } else if (intent === "unpublish") {
-    enResult = await payload.updateGlobal({ slug: "hero-content", data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
-  } else {
-    enResult = await payload.updateGlobal({ slug: "hero-content", data, draft: true, overrideAccess: true });
-  }
+  const finalData = { ...data, mapImage: data.mapImage! };
 
-  const taData = buildTaData(formData, data.headlineCycleWords, enResult.headlineCycleWords ?? []);
   if (intent === "publish") {
-    await payload.updateGlobal({ slug: "hero-content", locale: "ta", data: taData, overrideAccess: true });
+    await payload.updateGlobal({ slug: "hero-content", locale, data: { ...finalData, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.updateGlobal({ slug: "hero-content", locale: "ta", data: taData, draft: false, overrideAccess: true });
+    await payload.updateGlobal({ slug: "hero-content", locale, data: { ...finalData, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
-    await payload.updateGlobal({ slug: "hero-content", locale: "ta", data: taData, draft: true, overrideAccess: true });
+    await payload.updateGlobal({ slug: "hero-content", locale, data, draft: true, overrideAccess: true });
   }
 
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Homepage Hero", `${action} the homepage Hero`);
   revalidatePath("/", "layout");
-  redirect("/cms/settings/hero?saved=1");
+  redirect(`/cms/settings/hero?locale=${locale}&saved=1`);
 }

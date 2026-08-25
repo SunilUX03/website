@@ -1,6 +1,8 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { PillarsForm } from "./PillarsForm";
 import { updatePillars } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
 import type { Media } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
@@ -12,11 +14,12 @@ function bannerUrl(image: number | Media | null | undefined): string | undefined
 export default async function PillarsSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "pillars-content", depth: 1, draft: true, overrideAccess: true });
+  const doc = await payload.findGlobal({ slug: "pillars-content", locale, depth: 1, draft: true, overrideAccess: true });
   const pillars = doc.pillars ?? [];
   const existingImageIds = pillars.map((p) =>
     typeof p.bannerImage === "object" && p.bannerImage ? p.bannerImage.id : typeof p.bannerImage === "number" ? p.bannerImage : undefined
@@ -36,20 +39,24 @@ export default async function PillarsSettingsPage({
           {error}
         </p>
       ) : null}
-      {saved ? (
-        <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+
+      <LocaleTabs basePath="/cms/settings/pillars" current={locale} />
 
       <PillarsForm
+        key={locale}
         action={boundAction}
+        locale={locale}
         values={{
+          eyebrow: doc.eyebrow,
+          heading: doc.heading,
           pillars: Array.from({ length: 3 }, (_, i) => ({
+            id: pillars[i]?.id ?? undefined,
             title: pillars[i]?.title ?? "",
-            description: pillars[i]?.description ?? "",
             linkLabel: pillars[i]?.linkLabel ?? "",
             bannerImageUrl: bannerUrl(pillars[i]?.bannerImage),
           })),
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

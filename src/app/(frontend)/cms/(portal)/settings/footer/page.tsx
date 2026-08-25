@@ -1,23 +1,24 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { FooterContentForm } from "./FooterContentForm";
 import { updateFooterContent } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
+
+function rows(arr: { id?: string | null; label: string; href: string }[] | null | undefined) {
+  return (arr ?? []).map((r) => ({ id: r.id ?? undefined, label: r.label, href: r.href }));
+}
 
 export default async function FooterSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; locale?: string; error?: string }>;
 }) {
-  const { saved } = await searchParams;
+  const { saved, locale: localeParam, error } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const [doc, docTa] = await Promise.all([
-    payload.findGlobal({ slug: "footer-content", draft: true, overrideAccess: true }),
-    payload.findGlobal({ slug: "footer-content", locale: "ta", draft: true, overrideAccess: true }),
-  ]);
-
-  const zip = <T extends { label: string; href: string }>(en: T[] | null | undefined, ta: T[] | null | undefined) =>
-    (en ?? []).map((row, i) => ({ label: row.label, href: row.href, taLabel: ta?.[i]?.label ?? "" }));
+  const doc = await payload.findGlobal({ slug: "footer-content", locale, draft: true, overrideAccess: true });
 
   return (
     <div>
@@ -28,20 +29,25 @@ export default async function FooterSettingsPage({
         <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
       ) : null}
 
+      <LocaleTabs basePath="/cms/settings/footer" current={locale} />
+
       <FooterContentForm
+        key={locale}
         action={updateFooterContent}
+        locale={locale}
+        error={error}
         values={{
           description: doc.description,
-          descriptionTa: docTa.description ?? "",
           address: doc.address,
-          addressTa: docTa.address ?? "",
           phone: doc.phone,
           email: doc.email,
           socialLinks: doc.socialLinks ?? [],
-          quickLinks: zip(doc.quickLinks, docTa.quickLinks),
-          citizenServices: zip(doc.citizenServices, docTa.citizenServices),
-          helpSupport: zip(doc.helpSupport, docTa.helpSupport),
+          quickLinks: rows(doc.quickLinks),
+          citizenServices: rows(doc.citizenServices),
+          initiativesProjects: rows(doc.initiativesProjects),
+          helpSupport: rows(doc.helpSupport),
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

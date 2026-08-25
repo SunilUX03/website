@@ -7,6 +7,7 @@ import { requireSession } from "@/lib/portal/auth";
 import { logActivity } from "@/lib/portal/activity-log";
 import { uploadFile } from "@/lib/portal/upload";
 import { str } from "@/lib/portal/form-utils";
+import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
 async function buildData(formData: FormData) {
   const title = str(formData, "title");
@@ -45,19 +46,28 @@ export async function updatePolicy(id: number, formData: FormData) {
   const payload = await getPayloadClient();
   const data = await buildData(formData);
   const intent = formData.get("intent");
+  const locale = formData.get("locale") === "ta" ? "ta" : "en";
+
+  // Catches a save built from a stale page load (e.g. a locale tab left
+  // open since before someone else's edit) before it can silently
+  // overwrite whatever changed in the meantime — see staleness.ts.
+  const current = await payload.findByID({ collection: "policies", id, depth: 0, draft: true, overrideAccess: true });
+  if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
+    redirect(`/cms/policies/${id}/edit?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
+  }
 
   if (intent === "publish") {
-    await payload.update({ collection: "policies", id, data: { ...data, _status: "published" }, overrideAccess: true });
+    await payload.update({ collection: "policies", id, locale, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "policies", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
+    await payload.update({ collection: "policies", id, locale, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
-    await payload.update({ collection: "policies", id, data, draft: true, overrideAccess: true });
+    await payload.update({ collection: "policies", id, locale, data, draft: true, overrideAccess: true });
   }
 
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Policies & Guidelines", `${action} "${data.title}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/policies/${id}/edit?saved=1`);
+  redirect(`/cms/policies/${id}/edit?locale=${locale}&saved=1`);
 }
 
 export async function deletePolicy(id: number, title: string) {

@@ -6,21 +6,12 @@
 // makes Payload treat them as brand new, silently deleting the sibling
 // locale's data on the old row.
 //
-// STATUS as of 2026-08-21 (stopped mid-run at the user's request, safe
-// stopping point — no partial/corrupt writes, each doc update is atomic):
-//   Done:    all 10 remaining globals, announcements, awards, media-items,
-//            projects-spotlight, team-members, roll-of-honour, legal-pages,
-//            government-orders (182), policies (23), department-contacts
-//            (42), and services item id 1 (e-Sevai Portal) only.
-//   NOT done: services items 2–17 (Namma Arasu, Aadhaar Services, UMIS,
-//            TNSSP, e-Gazette, TNGIS, GRAINS, eOffice, Interdepartmental
-//            Consulting, DBT, TN DBT-PFMS, e-Sign, SMS/WhatsApp Gateway,
-//            IT Security Audit, Nambikkai Inaiyam) — the svcData map below
-//            already has full Tamil content for all of them, this script
-//            just hadn't finished writing it when stopped. Also not done:
-//            Announcement article body richtext (schema is localized,
-//            no Tamil written yet — out of scope of this script, not
-//            attempted at all).
+// STATUS as of 2026-08-21: everything in this script is done — all 10
+// remaining globals, all collections (announcements including article
+// body richtext, awards, media-items, projects-spotlight, team-members,
+// roll-of-honour, legal-pages, government-orders (182), policies (23),
+// department-contacts (42)), and all 16 services (1–12, 14–17; 13 has no
+// live document).
 // Safe to re-run in full: every write here is an idempotent upsert keyed
 // off the English document's own id/array-row ids.
 import { getPayload } from "payload";
@@ -289,10 +280,64 @@ async function main() {
   // ============================================================
 
   // --- announcements ---
-  const annData: Record<number, { heading: string; description: string; category: string; facts: string[] }> = {
-    4: { heading: "இ-சேவை உதவி மையம் ஆதரவு நேரத்தை விரிவுபடுத்துகிறது", description: "1800-42-56000 இப்போது மாநிலம் முழுவதும் உள்ள குடிமக்களுக்கு உதவ நீட்டிக்கப்பட்ட நேரங்களுடன் கிடைக்கிறது.", category: "சேவை புதுப்பிப்பு", facts: ["உதவி எண்", "மையங்கள்"] },
-    3: { heading: "தமிழ்நாடு செயற்கை நுண்ணறிவு பணியை தொடங்குகிறது (TN AI Mission)", description: "சுகாதாரம், விவசாயம், கல்வி, குடிமக்கள் சேவைகள் மற்றும் பலவற்றில் AI ஏற்பை முன்னெடுக்க தமிழ்நாடு செயற்கை நுண்ணறிவு பணியை (TN AI Mission) தமிழ்நாடு அறிவிக்கிறது, AI, குவாண்டம் ஆகியவற்றில் கவனம்.", category: "அறிவிப்புகள்", facts: ["கவன பகுதிகள்", "துறைகள்:", "மூலம்"] },
-    1: { heading: "டிஜிட்டல் அரசு: மக்களுக்கான எளிமையாக்கப்பட்ட சேவைகள் (இ-சேவை 2.0)", description: "அனைத்து இ-சேவை மையங்களும் இ-சேவை 2.0-க்கு மேம்படுத்தப்படும், அதிவேக இணையம், அதிக குடிமக்கள் நல சேவைகள், மற்றும் நம்ம அரசு WhatsApp சாட்பாட் 76 இலிருந்து 275 சேவைகளாக விரிவடையும்.", category: "அறிவிப்புகள்", facts: ["மேம்படுத்தல்", "சாட்பாட் விரிவாக்கம்", "மூலம்"] },
+  // Lexical richText shape for `body` — one paragraph node per string,
+  // matching the exact structure Payload's lexicalEditor() already wrote
+  // for the English body (root > children[paragraph] > children[text]).
+  function lexicalBody(paragraphs: string[]) {
+    return {
+      root: {
+        type: "root",
+        format: "" as const,
+        indent: 0,
+        version: 1,
+        direction: "ltr" as const,
+        children: paragraphs.map((text) => ({
+          type: "paragraph",
+          format: "" as const,
+          indent: 0,
+          version: 1,
+          direction: "ltr" as const,
+          children: [{ mode: "normal" as const, text, type: "text", style: "", detail: 0, format: 0, version: 1 }],
+        })),
+      },
+    };
+  }
+
+  const annData: Record<number, { heading: string; description: string; category: string; facts: string[]; body: string[] }> = {
+    4: {
+      heading: "இ-சேவை உதவி மையம் ஆதரவு நேரத்தை விரிவுபடுத்துகிறது",
+      description: "1800-42-56000 இப்போது மாநிலம் முழுவதும் உள்ள குடிமக்களுக்கு உதவ நீட்டிக்கப்பட்ட நேரங்களுடன் கிடைக்கிறது.",
+      category: "சேவை புதுப்பிப்பு",
+      facts: ["உதவி எண்", "மையங்கள்"],
+      body: [
+        "1800-42-56000 என்ற இ-சேவை உதவி எண் இப்போது மாநிலம் முழுவதும் உள்ள குடிமக்களுக்கு உதவ நீட்டிக்கப்பட்ட நேரங்களில் செயல்படுகிறது.",
+        "இ-சேவை என்பது தமிழ்நாட்டின் ஒருங்கிணைந்த டிஜிட்டல் சேவை வழங்கல் தளமாகும், இது 410 சேவைகளை ஆன்லைனிலும் மாநிலம் முழுவதும் உள்ள 34,843 உதவி மையங்கள் மூலமும் வழங்குகிறது. உதவி எண் இரு வழிகளையும் பயன்படுத்தும் குடிமக்களுக்கு ஆதரவளிக்கிறது.",
+      ],
+    },
+    3: {
+      heading: "தமிழ்நாடு செயற்கை நுண்ணறிவு பணியை தொடங்குகிறது (TN AI Mission)",
+      description: "சுகாதாரம், விவசாயம், கல்வி, குடிமக்கள் சேவைகள் மற்றும் பலவற்றில் AI ஏற்பை முன்னெடுக்க தமிழ்நாடு செயற்கை நுண்ணறிவு பணியை (TN AI Mission) தமிழ்நாடு அறிவிக்கிறது, AI, குவாண்டம் ஆகியவற்றில் கவனம்.",
+      category: "அறிவிப்புகள்",
+      facts: ["கவன பகுதிகள்", "துறைகள்:", "மூலம்"],
+      body: [
+        "தமிழ்நாடு அரசு, முக்கிய பொது சேவைத் துறைகள் முழுவதும் AI-இயக்கப்படும் தீர்வுகளை உட்பொதிக்கும் மாநிலம் தழுவிய முயற்சியான தமிழ்நாடு செயற்கை நுண்ணறிவு பணியை (TN AI Mission) அறிவித்துள்ளது.",
+        "இந்த பணி சுகாதாரம், விவசாயம், கல்வி மற்றும் குடிமக்கள் சேவைகளில் ஏற்பை முன்னுரிமையாகக் கொள்ளும், மேலும் தேவைக்கேற்ப நகர்ப்புற நிர்வாகம், சமூக நல நிர்வாகம் மற்றும் பிற துறைகளுக்கும் விரிவடையும்.",
+        "இந்த பணியின் ஒரு பகுதியாக, செயற்கை நுண்ணறிவு (AI), குவாண்டம் கம்ப்யூட்டிங், மற்றும் AVGC-XR (அனிமேஷன், விஷுவல் எஃபெக்ட்ஸ், கேமிங், காமிக்ஸ் மற்றும் விஸ்தரிக்கப்பட்ட யதார்த்தம்) ஆகிய மூன்று பகுதிகளில் வளர்ந்து வரும் தொழில்நுட்ப முயற்சிகளுக்கு அரசு சிறப்பு கவனம் செலுத்தும்.",
+        "இந்த முயற்சி தமிழ்நாடு பட்ஜெட் 2026-27-ன் ஒரு பகுதியாக அறிவிக்கப்பட்டது.",
+      ],
+    },
+    1: {
+      heading: "டிஜிட்டல் அரசு: மக்களுக்கான எளிமையாக்கப்பட்ட சேவைகள் (இ-சேவை 2.0)",
+      description: "அனைத்து இ-சேவை மையங்களும் இ-சேவை 2.0-க்கு மேம்படுத்தப்படும், அதிவேக இணையம், அதிக குடிமக்கள் நல சேவைகள், மற்றும் நம்ம அரசு WhatsApp சாட்பாட் 76 இலிருந்து 275 சேவைகளாக விரிவடையும்.",
+      category: "அறிவிப்புகள்",
+      facts: ["மேம்படுத்தல்", "சாட்பாட் விரிவாக்கம்", "மூலம்"],
+      body: [
+        "எளிமையாக்கப்பட்ட குடிமக்கள் சேவைகளுக்கான டிஜிட்டல் அரசு முயற்சிகளின் ஒரு பகுதியாக, தமிழ்நாடு முழுவதும் உள்ள அனைத்து தற்போதைய இ-சேவை மையங்களும் இ-சேவை 2.0-க்கு மேம்படுத்தப்படும்.",
+        "மேம்படுத்தப்பட்ட மையங்கள் அதிவேக இணைய இணைப்பு மற்றும் விரிவாக்கப்பட்ட குடிமக்கள் நல சேவைகளை வழங்கும், இது சேவை வழங்கலை வேகமாகவும் மேலும் அணுகக்கூடியதாகவும் ஆக்கும்.",
+        "நம்ம அரசு WhatsApp சாட்பாட்டும் பெரும் விரிவாக்கத்தைக் காணும், அதன் சேவை வரம்பு 76 சேவைகளிலிருந்து 275 சேவைகளாக வளரும்.",
+        "இந்த முயற்சி தமிழ்நாடு பட்ஜெட் 2026-27-ன் ஒரு பகுதியாக அறிவிக்கப்பட்டது.",
+      ],
+    },
   };
   const annEn = await payload.find({ collection: "announcements", locale: "en", limit: 500, overrideAccess: true });
   for (const doc of annEn.docs as any[]) {
@@ -307,6 +352,7 @@ async function main() {
         description: t.description,
         category: t.category,
         facts: zip(doc.facts, t.facts.map((label) => ({ label }))),
+        body: lexicalBody(t.body),
       },
       overrideAccess: true,
     });
@@ -592,13 +638,28 @@ async function main() {
     "Welfare of Differently Abled Persons": "மாற்றுத்திறனாளிகள் நலத் துறை",
     "Youth Welfare and Sports Development Department": "இளைஞர் நலன் மற்றும் விளையாட்டு மேம்பாட்டுத் துறை",
   };
-  const dcEn = await payload.find({ collection: "department-contacts", locale: "en", limit: 500, overrideAccess: true });
-  for (const doc of dcEn.docs as any[]) {
-    const ta = deptTa[doc.department];
-    if (!ta) continue;
-    await payload.update({ collection: "department-contacts", id: doc.id, locale: "ta", data: { department: ta }, overrideAccess: true });
-  }
-  log(`department-contacts ta done (${dcEn.docs.length} docs)`);
+  // department-contacts used to be its own collection; it's since been
+  // folded into this same services-to-government-content global as the
+  // departmentContacts array field (see 20260824_190000 migration), so
+  // its Tamil translation is now written there instead.
+  const dcEnRows = stgEn.departmentContacts ?? [];
+  await payload.updateGlobal({
+    slug: "services-to-government-content",
+    locale: "ta",
+    data: {
+      departmentContacts: zip(
+        dcEnRows,
+        dcEnRows.map((row) => ({
+          department: deptTa[row.department] ?? row.department,
+          contact: row.contact,
+          email: row.email,
+          phone: row.phone,
+        }))
+      ),
+    },
+    overrideAccess: true,
+  });
+  log(`departmentContacts ta done (${dcEnRows.length} rows)`);
 
   // --- services: the richest content surface (16 detail pages) ---
   type SvcTa = {
@@ -616,13 +677,11 @@ async function main() {
       aboutSecondParagraph?: string | null;
       calloutText?: string | null;
       aboutLinkModal?: { label?: string | null; title?: string | null; items?: string[] };
-      productTourCaption?: string | null;
       getStartedSteps?: { title: string; description: string }[];
       getStartedIntro?: string | null;
       getStartedOutro?: string | null;
       directLinkLabel?: string | null;
       ctaLabel?: string | null;
-      relatedCardStats?: string | null;
     };
   };
 
@@ -683,7 +742,6 @@ async function main() {
         ],
         aboutSecondParagraph: "குடிமக்கள் ஒரே WhatsApp எண்ணைச் சேமித்து, மின்சாரம், தண்ணீர் மற்றும் சொத்து வரி பில்களைச் செலுத்துவது உட்பட அனைத்து துறைகளிலும் தமிழ் மற்றும் ஆங்கிலத்தில் வழிகாட்டப்பட்ட, படிப்படியான ஓட்டத்தைப் பெறுகிறார்கள், இ-சேவை மற்றும் துறை தரவுத்தளங்களுடன் நிகழ்நேர ஒத்திசைவுடன். தேர்வு முடிவு நாட்கள் போன்ற உச்சபட்ச-போக்குவரத்து நிகழ்வுகளிலும் நிலையானதாக இருக்க தளம் வடிவமைக்கப்பட்டுள்ளது.",
         calloutText: "துறைகள் முழுவதும் குடிமக்களால் 4.1/5 என மதிப்பிடப்பட்டுள்ளது",
-        productTourCaption: "நம்ம அரசுவில் குடிமக்கள் ஒரு கோரிக்கையை எவ்வாறு தொடங்குகிறார்கள் என்பதைப் பார்க்கவும்",
         productTour: [{ alt: "நம்ம அரசு: உங்கள் விரல் நுனியில் அரசு, 3-படி காட்சி: இணையவும், துறையைத் தேர்ந்தெடுக்கவும், கோரிக்கையை முடிக்கவும்" }],
         getStartedSteps: [
           { title: "எண்ணைச் சேமிக்கவும்", description: "78452 52525-ஐ தொடர்பாக சேமிக்கவும்." },
@@ -812,8 +870,20 @@ async function main() {
         ],
         getStartedIntro: "இ-அரசிதழ் போர்ட்டல் விரைவில் தொடங்குகிறது. நேரலைக்கு வந்தவுடன், விண்ணப்பிப்பதில் இவை அடங்கும்:",
         getStartedOutro: "தொடக்க புதுப்பிப்புகளுக்கு இங்கே திரும்பிப் பாருங்கள் அல்லது TNeGA-வைத் தொடர்பு கொள்ளுங்கள்.",
-        relatedCardStats: "8 சேவை வகைகள் · ஆதார் & மின்கையொப்பம் ஒருங்கிணைக்கப்பட்டது · விரைவில் வருகிறது",
       },
+    },
+    // 7 and 8 (TNGIS, GRAINS) never had a `real` block in English, but
+    // still have real top-level name/description/stats that were missed
+    // in the first pass — added here now.
+    7: {
+      name: "TNGIS தமிழ் நிலம்",
+      description: "நிலப் பங்கு விவரங்கள், உரிமையாளர் பதிவுகள், வழிகாட்டுதல் மதிப்புகள், அருகிலுள்ள மருத்துவமனைகள், பள்ளிகள் மற்றும் ரேஷன் கடைகளைப் பெற வரைபடத்தில் எங்கு வேண்டுமானாலும் கிளிக் செய்யவும், அனைத்தும் ஒரே இடத்தில்.",
+      stats: "400+ புவிஇட அடுக்குகள் · tngis.tn.gov.in மூலம் பொது அணுகல்",
+    },
+    8: {
+      name: "GRAINS",
+      description: "தமிழ்நாடு முழுவதும் விவசாயிகள், நிலம் மற்றும் பயிர் விவரங்களின் ஒருங்கிணைந்த தரவுத்தளம், சரியான விவசாய நலன்கள் சரியான விவசாயிகளை துல்லியமாக சென்றடைவதை உறுதி செய்கிறது.",
+      stats: "விவசாயி · நிலம் · பயிர் தரவுத்தளம்",
     },
     9: {
       name: "இ-அலுவலகம்",
@@ -902,6 +972,75 @@ async function main() {
           { title: "உதவி பெறவும்", description: "எங்கள் குழு உங்களை சரியான வளத்திற்கு வழிநடத்தும் அல்லது உங்கள் சிக்கலை தீர்க்கும்." },
         ],
         directLinkLabel: "போர்ட்டலைத் திறக்கவும்",
+        // Official scheme names — kept verbatim rather than translated,
+        // matching how these formal instrument names are referred to in
+        // practice regardless of UI language. Required+localized field,
+        // so it still needs a real value per locale (see the productTour
+        // note above) — just not a re-wording.
+        aboutLinkModal: {
+          label: "50+ திட்டங்கள் உள்ளடக்கப்பட்டுள்ளன",
+          title: "DBT-ன் கீழ் உள்ளடக்கப்பட்ட திட்டங்கள்",
+          items: [
+            "KALAINGAR MAHALIR URIMAI THITTAM",
+            "Moovalur Ramamirtham Ammaiyar Higher Education Assurance Scheme (MRAHEAS) - PPS",
+            "ADW - State Scheme Girls Incentives Girls Transgenders (SC) (III to V)",
+            "ADW - State Scheme Girls Incentives Girls Transgenders (SC) (VI to VIII)",
+            "Prematric Scholarship for BC (TOPUP)",
+            "Prematric Scholarship for MBC & DNC (TOPUP)",
+            "Monthly Cash Assistance for Government School Boys Perceiving Higher Education (Tamizh Pudhalvan Scheme) - TPS",
+            "Maintenance Grant for Differently Abled",
+            "Muslim Girls Education Scholarship - WAKF Board",
+            "ADW - State Special Post Matric Scholarship",
+            "ADW - Tuition Fee Concession",
+            "Incentive Scheme for Rural Minority Girls Students of Std 3 to 6",
+            "Postmatric Scholarship for MBC & DNC (TOPUP)",
+            "Post Matric Scholarship for BC Students (TOPUP)",
+            "TW - Girls Incentive Scheme",
+            "TW - Higher Education Special Scholarship Scheme",
+            "TW - Free Education Concession Post Graduate (Girls)",
+            "TW - Free Education Concession Under Graduate Students",
+            "TW - Tuition Fee Concession to Law University Students",
+            "TW - Tuition Fee Concession to University Students",
+            "TW - Tamil Nadu Fellowship for Tribal Research",
+            "ADW - Skill Voucher Incentive Scheme",
+            "Anbu Karangal Scheme",
+            "Rural Girls Incentive Scheme for Most Backward Classes and Denotified Communities Girls Students of Std. III to Std. VI",
+            "ADW - Higher Education Special Scholarship",
+            "ADW - Free Education UG",
+            "ADW - Free Education PG",
+            "TNCWWB - Accidental Death and Funeral Assistance - Accidental Death at Work Place and Funeral Assistance",
+            "TNCWWB - Accidental Death and Funeral Assistance - Death at Other Than Work Place and Funeral Assistance",
+            "TNCWWB - Accidental Death and Funeral Assistance - Handicapped (Disability of Hand, Leg, Eyes)",
+            "TNCWWB - Natural Death and Funeral Assistance",
+            "TNCWWB - Old Age Pension (Above 60 Years)",
+            "TNCWWB - Spectacles Assistance",
+            "TNCWWB - Education Assistance - Professional PG Degree Day Scholar",
+            "TNCWWB - Education Assistance - Professional UG Degree Day Scholar",
+            "TNCWWB - Education Assistance - Arts and Science PG Degree Day Scholar",
+            "TNCWWB - Education Assistance - Arts and Science UG Degree Day Scholar",
+            "TNCWWB - Education Assistance - ITI or Polytechnic Day Scholar",
+            "TNCWWB - Education Assistance - 12th Std Passed (All Genders)",
+            "TNCWWB - Education Assistance - Pursuing 12th Std (Only Girls)",
+            "TNCWWB - Education Assistance - Pursuing 11th Std (Only Girls)",
+            "TNCWWB - Education Assistance - 10th Std Passed (All Genders)",
+            "TNCWWB - Education Assistance - Professional UG Degree Hosteller",
+            "TNCWWB - Education Assistance - Professional PG Degree Hosteller",
+            "TNCWWB - Education Assistance - Arts and Science UG Degree Hosteller",
+            "TNCWWB - Education Assistance - Arts and Science PG Degree Hosteller",
+            "TNCWWB - Education Assistance - Pursuing 10th Std (Only Girls)",
+            "TNCWWB - Education Assistance - ITI or Polytechnic Hosteller",
+            "TNCWWB - Maternity Assistance",
+            "TNCWWB - Maternity Assistance - Miscarriage / Abortion",
+            "TNCWWB - Marriage Assistance (Daughter)",
+            "TNCWWB - Marriage Assistance (Son)",
+            "TNCWWB - New Higher Education Scholarship Scheme",
+            "ADW - Ph.D. Incentive Scheme",
+            "GOI SC Post Matric and Pre Matric",
+            "GOI BC Post Matric and Pre Matric",
+            "GOI MBC Post Matric and Pre Matric",
+            "GOI ST Post Matric and Pre Matric",
+          ],
+        },
       },
     },
     12: {
@@ -976,7 +1115,6 @@ async function main() {
           { title: "இணைப்பை முடிக்கவும்", description: "தேவையான பதிவு மற்றும் ஒருங்கிணைப்பு படிகளை முடிக்கவும்." },
           { title: "இணைக்கப்படுங்கள்", description: "உங்கள் துறை தொடங்க மின்-கையொப்பம் குழுவுடன் இணைக்கப்படுகிறது." },
         ],
-        relatedCardStats: "27 துறைகள் இணைக்கப்பட்டுள்ளன · 4.35+ கோடி மின்-கையொப்பங்கள்",
       },
     },
     15: {
@@ -1063,14 +1201,12 @@ async function main() {
                 items: zip(enReal.aboutLinkModal?.items, (r.aboutLinkModal.items ?? []).map((value) => ({ value }))),
               }
             : undefined,
-          productTourCaption: r.productTourCaption,
           productTour: r.productTour ? zip(enReal.productTour, r.productTour) : undefined,
           getStartedSteps: zip(enReal.getStartedSteps, r.getStartedSteps ?? []),
           getStartedIntro: r.getStartedIntro,
           getStartedOutro: r.getStartedOutro,
           directLinkLabel: r.directLinkLabel,
           ctaLabel: r.ctaLabel,
-          relatedCardStats: r.relatedCardStats,
         },
       },
       overrideAccess: true,

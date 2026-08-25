@@ -1,24 +1,26 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { OrgChartForm } from "./OrgChartForm";
 import { updateOrgChart } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 
 export const dynamic = "force-dynamic";
 
 export default async function OrgChartSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "org-chart-content", draft: true, overrideAccess: true });
+  const doc = await payload.findGlobal({ slug: "org-chart-content", locale, draft: true, overrideAccess: true });
   const branches = doc.branches ?? [];
 
   return (
     <div>
       <h1 className="type-display-sm mb-1 text-ink">Organisation Structure</h1>
       <p className="type-body-sm mb-6 text-[var(--color-muted)]">
-        Labels only — the chart always has 2 top boxes and 6 branches; you can&apos;t add or remove branches here.
+        The chart always has 1 top box and 7 divisions — you can&apos;t add or remove divisions here, only their titles and staff lists.
       </p>
 
       {error ? (
@@ -26,22 +28,23 @@ export default async function OrgChartSettingsPage({
           {error}
         </p>
       ) : null}
-      {saved ? (
-        <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+
+      <LocaleTabs basePath="/cms/settings/org-chart" current={locale} />
 
       <OrgChartForm
+        key={locale}
         action={updateOrgChart}
+        locale={locale}
         values={{
-          topPrimary: doc.topPrimary,
-          topSecondary: doc.topSecondary,
-          branches: Array.from({ length: 6 }, (_, i) => ({
-            director: branches[i]?.director ?? "",
-            engineer: branches[i]?.engineer ?? "",
-            manager: branches[i]?.manager ?? "",
-            base: branches[i]?.base ?? "",
+          topLabel: doc.topLabel,
+          jceoLabel: doc.jceoLabel,
+          branches: Array.from({ length: 7 }, (_, i) => ({
+            title: branches[i]?.title ?? "",
+            subtitle: branches[i]?.subtitle ?? "",
+            nodes: branches[i]?.nodes?.map((n) => ({ id: n.id ?? undefined, label: n.label, sublabel: n.sublabel ?? "", muted: n.muted ?? false })) ?? [],
           })),
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

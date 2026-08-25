@@ -1,5 +1,7 @@
 import { FooterClient } from "./FooterClient";
 import { getFooterContent } from "@/lib/cms/footer";
+import { getSiteIdentity } from "@/lib/cms/site-identity";
+import { getLifetimePageviewCount } from "@/lib/analytics-query";
 import { getLocale } from "@/lib/locale";
 
 // Rendered directly by every page, same as TopNav — fetching here rather
@@ -7,6 +9,10 @@ import { getLocale } from "@/lib/locale";
 // migration to two files instead of every page in the app.
 export async function Footer() {
   const locale = await getLocale();
-  const footer = await getFooterContent(locale);
-  return <FooterClient footer={footer} />;
+  const [footer, identity, visitorCount] = await Promise.all([
+    getFooterContent(locale),
+    getSiteIdentity(),
+    getLifetimePageviewCount(),
+  ]);
+  return <FooterClient footer={footer} locale={locale} identity={identity} visitorCount={visitorCount} />;
 }

@@ -7,6 +7,7 @@
 
 import type { Facet } from "@/components/documents/FilterBar";
 import { type CmsMediaItem, yearOf } from "@/lib/cms/media-item-types";
+import type { Locale } from "@/lib/locale";
 
 export const heroOrbs = [
   { color: "mint", className: "-left-16 -top-24 h-[420px] w-[420px]" },
@@ -17,7 +18,7 @@ export const heroOrbs = [
  * Year options derived from the items themselves, so the dropdown can't
  * offer a year with no media or hide media from a year it forgot to list.
  */
-export function buildFacets(items: CmsMediaItem[]): Facet[] {
+export function buildFacets(items: CmsMediaItem[], locale: Locale): Facet[] {
   const years = Array.from(new Set(items.map((m) => yearOf(m.date)).filter(Boolean))).sort(
     (a, b) => Number(b) - Number(a)
   );
@@ -25,14 +26,28 @@ export function buildFacets(items: CmsMediaItem[]): Facet[] {
     {
       id: "year",
       kind: "select",
-      ariaLabel: "Filter by year",
+      ariaLabel: locale === "ta" ? "ஆண்டு வாரியாக வடிகட்டு" : "Filter by year",
       initial: "all",
-      options: [{ value: "all", label: "All Years" }, ...years.map((y) => ({ value: y, label: y }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து ஆண்டுகளும்" : "All Years" },
+        ...years.map((y) => ({ value: y, label: y })),
+      ],
     },
   ];
 }
 
-export const searchPlaceholder = "Search photos and videos...";
-export const searchAriaLabel = "Search photos and videos";
-export const filterBarLabel = "Filter media";
-export const noResultsText = "No media matches your filters.";
+export function getSearchPlaceholder(locale: Locale): string {
+  return locale === "ta" ? "புகைப்படங்கள் & வீடியோக்களைத் தேடுங்கள்..." : "Search photos and videos...";
+}
+
+export function getSearchAriaLabel(locale: Locale): string {
+  return locale === "ta" ? "புகைப்படங்கள் & வீடியோக்களைத் தேடுங்கள்" : "Search photos and videos";
+}
+
+export function getFilterBarLabel(locale: Locale): string {
+  return locale === "ta" ? "ஊடகத்தை வடிகட்டு" : "Filter media";
+}
+
+export function getNoResultsText(locale: Locale): string {
+  return locale === "ta" ? "உங்கள் வடிகட்டிகளுடன் பொருந்தும் ஊடகம் இல்லை." : "No media matches your filters.";
+}

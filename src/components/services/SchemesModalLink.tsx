@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import type { Locale } from "@/lib/locale";
 
 function ArrowIcon({ className }: { className?: string }) {
   return (
@@ -22,7 +23,18 @@ function CloseIcon() {
 /** Text link that opens a modal listing `items` — e.g. the About section's
  * "50+ schemes covered" link on the DBT detail page. Same modal shell as
  * WebInfoManagerModal, generic enough to reuse for any other item's list. */
-export function SchemesModalLink({ label, title, items }: { label: string; title: string; items: string[] }) {
+export function SchemesModalLink({
+  label,
+  title,
+  items,
+  locale = "en",
+}: {
+  label: string;
+  title: string;
+  items: string[];
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -70,12 +82,14 @@ export function SchemesModalLink({ label, title, items }: { label: string; title
                   <p id="schemes-modal-title" className="type-title-md text-ink">
                     {title}
                   </p>
-                  <p className="type-caption mt-0.5 text-[var(--color-muted)]">{items.length} schemes</p>
+                  <p className="type-caption mt-0.5 text-[var(--color-muted)]">
+                    {isTa ? `${items.length} திட்டங்கள்` : `${items.length} schemes`}
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Close"
+                  aria-label={isTa ? "மூடு" : "Close"}
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] hover:bg-[var(--color-surface-strong)] hover:text-ink"
                 >
                   <CloseIcon />
@@ -92,7 +106,7 @@ export function SchemesModalLink({ label, title, items }: { label: string; title
               </ol>
 
               <button type="button" onClick={() => setOpen(false)} className="type-button btn-outline mt-5 w-full shrink-0">
-                Close
+                {isTa ? "மூடு" : "Close"}
               </button>
             </motion.div>
           </>

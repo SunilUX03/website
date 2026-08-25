@@ -1,20 +1,21 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { HeroContentForm } from "./HeroContentForm";
 import { updateHeroContent } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
+import type { Media } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HeroSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, saved, locale: localeParam } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const [doc, docTa] = await Promise.all([
-    payload.findGlobal({ slug: "hero-content", draft: true, overrideAccess: true }),
-    payload.findGlobal({ slug: "hero-content", locale: "ta", draft: true, overrideAccess: true }),
-  ]);
+  const doc = await payload.findGlobal({ slug: "hero-content", locale, depth: 1, draft: true, overrideAccess: true });
 
   return (
     <div>
@@ -30,19 +31,21 @@ export default async function HeroSettingsPage({
         <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
       ) : null}
 
+      <LocaleTabs basePath="/cms/settings/hero" current={locale} />
+
       <HeroContentForm
+        key={locale}
         action={updateHeroContent}
+        locale={locale}
         values={{
-          agencyLabelCycle: doc.agencyLabelCycle?.map((r) => ({ text: r.text })) ?? [],
+          agencyLabelCycle: (doc.agencyLabelCycle ?? []).map((r) => ({ id: r.id ?? undefined, text: r.text })),
           headlineTemplate: doc.headlineTemplate,
-          headlineTemplateTa: docTa.headlineTemplate ?? "",
-          headlineCycleWords: (doc.headlineCycleWords ?? []).map((r, i) => ({
-            word: r.word,
-            taWord: docTa.headlineCycleWords?.[i]?.word ?? "",
-          })),
+          headlineCycleWords: (doc.headlineCycleWords ?? []).map((r) => ({ id: r.id ?? undefined, word: r.word })),
           tagline: doc.tagline,
-          taglineTa: docTa.tagline ?? "",
+          mapImageUrl: typeof doc.mapImage === "object" && doc.mapImage ? (doc.mapImage as Media).url ?? undefined : undefined,
+          backgroundImageUrl: typeof doc.backgroundImage === "object" && doc.backgroundImage ? (doc.backgroundImage as Media).url ?? undefined : undefined,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

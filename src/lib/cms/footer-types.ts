@@ -12,5 +12,6 @@ export type CmsFooterContent = {
   socialLinks: FooterLink[];
   quickLinks: FooterLink[];
   citizenServices: FooterLink[];
+  initiativesProjects: FooterLink[];
   helpSupport: FooterLink[];
 };

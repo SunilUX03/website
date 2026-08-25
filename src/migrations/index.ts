@@ -24,6 +24,30 @@ import * as migration_20260810_161500_add_social_posts from './20260810_161500_a
 import * as migration_20260820_190000_add_department_contacts_services_to_government from './20260820_190000_add_department_contacts_services_to_government';
 import * as migration_20260820_210000_add_localization_pilot from './20260820_210000_add_localization_pilot';
 import * as migration_20260821_070657_full_localization from './20260821_070657_full_localization';
+import * as migration_20260822_073750_add_name_localization from './20260822_073750_add_name_localization';
+import * as migration_20260822_144148_add_social_posts_text_localization from './20260822_144148_add_social_posts_text_localization';
+import * as migration_20260822_211410_redesign_org_chart_step1_drop from './20260822_211410_redesign_org_chart_step1_drop';
+import * as migration_20260822_211441_redesign_org_chart_step2_add from './20260822_211441_redesign_org_chart_step2_add';
+import * as migration_20260822_211719_org_chart_localize_top_label from './20260822_211719_org_chart_localize_top_label';
+import * as migration_20260822_212946_org_chart_add_jceo from './20260822_212946_org_chart_add_jceo';
+import * as migration_20260824_115500_site_copy_split_services_hero from './20260824_115500_site_copy_split_services_hero';
+import * as migration_20260824_130000_home_page_section_headings from './20260824_130000_home_page_section_headings';
+import * as migration_20260824_150000_about_page_section_headings from './20260824_150000_about_page_section_headings';
+import * as migration_20260824_160000_careers_section_headings from './20260824_160000_careers_section_headings';
+import * as migration_20260824_170000_add_citizen_services from './20260824_170000_add_citizen_services';
+import * as migration_20260824_180000_initiatives_projects_updates from './20260824_180000_initiatives_projects_updates';
+import * as migration_20260824_190000_services_to_government_department_contacts from './20260824_190000_services_to_government_department_contacts';
+import * as migration_20260824_200000_service_detail_editable_headings from './20260824_200000_service_detail_editable_headings';
+import * as migration_20260824_210000_services_form_simplification from './20260824_210000_services_form_simplification';
+import * as migration_20260825_100000_svcgov_table_column_headers from './20260825_100000_svcgov_table_column_headers';
+import * as migration_20260825_110000_social_posts_announcements_order from './20260825_110000_social_posts_announcements_order';
+import * as migration_20260825_120000_footer_initiatives_projects_column from './20260825_120000_footer_initiatives_projects_column';
+import * as migration_20260825_130000_add_feedback_submissions from './20260825_130000_add_feedback_submissions';
+import * as migration_20260825_140000_add_site_identity_and_site_map from './20260825_140000_add_site_identity_and_site_map';
+import * as migration_20260826_100000_hero_content_images from './20260826_100000_hero_content_images';
+import * as migration_20260826_140000_add_analytics_events from './20260826_140000_add_analytics_events';
+import * as migration_20260826_150000_legal_pages_cookie_policy from './20260826_150000_legal_pages_cookie_policy';
+import * as migration_20260826_160000_site_identity_favicon from './20260826_160000_site_identity_favicon';
 
 export const migrations = [
   {
@@ -154,6 +178,126 @@ export const migrations = [
   {
     up: migration_20260821_070657_full_localization.up,
     down: migration_20260821_070657_full_localization.down,
-    name: '20260821_070657_full_localization'
+    name: '20260821_070657_full_localization',
+  },
+  {
+    up: migration_20260822_073750_add_name_localization.up,
+    down: migration_20260822_073750_add_name_localization.down,
+    name: '20260822_073750_add_name_localization',
+  },
+  {
+    up: migration_20260822_144148_add_social_posts_text_localization.up,
+    down: migration_20260822_144148_add_social_posts_text_localization.down,
+    name: '20260822_144148_add_social_posts_text_localization',
+  },
+  {
+    up: migration_20260822_211410_redesign_org_chart_step1_drop.up,
+    down: migration_20260822_211410_redesign_org_chart_step1_drop.down,
+    name: '20260822_211410_redesign_org_chart_step1_drop',
+  },
+  {
+    up: migration_20260822_211441_redesign_org_chart_step2_add.up,
+    down: migration_20260822_211441_redesign_org_chart_step2_add.down,
+    name: '20260822_211441_redesign_org_chart_step2_add',
+  },
+  {
+    up: migration_20260822_211719_org_chart_localize_top_label.up,
+    down: migration_20260822_211719_org_chart_localize_top_label.down,
+    name: '20260822_211719_org_chart_localize_top_label',
+  },
+  {
+    up: migration_20260822_212946_org_chart_add_jceo.up,
+    down: migration_20260822_212946_org_chart_add_jceo.down,
+    name: '20260822_212946_org_chart_add_jceo'
+  },
+  {
+    up: migration_20260824_115500_site_copy_split_services_hero.up,
+    down: migration_20260824_115500_site_copy_split_services_hero.down,
+    name: '20260824_115500_site_copy_split_services_hero',
+  },
+  {
+    up: migration_20260824_130000_home_page_section_headings.up,
+    down: migration_20260824_130000_home_page_section_headings.down,
+    name: '20260824_130000_home_page_section_headings',
+  },
+  {
+    up: migration_20260824_150000_about_page_section_headings.up,
+    down: migration_20260824_150000_about_page_section_headings.down,
+    name: '20260824_150000_about_page_section_headings',
+  },
+  {
+    up: migration_20260824_160000_careers_section_headings.up,
+    down: migration_20260824_160000_careers_section_headings.down,
+    name: '20260824_160000_careers_section_headings',
+  },
+  {
+    up: migration_20260824_170000_add_citizen_services.up,
+    down: migration_20260824_170000_add_citizen_services.down,
+    name: '20260824_170000_add_citizen_services',
+  },
+  {
+    up: migration_20260824_180000_initiatives_projects_updates.up,
+    down: migration_20260824_180000_initiatives_projects_updates.down,
+    name: '20260824_180000_initiatives_projects_updates',
+  },
+  {
+    up: migration_20260824_190000_services_to_government_department_contacts.up,
+    down: migration_20260824_190000_services_to_government_department_contacts.down,
+    name: '20260824_190000_services_to_government_department_contacts',
+  },
+  {
+    up: migration_20260824_200000_service_detail_editable_headings.up,
+    down: migration_20260824_200000_service_detail_editable_headings.down,
+    name: '20260824_200000_service_detail_editable_headings',
+  },
+  {
+    up: migration_20260824_210000_services_form_simplification.up,
+    down: migration_20260824_210000_services_form_simplification.down,
+    name: '20260824_210000_services_form_simplification',
+  },
+  {
+    up: migration_20260825_100000_svcgov_table_column_headers.up,
+    down: migration_20260825_100000_svcgov_table_column_headers.down,
+    name: '20260825_100000_svcgov_table_column_headers',
+  },
+  {
+    up: migration_20260825_110000_social_posts_announcements_order.up,
+    down: migration_20260825_110000_social_posts_announcements_order.down,
+    name: '20260825_110000_social_posts_announcements_order',
+  },
+  {
+    up: migration_20260825_120000_footer_initiatives_projects_column.up,
+    down: migration_20260825_120000_footer_initiatives_projects_column.down,
+    name: '20260825_120000_footer_initiatives_projects_column',
+  },
+  {
+    up: migration_20260825_130000_add_feedback_submissions.up,
+    down: migration_20260825_130000_add_feedback_submissions.down,
+    name: '20260825_130000_add_feedback_submissions',
+  },
+  {
+    up: migration_20260825_140000_add_site_identity_and_site_map.up,
+    down: migration_20260825_140000_add_site_identity_and_site_map.down,
+    name: '20260825_140000_add_site_identity_and_site_map',
+  },
+  {
+    up: migration_20260826_100000_hero_content_images.up,
+    down: migration_20260826_100000_hero_content_images.down,
+    name: '20260826_100000_hero_content_images',
+  },
+  {
+    up: migration_20260826_140000_add_analytics_events.up,
+    down: migration_20260826_140000_add_analytics_events.down,
+    name: '20260826_140000_add_analytics_events',
+  },
+  {
+    up: migration_20260826_150000_legal_pages_cookie_policy.up,
+    down: migration_20260826_150000_legal_pages_cookie_policy.down,
+    name: '20260826_150000_legal_pages_cookie_policy',
+  },
+  {
+    up: migration_20260826_160000_site_identity_favicon.up,
+    down: migration_20260826_160000_site_identity_favicon.down,
+    name: '20260826_160000_site_identity_favicon',
   },
 ];

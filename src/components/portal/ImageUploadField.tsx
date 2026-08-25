@@ -11,6 +11,14 @@ function PlusIcon() {
   );
 }
 
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden>
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // Vercel Functions hard-reject any request body over 4.5MB at the
 // platform level (before the app even runs) — a form combining several
 // of these fields (see ServiceForm's product tour) must stay well under
@@ -32,6 +40,7 @@ export function ImageUploadField({
   idealSize,
   required = false,
   aspect = "h-32 w-52",
+  shape = "rounded",
 }: {
   name: string;
   currentUrl?: string;
@@ -41,22 +50,54 @@ export function ImageUploadField({
    * 13:8-ish landscape box that suits both the hero photo and product
    * tour slots. */
   aspect?: string;
+  /** "circle" for a round avatar crop (team member / leader photos) —
+   * kept as a separate prop rather than baked into `aspect` since the
+   * corner-radius class needs to fully replace, not just append to, the
+   * default rounded-lg. */
+  shape?: "rounded" | "circle";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [sizeError, setSizeError] = useState<string | null>(null);
+  // Tracks an explicit "remove" click, distinct from simply never having
+  // picked a file — the server action needs to tell "admin didn't touch
+  // this field" (keep whatever's saved) apart from "admin cleared it"
+  // (null the field out), which a bare empty file input can't express on
+  // its own. Reset to false the moment a new file is chosen, since
+  // picking a replacement supersedes the removal.
+  const [removed, setRemoved] = useState(false);
 
-  const displayUrl = previewUrl ?? currentUrl;
+  const displayUrl = previewUrl ?? (removed ? null : currentUrl);
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className={`group relative overflow-hidden rounded-lg border border-hairline bg-canvas-soft ${aspect}`}>
+      <div className={`group relative overflow-hidden ${shape === "circle" ? "rounded-full" : "rounded-lg"} border border-hairline bg-canvas-soft ${aspect}`}>
         {displayUrl ? (
           <Image src={displayUrl} alt="" fill unoptimized={Boolean(previewUrl)} className="object-cover" />
         ) : (
           <div className="type-caption flex h-full items-center justify-center text-[var(--color-muted)]">No photo yet</div>
         )}
+        {displayUrl ? (
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl((old) => {
+                if (old) URL.revokeObjectURL(old);
+                return null;
+              });
+              setFileName(null);
+              setSizeError(null);
+              setRemoved(true);
+              if (inputRef.current) inputRef.current.value = "";
+            }}
+            aria-label="Remove photo"
+            title="Remove photo"
+            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white shadow-[0_2px_8px_rgba(12,10,9,0.3)] transition-colors hover:bg-black/80"
+          >
+            <CloseIcon />
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -83,6 +124,7 @@ export function ImageUploadField({
             return;
           }
           setSizeError(null);
+          setRemoved(false);
           setPreviewUrl((old) => {
             if (old) URL.revokeObjectURL(old);
             return URL.createObjectURL(file);
@@ -90,11 +132,17 @@ export function ImageUploadField({
           setFileName(file.name);
         }}
       />
+      {/* Read by the server action alongside the file input: a new file
+          always wins, otherwise this tells it to null the field out
+          instead of leaving the existing photo untouched. */}
+      <input type="hidden" name={`${name}Removed`} value={removed && !previewUrl ? "1" : ""} />
 
       {fileName ? (
         <p className="type-caption font-medium text-[var(--color-primary-blue)]">
           Selected &quot;{fileName}&quot; — will replace the current photo when you save.
         </p>
+      ) : removed ? (
+        <p className="type-caption font-medium text-[var(--color-error)]">Photo will be removed when you save.</p>
       ) : null}
       {sizeError ? <p className="type-caption font-medium text-[var(--color-error)]">{sizeError}</p> : null}
       {idealSize ? <p className="type-caption text-[var(--color-muted)]">Ideal size: {idealSize}</p> : null}

@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import clsx from "clsx";
-
-/**
- * ─────────────────────────────────────────────────────────────────────
- * NOTE — same situation as ApplicationForm.tsx: this validates on the
- * client and shows a success state, but doesn't submit anywhere yet.
- * Before this goes live, handleSubmit needs to POST to a real endpoint
- * (a Route Handler under src/app/api/, or a Server Action) and the
- * success panel should only render after that call resolves.
- * ─────────────────────────────────────────────────────────────────────
- */
+import type { Locale } from "@/lib/locale";
+import { submitFeedback } from "@/app/(frontend)/feedback/actions";
+import { trackConversion } from "@/lib/analytics-client";
 
 type Errors = Partial<Record<"name" | "email" | "comments", string>>;
 
@@ -19,28 +12,51 @@ const inputBase =
   "h-11 w-full rounded-md border bg-surface-card px-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-[var(--color-muted-soft)] focus:border-ink";
 
 const SUBJECT_OPTIONS = ["Website", "A service or portal", "Content accuracy", "Other"];
+const SUBJECT_OPTIONS_TA: Record<string, string> = {
+  Website: "இணையதளம்",
+  "A service or portal": "ஒரு சேவை அல்லது போர்ட்டல்",
+  "Content accuracy": "உள்ளடக்க துல்லியம்",
+  Other: "பிற",
+};
 
-export function FeedbackForm() {
+export function FeedbackForm({ locale = "en" }: { locale?: Locale }) {
+  const isTa = locale === "ta";
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const next: Errors = {};
 
     const name = String(data.get("name") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
+    const subject = String(data.get("subject") ?? "").trim();
     const comments = String(data.get("comments") ?? "").trim();
 
-    if (!name) next.name = "Please enter your name.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = "Please enter a valid email address.";
-    if (!comments) next.comments = "Please share your feedback.";
+    if (!name) next.name = isTa ? "உங்கள் பெயரை உள்ளிடவும்." : "Please enter your name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      next.email = isTa ? "செல்லுபடியாகும் மின்னஞ்சல் முகவரியை உள்ளிடவும்." : "Please enter a valid email address.";
+    if (!comments) next.comments = isTa ? "உங்கள் கருத்தைப் பகிரவும்." : "Please share your feedback.";
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
-    // TODO: send `data` to a real endpoint before showing success.
+    setSubmitting(true);
+    setSubmitError(null);
+    const result = await submitFeedback({ name, email, subject, comments, locale });
+    setSubmitting(false);
+    if (!result.ok) {
+      setSubmitError(
+        isTa
+          ? "உங்கள் கருத்தை அனுப்ப முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்."
+          : "We couldn't submit your feedback. Please try again."
+      );
+      return;
+    }
+    trackConversion("feedback_submitted");
     setSubmitted(true);
   }
 
@@ -52,24 +68,33 @@ export function FeedbackForm() {
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p className="type-title-md text-ink">Thank you for your feedback.</p>
-        <p className="type-body-sm text-[var(--color-muted)]">We read every submission and will get back to you if a reply is needed.</p>
+        <p className="type-title-md text-ink">{isTa ? "உங்கள் கருத்துக்கு நன்றி." : "Thank you for your feedback."}</p>
+        <p className="type-body-sm text-[var(--color-muted)]">
+          {isTa
+            ? "ஒவ்வொரு பதிவையும் நாங்கள் படிக்கிறோம், பதில் தேவைப்பட்டால் உங்களைத் தொடர்பு கொள்வோம்."
+            : "We read every submission and will get back to you if a reply is needed."}
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate aria-label="Feedback form" className="flex flex-col gap-5 rounded-xl border border-hairline bg-surface-card p-6 md:p-8">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label={isTa ? "கருத்துப் படிவம்" : "Feedback form"}
+      className="flex flex-col gap-5 rounded-xl border border-hairline bg-surface-card p-6 md:p-8"
+    >
       <div className="flex flex-col gap-1.5">
         <label htmlFor="name" className="type-caption-uppercase text-[var(--color-muted)]">
-          Name
+          {isTa ? "பெயர்" : "Name"}
         </label>
         <input
           id="name"
           name="name"
           type="text"
           autoComplete="name"
-          placeholder="Your full name"
+          placeholder={isTa ? "உங்கள் முழுப்பெயர்" : "Your full name"}
           aria-invalid={Boolean(errors.name)}
           className={clsx(inputBase, errors.name ? "border-[var(--color-error)]" : "border-hairline-strong")}
         />
@@ -78,7 +103,7 @@ export function FeedbackForm() {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="type-caption-uppercase text-[var(--color-muted)]">
-          Email address
+          {isTa ? "மின்னஞ்சல் முகவரி" : "Email address"}
         </label>
         <input
           id="email"
@@ -94,7 +119,7 @@ export function FeedbackForm() {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="subject" className="type-caption-uppercase text-[var(--color-muted)]">
-          Subject
+          {isTa ? "பொருள்" : "Subject"}
         </label>
         <select
           id="subject"
@@ -108,7 +133,7 @@ export function FeedbackForm() {
         >
           {SUBJECT_OPTIONS.map((option) => (
             <option key={option} value={option}>
-              {option}
+              {isTa ? SUBJECT_OPTIONS_TA[option] : option}
             </option>
           ))}
         </select>
@@ -116,13 +141,13 @@ export function FeedbackForm() {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="comments" className="type-caption-uppercase text-[var(--color-muted)]">
-          Comments
+          {isTa ? "கருத்துகள்" : "Comments"}
         </label>
         <textarea
           id="comments"
           name="comments"
           rows={5}
-          placeholder="Tell us what's on your mind"
+          placeholder={isTa ? "உங்கள் மனதில் உள்ளதைச் சொல்லுங்கள்" : "Tell us what's on your mind"}
           aria-invalid={Boolean(errors.comments)}
           className={clsx(
             "w-full rounded-md border bg-surface-card px-3.5 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-[var(--color-muted-soft)] focus:border-ink",
@@ -132,8 +157,12 @@ export function FeedbackForm() {
         {errors.comments && <p role="alert" className="type-caption text-[var(--color-error)]">{errors.comments}</p>}
       </div>
 
-      <button type="submit" className="type-button btn-primary h-12 w-full text-base">
-        Submit Feedback
+      {submitError ? (
+        <p role="alert" className="type-caption text-[var(--color-error)]">{submitError}</p>
+      ) : null}
+
+      <button type="submit" disabled={submitting} className="type-button btn-primary h-12 w-full text-base disabled:cursor-not-allowed disabled:opacity-60">
+        {submitting ? (isTa ? "அனுப்புகிறது…" : "Submitting…") : isTa ? "கருத்தைச் சமர்ப்பிக்கவும்" : "Submit Feedback"}
       </button>
     </form>
   );

@@ -12,6 +12,7 @@ import {
 } from "@/components/rti/RtiSections";
 import { heroOrbs } from "@/lib/rti-content";
 import { getRtiContent } from "@/lib/cms/rti-content";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Right to Information (RTI) | TNeGA",
@@ -22,13 +23,21 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Rti() {
-  const rti = await getRtiContent();
+  const locale = await getLocale();
+  const rti = await getRtiContent(locale);
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Notifications" }, { label: "RTI" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "தகவல் அறியும் உரிமை" : "RTI" },
+          ]}
+        />
         <PageHero
           eyebrow={rti.hero.eyebrow}
           heading={rti.hero.heading}
@@ -36,9 +45,9 @@ export default async function Rti() {
           orbs={heroOrbs}
           graphic={<RtiGraphic />}
         />
-        <KeyContacts contacts={rti.contacts} />
-        <DisclosureTable disclosures={rti.disclosures} />
-        <HowToFileRti howToFile={rti.howToFile} />
+        <KeyContacts contacts={rti.contacts} locale={locale} />
+        <DisclosureTable disclosures={rti.disclosures} locale={locale} />
+        <HowToFileRti howToFile={rti.howToFile} locale={locale} />
       </main>
       <Footer />
       <ScrollToTop />

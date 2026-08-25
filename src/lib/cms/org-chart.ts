@@ -1,24 +1,25 @@
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload-client";
 import type { CmsOrgChart } from "@/lib/cms/about-types";
+import type { Locale } from "@/lib/locale";
 
-export type { CmsOrgChart, CmsOrgChartBranch } from "@/lib/cms/about-types";
+export type { CmsOrgChart, CmsOrgChartBranch, CmsOrgChartNode } from "@/lib/cms/about-types";
 
-const EMPTY: CmsOrgChart = { top: [], branches: [] };
+const EMPTY: CmsOrgChart = { topLabel: "", jceoLabel: "", branches: [] };
 
 export const getOrgChart = unstable_cache(
-  async (): Promise<CmsOrgChart> => {
+  async (locale: Locale = "en"): Promise<CmsOrgChart> => {
     const payload = await getPayloadClient();
-    const doc = await payload.findGlobal({ slug: "org-chart-content", depth: 0, overrideAccess: false });
+    const doc = await payload.findGlobal({ slug: "org-chart-content", locale, depth: 0, overrideAccess: false });
     if (!doc) return EMPTY;
     return {
-      top: [doc.topPrimary, doc.topSecondary].filter(Boolean),
+      topLabel: doc.topLabel,
+      jceoLabel: doc.jceoLabel,
       branches:
         doc.branches?.map((b) => ({
-          director: b.director,
-          engineer: b.engineer || null,
-          manager: b.manager,
-          base: b.base,
+          title: b.title,
+          subtitle: b.subtitle,
+          nodes: b.nodes?.map((n) => ({ label: n.label, sublabel: n.sublabel || null, muted: n.muted ?? false })) ?? [],
         })) ?? [],
     };
   },

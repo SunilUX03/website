@@ -1,7 +1,9 @@
 export type CmsMetric = {
-  value: number;
-  decimals?: number;
-  prefix: string;
-  suffix: string;
+  metric: string;
   label: string;
+};
+
+export type CmsMetricsContent = {
+  heading: string;
+  metrics: CmsMetric[];
 };

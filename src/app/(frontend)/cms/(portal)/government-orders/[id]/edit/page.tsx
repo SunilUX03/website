@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/portal/auth";
 import { GovernmentOrderForm } from "../../GovernmentOrderForm";
 import { updateGovernmentOrder, deleteGovernmentOrder } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 import type { Document as PayloadDocument } from "@/payload-types";
 
 export default async function EditGovernmentOrderPage({
@@ -11,14 +12,15 @@ export default async function EditGovernmentOrderPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; locale?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { locale: localeParam, error } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "government-orders", id: Number(id), depth: 1, draft: true, overrideAccess: true })
+    .findByID({ collection: "government-orders", id: Number(id), locale, depth: 1, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -41,18 +43,21 @@ export default async function EditGovernmentOrderPage({
         ) : null}
       </div>
 
-      {saved ? (
-        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+      <LocaleTabs basePath={`/cms/government-orders/${id}/edit`} current={locale} />
 
       <GovernmentOrderForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
+        error={error}
         values={{
           title: doc.title,
           year: doc.year,
           department: doc.department,
+          fileName: typeof doc.file === "object" && doc.file ? (doc.file as PayloadDocument).filename ?? undefined : undefined,
           fileUrl: typeof doc.file === "object" && doc.file ? (doc.file as PayloadDocument).url ?? undefined : undefined,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

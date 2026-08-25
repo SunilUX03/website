@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { CountUp } from "@/components/ui/CountUp";
 import { useReducedMotion, useIsDesktop } from "@/lib/hooks";
+import type { Locale } from "@/lib/locale";
 
 type Project = CmsProjectSpotlight;
 
@@ -68,7 +69,8 @@ function SpotlightContent({ project, active }: { project: Project; active: boole
 
 const SLIDE_DURATION_MS = 2500;
 
-function DesktopSpotlight({ projects }: { projects: Project[] }) {
+function DesktopSpotlight({ projects, locale = "en" }: { projects: Project[]; locale?: Locale }) {
+  const isTa = locale === "ta";
   const [active, setActive] = useState(0);
   const [hovering, setHovering] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -122,7 +124,7 @@ function DesktopSpotlight({ projects }: { projects: Project[] }) {
             key={p.id}
             type="button"
             onClick={() => setActive(i)}
-            aria-label={`Go to ${p.name}`}
+            aria-label={isTa ? `${p.name}-க்குச் செல்லவும்` : `Go to ${p.name}`}
             aria-current={i === active}
             className={`h-1 rounded-full transition-all duration-300 ${
               i === active ? "w-6 bg-white" : "w-2 bg-white/45 hover:bg-white/70"
@@ -136,7 +138,7 @@ function DesktopSpotlight({ projects }: { projects: Project[] }) {
         <button
           type="button"
           onClick={() => go(-1)}
-          aria-label="Previous project"
+          aria-label={isTa ? "முந்தைய திட்டம்" : "Previous project"}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25"
         >
           ←
@@ -144,7 +146,7 @@ function DesktopSpotlight({ projects }: { projects: Project[] }) {
         <button
           type="button"
           onClick={() => go(1)}
-          aria-label="Next project"
+          aria-label={isTa ? "அடுத்த திட்டம்" : "Next project"}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25"
         >
           →
@@ -156,7 +158,8 @@ function DesktopSpotlight({ projects }: { projects: Project[] }) {
 
 const STORY_DURATION = 4000;
 
-function MobileSpotlight({ projects }: { projects: Project[] }) {
+function MobileSpotlight({ projects, locale = "en" }: { projects: Project[]; locale?: Locale }) {
+  const isTa = locale === "ta";
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -238,13 +241,13 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
         {/* tap zones */}
         <button
           type="button"
-          aria-label="Previous project"
+          aria-label={isTa ? "முந்தைய திட்டம்" : "Previous project"}
           className="absolute inset-y-0 left-0 z-10 w-1/2"
           onClick={() => goTo(active - 1)}
         />
         <button
           type="button"
-          aria-label="Next project"
+          aria-label={isTa ? "அடுத்த திட்டம்" : "Next project"}
           className="absolute inset-y-0 right-0 z-10 w-1/2"
           onClick={() => goTo(active + 1)}
         />
@@ -289,7 +292,7 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
             onClick={() => setDescExpanded(true)}
             className="type-caption mb-4 font-semibold text-[var(--color-primary-blue)] hover:underline"
           >
-            Read More
+            {isTa ? "மேலும் படிக்க" : "Read More"}
           </button>
         )}
 
@@ -316,8 +319,9 @@ function MobileSpotlight({ projects }: { projects: Project[] }) {
   );
 }
 
-export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
+export function ProjectsSpotlight({ projects, locale = "en" }: { projects: Project[]; locale?: Locale }) {
   const isDesktop = useIsDesktop();
+  const isTa = locale === "ta";
 
   // DesktopSpotlight/MobileSpotlight both index into projects[active] and
   // take `% projects.length` unconditionally — safe for any count above
@@ -334,10 +338,10 @@ export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
-              Projects Spotlight
+              {isTa ? "திட்ட சிறப்பம்சங்கள்" : "Projects Spotlight"}
             </p>
             <h2 className="type-display-lg max-w-2xl text-ink">
-              A few projects worth viewing
+              {isTa ? "பார்க்க வேண்டிய சில திட்டங்கள்" : "A few projects worth viewing"}
             </h2>
           </div>
           {/* Two separate links, not one class swapped by breakpoint: the
@@ -347,19 +351,19 @@ export function ProjectsSpotlight({ projects }: { projects: Project[] }) {
               link — matching the Scroller ticker's "View all →" — since
               the full button was wide enough to wrap below the heading. */}
           <Link href="/initiatives-projects" className="type-button btn-outline hidden shrink-0 md:inline-flex">
-            View all Initiatives &amp; Projects
+            {isTa ? "அனைத்து முயற்சிகள் & திட்டங்களையும் காண்க" : "View all Initiatives & Projects"}
           </Link>
           <Link
             href="/initiatives-projects"
             className="type-caption shrink-0 whitespace-nowrap font-semibold text-[var(--color-primary-blue)] hover:underline md:hidden"
           >
-            View all Initiatives &amp; Projects
+            {isTa ? "அனைத்து முயற்சிகள் & திட்டங்களையும் காண்க" : "View all Initiatives & Projects"}
             <span aria-hidden>{" →"}</span>
           </Link>
         </div>
 
-        {isDesktop === true && <DesktopSpotlight projects={projects} />}
-        {isDesktop === false && <MobileSpotlight projects={projects} />}
+        {isDesktop === true && <DesktopSpotlight projects={projects} locale={locale} />}
+        {isDesktop === false && <MobileSpotlight projects={projects} locale={locale} />}
       </Container>
     </section>
   );

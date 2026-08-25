@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { getAnnouncementBySlug, getAnnouncements } from "@/lib/cms/announcements";
+import { getLocale } from "@/lib/locale";
 
 /**
  * Individual announcement page.
@@ -69,10 +70,12 @@ function ArrowIcon() {
 
 export default async function AnnouncementPage({ params }: Params) {
   const { slug } = await params;
-  const announcement = await getAnnouncementBySlug(slug);
+  const locale = await getLocale();
+  const isTa = locale === "ta";
+  const announcement = await getAnnouncementBySlug(slug, locale);
   if (!announcement) notFound();
 
-  const allAnnouncements = await getAnnouncements();
+  const allAnnouncements = await getAnnouncements(locale);
   const related = allAnnouncements.filter((a) => a.slug !== announcement.slug).slice(0, 2);
 
   return (
@@ -81,9 +84,10 @@ export default async function AnnouncementPage({ params }: Params) {
 
       <main className="flex-1" id="main-content">
         <Breadcrumb
+          locale={locale}
           items={[
-            { label: "Notifications" },
-            { label: "Announcements", href: "/notifications/announcements" },
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "அறிவிப்புகள்" : "Announcements", href: "/notifications/announcements" },
             { label: announcement.heading },
           ]}
         />
@@ -106,7 +110,7 @@ export default async function AnnouncementPage({ params }: Params) {
               className="type-body-sm group mb-lg inline-flex items-center gap-xs text-[var(--color-primary-blue)] transition-colors hover:text-[var(--color-primary-blue-active)]"
             >
               <BackIcon />
-              All announcements
+              {isTa ? "அனைத்து அறிவிப்புகளும்" : "All announcements"}
             </Link>
 
             {/* Text beside the image (not stacked) on desktop, so the
@@ -167,8 +171,9 @@ export default async function AnnouncementPage({ params }: Params) {
                   </div>
                 ) : (
                   <p className="type-body-md text-[var(--color-muted)]">
-                    Full details for this announcement will be published here
-                    shortly.
+                    {isTa
+                      ? "இந்த அறிவிப்புக்கான முழு விவரங்கள் விரைவில் இங்கே வெளியிடப்படும்."
+                      : "Full details for this announcement will be published here shortly."}
                   </p>
                 )}
               </article>
@@ -177,7 +182,7 @@ export default async function AnnouncementPage({ params }: Params) {
                 {announcement.facts?.length ? (
                   <div className="rounded-xl border border-hairline bg-surface-card p-lg">
                     <p className="type-caption-uppercase mb-base text-[var(--color-muted)]">
-                      At a glance
+                      {isTa ? "ஒரு பார்வையில்" : "At a glance"}
                     </p>
                     <dl className="flex flex-col gap-base">
                       {announcement.facts.map((fact) => (
@@ -197,7 +202,7 @@ export default async function AnnouncementPage({ params }: Params) {
                 {announcement.links?.length ? (
                   <div className="rounded-xl border border-hairline bg-surface-card p-lg">
                     <p className="type-caption-uppercase mb-base text-[var(--color-muted)]">
-                      Related
+                      {isTa ? "தொடர்புடையவை" : "Related"}
                     </p>
                     <ul role="list" className="flex flex-col gap-sm">
                       {announcement.links.map((link) => (
@@ -224,7 +229,7 @@ export default async function AnnouncementPage({ params }: Params) {
           <section className="bg-canvas-soft py-xxl md:py-section">
             <Container>
               <h2 className="type-display-sm mb-xl text-ink">
-                More announcements
+                {isTa ? "மேலும் அறிவிப்புகள்" : "More announcements"}
               </h2>
 
               <ul role="list" className="grid gap-lg md:grid-cols-2">
@@ -244,7 +249,7 @@ export default async function AnnouncementPage({ params }: Params) {
                         {item.description}
                       </p>
                       <span className="type-body-strong mt-auto inline-flex items-center gap-xs pt-xs text-[var(--color-primary-blue)] transition-colors group-hover:text-[var(--color-primary-blue-active)]">
-                        Read more
+                        {isTa ? "மேலும் அறிக" : "Read more"}
                         <ArrowIcon />
                       </span>
                     </Link>

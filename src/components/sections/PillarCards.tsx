@@ -96,16 +96,22 @@ function PillarCard({ pillar, items, bannerImage }: {
   );
 }
 
-export function PillarCards({ pillars, pillarItems }: { pillars: Pillar[]; pillarItems: PillarLinkItem[][] }) {
+export function PillarCards({
+  eyebrow,
+  heading,
+  pillars,
+  pillarItems,
+}: {
+  eyebrow: string;
+  heading: string;
+  pillars: Pillar[];
+  pillarItems: PillarLinkItem[][];
+}) {
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
-          Enabling Digital Governance
-        </p>
-        <h2 className="type-display-lg mb-10 lg:whitespace-nowrap text-ink">
-          How TNeGA powers governance across Tamil Nadu
-        </h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{eyebrow}</p>
+        <h2 className="type-display-lg mb-10 lg:whitespace-nowrap text-ink">{heading}</h2>
 
         <div className="flex flex-col gap-4 md:flex-row">
           {pillars.map((pillar, i) => (

@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload-client";
+import type { Locale } from "@/lib/locale";
 
 export type CmsRtiContactDetail = { text: string; href: string | null };
 export type CmsRtiContact = {
@@ -40,9 +41,9 @@ function parseDisclosureRow(line: string): { detail: string; info: string } {
   return { detail: detail ?? "", info: info ?? "" };
 }
 
-export async function getRtiContent(): Promise<CmsRtiContent> {
+export async function getRtiContent(locale: Locale = "en"): Promise<CmsRtiContent> {
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "rti-content", overrideAccess: false });
+  const doc = await payload.findGlobal({ slug: "rti-content", locale, overrideAccess: false });
   return {
     hero: doc.hero,
     contacts: (doc.contacts ?? []).map((c) => ({

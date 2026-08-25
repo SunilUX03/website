@@ -1,26 +1,40 @@
 import type { GlobalConfig } from "payload";
 
-const branchFields = [
-  { name: "director" as const, type: "text" as const, required: true, localized: true as const },
+const nodeFields = [
+  { name: "label" as const, type: "text" as const, required: true, localized: true as const },
   {
-    name: "engineer" as const,
+    name: "sublabel" as const,
     type: "text" as const,
     localized: true as const,
-    admin: { description: "Leave blank to draw a pass-through line instead of a box at this level (as the Project Director branch does)." },
+    admin: { description: "Second line inside the box, e.g. the person's role under a short code like \"Proc 1\". Leave blank for a plain (unboxed) row." },
   },
-  { name: "manager" as const, type: "text" as const, required: true, localized: true as const },
-  { name: "base" as const, type: "text" as const, required: true, localized: true as const },
+  {
+    name: "muted" as const,
+    type: "checkbox" as const,
+    defaultValue: false,
+    admin: { description: "Plain grey text with no box border — for individual-contributor rows between the numbered/lettered role boxes (e.g. \"Asst. System Engineer\", \"Technical Associate\")." },
+  },
 ];
 
-// Backs the CEO -> JCEO -> six-branch organisation chart on the About
-// page. Text-only by design — the shape (2 top boxes, exactly 6
-// branches) mirrors the real reporting structure and isn't meant to be
-// restructured from the admin, only relabelled, so there's no add/remove
-// UI for branches even though the field itself is a normal array.
+const branchFields = [
+  { name: "title" as const, type: "text" as const, required: true, localized: true as const },
+  { name: "subtitle" as const, type: "text" as const, required: true, localized: true as const },
+  {
+    name: "nodes" as const,
+    type: "array" as const,
+    fields: nodeFields,
+  },
+];
+
+// Backs the CEO -> seven-division organisation chart on the About page.
+// Each division's own staff list is a variable-length, sequential chain
+// (2 rows for the smallest division, 18 for Project Division) — not a
+// fixed shape like the chart this replaced — so `nodes` is a genuine
+// admin-editable array per branch, not fixed-count labels.
 export const OrgChartContent: GlobalConfig = {
   slug: "org-chart-content",
   admin: {
-    description: "The organisation chart on the About page. Labels only — the chart's shape is fixed.",
+    description: "The organisation chart on the About page: one CEO box, then each division's own title/subtitle and staff list.",
   },
   versions: {
     drafts: true,
@@ -30,13 +44,13 @@ export const OrgChartContent: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
-    { name: "topPrimary", type: "text", required: true, defaultValue: "CEO" },
-    { name: "topSecondary", type: "text", required: true, defaultValue: "JCEO" },
+    { name: "topLabel", type: "text", required: true, localized: true, defaultValue: "Chief Executive Officer" },
+    { name: "jceoLabel", type: "text", required: true, localized: true, defaultValue: "JCEO" },
     {
       name: "branches",
       type: "array",
-      minRows: 6,
-      maxRows: 6,
+      minRows: 7,
+      maxRows: 7,
       fields: branchFields,
     },
   ],

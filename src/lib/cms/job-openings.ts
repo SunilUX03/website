@@ -1,5 +1,6 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { JobOpening, Document } from "@/payload-types";
+import type { Locale } from "@/lib/locale";
 
 /** JobOpenings.tsx is a plain server component (no "use client"), so —
  * unlike announcements/media-items — there's no client-bundle reason to
@@ -14,35 +15,36 @@ export type CmsJobOpening = {
   jdHref?: string;
 };
 
-function formatDeadline(isoDate: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatDeadline(isoDate: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "ta" ? "ta-IN" : "en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   }).format(new Date(isoDate));
 }
 
-function toCmsJobOpening(doc: JobOpening): CmsJobOpening {
+function toCmsJobOpening(doc: JobOpening, locale: Locale): CmsJobOpening {
   const jd = typeof doc.jd === "object" ? (doc.jd as Document) : undefined;
   return {
     id: doc.id,
     role: doc.role,
     type: doc.type,
     department: doc.department,
-    deadline: formatDeadline(doc.deadline),
+    deadline: formatDeadline(doc.deadline, locale),
     jdHref: jd?.url ?? undefined,
   };
 }
 
 /** Published openings, soonest deadline first. */
-export async function getJobOpenings(): Promise<CmsJobOpening[]> {
+export async function getJobOpenings(locale: Locale = "en"): Promise<CmsJobOpening[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "job-openings",
+    locale,
     depth: 1,
     sort: "deadline",
     limit: 100,
     overrideAccess: false,
   });
-  return result.docs.map(toCmsJobOpening);
+  return result.docs.map((doc) => toCmsJobOpening(doc, locale));
 }

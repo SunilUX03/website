@@ -1,17 +1,19 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { TendersContentForm } from "./TendersContentForm";
 import { updateTendersContent } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 
 export const dynamic = "force-dynamic";
 
 export default async function TendersSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "tenders-content", draft: true, overrideAccess: true });
+  const doc = await payload.findGlobal({ slug: "tenders-content", locale, draft: true, overrideAccess: true });
 
   return (
     <div>
@@ -25,12 +27,13 @@ export default async function TendersSettingsPage({
           {error}
         </p>
       ) : null}
-      {saved ? (
-        <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+
+      <LocaleTabs basePath="/cms/settings/tenders" current={locale} />
 
       <TendersContentForm
+        key={locale}
         action={updateTendersContent}
+        locale={locale}
         values={{
           heroEyebrow: doc.hero.eyebrow,
           heroHeading: doc.hero.heading,
@@ -42,6 +45,7 @@ export default async function TendersSettingsPage({
           portalCtaHref: doc.tenderPortal.ctaHref,
           portalRedirectNote: doc.tenderPortal.redirectNote,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

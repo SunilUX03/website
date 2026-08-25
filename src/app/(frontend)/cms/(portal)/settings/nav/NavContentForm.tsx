@@ -7,17 +7,22 @@ import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReview
 const linkFields = [
   { key: "label", label: "Label" },
   { key: "href", label: "URL" },
-  { key: "taLabel", label: "Label (Tamil)" },
 ];
+
+export type NavLinkRow = { id?: string; label: string; href: string };
 
 export type NavContentFormValues = {
   govLabel: string;
-  govLabelTa: string;
-  about: { label: string; href: string; taLabel: string }[];
-  services: { label: string; href: string; taLabel: string }[];
-  notificationsUpdates: { label: string; href: string; taLabel: string }[];
-  notificationsDocuments: { label: string; href: string; taLabel: string }[];
+  about: NavLinkRow[];
+  services: NavLinkRow[];
+  notificationsUpdates: NavLinkRow[];
+  notificationsDocuments: NavLinkRow[];
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -40,9 +45,15 @@ function reconstructRows(fd: FormData, name: string, keys: string[]): Record<str
 export function NavContentForm({
   action,
   values,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: NavContentFormValues;
+  /** Which locale this save writes to — set by the page from `?locale=`
+   * and carried through as a hidden field the server action reads.
+   * English and Tamil are edited as two independent passes over the same
+   * form (via LocaleTabs), not side-by-side fields. */
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -61,15 +72,15 @@ export function NavContentForm({
         list.push({ id: key, label, detail: `"${truncate(original) || "(empty)"}" → "${truncate(after) || "(empty)"}"`, sectionId });
       }
     };
-    const rows = (name: string, label: string, original: unknown[], sectionId: string) => {
-      const after = reconstructRows(fd, name, ["label", "href", "taLabel"]);
-      if (JSON.stringify(after) !== JSON.stringify(original)) {
+    const rows = (name: string, label: string, original: NavLinkRow[], sectionId: string) => {
+      const after = reconstructRows(fd, name, ["label", "href"]);
+      const before = original.map((r) => ({ label: r.label, href: r.href }));
+      if (JSON.stringify(after) !== JSON.stringify(before)) {
         list.push({ id: name, label, detail: `${original.length} → ${after.length} link${after.length === 1 ? "" : "s"}`, sectionId });
       }
     };
 
     text("govLabel", "Government link label", values.govLabel, "section-gov");
-    text("govLabelTa", "Government link label (Tamil)", values.govLabelTa, "section-gov");
     rows("about", "About menu", values.about, "section-about");
     rows("services", "Services menu", values.services, "section-services");
     rows("notificationsUpdates", "Notifications — Updates column", values.notificationsUpdates, "section-notif-updates");
@@ -91,6 +102,8 @@ export function NavContentForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[680px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       <section id="section-gov" className="scroll-mt-6 flex flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
@@ -101,15 +114,7 @@ export function NavContentForm({
             name="govLabel"
             defaultValue={values.govLabel}
             required
-            className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
-          />
-        </div>
-        <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Government link label (Tamil)</label>
-          <input
-            name="govLabelTa"
-            defaultValue={values.govLabelTa}
-            lang="ta"
+            lang={locale === "ta" ? "ta" : undefined}
             className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
           />
         </div>
@@ -135,23 +140,13 @@ export function NavContentForm({
         <RepeatableRows name="notificationsDocuments" fields={linkFields} initialRows={values.notificationsDocuments} addLabel="+ Add link" />
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish? The header nav will revert to whatever was last published.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

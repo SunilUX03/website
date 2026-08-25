@@ -1,6 +1,8 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import { LeadershipBandForm } from "./LeadershipBandForm";
 import { updateLeadershipBand } from "./actions";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
 import type { Media } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
@@ -15,11 +17,12 @@ function photoId(photo: number | Media | null | undefined): number | undefined {
 export default async function LeadershipBandSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; locale?: string }>;
 }) {
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "leadership-band-content", depth: 1, draft: true, overrideAccess: true });
+  const doc = await payload.findGlobal({ slug: "leadership-band-content", locale, depth: 1, draft: true, overrideAccess: true });
   const [leader1, leader2] = doc.leaders ?? [];
 
   const boundAction = updateLeadershipBand.bind(null, [photoId(leader1?.photo), photoId(leader2?.photo)]);
@@ -34,23 +37,28 @@ export default async function LeadershipBandSettingsPage({
           {error}
         </p>
       ) : null}
-      {saved ? (
-        <p className="type-body-sm mb-6 max-w-[680px] rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+
+      <LocaleTabs basePath="/cms/settings/leadership-band" current={locale} />
 
       <LeadershipBandForm
+        key={locale}
         action={boundAction}
+        locale={locale}
         values={{
+          heading: doc.heading,
           description: doc.description,
+          leader1Id: leader1?.id ?? undefined,
           leader1Name: leader1?.name ?? "",
           leader1Title: leader1?.title ?? "",
           leader1PhotoUrl: photoUrl(leader1?.photo),
           leader1PhotoPosition: leader1?.photoPosition ?? "50% 50%",
+          leader2Id: leader2?.id ?? undefined,
           leader2Name: leader2?.name ?? "",
           leader2Title: leader2?.title ?? "",
           leader2PhotoUrl: photoUrl(leader2?.photo),
           leader2PhotoPosition: leader2?.photoPosition ?? "50% 50%",
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

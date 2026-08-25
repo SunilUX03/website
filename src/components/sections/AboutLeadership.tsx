@@ -104,7 +104,7 @@ export function AboutLeadership({ band }: { band: CmsLeadershipBand }) {
                   at that line-height the "g" descender in "Leading" was
                   getting clipped by the line box. */}
               <h2 className="type-display-lg mb-5 font-bold leading-[1.4] text-[var(--color-primary-blue)]">
-                Leading Digital Tamil Nadu
+                {band.heading}
               </h2>
               <p className="type-body-md text-[var(--color-body)]">{band.description}</p>
             </div>

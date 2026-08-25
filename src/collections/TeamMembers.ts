@@ -28,6 +28,7 @@ export const TeamMembers: CollectionConfig = {
       name: "name",
       type: "text",
       required: true,
+      localized: true,
       admin: {
         description: 'Use "Vacant" for a currently-unfilled post rather than inventing a name.',
       },

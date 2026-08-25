@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { CmsAnnouncement } from "@/lib/cms/announcement-types";
 import { useReducedMotion } from "@/lib/hooks";
+import type { Locale } from "@/lib/locale";
 
 function TickerItem({ item }: { item: CmsAnnouncement }) {
   return (
@@ -15,10 +16,11 @@ function TickerItem({ item }: { item: CmsAnnouncement }) {
   );
 }
 
-export function Scroller({ items }: { items: CmsAnnouncement[] }) {
+export function Scroller({ items, locale = "en" }: { items: CmsAnnouncement[]; locale?: Locale }) {
   const reducedMotion = useReducedMotion();
   const [userPaused, setUserPaused] = useState(false);
   const paused = reducedMotion || userPaused;
+  const isTa = locale === "ta";
 
   if (items.length === 0) return null;
   const track = [...items, ...items];
@@ -31,7 +33,7 @@ export function Scroller({ items }: { items: CmsAnnouncement[] }) {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary-blue)] opacity-60 motion-reduce:hidden" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--color-primary-blue)]" />
           </span>
-          Live
+          {isTa ? "நேரலை" : "Live"}
         </span>
 
         <div
@@ -58,7 +60,15 @@ export function Scroller({ items }: { items: CmsAnnouncement[] }) {
           type="button"
           onClick={() => setUserPaused((v) => !v)}
           aria-pressed={paused}
-          aria-label={paused ? "Play announcement ticker" : "Pause announcement ticker"}
+          aria-label={
+            isTa
+              ? paused
+                ? "அறிவிப்பு டிக்கரை இயக்கு"
+                : "அறிவிப்பு டிக்கரை இடைநிறுத்து"
+              : paused
+                ? "Play announcement ticker"
+                : "Pause announcement ticker"
+          }
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline-strong text-ink"
         >
           {paused ? (
@@ -77,7 +87,7 @@ export function Scroller({ items }: { items: CmsAnnouncement[] }) {
           href="/notifications/announcements"
           className="type-body-sm shrink-0 whitespace-nowrap font-medium text-ink hover:text-[var(--color-primary-blue)]"
         >
-          View all →
+          {isTa ? "அனைத்தையும் காண்க →" : "View all →"}
         </a>
       </div>
 

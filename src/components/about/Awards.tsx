@@ -1,6 +1,6 @@
 "use client";
 
-import type { CmsAward } from "@/lib/cms/about-types";
+import type { CmsAward, CmsSectionHeading } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
@@ -25,16 +25,12 @@ function AwardCard({ award }: { award: CmsAward }) {
   );
 }
 
-export function Awards({ awards }: { awards: CmsAward[] }) {
+export function Awards({ awards, section }: { awards: CmsAward[]; section: CmsSectionHeading }) {
   return (
     <section className="bg-canvas-soft">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">
-          Awards &amp; Recognition
-        </p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">
-          Recognised for governance impact
-        </h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{section.eyebrow}</p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">{section.heading}</h2>
 
         {/* Arrows float over the track's edges here (instead of sitting
             beside it) so the card itself can use the track's full width —

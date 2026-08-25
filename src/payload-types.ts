@@ -83,7 +83,8 @@ export interface Config {
     'roll-of-honour': RollOfHonour;
     'projects-spotlight': ProjectsSpotlight;
     'social-posts': SocialPost;
-    'department-contacts': DepartmentContact;
+    'citizen-services': CitizenService;
+    'feedback-submissions': FeedbackSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -107,7 +108,8 @@ export interface Config {
     'roll-of-honour': RollOfHonourSelect<false> | RollOfHonourSelect<true>;
     'projects-spotlight': ProjectsSpotlightSelect<false> | ProjectsSpotlightSelect<true>;
     'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
-    'department-contacts': DepartmentContactsSelect<false> | DepartmentContactsSelect<true>;
+    'citizen-services': CitizenServicesSelect<false> | CitizenServicesSelect<true>;
+    'feedback-submissions': FeedbackSubmissionsSelect<false> | FeedbackSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -132,6 +134,8 @@ export interface Config {
     'tenders-content': TendersContent;
     'site-copy-content': SiteCopyContent;
     'services-to-government-content': ServicesToGovernmentContent;
+    'site-identity': SiteIdentity;
+    'site-map-content': SiteMapContent;
   };
   globalsSelect: {
     'nav-content': NavContentSelect<false> | NavContentSelect<true>;
@@ -148,6 +152,8 @@ export interface Config {
     'tenders-content': TendersContentSelect<false> | TendersContentSelect<true>;
     'site-copy-content': SiteCopyContentSelect<false> | SiteCopyContentSelect<true>;
     'services-to-government-content': ServicesToGovernmentContentSelect<false> | ServicesToGovernmentContentSelect<true>;
+    'site-identity': SiteIdentitySelect<false> | SiteIdentitySelect<true>;
+    'site-map-content': SiteMapContentSelect<false> | SiteMapContentSelect<true>;
   };
   locale: 'en' | 'ta';
   widgets: {
@@ -311,6 +317,10 @@ export interface Announcement {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Controls display order on the Announcements list page. Lower numbers show first.
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -444,11 +454,19 @@ export interface Service {
   /**
    * This is the actual detail-page content — Key Features, Eligibility, Get Started, FAQs, etc. It must be filled in with the real submitted content before publishing. (Technically nothing here is schema-required, since service-detail-generator.ts can fall back to generic placeholder copy for anything left blank — but that fallback exists as a safety net for content still in progress, not as an acceptable end state for a published page.)
    */
-  real?: {
+  real: {
     /**
      * Short hero-only line. Falls back to the description above when blank.
      */
     tagline?: string | null;
+    /**
+     * The section heading. Defaults to "What {name} does".
+     */
+    aboutHeading?: string | null;
+    /**
+     * Small sub heading above the About heading. Defaults to "About the Project/Initiative" based on the Badge label.
+     */
+    aboutEyebrow?: string | null;
     /**
      * One stat per row, e.g. "273 Government services".
      */
@@ -465,7 +483,7 @@ export interface Service {
         }[]
       | null;
     /**
-     * Optional, same order as Key Features — a one-line description per feature. Leave a row blank to use the generic fallback for that feature.
+     * Optional, same order as Key Features — a one-line description per feature (max 150 characters). Leave a row blank to use the generic fallback for that feature.
      */
     keyFeatureDescriptions?:
       | {
@@ -474,9 +492,17 @@ export interface Service {
         }[]
       | null;
     /**
-     * Statistics normally also become Key Feature cards — check this when Key Features is already complete on its own.
+     * Defaults to "Capabilities".
      */
-    hideStatFeatureCards?: boolean | null;
+    featuresEyebrow?: string | null;
+    /**
+     * Defaults to "Key Features".
+     */
+    featuresHeading?: string | null;
+    /**
+     * Don't show the Key Features section on this page at all.
+     */
+    hideFeaturesSection?: boolean | null;
     /**
      * "You can use this if..." bullet points.
      */
@@ -492,6 +518,26 @@ export interface Service {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Defaults to "Eligibility".
+     */
+    eligibilityEyebrow?: string | null;
+    /**
+     * Defaults to "Who can use this".
+     */
+    eligibilityHeading?: string | null;
+    /**
+     * Defaults to "You can use this if".
+     */
+    eligibilityWhoHeading?: string | null;
+    /**
+     * Defaults to "What you'll need".
+     */
+    eligibilityDocsHeading?: string | null;
+    /**
+     * Don't show the Eligibility section on this page at all.
+     */
+    hideEligibilitySection?: boolean | null;
     faqs?:
       | {
           q: string;
@@ -509,6 +555,18 @@ export interface Service {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Defaults to "Questions".
+     */
+    faqEyebrow?: string | null;
+    /**
+     * Defaults to "Frequently asked questions".
+     */
+    faqHeading?: string | null;
+    /**
+     * Don't show the FAQs section on this page at all.
+     */
+    hideFaqSection?: boolean | null;
     aboutSecondParagraph?: string | null;
     hideAboutSecondParagraph?: boolean | null;
     /**
@@ -538,7 +596,14 @@ export interface Service {
           id?: string | null;
         }[]
       | null;
-    productTourCaption?: string | null;
+    /**
+     * The section heading. Defaults to "A look at {name}".
+     */
+    productTourHeading?: string | null;
+    /**
+     * Don't show the Product Tour section on this page at all.
+     */
+    hideProductTourSection?: boolean | null;
     /**
      * Overrides the generated "How to access" steps. Leave empty and check "Hide steps" below for an intro/outro-only Get Started section with no numbered steps.
      */
@@ -560,6 +625,22 @@ export interface Service {
      */
     directLinkLabel?: string | null;
     /**
+     * Text next to the direct-link button (projects only). Defaults to "{name} Portal".
+     */
+    directLinkPortalLabel?: string | null;
+    /**
+     * Defaults to "Get started".
+     */
+    getStartedEyebrow?: string | null;
+    /**
+     * Defaults to "How to access {name}".
+     */
+    getStartedHeading?: string | null;
+    /**
+     * Don't show the Get Started section on this page at all.
+     */
+    hideGetStartedSection?: boolean | null;
+    /**
      * Marks a pre-launch project: CTAs become "Coming Soon" / "Contact TNeGA".
      */
     comingSoon?: boolean | null;
@@ -572,17 +653,9 @@ export interface Service {
      */
     ctaLabel?: string | null;
     /**
-     * Where the main button goes when Button text above is set. Leave blank to reuse the Access Portal link.
+     * The badge shown at the top of the page. Every item is either a "Project" (has its own self-service portal) or an "Initiative".
      */
-    ctaHref?: string | null;
-    /**
-     * Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above).
-     */
-    relatedCardStats?: string | null;
-    /**
-     * Small tag shown at the top of the page (e.g. "Project" or "Service") so visitors know what kind of listing this is at a glance. Automatically set to "Project" if Access Portal link is filled in above, otherwise "Service" — only pick a value here to show something different from that automatic behavior (e.g. eOffice has a live portal link but is still labeled "Service").
-     */
-    typeLabel?: ('Project' | 'Service') | null;
+    typeLabel: 'Project' | 'Initiative';
     /**
      * Overrides the sitewide footer contact info for this item's Contact section.
      */
@@ -663,7 +736,7 @@ export interface LegalPage {
   /**
    * Which page this content backs — matches a fixed route, not a URL you can change.
    */
-  slug: 'privacy-policy' | 'terms-conditions' | 'terms-of-use' | 'disclaimer' | 'help' | 'feedback';
+  slug: 'privacy-policy' | 'terms-conditions' | 'terms-of-use' | 'disclaimer' | 'help' | 'feedback' | 'cookie-policy';
   title: string;
   eyebrow?: string | null;
   intro?: string | null;
@@ -689,6 +762,9 @@ export interface Award {
   id: number;
   title: string;
   year: string;
+  /**
+   * Keep it to 35 words or fewer — the card has no fixed height, so a long description makes it noticeably taller than the others in the row.
+   */
   description: string;
   image: number | Media;
   updatedAt: string;
@@ -778,23 +854,38 @@ export interface SocialPost {
    * Link to the actual post. Leave blank to link to the platform's profile page instead.
    */
   link?: string | null;
+  /**
+   * Controls display order within each platform's feed. Lower numbers show first.
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "department-contacts".
+ * via the `definition` "citizen-services".
  */
-export interface DepartmentContact {
+export interface CitizenService {
   id: number;
-  department: string;
   /**
-   * The assigned Project Manager, e.g. "PM I"
+   * Shown as the card's heading.
    */
-  contact: string;
-  email: string;
-  phone: string;
+  name: string;
+  description: string;
+  image: number | Media;
+  /**
+   * Button text. Leave blank to use the automatic "Open {name}".
+   */
+  buttonLabel?: string | null;
+  /**
+   * Where the button goes — usually an external portal URL.
+   */
+  buttonHref: string;
+  /**
+   * Opens in a new tab. Leave checked for an external portal (the usual case); uncheck only for a link within this site.
+   */
+  externalLink?: boolean | null;
   /**
    * Lower numbers show first.
    */
@@ -802,6 +893,28 @@ export interface DepartmentContact {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback-submissions".
+ */
+export interface FeedbackSubmission {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  comments: string;
+  /**
+   * Which language the visitor was viewing the site in.
+   */
+  locale?: string | null;
+  submittedAt: string;
+  /**
+   * Marked once an admin has reviewed it.
+   */
+  read?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -892,8 +1005,12 @@ export interface PayloadLockedDocument {
         value: number | SocialPost;
       } | null)
     | ({
-        relationTo: 'department-contacts';
-        value: number | DepartmentContact;
+        relationTo: 'citizen-services';
+        value: number | CitizenService;
+      } | null)
+    | ({
+        relationTo: 'feedback-submissions';
+        value: number | FeedbackSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1031,6 +1148,7 @@ export interface AnnouncementsSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1094,6 +1212,8 @@ export interface ServicesSelect<T extends boolean = true> {
     | T
     | {
         tagline?: T;
+        aboutHeading?: T;
+        aboutEyebrow?: T;
         statistics?:
           | T
           | {
@@ -1112,7 +1232,9 @@ export interface ServicesSelect<T extends boolean = true> {
               value?: T;
               id?: T;
             };
-        hideStatFeatureCards?: T;
+        featuresEyebrow?: T;
+        featuresHeading?: T;
+        hideFeaturesSection?: T;
         eligibility?:
           | T
           | {
@@ -1125,6 +1247,11 @@ export interface ServicesSelect<T extends boolean = true> {
               value?: T;
               id?: T;
             };
+        eligibilityEyebrow?: T;
+        eligibilityHeading?: T;
+        eligibilityWhoHeading?: T;
+        eligibilityDocsHeading?: T;
+        hideEligibilitySection?: T;
         faqs?:
           | T
           | {
@@ -1139,6 +1266,9 @@ export interface ServicesSelect<T extends boolean = true> {
               a?: T;
               id?: T;
             };
+        faqEyebrow?: T;
+        faqHeading?: T;
+        hideFaqSection?: T;
         aboutSecondParagraph?: T;
         hideAboutSecondParagraph?: T;
         calloutText?: T;
@@ -1161,7 +1291,8 @@ export interface ServicesSelect<T extends boolean = true> {
               alt?: T;
               id?: T;
             };
-        productTourCaption?: T;
+        productTourHeading?: T;
+        hideProductTourSection?: T;
         getStartedSteps?:
           | T
           | {
@@ -1173,11 +1304,13 @@ export interface ServicesSelect<T extends boolean = true> {
         getStartedIntro?: T;
         getStartedOutro?: T;
         directLinkLabel?: T;
+        directLinkPortalLabel?: T;
+        getStartedEyebrow?: T;
+        getStartedHeading?: T;
+        hideGetStartedSection?: T;
         comingSoon?: T;
         gatedAccess?: T;
         ctaLabel?: T;
-        ctaHref?: T;
-        relatedCardStats?: T;
         typeLabel?: T;
         contact?:
           | T
@@ -1329,23 +1462,41 @@ export interface SocialPostsSelect<T extends boolean = true> {
   date?: T;
   image?: T;
   link?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "department-contacts_select".
+ * via the `definition` "citizen-services_select".
  */
-export interface DepartmentContactsSelect<T extends boolean = true> {
-  department?: T;
-  contact?: T;
-  email?: T;
-  phone?: T;
+export interface CitizenServicesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  image?: T;
+  buttonLabel?: T;
+  buttonHref?: T;
+  externalLink?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback-submissions_select".
+ */
+export interface FeedbackSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  subject?: T;
+  comments?: T;
+  locale?: T;
+  submittedAt?: T;
+  read?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1494,6 +1645,14 @@ export interface HeroContent {
     id?: string | null;
   }[];
   tagline: string;
+  /**
+   * The citizens-over-Tamil-Nadu-map collage shown beside the headline.
+   */
+  mapImage: number | Media;
+  /**
+   * Optional full-bleed background behind the whole Hero. Leave empty to keep the default colour wash — uploading an image replaces it.
+   */
+  backgroundImage?: (number | null) | Media;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1506,6 +1665,10 @@ export interface HeroContent {
  */
 export interface LeadershipBandContent {
   id: number;
+  /**
+   * The band's heading, e.g. "Leading Digital Tamil Nadu".
+   */
+  heading: string;
   description: string;
   /**
    * Exactly two — shown as a larger (first) and smaller (second) signature.
@@ -1571,6 +1734,16 @@ export interface FooterContent {
       }[]
     | null;
   /**
+   * Initiatives & Projects column.
+   */
+  initiativesProjects?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Help & Support column.
    */
   helpSupport?:
@@ -1585,7 +1758,7 @@ export interface FooterContent {
   createdAt?: string | null;
 }
 /**
- * Hero, Who We Are, Vision & Mission, and Connect With Us on the About page.
+ * Hero, Who We Are, Vision & Mission, Connect With Us, and every section heading on the About page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-page-content".
@@ -1635,29 +1808,73 @@ export interface AboutPageContent {
         }[]
       | null;
   };
+  /**
+   * The heading above the Organisation Structure chart, e.g. "Organisation Structure" / "How TNeGA is organised".
+   */
+  orgChartSection: {
+    eyebrow: string;
+    heading: string;
+  };
+  /**
+   * The heading above the Leadership & Team cards, e.g. "Leadership & Team" / "The people behind TNeGA".
+   */
+  leadershipSection: {
+    eyebrow: string;
+    heading: string;
+  };
+  /**
+   * The heading above the Governing Board, e.g. "Governing Board" / "Governing TNeGA's mission".
+   */
+  boardSection: {
+    eyebrow: string;
+    heading: string;
+  };
+  /**
+   * The heading above Awards & Recognition, e.g. "Awards & Recognition" / "Recognised for governance impact".
+   */
+  awardsSection: {
+    eyebrow: string;
+    heading: string;
+  };
+  /**
+   * The heading above Roll of Honour, e.g. "Roll of Honour" / "Leading TNeGA since 2006".
+   */
+  rollOfHonourSection: {
+    eyebrow: string;
+    heading: string;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
- * The organisation chart on the About page. Labels only — the chart's shape is fixed.
+ * The organisation chart on the About page: one CEO box, then each division's own title/subtitle and staff list.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "org-chart-content".
  */
 export interface OrgChartContent {
   id: number;
-  topPrimary: string;
-  topSecondary: string;
+  topLabel: string;
+  jceoLabel: string;
   branches?:
     | {
-        director: string;
-        /**
-         * Leave blank to draw a pass-through line instead of a box at this level (as the Project Director branch does).
-         */
-        engineer?: string | null;
-        manager: string;
-        base: string;
+        title: string;
+        subtitle: string;
+        nodes?:
+          | {
+              label: string;
+              /**
+               * Second line inside the box, e.g. the person's role under a short code like "Proc 1". Leave blank for a plain (unboxed) row.
+               */
+              sublabel?: string | null;
+              /**
+               * Plain grey text with no box border — for individual-contributor rows between the numbered/lettered role boxes (e.g. "Asst. System Engineer", "Technical Associate").
+               */
+              muted?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -1673,21 +1890,16 @@ export interface OrgChartContent {
  */
 export interface MetricsContent {
   id: number;
+  /**
+   * The section heading, e.g. "Delivering Digital Governance at Scale".
+   */
+  heading: string;
   metrics?:
     | {
-        value: number;
         /**
-         * Decimal places to show, e.g. 2 for 24.27. Leave blank for a whole number.
+         * The figure exactly as shown, e.g. "273+", "₹43,318 Cr", "24.27 Lakh".
          */
-        decimals?: number | null;
-        /**
-         * e.g. "₹"
-         */
-        prefix?: string | null;
-        /**
-         * e.g. "+", " Cr", " Lakh"
-         */
-        suffix?: string | null;
+        metric: string;
         label: string;
         id?: string | null;
       }[]
@@ -1704,10 +1916,17 @@ export interface MetricsContent {
  */
 export interface PillarsContent {
   id: number;
+  /**
+   * The section eyebrow, e.g. "Enabling Digital Governance".
+   */
+  eyebrow: string;
+  /**
+   * The section heading, e.g. "How TNeGA powers governance across Tamil Nadu".
+   */
+  heading: string;
   pillars?:
     | {
         title: string;
-        description: string;
         linkLabel: string;
         bannerImage?: (number | null) | Media;
         id?: string | null;
@@ -1742,6 +1961,26 @@ export interface CareersContent {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The heading above the "How to Apply" steps, e.g. "How to Apply" / "A simple four step process to join our team."
+   */
+  howToApplySection: {
+    heading: string;
+    sub: string;
+  };
+  /**
+   * The heading above the Current Openings list, e.g. "Current Openings".
+   */
+  openingsSection: {
+    heading: string;
+  };
+  /**
+   * The heading above the Apply Now form, e.g. "Apply Now" / "Fill in your details below and we will get back to you."
+   */
+  applySection: {
+    heading: string;
+    sub: string;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1857,10 +2096,42 @@ export interface SiteCopyContent {
     heading: string;
     body: string;
   };
-  servicesHero: {
+  citizenServicesHero: {
     eyebrow: string;
     heading: string;
     body: string;
+  };
+  initiativesProjectsHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  reachUsHero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  /**
+   * The "View All Initiatives & Projects" button shown on every service/project detail page.
+   */
+  viewAllInitiativesButton: {
+    label: string;
+    /**
+     * Where the button links to.
+     */
+    href: string;
+  };
+  /**
+   * The last two sections on every service/project detail page (Explore More, Contact & Support) — shared across every item, not per-item.
+   */
+  serviceDetailFooterHeadings: {
+    exploreMoreEyebrow: string;
+    exploreMoreHeading: string;
+    supportEyebrow: string;
+    supportHeading: string;
+    helplineLabel: string;
+    emailLabel: string;
+    officeLabel: string;
   };
   /**
    * The homepage's 2 promo panels: Reach Us and Current Openings.
@@ -1879,7 +2150,7 @@ export interface SiteCopyContent {
   createdAt?: string | null;
 }
 /**
- * The Services to Government page: hero, the 4 service blocks, and the contact table's intro copy.
+ * The Services to Government page: hero, service blocks, and department contacts.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services-to-government-content".
@@ -1903,11 +2174,89 @@ export interface ServicesToGovernmentContent {
     heading: string;
     body: string;
   };
+  /**
+   * The column headings on the department-contacts table.
+   */
+  tableColumnHeaders: {
+    serialNumber: string;
+    department: string;
+    contact: string;
+    email: string;
+    phone: string;
+  };
+  /**
+   * Which Government Department maps to which TNeGA Project Manager. Drag to reorder.
+   */
+  departmentContacts?:
+    | {
+        department: string;
+        /**
+         * The assigned Project Manager, e.g. "PM I"
+         */
+        contact: string;
+        email: string;
+        phone: string;
+        id?: string | null;
+      }[]
+    | null;
   raiseTicketLabel: string;
   /**
    * Where both "Raise a Ticket" buttons link to.
    */
   raiseTicketHref: string;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The government emblem, TNeGA mark, and organisation name shown in the header and footer on every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-identity".
+ */
+export interface SiteIdentity {
+  id: number;
+  /**
+   * Government of Tamil Nadu emblem.
+   */
+  emblemImage: number | Media;
+  /**
+   * TNeGA circular mark.
+   */
+  markImage: number | Media;
+  /**
+   * The browser tab icon. Kept separate from the TNeGA mark above — a favicon needs to stay readable at a very small size, which sometimes means a simplified crop rather than the exact same file. Falls back to the TNeGA mark if left empty.
+   */
+  faviconImage?: (number | null) | Media;
+  /**
+   * Tamil line of the organisation name, e.g. "தமிழ்நாடு மின்-ஆளுமை முகமை". Always shown alongside the English line, regardless of site language.
+   */
+  nameTamil: string;
+  /**
+   * English line of the organisation name, e.g. "Tamil Nadu e-Governance Agency". Always shown alongside the Tamil line, regardless of site language.
+   */
+  nameEnglish: string;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The /sitemap page's link groups.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-map-content".
+ */
+export interface SiteMapContent {
+  id: number;
+  /**
+   * Rows sharing the same "Group heading" are shown together under one card, in the order each group first appears.
+   */
+  links: {
+    groupHeading: string;
+    label: string;
+    href: string;
+    id?: string | null;
+  }[];
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2002,6 +2351,8 @@ export interface HeroContentSelect<T extends boolean = true> {
         id?: T;
       };
   tagline?: T;
+  mapImage?: T;
+  backgroundImage?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2012,6 +2363,7 @@ export interface HeroContentSelect<T extends boolean = true> {
  * via the `definition` "leadership-band-content_select".
  */
 export interface LeadershipBandContentSelect<T extends boolean = true> {
+  heading?: T;
   description?: T;
   leaders?:
     | T
@@ -2052,6 +2404,13 @@ export interface FooterContentSelect<T extends boolean = true> {
         id?: T;
       };
   citizenServices?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  initiativesProjects?:
     | T
     | {
         label?: T;
@@ -2115,6 +2474,36 @@ export interface AboutPageContentSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  orgChartSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
+  leadershipSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
+  boardSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
+  awardsSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
+  rollOfHonourSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2125,15 +2514,21 @@ export interface AboutPageContentSelect<T extends boolean = true> {
  * via the `definition` "org-chart-content_select".
  */
 export interface OrgChartContentSelect<T extends boolean = true> {
-  topPrimary?: T;
-  topSecondary?: T;
+  topLabel?: T;
+  jceoLabel?: T;
   branches?:
     | T
     | {
-        director?: T;
-        engineer?: T;
-        manager?: T;
-        base?: T;
+        title?: T;
+        subtitle?: T;
+        nodes?:
+          | T
+          | {
+              label?: T;
+              sublabel?: T;
+              muted?: T;
+              id?: T;
+            };
         id?: T;
       };
   _status?: T;
@@ -2146,13 +2541,11 @@ export interface OrgChartContentSelect<T extends boolean = true> {
  * via the `definition` "metrics-content_select".
  */
 export interface MetricsContentSelect<T extends boolean = true> {
+  heading?: T;
   metrics?:
     | T
     | {
-        value?: T;
-        decimals?: T;
-        prefix?: T;
-        suffix?: T;
+        metric?: T;
         label?: T;
         id?: T;
       };
@@ -2166,11 +2559,12 @@ export interface MetricsContentSelect<T extends boolean = true> {
  * via the `definition` "pillars-content_select".
  */
 export interface PillarsContentSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
   pillars?:
     | T
     | {
         title?: T;
-        description?: T;
         linkLabel?: T;
         bannerImage?: T;
         id?: T;
@@ -2200,6 +2594,23 @@ export interface CareersContentSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         id?: T;
+      };
+  howToApplySection?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+      };
+  openingsSection?:
+    | T
+    | {
+        heading?: T;
+      };
+  applySection?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -2314,12 +2725,43 @@ export interface SiteCopyContentSelect<T extends boolean = true> {
         heading?: T;
         body?: T;
       };
-  servicesHero?:
+  citizenServicesHero?:
     | T
     | {
         eyebrow?: T;
         heading?: T;
         body?: T;
+      };
+  initiativesProjectsHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  reachUsHero?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  viewAllInitiativesButton?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  serviceDetailFooterHeadings?:
+    | T
+    | {
+        exploreMoreEyebrow?: T;
+        exploreMoreHeading?: T;
+        supportEyebrow?: T;
+        supportHeading?: T;
+        helplineLabel?: T;
+        emailLabel?: T;
+        officeLabel?: T;
       };
   reachUsPanels?:
     | T
@@ -2361,8 +2803,59 @@ export interface ServicesToGovernmentContentSelect<T extends boolean = true> {
         heading?: T;
         body?: T;
       };
+  tableColumnHeaders?:
+    | T
+    | {
+        serialNumber?: T;
+        department?: T;
+        contact?: T;
+        email?: T;
+        phone?: T;
+      };
+  departmentContacts?:
+    | T
+    | {
+        department?: T;
+        contact?: T;
+        email?: T;
+        phone?: T;
+        id?: T;
+      };
   raiseTicketLabel?: T;
   raiseTicketHref?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-identity_select".
+ */
+export interface SiteIdentitySelect<T extends boolean = true> {
+  emblemImage?: T;
+  markImage?: T;
+  faviconImage?: T;
+  nameTamil?: T;
+  nameEnglish?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-map-content_select".
+ */
+export interface SiteMapContentSelect<T extends boolean = true> {
+  links?:
+    | T
+    | {
+        groupHeading?: T;
+        label?: T;
+        href?: T;
+        id?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

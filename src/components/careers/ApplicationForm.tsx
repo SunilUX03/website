@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { trackConversion } from "@/lib/analytics-client";
+import type { Locale } from "@/lib/locale";
 
 export type ApplicationRole = { id: string; label: string };
 
@@ -16,12 +18,27 @@ type Errors = Partial<
   Record<"fullName" | "email" | "phone" | "role" | "resume", string>
 >;
 
+// The role list itself comes from a separate Prisma-backed HR system
+// (db.jobRole), not the Payload CMS this localization work otherwise
+// covers — no schema there to mark `localized`. Translating the known
+// role labels here is a display-only lookup, it doesn't touch that
+// database, so a role added later with no entry here just shows in
+// English until this map is updated.
+const ROLE_LABELS_TA: Record<string, string> = {
+  "Project Manager, e-Governance": "திட்ட மேலாளர், மின்-ஆளுமை",
+  "Data Analyst": "தரவு பகுப்பாய்வாளர்",
+  "GIS Specialist": "GIS நிபுணர்",
+  "AI / ML Engineer": "AI / ML பொறியாளர்",
+  "Software Security Analyst": "மென்பொருள் பாதுகாப்பு பகுப்பாய்வாளர்",
+};
+
 function Field({
   label,
   htmlFor,
   error,
   helper,
   optional,
+  optionalLabel,
   children,
 }: {
   label: string;
@@ -29,6 +46,7 @@ function Field({
   error?: string;
   helper?: string;
   optional?: boolean;
+  optionalLabel?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -40,7 +58,7 @@ function Field({
         {label}
         {optional ? (
           <span className="ml-1 text-[10px] font-normal normal-case tracking-normal">
-            (Optional)
+            ({optionalLabel ?? "Optional"})
           </span>
         ) : null}
       </label>
@@ -66,7 +84,16 @@ function Field({
 const inputBase =
   "h-11 w-full rounded-md border bg-surface-card px-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-[var(--color-muted-soft)] focus:border-ink";
 
-export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
+export function ApplicationForm({
+  roles,
+  section,
+  locale = "en",
+}: {
+  roles: ApplicationRole[];
+  section: { heading: string; sub: string };
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -86,18 +113,18 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
     const role = String(data.get("role") ?? "");
     const resume = fileRef.current?.files?.[0];
 
-    if (!fullName) next.fullName = "Please enter your full name.";
+    if (!fullName) next.fullName = isTa ? "தயவுசெய்து உங்கள் முழுப்பெயரை உள்ளிடவும்." : "Please enter your full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      next.email = "Please enter a valid email address.";
-    if (!phone) next.phone = "Please enter your phone number.";
-    if (!role) next.role = "Please select a role.";
+      next.email = isTa ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்." : "Please enter a valid email address.";
+    if (!phone) next.phone = isTa ? "தயவுசெய்து உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்." : "Please enter your phone number.";
+    if (!role) next.role = isTa ? "தயவுசெய்து ஒரு பணியைத் தேர்ந்தெடுக்கவும்." : "Please select a role.";
 
     if (!resume) {
-      next.resume = "Please upload your resume (PDF only).";
+      next.resume = isTa ? "உங்கள் விண்ணப்பத்தை (PDF மட்டும்) பதிவேற்றவும்." : "Please upload your resume (PDF only).";
     } else if (resume.type !== "application/pdf") {
-      next.resume = "Resume must be a PDF file.";
+      next.resume = isTa ? "விண்ணப்பம் PDF கோப்பாக இருக்க வேண்டும்." : "Resume must be a PDF file.";
     } else if (resume.size > MAX_RESUME_BYTES) {
-      next.resume = "Resume must be 4MB or smaller.";
+      next.resume = isTa ? "விண்ணப்பம் 4MB அல்லது அதற்கும் குறைவாக இருக்க வேண்டும்." : "Resume must be 4MB or smaller.";
     }
 
     setErrors(next);
@@ -109,12 +136,13 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
       const res = await fetch("/api/careers/apply", { method: "POST", body: data });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        setSubmitError(body?.error ?? "Something went wrong. Please try again.");
+        setSubmitError(body?.error ?? (isTa ? "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்." : "Something went wrong. Please try again."));
         return;
       }
+      trackConversion("job_application_submitted");
       setSubmitted(true);
     } catch {
-      setSubmitError("Something went wrong. Please check your connection and try again.");
+      setSubmitError(isTa ? "ஏதோ தவறு நடந்தது. உங்கள் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்." : "Something went wrong. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -124,8 +152,8 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
     <section className="py-xxl md:py-section" id="apply">
       <Container>
         <SectionHead
-          heading="Apply Now"
-          sub="Fill in your details below and we will get back to you."
+          heading={section.heading}
+          sub={section.sub}
           id="form-heading"
           align="center"
         />
@@ -143,25 +171,25 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <p className="type-title-md text-ink">Thank you for applying.</p>
+                <p className="type-title-md text-ink">{isTa ? "விண்ணப்பித்ததற்கு நன்றி." : "Thank you for applying."}</p>
                 <p className="type-body-sm text-[var(--color-muted)]">
-                  We will be in touch soon.
+                  {isTa ? "நாங்கள் விரைவில் தொடர்பு கொள்வோம்." : "We will be in touch soon."}
                 </p>
               </div>
             ) : (
               <form
                 onSubmit={handleSubmit}
                 noValidate
-                aria-label="Job application form"
+                aria-label={isTa ? "வேலை விண்ணப்பப் படிவம்" : "Job application form"}
                 className="flex flex-col gap-lg"
               >
-                <Field label="Full Name" htmlFor="fullName" error={errors.fullName}>
+                <Field label={isTa ? "முழுப்பெயர்" : "Full Name"} htmlFor="fullName" error={errors.fullName}>
                   <input
                     id="fullName"
                     name="fullName"
                     type="text"
                     autoComplete="name"
-                    placeholder="Enter your full name"
+                    placeholder={isTa ? "உங்கள் முழுப்பெயரை உள்ளிடவும்" : "Enter your full name"}
                     aria-required
                     aria-invalid={Boolean(errors.fullName)}
                     className={clsx(
@@ -173,13 +201,13 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                   />
                 </Field>
 
-                <Field label="Email Address" htmlFor="email" error={errors.email}>
+                <Field label={isTa ? "மின்னஞ்சல் முகவரி" : "Email Address"} htmlFor="email" error={errors.email}>
                   <input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="Enter your email address"
+                    placeholder={isTa ? "உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்" : "Enter your email address"}
                     aria-required
                     aria-invalid={Boolean(errors.email)}
                     className={clsx(
@@ -191,13 +219,13 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                   />
                 </Field>
 
-                <Field label="Phone Number" htmlFor="phone" error={errors.phone}>
+                <Field label={isTa ? "தொலைபேசி எண்" : "Phone Number"} htmlFor="phone" error={errors.phone}>
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
                     autoComplete="tel"
-                    placeholder="Enter your phone number"
+                    placeholder={isTa ? "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்" : "Enter your phone number"}
                     aria-required
                     aria-invalid={Boolean(errors.phone)}
                     className={clsx(
@@ -209,7 +237,7 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                   />
                 </Field>
 
-                <Field label="Role Applied For" htmlFor="role" error={errors.role}>
+                <Field label={isTa ? "விண்ணப்பிக்கும் பணி" : "Role Applied For"} htmlFor="role" error={errors.role}>
                   <select
                     id="role"
                     name="role"
@@ -228,20 +256,20 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                         "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23777169' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
                     }}
                   >
-                    <option value="">Select a role</option>
+                    <option value="">{isTa ? "ஒரு பணியைத் தேர்ந்தெடுக்கவும்" : "Select a role"}</option>
                     {roles.map((r) => (
                       <option key={r.id} value={r.id}>
-                        {r.label}
+                        {isTa ? ROLE_LABELS_TA[r.label] ?? r.label : r.label}
                       </option>
                     ))}
                   </select>
                 </Field>
 
                 <Field
-                  label="Upload Resume"
+                  label={isTa ? "விண்ணப்பத்தை பதிவேற்றவும்" : "Upload Resume"}
                   htmlFor="resume"
                   error={errors.resume}
-                  helper="PDF only. Maximum file size 4MB."
+                  helper={isTa ? "PDF மட்டும். அதிகபட்ச கோப்பு அளவு 4MB." : "PDF only. Maximum file size 4MB."}
                 >
                   <div className="relative">
                     <input
@@ -279,18 +307,18 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                           fileName ? "text-ink" : "text-[var(--color-muted-soft)]"
                         )}
                       >
-                        {fileName ?? "Choose PDF file…"}
+                        {fileName ?? (isTa ? "PDF கோப்பைத் தேர்ந்தெடுக்கவும்…" : "Choose PDF file…")}
                       </span>
                     </div>
                   </div>
                 </Field>
 
-                <Field label="Cover Letter" htmlFor="coverLetter" optional>
+                <Field label={isTa ? "அட்டைக் கடிதம்" : "Cover Letter"} htmlFor="coverLetter" optional optionalLabel={isTa ? "விருப்பத்தேர்வு" : "Optional"}>
                   <textarea
                     id="coverLetter"
                     name="coverLetter"
                     rows={4}
-                    placeholder="Tell us why you want to work at TNeGA"
+                    placeholder={isTa ? "TNeGA-வில் ஏன் பணிபுரிய விரும்புகிறீர்கள் என்று எங்களிடம் கூறுங்கள்" : "Tell us why you want to work at TNeGA"}
                     className="w-full rounded-md border border-hairline-strong bg-surface-card px-3.5 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-[var(--color-muted-soft)] focus:border-ink"
                   />
                 </Field>
@@ -306,22 +334,38 @@ export function ApplicationForm({ roles }: { roles: ApplicationRole[] }) {
                   disabled={submitting}
                   className="type-button btn-primary h-12 w-full text-base disabled:opacity-60"
                 >
-                  {submitting ? "Submitting…" : "Submit Application"}
+                  {submitting ? (isTa ? "சமர்ப்பிக்கிறது…" : "Submitting…") : isTa ? "விண்ணப்பத்தைச் சமர்ப்பிக்கவும்" : "Submit Application"}
                 </button>
               </form>
             )}
           </div>
 
           <p className="type-body-sm mt-base text-center text-[var(--color-muted)]">
-            By submitting this form you agree to our{" "}
-            <a href="/privacy-policy" className="text-ink underline underline-offset-2">
-              Privacy Policy
-            </a>{" "}
-            and{" "}
-            <a href="/terms-of-use" className="text-ink underline underline-offset-2">
-              Terms of Use
-            </a>
-            .
+            {isTa ? (
+              <>
+                இந்தப் படிவத்தைச் சமர்ப்பிப்பதன் மூலம் நீங்கள் எங்கள்{" "}
+                <a href="/privacy-policy" className="text-ink underline underline-offset-2">
+                  தனியுரிமைக் கொள்கை
+                </a>{" "}
+                மற்றும்{" "}
+                <a href="/terms-of-use" className="text-ink underline underline-offset-2">
+                  பயன்பாட்டு விதிமுறைகளை
+                </a>{" "}
+                ஏற்றுக்கொள்கிறீர்கள்.
+              </>
+            ) : (
+              <>
+                By submitting this form you agree to our{" "}
+                <a href="/privacy-policy" className="text-ink underline underline-offset-2">
+                  Privacy Policy
+                </a>{" "}
+                and{" "}
+                <a href="/terms-of-use" className="text-ink underline underline-offset-2">
+                  Terms of Use
+                </a>
+                .
+              </>
+            )}
           </p>
         </div>
       </Container>

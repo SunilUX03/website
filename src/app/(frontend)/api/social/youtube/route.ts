@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSocialPosts } from "@/lib/cms/social-posts";
+import { getLocale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const posts = await getSocialPosts("youtube");
+  const locale = await getLocale();
+  const posts = await getSocialPosts("youtube", locale);
   return NextResponse.json({ posts });
 }

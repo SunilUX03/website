@@ -1,6 +1,7 @@
 import { AccessibilityBar } from "./AccessibilityBar";
 import { MainNav } from "./MainNav";
 import { getNavContent } from "@/lib/cms/nav-content";
+import { getSiteIdentity } from "@/lib/cms/site-identity";
 import { getLocale } from "@/lib/locale";
 
 // Rendered directly by every page (see the individual page.tsx files —
@@ -9,12 +10,12 @@ import { getLocale } from "@/lib/locale";
 // migration to a couple of files instead of every page in the app.
 export async function TopNav() {
   const locale = await getLocale();
-  const nav = await getNavContent(locale);
+  const [nav, identity] = await Promise.all([getNavContent(locale), getSiteIdentity()]);
 
   return (
     <header>
       <AccessibilityBar govLabel={nav.govLabel} locale={locale} />
-      <MainNav nav={nav} />
+      <MainNav nav={nav} locale={locale} identity={identity} />
     </header>
   );
 }

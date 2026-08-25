@@ -45,5 +45,31 @@ export const CareersContent: GlobalConfig = {
         { name: "description", type: "textarea", required: true, localized: true },
       ],
     },
+    {
+      name: "howToApplySection",
+      type: "group",
+      admin: { description: 'The heading above the "How to Apply" steps, e.g. "How to Apply" / "A simple four step process to join our team."' },
+      fields: [
+        { name: "heading", type: "text", required: true, localized: true },
+        { name: "sub", type: "textarea", required: true, localized: true },
+      ],
+    },
+    {
+      name: "openingsSection",
+      type: "group",
+      admin: { description: 'The heading above the Current Openings list, e.g. "Current Openings".' },
+      fields: [
+        { name: "heading", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "applySection",
+      type: "group",
+      admin: { description: 'The heading above the Apply Now form, e.g. "Apply Now" / "Fill in your details below and we will get back to you."' },
+      fields: [
+        { name: "heading", type: "text", required: true, localized: true },
+        { name: "sub", type: "textarea", required: true, localized: true },
+      ],
+    },
   ],
 };

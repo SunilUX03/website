@@ -1,6 +1,7 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { Service, Media } from "@/payload-types";
 import { type CmsRealContent, type CmsServiceItemDetail } from "@/lib/cms/service-types";
+import type { Locale } from "@/lib/locale";
 
 export type {
   CmsServiceItem,
@@ -9,7 +10,7 @@ export type {
   ServiceSection,
   ServiceItemType,
 } from "@/lib/cms/service-types";
-export { getServiceItemsBySection, getServiceItemsByNames } from "@/lib/cms/service-types";
+export { getServiceItemsBySection, getServiceItemsByNames, getServiceItemsBySlugs } from "@/lib/cms/service-types";
 
 function mediaUrl(value: number | Media | null | undefined): string {
   return typeof value === "object" && value !== null ? value.url ?? "" : "";
@@ -59,25 +60,40 @@ function toCmsRealContent(doc: Service): CmsRealContent | undefined {
           items: toStringArray(r.aboutLinkModal.items),
         }
       : undefined,
-    hideStatFeatureCards: r.hideStatFeatureCards ?? undefined,
     productTour: r.productTour?.length
       ? r.productTour.map((p) => ({ src: mediaUrl(p.photo), alt: p.alt }))
       : undefined,
-    productTourCaption: r.productTourCaption ?? undefined,
     getStartedSteps: r.getStartedSteps ?? undefined,
     suppressGetStartedSteps: r.suppressGetStartedSteps ?? undefined,
     directLinkLabel: r.directLinkLabel ?? undefined,
+    directLinkPortalLabel: r.directLinkPortalLabel ?? undefined,
     getStartedIntro: r.getStartedIntro ?? undefined,
     getStartedOutro: r.getStartedOutro ?? undefined,
     comingSoon: r.comingSoon ?? undefined,
-    relatedCardStats: r.relatedCardStats ?? undefined,
     gatedAccess: r.gatedAccess ?? undefined,
     ctaLabel: r.ctaLabel ?? undefined,
-    ctaHref: r.ctaHref ?? undefined,
     hideAboutSecondParagraph: r.hideAboutSecondParagraph ?? undefined,
-    typeLabel: r.typeLabel ?? undefined,
+    typeLabel: r.typeLabel === "Project" || r.typeLabel === "Initiative" ? r.typeLabel : undefined,
     faqsMore: r.faqsMore?.length ? r.faqsMore.map((f) => ({ q: f.q, a: f.a })) : undefined,
     contact: r.contact?.email || r.contact?.phone ? { email: r.contact.email ?? undefined, phone: r.contact.phone ?? undefined } : undefined,
+    aboutEyebrow: r.aboutEyebrow ?? undefined,
+    aboutHeading: r.aboutHeading ?? undefined,
+    featuresEyebrow: r.featuresEyebrow ?? undefined,
+    featuresHeading: r.featuresHeading ?? undefined,
+    hideFeaturesSection: r.hideFeaturesSection ?? undefined,
+    productTourHeading: r.productTourHeading ?? undefined,
+    hideProductTourSection: r.hideProductTourSection ?? undefined,
+    eligibilityEyebrow: r.eligibilityEyebrow ?? undefined,
+    eligibilityHeading: r.eligibilityHeading ?? undefined,
+    eligibilityWhoHeading: r.eligibilityWhoHeading ?? undefined,
+    eligibilityDocsHeading: r.eligibilityDocsHeading ?? undefined,
+    hideEligibilitySection: r.hideEligibilitySection ?? undefined,
+    getStartedEyebrow: r.getStartedEyebrow ?? undefined,
+    getStartedHeading: r.getStartedHeading ?? undefined,
+    hideGetStartedSection: r.hideGetStartedSection ?? undefined,
+    faqEyebrow: r.faqEyebrow ?? undefined,
+    faqHeading: r.faqHeading ?? undefined,
+    hideFaqSection: r.hideFaqSection ?? undefined,
   };
 }
 
@@ -102,10 +118,11 @@ function toCmsServiceItemDetail(doc: Service): CmsServiceItemDetail {
  * memory rather than each issuing their own query, mirroring how
  * services-content.ts derived citizenServices/eGovernanceProjects/
  * sharedServices/allServiceItems from one underlying array. */
-export async function getAllServiceItems(): Promise<CmsServiceItemDetail[]> {
+export async function getAllServiceItems(locale: Locale = "en"): Promise<CmsServiceItemDetail[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "services",
+    locale,
     depth: 2,
     limit: 200,
     sort: "order",
@@ -114,10 +131,11 @@ export async function getAllServiceItems(): Promise<CmsServiceItemDetail[]> {
   return result.docs.map(toCmsServiceItemDetail);
 }
 
-export async function getServiceItemBySlug(slug: string): Promise<CmsServiceItemDetail | null> {
+export async function getServiceItemBySlug(slug: string, locale: Locale = "en"): Promise<CmsServiceItemDetail | null> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "services",
+    locale,
     depth: 2,
     where: { slug: { equals: slug } },
     limit: 1,

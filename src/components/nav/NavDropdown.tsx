@@ -3,6 +3,7 @@
 import { ReactNode, useLayoutEffect, useRef, useState, useId } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDownIcon } from "./icons";
+import type { Locale } from "@/lib/locale";
 
 const VIEWPORT_MARGIN = 12;
 
@@ -18,6 +19,7 @@ interface NavDropdownProps {
    * icon-only button (the Notifications kebab) — no separate nav-to-href
    * affordance, since there's no overview page for it to link to. */
   iconTrigger?: ReactNode;
+  locale?: Locale;
 }
 
 /**
@@ -29,7 +31,8 @@ interface NavDropdownProps {
  * — its position is measured after mount and clamped to the viewport so
  * wide panels never overflow, while still centering whenever there's room.
  */
-export function NavDropdown({ label, href, panel, panelClassName, iconTrigger }: NavDropdownProps) {
+export function NavDropdown({ label, href, panel, panelClassName, iconTrigger, locale = "en" }: NavDropdownProps) {
+  const isTa = locale === "ta";
   const [open, setOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [leftPx, setLeftPx] = useState<number | null>(null);
@@ -109,7 +112,7 @@ export function NavDropdown({ label, href, panel, panelClassName, iconTrigger }:
               type="button"
               aria-expanded={open}
               aria-controls={id}
-              aria-label={`Toggle ${label} menu`}
+              aria-label={isTa ? `${label} மெனுவை மாற்று` : `Toggle ${label} menu`}
               onClick={() => setOpen((v) => !v)}
               className="flex items-center py-2 pl-1 pr-0.5 text-ink transition-colors hover:text-[var(--color-primary-blue)]"
             >
@@ -153,6 +156,7 @@ export function DropdownLink({ href, label }: { href: string; label: string }) {
   return (
     <a
       href={href}
+      data-track={`nav_${label}`}
       className="type-body-sm block rounded-lg px-3 py-2 text-ink transition-colors hover:bg-[var(--color-surface-strong)]"
     >
       {label}

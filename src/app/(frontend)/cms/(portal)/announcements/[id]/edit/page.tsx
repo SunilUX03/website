@@ -5,21 +5,31 @@ import { lexicalToText } from "@/lib/portal/lexical";
 import { AnnouncementForm } from "../../AnnouncementForm";
 import { updateAnnouncement, deleteAnnouncement } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
+import type { Locale } from "@/lib/locale";
 import type { Media } from "@/payload-types";
 
+// `id` on each mapped row is a Payload internal detail: every localized
+// array field (facts) stores its Tamil and English text keyed off the
+// row's own id, not its position — a row resubmitted without that id
+// gets treated as brand new, and Payload replaces the whole array
+// wholesale, silently deleting the *other* locale's translation for
+// every row. See ServiceForm.tsx / services/[id]/edit/page.tsx for the
+// full explanation.
 export default async function EditAnnouncementPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ locale?: string; saved?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { locale: localeParam, saved, error } = await searchParams;
+  const locale: Locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "announcements", id: Number(id), depth: 1, draft: true, overrideAccess: true })
+    .findByID({ collection: "announcements", id: Number(id), locale, depth: 1, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -46,8 +56,13 @@ export default async function EditAnnouncementPage({
         <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
       ) : null}
 
+      <LocaleTabs basePath={`/cms/announcements/${id}/edit`} current={locale} />
+
       <AnnouncementForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
+        error={error}
         values={{
           heading: doc.heading,
           date: doc.date?.slice(0, 10) ?? "",
@@ -55,11 +70,12 @@ export default async function EditAnnouncementPage({
           category: doc.category ?? "",
           body: lexicalToText(doc.body),
           imageUrl: typeof doc.image === "object" && doc.image ? (doc.image as Media).url ?? undefined : undefined,
-          facts: doc.facts?.map((f) => ({ label: f.label, value: f.value })) ?? [],
-          links: doc.links?.map((l) => ({ label: l.label, href: l.href })) ?? [],
+          facts: doc.facts?.map((f) => ({ id: f.id ?? undefined, label: f.label, value: f.value })) ?? [],
+          links: doc.links?.map((l) => ({ id: l.id ?? undefined, label: l.label, href: l.href })) ?? [],
           tickerFeatured: doc.tickerFeatured ?? false,
           tickerOrder: doc.tickerOrder ?? 0,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

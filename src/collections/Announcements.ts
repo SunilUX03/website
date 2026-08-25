@@ -139,5 +139,12 @@ export const Announcements: CollectionConfig = {
         { name: "href", type: "text", required: true },
       ],
     },
+    {
+      name: "order",
+      type: "number",
+      required: true,
+      defaultValue: 0,
+      admin: { description: "Controls display order on the Announcements list page. Lower numbers show first." },
+    },
   ],
 };

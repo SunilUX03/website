@@ -4,20 +4,22 @@ import { requireSession } from "@/lib/portal/auth";
 import { RollOfHonourForm } from "../../RollOfHonourForm";
 import { updateRollOfHonourEntry, deleteRollOfHonourEntry } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 
 export default async function EditRollOfHonourEntryPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; locale?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { locale: localeParam, error } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "roll-of-honour", id: Number(id), draft: true, overrideAccess: true })
+    .findByID({ collection: "roll-of-honour", id: Number(id), locale, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -40,18 +42,20 @@ export default async function EditRollOfHonourEntryPage({
         ) : null}
       </div>
 
-      {saved ? (
-        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+      <LocaleTabs basePath={`/cms/roll-of-honour/${id}/edit`} current={locale} />
 
       <RollOfHonourForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
+        error={error}
         values={{
           designation: doc.designation,
           name: doc.name ?? "",
           range: doc.range ?? "",
           order: doc.order,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

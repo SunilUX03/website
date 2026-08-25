@@ -1,72 +1,61 @@
 import Link from "next/link";
 import { getPayloadClient } from "@/lib/payload-client";
+import { AnnouncementsTable } from "./AnnouncementsTable";
+import { HomepageAnnouncements } from "./HomepageAnnouncements";
 
 export const dynamic = "force-dynamic";
+
+function dateOnly(value: string | null | undefined): string {
+  return value ? value.slice(0, 10) : "";
+}
 
 export default async function AnnouncementsListPage() {
   const payload = await getPayloadClient();
   const { docs } = await payload.find({
     collection: "announcements",
-    sort: "-date",
+    sort: "order",
     limit: 200,
     draft: true,
     overrideAccess: true,
   });
 
+  const featured = docs
+    .filter((d) => d.tickerFeatured)
+    .sort((a, b) => (a.tickerOrder ?? 0) - (b.tickerOrder ?? 0))
+    .map((d) => ({ id: d.id, heading: d.heading, date: dateOnly(d.date) }));
+  const candidates = docs
+    .filter((d) => !d.tickerFeatured && d._status === "published")
+    .map((d) => ({ id: d.id, heading: d.heading, date: dateOnly(d.date) }));
+
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-2 flex items-center justify-between">
         <h1 className="type-display-sm text-ink">Announcements</h1>
         <Link href="/cms/announcements/new" className="type-button btn-primary">
           + Add announcement
         </Link>
       </div>
+      <p className="type-body-sm mb-6 text-[var(--color-muted)]">
+        Looking for the /notifications/announcements page&apos;s own eyebrow/heading/description copy? That&apos;s edited under{" "}
+        <Link href="/cms/settings/site-copy" className="font-semibold text-[var(--color-primary-blue)] hover:underline">
+          Site Settings → Other Page Copy
+        </Link>
+        {" "}(&quot;Announcements page hero&quot;) — it&apos;s shared page chrome, not one specific announcement.
+      </p>
 
-      <div className="overflow-hidden rounded-xl border border-hairline bg-surface-card">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="type-caption-uppercase border-b border-hairline text-[var(--color-muted)]">
-              <th className="px-4 py-3">Heading</th>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Ticker</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {docs.map((doc) => (
-              <tr key={doc.id} className="type-body-sm border-b border-hairline last:border-0">
-                <td className="px-4 py-3 text-ink">{doc.heading}</td>
-                <td className="px-4 py-3 text-[var(--color-muted)]">{doc.date?.slice(0, 10)}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={
-                      doc._status === "published"
-                        ? "badge-pill type-caption-uppercase !bg-[rgba(16,138,74,0.1)] !text-[#108a4a]"
-                        : "badge-pill type-caption-uppercase"
-                    }
-                  >
-                    {doc._status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-[var(--color-muted)]">{doc.tickerFeatured ? "Yes" : "—"}</td>
-                <td className="px-4 py-3 text-right">
-                  <Link href={`/cms/announcements/${doc.id}/edit`} className="type-caption font-semibold text-[var(--color-primary-blue)] hover:underline">
-                    Edit
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {docs.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-muted)]">
-                  No announcements yet.
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
-      </div>
+      <HomepageAnnouncements
+        key={featured.map((f) => f.id).join(",")}
+        initialFeatured={featured}
+        candidates={candidates}
+      />
+
+      <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">All announcements</p>
+      <p className="type-body-sm mb-4 max-w-[680px] text-[var(--color-muted)]">
+        Drag a row by its handle to control the order they appear in on the /notifications/announcements page.
+      </p>
+      <AnnouncementsTable
+        docs={docs.map((d) => ({ id: d.id, heading: d.heading, date: dateOnly(d.date), _status: d._status as "draft" | "published", tickerFeatured: d.tickerFeatured ?? false }))}
+      />
     </div>
   );
 }

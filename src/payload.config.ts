@@ -22,7 +22,8 @@ import { Awards } from "./collections/Awards";
 import { RollOfHonour } from "./collections/RollOfHonour";
 import { ProjectsSpotlight } from "./collections/ProjectsSpotlight";
 import { SocialPosts } from "./collections/SocialPosts";
-import { DepartmentContacts } from "./collections/DepartmentContacts";
+import { CitizenServices } from "./collections/CitizenServices";
+import { FeedbackSubmissions } from "./collections/FeedbackSubmissions";
 import { NavContent } from "./globals/NavContent";
 import { BoardContent } from "./globals/BoardContent";
 import { HeroContent } from "./globals/HeroContent";
@@ -37,6 +38,8 @@ import { RtiContent } from "./globals/RtiContent";
 import { TendersContent } from "./globals/TendersContent";
 import { SiteCopyContent } from "./globals/SiteCopyContent";
 import { ServicesToGovernmentContent } from "./globals/ServicesToGovernmentContent";
+import { SiteIdentity } from "./globals/SiteIdentity";
+import { SiteMapContent } from "./globals/SiteMapContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -82,7 +85,8 @@ export default buildConfig({
     RollOfHonour,
     ProjectsSpotlight,
     SocialPosts,
-    DepartmentContacts,
+    CitizenServices,
+    FeedbackSubmissions,
   ],
   globals: [
     NavContent,
@@ -99,6 +103,8 @@ export default buildConfig({
     TendersContent,
     SiteCopyContent,
     ServicesToGovernmentContent,
+    SiteIdentity,
+    SiteMapContent,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",

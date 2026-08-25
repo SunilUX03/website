@@ -1,12 +1,22 @@
-import type { CmsRollOfHonourEntry } from "@/lib/cms/about-types";
+import type { CmsRollOfHonourEntry, CmsSectionHeading } from "@/lib/cms/about-types";
 import { Container } from "@/components/ui/Container";
+import type { Locale } from "@/lib/locale";
 
-export function RollOfHonour({ entries }: { entries: CmsRollOfHonourEntry[] }) {
+export function RollOfHonour({
+  entries,
+  section,
+  locale = "en",
+}: {
+  entries: CmsRollOfHonourEntry[];
+  section: CmsSectionHeading;
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   return (
     <section className="bg-canvas">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Roll of Honour</p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">Leading TNeGA since 2006</h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{section.eyebrow}</p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">{section.heading}</h2>
 
         {/* Plain static table — no carousel/scroll behavior. Desktop gets
             a real table; below md it becomes a stacked card list (same
@@ -16,9 +26,9 @@ export function RollOfHonour({ entries }: { entries: CmsRollOfHonourEntry[] }) {
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="border-b border-hairline bg-canvas-soft">
-                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Name</th>
-                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Designation</th>
-                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">Tenure</th>
+                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{isTa ? "பெயர்" : "Name"}</th>
+                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{isTa ? "பதவி" : "Designation"}</th>
+                <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{isTa ? "பதவிக்காலம்" : "Tenure"}</th>
               </tr>
             </thead>
             <tbody>

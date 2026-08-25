@@ -7,6 +7,7 @@ import type { CmsAnnouncement } from "@/lib/cms/announcements";
 import type { SocialPost } from "@/lib/social-seed-data";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/hooks";
+import type { Locale } from "@/lib/locale";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -21,6 +22,17 @@ const SOCIAL_ICON: Record<string, ComponentType<{ className?: string }>> = {
   Instagram: InstagramIcon,
   LinkedIn: LinkedInIcon,
   YouTube: YouTubeIcon,
+};
+
+// socialMedia's followLabel is static English data in lib/content.ts —
+// same display-only-override pattern used on the Home pillar cards
+// (see PILLAR_ITEM_TA in page.tsx), keyed by platform name.
+const FOLLOW_LABEL_TA: Record<string, string> = {
+  Facebook: "Facebook-இல் பின்தொடரவும்",
+  X: "X-இல் பின்தொடரவும்",
+  Instagram: "Instagram-இல் பின்தொடரவும்",
+  LinkedIn: "LinkedIn-இல் பின்தொடரவும்",
+  YouTube: "YouTube-இல் பின்தொடரவும்",
 };
 
 type FeedPost = SocialPost & { platform: string; href: string };
@@ -241,8 +253,9 @@ function useMergedSocialFeed(): FeedPost[] | null {
   return posts;
 }
 
-export function CommunityFeed({ announcements }: { announcements: CmsAnnouncement[] }) {
+export function CommunityFeed({ announcements, locale = "en" }: { announcements: CmsAnnouncement[]; locale?: Locale }) {
   const posts = useMergedSocialFeed();
+  const isTa = locale === "ta";
 
   return (
     <section className="bg-canvas">
@@ -251,14 +264,16 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
           <div>
             <div className="mb-6 flex items-end justify-between gap-4">
               <div>
-                <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Announcements</p>
-                <h2 className="type-display-md text-ink">Latest from TNeGA</h2>
+                <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">
+                  {isTa ? "அறிவிப்புகள்" : "Announcements"}
+                </p>
+                <h2 className="type-display-md text-ink">{isTa ? "TNeGA-இன் சமீபத்திய தகவல்கள்" : "Latest from TNeGA"}</h2>
               </div>
               <Link
                 href="/notifications/announcements"
                 className="type-caption shrink-0 font-semibold text-[var(--color-primary-blue)] hover:underline"
               >
-                View all
+                {isTa ? "அனைத்தையும் காண்க" : "View all"}
                 <span aria-hidden>{" →"}</span>
               </Link>
             </div>
@@ -293,8 +308,8 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
 
           <div>
             <div className="mb-6">
-              <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Updates</p>
-              <h2 className="type-display-md text-ink">From our social channels</h2>
+              <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">{isTa ? "புதுப்பிப்புகள்" : "Updates"}</p>
+              <h2 className="type-display-md text-ink">{isTa ? "எங்கள் சமூக ஊடக சேனல்களிலிருந்து" : "From our social channels"}</h2>
             </div>
 
             {posts === null ? (
@@ -308,7 +323,9 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
                 ))}
               </div>
             ) : posts.length === 0 ? (
-              <p className="type-body-sm text-[var(--color-muted)]">Updates will appear here shortly.</p>
+              <p className="type-body-sm text-[var(--color-muted)]">
+                {isTa ? "புதுப்பிப்புகள் விரைவில் இங்கே தோன்றும்." : "Updates will appear here shortly."}
+              </p>
             ) : (
               <VerticalDrift
                 items={posts}
@@ -345,7 +362,7 @@ export function CommunityFeed({ announcements }: { announcements: CmsAnnouncemen
                   href={platform.href}
                   className="type-caption font-semibold text-ink hover:text-[var(--color-primary-blue)]"
                 >
-                  {platform.followLabel}
+                  {isTa ? FOLLOW_LABEL_TA[platform.platform] ?? platform.followLabel : platform.followLabel}
                 </a>
               ))}
             </div>

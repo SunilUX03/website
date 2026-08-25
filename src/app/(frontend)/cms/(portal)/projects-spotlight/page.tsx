@@ -21,7 +21,7 @@ export default async function ProjectsSpotlightListPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="type-display-sm text-ink">Projects Spotlight</h1>
         <Link href="/cms/projects-spotlight/add" className="type-button btn-primary">
-          + Add from Services
+          + Add from Initiatives &amp; Projects
         </Link>
       </div>
       <p className="type-body-sm mb-4 max-w-[680px] text-[var(--color-muted)]">

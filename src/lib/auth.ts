@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
+import { verifyCaptcha } from "./captcha";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -11,8 +12,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        captchaToken: { label: "Captcha token", type: "text" },
+        captchaAnswer: { label: "Captcha answer", type: "text" },
       },
       async authorize(credentials) {
+        if (!verifyCaptcha(credentials?.captchaToken, credentials?.captchaAnswer)) return null;
+
         const email = credentials?.email;
         const password = credentials?.password;
         if (typeof email !== "string" || typeof password !== "string") return null;

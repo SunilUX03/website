@@ -23,6 +23,7 @@ import { getAwards } from "@/lib/cms/awards";
 import { getRollOfHonour } from "@/lib/cms/roll-of-honour";
 import { getMetrics } from "@/lib/cms/metrics";
 import { getCareersContent } from "@/lib/cms/careers-content";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "About TNeGA | Tamil Nadu e-Governance Agency",
@@ -36,35 +37,36 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
+  const locale = await getLocale();
   const [openings, board, members, aboutPage, orgChart, awards, rollOfHonour, metrics, careers] =
     await Promise.all([
-      getJobOpenings(),
-      getBoardContent(),
-      getTeamMembers(),
-      getAboutPageContent(),
-      getOrgChart(),
-      getAwards(),
-      getRollOfHonour(),
-      getMetrics(),
-      getCareersContent(),
+      getJobOpenings(locale),
+      getBoardContent(locale),
+      getTeamMembers(locale),
+      getAboutPageContent(locale),
+      getOrgChart(locale),
+      getAwards(locale),
+      getRollOfHonour(locale),
+      getMetrics(locale),
+      getCareersContent(locale),
     ]);
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "About" }]} />
+        <Breadcrumb locale={locale} items={[{ label: locale === "ta" ? "எங்களைப் பற்றி" : "About" }]} />
         <AboutHero aboutHero={aboutPage.hero} />
         <WhoWeAreHierarchy whoWeAre={aboutPage.whoWeAre} hierarchy={aboutPage.hierarchy} />
         <VisionMission visionMission={aboutPage.visionMission} />
-        <Metrics metrics={metrics} />
-        <OrgChart orgChart={orgChart} />
-        <LeadershipTeam members={members} />
-        <BoardOfDirectors board={board} />
-        <Awards awards={awards} />
-        <RollOfHonour entries={rollOfHonour} />
-        <JoinUs hero={careers.hero} openings={openings} />
-        <ConnectWithUs connectWithUs={aboutPage.connectWithUs} />
+        <Metrics heading={metrics.heading} metrics={metrics.metrics} />
+        <OrgChart orgChart={orgChart} section={aboutPage.orgChartSection} locale={locale} />
+        <LeadershipTeam members={members} section={aboutPage.leadershipSection} />
+        <BoardOfDirectors board={board} section={aboutPage.boardSection} locale={locale} />
+        <Awards awards={awards} section={aboutPage.awardsSection} />
+        <RollOfHonour entries={rollOfHonour} section={aboutPage.rollOfHonourSection} locale={locale} />
+        <JoinUs hero={careers.hero} openings={openings} locale={locale} />
+        <ConnectWithUs connectWithUs={aboutPage.connectWithUs} locale={locale} />
       </main>
       <Footer />
       <ScrollToTop />

@@ -1,13 +1,15 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { Media, Service } from "@/payload-types";
 import type { CmsProjectSpotlight } from "@/lib/cms/projects-spotlight-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsProjectSpotlight, CmsProjectStat, CmsProjectCta } from "@/lib/cms/projects-spotlight-types";
 
-export async function getProjectsSpotlight(): Promise<CmsProjectSpotlight[]> {
+export async function getProjectsSpotlight(locale: Locale = "en"): Promise<CmsProjectSpotlight[]> {
   const payload = await getPayloadClient();
   const { docs } = await payload.find({
     collection: "projects-spotlight",
+    locale,
     sort: "order",
     limit: 50,
     depth: 2,

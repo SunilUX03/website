@@ -10,11 +10,11 @@ function slugify(value: string): string {
 /** A single string as one array row — Payload arrays need an object per
  * row, so every string[] field in the old ServiceItem/RealContent shape
  * (statistics, keyFeatures, eligibility, ...) becomes an array of these. */
-const stringListField = (name: string, label?: string, valueRequired = true) => ({
+const stringListField = (name: string, label?: string, valueRequired = true, valueMaxLength?: number) => ({
   name,
   type: "array" as const,
   admin: label ? { description: label } : undefined,
-  fields: [{ name: "value", type: "text" as const, required: valueRequired, localized: true as const }],
+  fields: [{ name: "value", type: "text" as const, required: valueRequired, localized: true as const, ...(valueMaxLength ? { maxLength: valueMaxLength } : {}) }],
 });
 
 const qaListField = (name: string, label?: string) => ({
@@ -129,14 +129,26 @@ export const Services: CollectionConfig = {
           localized: true,
           admin: { description: "Short hero-only line. Falls back to the description above when blank." },
         },
+        { name: "aboutHeading", type: "text", localized: true, admin: { description: 'The section heading. Defaults to "What {name} does".' } },
+        { name: "aboutEyebrow", type: "text", localized: true, admin: { description: 'Small sub heading above the About heading. Defaults to "About the Project/Initiative" based on the Badge label.' } },
         stringListField("statistics", "One stat per row, e.g. \"273 Government services\"."),
         stringListField("keyFeatures"),
-        stringListField("keyFeatureDescriptions", "Optional, same order as Key Features — a one-line description per feature. Leave a row blank to use the generic fallback for that feature.", false),
-        { name: "hideStatFeatureCards", type: "checkbox", defaultValue: false, admin: { description: "Statistics normally also become Key Feature cards — check this when Key Features is already complete on its own." } },
+        stringListField("keyFeatureDescriptions", "Optional, same order as Key Features — a one-line description per feature (max 150 characters). Leave a row blank to use the generic fallback for that feature.", false, 150),
+        { name: "featuresEyebrow", type: "text", localized: true, admin: { description: 'Defaults to "Capabilities".' } },
+        { name: "featuresHeading", type: "text", localized: true, admin: { description: 'Defaults to "Key Features".' } },
+        { name: "hideFeaturesSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the Key Features section on this page at all." } },
         stringListField("eligibility", "\"You can use this if...\" bullet points."),
         stringListField("whatYoullNeed"),
+        { name: "eligibilityEyebrow", type: "text", localized: true, admin: { description: 'Defaults to "Eligibility".' } },
+        { name: "eligibilityHeading", type: "text", localized: true, admin: { description: 'Defaults to "Who can use this".' } },
+        { name: "eligibilityWhoHeading", type: "text", localized: true, admin: { description: 'Defaults to "You can use this if".' } },
+        { name: "eligibilityDocsHeading", type: "text", localized: true, admin: { description: 'Defaults to "What you\'ll need".' } },
+        { name: "hideEligibilitySection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the Eligibility section on this page at all." } },
         qaListField("faqs"),
         qaListField("faqsMore", "Extra FAQs shown behind a \"View more\" toggle."),
+        { name: "faqEyebrow", type: "text", localized: true, admin: { description: 'Defaults to "Questions".' } },
+        { name: "faqHeading", type: "text", localized: true, admin: { description: 'Defaults to "Frequently asked questions".' } },
+        { name: "hideFaqSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the FAQs section on this page at all." } },
         { name: "aboutSecondParagraph", type: "textarea", localized: true },
         { name: "hideAboutSecondParagraph", type: "checkbox", defaultValue: false },
         { name: "calloutText", type: "text", localized: true, admin: { description: "A plain callout line in the About section, instead of a generated pull-quote." } },
@@ -159,7 +171,8 @@ export const Services: CollectionConfig = {
             { name: "alt", type: "text", required: true, localized: true },
           ],
         },
-        { name: "productTourCaption", type: "text", localized: true },
+        { name: "productTourHeading", type: "text", localized: true, admin: { description: 'The section heading. Defaults to "A look at {name}".' } },
+        { name: "hideProductTourSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the Product Tour section on this page at all." } },
         {
           name: "getStartedSteps",
           type: "array",
@@ -178,6 +191,10 @@ export const Services: CollectionConfig = {
         { name: "getStartedIntro", type: "textarea", localized: true },
         { name: "getStartedOutro", type: "textarea", localized: true },
         { name: "directLinkLabel", type: "text", localized: true, admin: { description: "Label for the Get Started direct-link button (projects only). Defaults to \"Open\"." } },
+        { name: "directLinkPortalLabel", type: "text", localized: true, admin: { description: 'Text next to the direct-link button (projects only). Defaults to "{name} Portal".' } },
+        { name: "getStartedEyebrow", type: "text", localized: true, admin: { description: 'Defaults to "Get started".' } },
+        { name: "getStartedHeading", type: "text", localized: true, admin: { description: 'Defaults to "How to access {name}".' } },
+        { name: "hideGetStartedSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the Get Started section on this page at all." } },
         { name: "comingSoon", type: "checkbox", defaultValue: false, admin: { description: "Marks a pre-launch project: CTAs become \"Coming Soon\" / \"Contact TNeGA\"." } },
         { name: "gatedAccess", type: "checkbox", defaultValue: false, admin: { description: "Marks an access-gated project (staff login, not public self-service): CTAs become \"Avail Service\" → /reach-us." } },
         {
@@ -189,23 +206,15 @@ export const Services: CollectionConfig = {
           },
         },
         {
-          name: "ctaHref",
-          type: "text",
-          admin: {
-            description: "Where the main button goes when Button text above is set. Leave blank to reuse the Access Portal link.",
-          },
-        },
-        { name: "relatedCardStats", type: "text", localized: true, admin: { description: "Overrides the stats line shown on cards elsewhere on the site (the Hero keeps showing the main stats field above)." } },
-        {
           name: "typeLabel",
           type: "select",
+          required: true,
           options: [
             { label: "Project", value: "Project" },
-            { label: "Service", value: "Service" },
+            { label: "Initiative", value: "Initiative" },
           ],
           admin: {
-            description:
-              'Small tag shown at the top of the page (e.g. "Project" or "Service") so visitors know what kind of listing this is at a glance. Automatically set to "Project" if Access Portal link is filled in above, otherwise "Service" — only pick a value here to show something different from that automatic behavior (e.g. eOffice has a live portal link but is still labeled "Service").',
+            description: 'The badge shown at the top of the page. Every item is either a "Project" (has its own self-service portal) or an "Initiative".',
           },
         },
         {

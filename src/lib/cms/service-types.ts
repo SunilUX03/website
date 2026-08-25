@@ -19,9 +19,7 @@ export interface CmsRealContent {
   aboutSecondParagraph?: string;
   calloutText?: string;
   aboutLinkModal?: { label: string; title: string; items: string[] };
-  hideStatFeatureCards?: boolean;
   productTour?: { src: string; alt: string }[];
-  productTourCaption?: string;
   getStartedSteps?: { title: string; description: string }[];
   /** Explicitly hides the Get Started steps section (e.g. intro/outro
    * prose only) — needed because Payload can't distinguish "explicitly
@@ -29,21 +27,41 @@ export interface CmsRealContent {
    * write `getStartedSteps: []`. */
   suppressGetStartedSteps?: boolean;
   directLinkLabel?: string;
+  directLinkPortalLabel?: string;
   getStartedIntro?: string;
   getStartedOutro?: string;
   comingSoon?: boolean;
-  relatedCardStats?: string;
   gatedAccess?: boolean;
   /** Free-text override for the main CTA button (Hero and card) — wins
    * over the automatic Access Portal / Avail Service / Coming Soon
-   * label whenever it's set. */
+   * label whenever it's set. Always links to `accessPortalHref`. */
   ctaLabel?: string;
-  /** Where `ctaLabel` goes; falls back to `accessPortalHref` if blank. */
-  ctaHref?: string;
   hideAboutSecondParagraph?: boolean;
-  typeLabel?: "Project" | "Service";
+  /** Required going forward — every item explicitly declares which it
+   * is, no automatic/inferred badge any more. */
+  typeLabel?: "Project" | "Initiative";
   faqsMore?: { q: string; a: string }[];
   contact?: { email?: string; phone?: string };
+  // Per-section eyebrow/heading overrides — every one falls back to a
+  // generated default (see ServiceDetailContent.tsx) when left blank.
+  aboutEyebrow?: string;
+  aboutHeading?: string;
+  featuresEyebrow?: string;
+  featuresHeading?: string;
+  hideFeaturesSection?: boolean;
+  productTourHeading?: string;
+  hideProductTourSection?: boolean;
+  eligibilityEyebrow?: string;
+  eligibilityHeading?: string;
+  eligibilityWhoHeading?: string;
+  eligibilityDocsHeading?: string;
+  hideEligibilitySection?: boolean;
+  getStartedEyebrow?: string;
+  getStartedHeading?: string;
+  hideGetStartedSection?: boolean;
+  faqEyebrow?: string;
+  faqHeading?: string;
+  hideFaqSection?: boolean;
 }
 
 export type CmsServiceItem = {
@@ -95,6 +113,25 @@ export function getServiceItemsByNames(
     const item = items.find((candidate) => candidate.name === name);
     if (!item) {
       console.error(`getServiceItemsByNames: no service item named "${name}" — skipping. Available: ${items.map((i) => i.name).join(", ")}`);
+      return [];
+    }
+    return [item];
+  });
+}
+
+/** Same as getServiceItemsByNames, but matched by `slug` — a stable,
+ * unlocalized identifier — rather than `name`, which returns translated
+ * text once `items` was fetched for locale: "ta" and so can never match
+ * an English name literal. Prefer this over getServiceItemsByNames for
+ * any lookup list that needs to keep working under both locales. */
+export function getServiceItemsBySlugs(
+  items: CmsServiceItemDetail[],
+  slugs: string[]
+): CmsServiceItemDetail[] {
+  return slugs.flatMap((slug) => {
+    const item = items.find((candidate) => candidate.slug === slug);
+    if (!item) {
+      console.error(`getServiceItemsBySlugs: no service item with slug "${slug}" — skipping. Available: ${items.map((i) => i.slug).join(", ")}`);
       return [];
     }
     return [item];

@@ -6,11 +6,7 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import type { CmsHeroContent } from "@/lib/cms/hero-content-types";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/hooks";
-// Static import (not a "/images/..." string path) on purpose: Next
-// fingerprints the built filename by content hash, so replacing this file
-// on disk always produces a new URL instead of silently reusing a stale
-// cached copy at the old one — the "old image keeps coming back" bug.
-import heroCollage from "../../../public/images/hero/tn-citizens-collage.png";
+import type { Locale } from "@/lib/locale";
 
 // One-time entrance reveal on mount — name, then caption, then image, then
 // the scroll cue. No longer a continuous cycle: per feedback, the hero is
@@ -82,10 +78,15 @@ const ATMOSPHERE_BACKGROUND = [
   "var(--color-canvas)",
 ].join(", ");
 
-export function Hero({ hero }: { hero: CmsHeroContent }) {
+export function Hero({ hero, locale = "en" }: { hero: CmsHeroContent; locale?: Locale }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
-  const agencyName = hero.agencyLabelCycle[0] ?? "Tamil Nadu e-Governance Agency";
+  const isTa = locale === "ta";
+  // agencyLabelCycle isn't a localized field — it's a fixed bilingual pair
+  // ([0] English, [1] Tamil) meant to show the name in the site's current
+  // language, not to actually cycle (that behavior was removed per
+  // feedback, see comment below).
+  const agencyName = (isTa ? hero.agencyLabelCycle[1] : hero.agencyLabelCycle[0]) ?? hero.agencyLabelCycle[0] ?? "Tamil Nadu e-Governance Agency";
 
   // Resolves the CMS headline template ("Powering Digital {word} in Tamil
   // Nadu") into three parts. The last static word before the placeholder
@@ -112,6 +113,20 @@ export function Hero({ hero }: { hero: CmsHeroContent }) {
       id="main-content"
       style={{ background: ATMOSPHERE_BACKGROUND }}
     >
+      {/* CMS-uploaded background (Site Content > Hero) fully covers the
+          colour-wash gradient above when set — admin can restore the
+          default look at any time by just removing the image. */}
+      {hero.backgroundImageUrl ? (
+        <Image
+          src={hero.backgroundImageUrl}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+      ) : null}
       <Container className="relative w-full py-10 md:py-14">
         <motion.div
           className="grid items-center gap-10 md:grid-cols-[1.35fr_1fr] md:gap-10"
@@ -149,14 +164,16 @@ export function Hero({ hero }: { hero: CmsHeroContent }) {
             variants={riseIn}
             className="relative mx-auto h-[336px] w-full max-w-[336px] sm:h-[400px] sm:max-w-[384px] md:h-[424px] md:max-w-[360px]"
           >
-            <Image
-              src={heroCollage}
-              alt="Collage of Tamil Nadu citizens across different walks of life, over a map of the state"
-              fill
-              priority
-              className="object-contain"
-              sizes="(min-width: 768px) 360px, 336px"
-            />
+            {hero.mapImageUrl ? (
+              <Image
+                src={hero.mapImageUrl}
+                alt="Collage of Tamil Nadu citizens across different walks of life, over a map of the state"
+                fill
+                priority
+                className="object-contain"
+                sizes="(min-width: 768px) 360px, 336px"
+              />
+            ) : null}
           </motion.div>
         </motion.div>
 
@@ -166,10 +183,10 @@ export function Hero({ hero }: { hero: CmsHeroContent }) {
           initial={reducedMotion ? "show" : "hidden"}
           animate="show"
           variants={riseIn}
-          aria-label="Scroll to next section"
+          aria-label={isTa ? "அடுத்த பிரிவுக்குச் செல்லவும்" : "Scroll to next section"}
           className="mx-auto mt-10 flex flex-col items-center gap-1.5 text-[var(--color-muted)] transition-colors hover:text-ink"
         >
-          <span className="type-caption-uppercase">Scroll</span>
+          <span className="type-caption-uppercase">{isTa ? "ஸ்க்ரோல்" : "Scroll"}</span>
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 motion-safe:animate-bounce" fill="none" aria-hidden>
             <path
               d="M6 9l6 6 6-6"

@@ -15,39 +15,55 @@
 // there, per explicit instruction) rather than left duplicated here.
 
 import type { DocumentFacet, DocumentRow } from "@/components/documents/types";
+import type { Locale } from "@/lib/locale";
 
 export const heroOrbs = [
   { color: "mint", className: "-left-16 -top-24 h-[420px] w-[420px]" },
   { color: "peach", className: "-bottom-10 left-[300px] h-[340px] w-[340px]" },
 ] as const;
 
-export const tableHeaders = ["Title", "GO No", "Date", "Department", "Download"];
+export function getTableHeaders(locale: Locale): string[] {
+  return locale === "ta"
+    ? ["தலைப்பு", "அரசாணை எண்", "தேதி", "துறை", "பதிவிறக்கு"]
+    : ["Title", "GO No", "Date", "Department", "Download"];
+}
 
 /** Year and department options are derived from the rows themselves
  * (see lib/cms/government-orders.ts), not hand-listed here — a
  * hardcoded year/department list would silently stop covering a new
  * G.O. added through the CMS from a year or department not already in
  * this list. */
-export function buildFacets(rows: DocumentRow[]): DocumentFacet[] {
+export function buildFacets(rows: DocumentRow[], locale: Locale): DocumentFacet[] {
   const years = Array.from(new Set(rows.map((r) => r.facets.year).filter(Boolean))).sort((a, b) => Number(b) - Number(a));
   const depts = Array.from(new Set(rows.map((r) => r.facets.dept).filter(Boolean))).sort();
   return [
     {
       id: "year",
       kind: "select",
-      ariaLabel: "Filter by year",
+      ariaLabel: locale === "ta" ? "ஆண்டு வாரியாக வடிகட்டு" : "Filter by year",
       initial: "all",
-      options: [{ value: "all", label: "All Years" }, ...years.map((y) => ({ value: y, label: y }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து ஆண்டுகளும்" : "All Years" },
+        ...years.map((y) => ({ value: y, label: y })),
+      ],
     },
     {
       id: "dept",
       kind: "select",
-      ariaLabel: "Filter by department",
+      ariaLabel: locale === "ta" ? "துறை வாரியாக வடிகட்டு" : "Filter by department",
       initial: "all",
-      options: [{ value: "all", label: "All Departments" }, ...depts.map((d) => ({ value: d, label: d }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து துறைகளும்" : "All Departments" },
+        ...depts.map((d) => ({ value: d, label: d })),
+      ],
     },
   ];
 }
 
-export const searchPlaceholder = "Search government orders...";
-export const noResultsText = "No government orders match your filters.";
+export function getSearchPlaceholder(locale: Locale): string {
+  return locale === "ta" ? "அரசு ஆணைகளைத் தேடுங்கள்..." : "Search government orders...";
+}
+
+export function getNoResultsText(locale: Locale): string {
+  return locale === "ta" ? "உங்கள் வடிகட்டிகளுடன் பொருந்தும் அரசு ஆணைகள் இல்லை." : "No government orders match your filters.";
+}

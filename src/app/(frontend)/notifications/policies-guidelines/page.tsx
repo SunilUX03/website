@@ -8,14 +8,15 @@ import { DocumentTable } from "@/components/documents/DocumentTable";
 import { PoliciesGraphic } from "@/components/heroes/PoliciesGraphic";
 import {
   heroOrbs,
-  tableHeaders,
+  getTableHeaders,
   buildFacets,
-  searchPlaceholder,
-  noResultsText,
+  getSearchPlaceholder,
+  getNoResultsText,
 } from "@/lib/policies-guidelines-content";
 import { getPolicyRows } from "@/lib/cms/policies";
 import { getSiteCopy } from "@/lib/cms/site-copy";
 import { getLocale } from "@/lib/locale";
+import { getUiStrings } from "@/lib/ui-strings";
 
 export const metadata: Metadata = {
   title: "Policies & Guidelines | TNeGA",
@@ -27,31 +28,40 @@ export const revalidate = 60;
 
 export default async function PoliciesGuidelines() {
   const locale = await getLocale();
-  const [rows, siteCopy] = await Promise.all([getPolicyRows(), getSiteCopy(locale)]);
+  const t = getUiStrings(locale);
+  const [rows, siteCopy] = await Promise.all([getPolicyRows(locale), getSiteCopy(locale)]);
   const hero = siteCopy.policiesHero;
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Notifications" }, { label: "Policies & Guidelines" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "கொள்கைகள் & வழிகாட்டுதல்கள்" : "Policies & Guidelines" },
+          ]}
+        />
         <PageHero
           eyebrow={hero.eyebrow}
           heading={hero.heading}
           body={hero.body}
-          cta={{ label: "View All", href: "#document-table" }}
+          cta={{ label: t.viewAll, href: "#document-table" }}
           orbs={heroOrbs}
           graphic={<PoliciesGraphic />}
         />
         <DocumentTable
           rows={rows}
-          headers={tableHeaders}
-          facets={buildFacets(rows)}
-          searchPlaceholder={searchPlaceholder}
-          searchAriaLabel="Search policies and guidelines"
-          filterBarLabel="Filter policies and guidelines"
-          tableLabel="Policies and guidelines list"
-          noResultsText={noResultsText}
+          headers={getTableHeaders(locale)}
+          facets={buildFacets(rows, locale)}
+          searchPlaceholder={getSearchPlaceholder(locale)}
+          searchAriaLabel={isTa ? "கொள்கைகள் & வழிகாட்டுதல்களைத் தேடுங்கள்" : "Search policies and guidelines"}
+          filterBarLabel={isTa ? "கொள்கைகள் & வழிகாட்டுதல்களை வடிகட்டு" : "Filter policies and guidelines"}
+          tableLabel={isTa ? "கொள்கைகள் & வழிகாட்டுதல்கள் பட்டியல்" : "Policies and guidelines list"}
+          noResultsText={getNoResultsText(locale)}
+          locale={locale}
         />
       </main>
       <Footer />

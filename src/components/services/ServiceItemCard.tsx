@@ -1,14 +1,18 @@
 import Link from "next/link";
 import type { CmsServiceItem as ServiceItem } from "@/lib/cms/service-types";
 import { PhotoTile } from "@/components/ui/PhotoTile";
+import type { Locale } from "@/lib/locale";
 
 export function ServiceItemCard({
   item,
   className,
+  locale = "en",
 }: {
   item: ServiceItem;
   className?: string;
+  locale?: Locale;
 }) {
+  const isTa = locale === "ta";
   // The card's own short tagline (shown above the metrics on the detail
   // page) reads better clamped than the longer `description`, which is
   // written for the About section's opening paragraph.
@@ -39,7 +43,7 @@ export function ServiceItemCard({
       <Link
         href={item.knowMoreHref}
         className="absolute inset-0 z-0"
-        aria-label={`View details about ${item.name}`}
+        aria-label={isTa ? `${item.name} பற்றிய விவரங்களைக் காண்க` : `View details about ${item.name}`}
       />
 
       <div className="overflow-hidden">
@@ -62,38 +66,38 @@ export function ServiceItemCard({
           href={item.knowMoreHref}
           className="type-caption relative z-10 mt-1 self-start font-semibold text-[var(--color-primary-blue)] hover:underline"
         >
-          Read more
+          {isTa ? "மேலும் அறிக" : "Read more"}
         </Link>
         {/* Lighter than --color-primary-blue (#1d3f8f) on purpose — that
             read as too dark/heavy for a caption-sized line; this matches
             the mid-tone blue already used for the "sky" badge tint. */}
         <p className="type-caption mt-4 font-semibold" style={{ color: "#2f6fb0" }}>
-          {item.real?.relatedCardStats ?? item.stats}
+          {item.stats}
         </p>
 
         <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
           {item.real?.ctaLabel ? (
-            <a href={item.real.ctaHref || item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
+            <a href={item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
               {item.real.ctaLabel}
             </a>
           ) : item.real?.comingSoon ? (
             <a href={item.knowMoreHref} className="type-button btn-primary">
-              Coming Soon
+              {isTa ? "விரைவில்" : "Coming Soon"}
             </a>
           ) : item.accessPortalHref && !item.real?.gatedAccess ? (
             <a href={item.accessPortalHref} className="type-button btn-primary">
-              Access Portal
+              {isTa ? "போர்ட்டலை அணுகவும்" : "Access Portal"}
             </a>
           ) : (
             // Service-type items (no direct self-service portal) route to
             // Reach Us to avail the service instead — every card now has
             // exactly 2 CTAs, matching the Project-type Access Portal pair.
             <a href="/reach-us" className="type-button btn-primary">
-              Avail Service
+              {isTa ? "சேவையைப் பெறவும்" : "Avail Service"}
             </a>
           )}
           <a href={item.knowMoreHref} className="type-button btn-outline">
-            Know More
+            {isTa ? "மேலும் அறிக" : "Know More"}
           </a>
         </div>
       </div>

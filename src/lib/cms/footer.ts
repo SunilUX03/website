@@ -14,6 +14,7 @@ const EMPTY: CmsFooterContent = {
   socialLinks: [],
   quickLinks: [],
   citizenServices: [],
+  initiativesProjects: [],
   helpSupport: [],
 };
 
@@ -34,6 +35,7 @@ export const getFooterContent = unstable_cache(
       socialLinks: doc.socialLinks?.map((l) => ({ label: l.label, href: l.href })) ?? [],
       quickLinks: doc.quickLinks?.map((l) => ({ label: l.label, href: l.href })) ?? [],
       citizenServices: doc.citizenServices?.map((l) => ({ label: l.label, href: l.href })) ?? [],
+      initiativesProjects: doc.initiativesProjects?.map((l) => ({ label: l.label, href: l.href })) ?? [],
       helpSupport: doc.helpSupport?.map((l) => ({ label: l.label, href: l.href })) ?? [],
     };
   },

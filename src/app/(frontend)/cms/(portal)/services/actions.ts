@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { getPayloadClient } from "@/lib/payload-client";
 import { requireSession } from "@/lib/portal/auth";
 import { logActivity } from "@/lib/portal/activity-log";
-import { uploadFile } from "@/lib/portal/upload";
+import { uploadFile, resolveUploadValue } from "@/lib/portal/upload";
 import { parseRepeatable, str, optionalStr } from "@/lib/portal/form-utils";
+import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
 const PRODUCT_TOUR_SLOTS = [0, 1, 2, 3];
 
@@ -15,79 +16,79 @@ async function buildProductTour(formData: FormData, fallbackAlt: string) {
     PRODUCT_TOUR_SLOTS.map(async (i) => {
       const file = formData.get(`productTour.${i}.photo`) as File | null;
       const existingId = optionalStr(formData, `productTour.${i}.photoId`);
+      const removed = formData.get(`productTour.${i}.photoRemoved`) === "1";
       const alt = str(formData, `productTour.${i}.alt`);
+      // The array row's own id (preserves this row's Tamil `alt` across a
+      // save) — distinct from `photoId` above, which is the *uploaded
+      // media asset's* id, a different Payload doc entirely.
+      const rowId = optionalStr(formData, `productTour.${i}.id`);
       const newId = await uploadFile("media", file, alt || fallbackAlt);
-      const photoId = newId ?? (existingId ? Number(existingId) : undefined);
+      const photoId = newId ?? (removed ? undefined : existingId ? Number(existingId) : undefined);
       if (!photoId) return null;
-      return { photo: photoId, alt: alt || fallbackAlt };
+      return { ...(rowId ? { id: rowId } : {}), photo: photoId, alt: alt || fallbackAlt };
     })
   );
-  return slots.filter((s): s is { photo: number; alt: string } => s !== null);
+  return slots.filter((s): s is { id?: string; photo: number; alt: string } => s !== null);
 }
 
 async function buildData(formData: FormData) {
   const name = str(formData, "name");
   const imageFile = formData.get("image") as File | null;
   const imageId = await uploadFile("media", imageFile, name);
-  const sections = formData.getAll("sections").map(String) as (
-    | "citizen-services"
-    | "e-governance-projects"
-    | "services"
-  )[];
+  const imageValue = resolveUploadValue(formData, "image", imageId);
+  // No longer an admin-facing choice ("Shown under" was removed from the
+  // form — every item in this collection is an Initiatives & Projects
+  // entry now that Citizen Services and Services to Government have
+  // their own dedicated collections/fields). Still written on every save
+  // since service-detail-generator.ts's stock-photo/label fallback keys
+  // off it when `real` content is empty — a fixed value keeps that
+  // fallback working without exposing a meaningless choice to admins.
+  const sections: ("citizen-services" | "e-governance-projects" | "services")[] = ["e-governance-projects"];
 
-  const statistics = parseRepeatable(formData, "statistics", ["value"]).map((r) => r.value);
-  const keyFeatureRows = parseRepeatable(formData, "keyFeatures", ["value", "description"]);
-  const keyFeatures = keyFeatureRows.map((r) => r.value);
-  const keyFeatureDescriptions = keyFeatureRows.map((r) => r.description ?? "");
-  const eligibility = parseRepeatable(formData, "eligibility", ["value"]).map((r) => r.value);
-  const whatYoullNeed = parseRepeatable(formData, "whatYoullNeed", ["value"]).map((r) => r.value);
-  const faqs = parseRepeatable(formData, "faqs", ["q", "a"]) as { q: string; a: string }[];
-  const faqsMore = parseRepeatable(formData, "faqsMore", ["q", "a"]) as { q: string; a: string }[];
+  // Kept as full row objects (not collapsed to plain strings) all the way
+  // through so each row's `id` — and, for keyFeatureRows, its paired
+  // `descId` — survives into the Payload data below. See RepeatableRows.tsx
+  // for why: losing a row's id makes Payload treat it as brand new and
+  // wipes that field's Tamil translation on save.
+  const statisticsRows = parseRepeatable(formData, "statistics", ["value"]);
+  const keyFeatureRows = parseRepeatable(formData, "keyFeatures", ["value", "description", "descId"]);
+  const eligibilityRows = parseRepeatable(formData, "eligibility", ["value"]);
+  const whatYoullNeedRows = parseRepeatable(formData, "whatYoullNeed", ["value"]);
+  const faqs = parseRepeatable(formData, "faqs", ["q", "a"]) as { id?: string; q: string; a: string }[];
+  const faqsMore = parseRepeatable(formData, "faqsMore", ["q", "a"]) as { id?: string; q: string; a: string }[];
   const getStartedSteps = parseRepeatable(formData, "getStartedSteps", ["title", "description"]) as {
+    id?: string;
     title: string;
     description: string;
   }[];
-  const aboutLinkModalItems = parseRepeatable(formData, "aboutLinkModalItems", ["value"]).map((r) => r.value);
+  const aboutLinkModalItemRows = parseRepeatable(formData, "aboutLinkModalItems", ["value"]);
   const productTour = await buildProductTour(formData, name);
 
   const tagline = optionalStr(formData, "tagline");
   const aboutSecondParagraph = optionalStr(formData, "aboutSecondParagraph");
   const calloutText = optionalStr(formData, "calloutText");
-  const productTourCaption = optionalStr(formData, "productTourCaption");
   const getStartedIntro = optionalStr(formData, "getStartedIntro");
   const getStartedOutro = optionalStr(formData, "getStartedOutro");
   const directLinkLabel = optionalStr(formData, "directLinkLabel");
+  const directLinkPortalLabel = optionalStr(formData, "directLinkPortalLabel");
   const ctaLabel = optionalStr(formData, "ctaLabel");
-  const ctaHref = optionalStr(formData, "ctaHref");
-  const relatedCardStats = optionalStr(formData, "relatedCardStats");
   const aboutLinkModalLabel = optionalStr(formData, "aboutLinkModalLabel");
   const aboutLinkModalTitle = optionalStr(formData, "aboutLinkModalTitle");
   const contactEmail = optionalStr(formData, "contactEmail");
   const contactPhone = optionalStr(formData, "contactPhone");
-
-  // Broader than the original 5-field check (which missed e.g. a doc
-  // where only Get Started or Product Tour had been filled in) — any
-  // touched real.* field means this item has real submitted content and
-  // service-detail-generator.ts's generated-fallback branch should NOT
-  // kick in for it.
-  const hasRealContent =
-    Boolean(tagline || aboutSecondParagraph || calloutText || productTourCaption || getStartedIntro || getStartedOutro || directLinkLabel || ctaLabel || ctaHref || relatedCardStats || aboutLinkModalLabel) ||
-    statistics.length > 0 ||
-    keyFeatures.length > 0 ||
-    eligibility.length > 0 ||
-    whatYoullNeed.length > 0 ||
-    faqs.length > 0 ||
-    faqsMore.length > 0 ||
-    getStartedSteps.length > 0 ||
-    productTour.length > 0 ||
-    aboutLinkModalItems.length > 0 ||
-    formData.get("hideStatFeatureCards") === "on" ||
-    formData.get("hideAboutSecondParagraph") === "on" ||
-    formData.get("suppressGetStartedSteps") === "on" ||
-    formData.get("comingSoon") === "on" ||
-    formData.get("gatedAccess") === "on" ||
-    Boolean(optionalStr(formData, "typeLabel")) ||
-    Boolean(contactEmail || contactPhone);
+  const aboutEyebrow = optionalStr(formData, "aboutEyebrow");
+  const aboutHeading = optionalStr(formData, "aboutHeading");
+  const featuresEyebrow = optionalStr(formData, "featuresEyebrow");
+  const featuresHeading = optionalStr(formData, "featuresHeading");
+  const productTourHeading = optionalStr(formData, "productTourHeading");
+  const eligibilityEyebrow = optionalStr(formData, "eligibilityEyebrow");
+  const eligibilityHeading = optionalStr(formData, "eligibilityHeading");
+  const eligibilityWhoHeading = optionalStr(formData, "eligibilityWhoHeading");
+  const eligibilityDocsHeading = optionalStr(formData, "eligibilityDocsHeading");
+  const getStartedEyebrow = optionalStr(formData, "getStartedEyebrow");
+  const getStartedHeading = optionalStr(formData, "getStartedHeading");
+  const faqEyebrow = optionalStr(formData, "faqEyebrow");
+  const faqHeading = optionalStr(formData, "faqHeading");
 
   return {
     name,
@@ -96,47 +97,69 @@ async function buildData(formData: FormData) {
     stats: str(formData, "stats"),
     accessPortalHref: optionalStr(formData, "accessPortalHref"),
     sections,
-    ...(imageId ? { image: imageId } : {}),
+    ...(imageValue !== undefined ? { image: imageValue } : {}),
     // `real` is a single Payload field — every save replaces it wholesale,
     // so every sub-field the form knows about must be included here every
     // time, not just the ones that happen to be non-empty this round.
     // Omitting any of them (as the previous version of this function did
     // for Get Started, Product Tour, aboutLinkModal, etc.) would silently
-    // delete that content from any doc that already had it.
-    real: hasRealContent
-      ? {
-          tagline,
-          aboutSecondParagraph,
-          hideAboutSecondParagraph: formData.get("hideAboutSecondParagraph") === "on",
-          calloutText,
-          statistics: statistics.map((value) => ({ value })),
-          keyFeatures: keyFeatures.map((value) => ({ value })),
-          keyFeatureDescriptions: keyFeatureDescriptions.map((value) => ({ value })),
-          hideStatFeatureCards: formData.get("hideStatFeatureCards") === "on",
-          aboutLinkModal:
-            aboutLinkModalLabel || aboutLinkModalTitle || aboutLinkModalItems.length > 0
-              ? { label: aboutLinkModalLabel, title: aboutLinkModalTitle, items: aboutLinkModalItems.map((value) => ({ value })) }
-              : undefined,
-          productTour,
-          productTourCaption,
-          eligibility: eligibility.map((value) => ({ value })),
-          whatYoullNeed: whatYoullNeed.map((value) => ({ value })),
-          getStartedIntro,
-          getStartedSteps,
-          suppressGetStartedSteps: formData.get("suppressGetStartedSteps") === "on",
-          getStartedOutro,
-          directLinkLabel,
-          faqs,
-          faqsMore,
-          comingSoon: formData.get("comingSoon") === "on",
-          gatedAccess: formData.get("gatedAccess") === "on",
-          ctaLabel,
-          ctaHref,
-          relatedCardStats,
-          typeLabel: (optionalStr(formData, "typeLabel") as "Project" | "Service" | undefined) || undefined,
-          contact: contactEmail || contactPhone ? { email: contactEmail, phone: contactPhone } : undefined,
-        }
-      : undefined,
+    // delete that content from any doc that already had it. Always
+    // included now (not conditional on hasRealContent) since typeLabel
+    // inside it is a required field on every save.
+    real: {
+      tagline,
+      aboutEyebrow,
+      aboutHeading,
+      aboutSecondParagraph,
+      hideAboutSecondParagraph: formData.get("hideAboutSecondParagraph") === "on",
+      calloutText,
+      statistics: statisticsRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: r.value })),
+      keyFeatures: keyFeatureRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: r.value })),
+      keyFeatureDescriptions: keyFeatureRows.map((r) => ({ ...(r.descId ? { id: r.descId } : {}), value: r.description ?? "" })),
+      featuresEyebrow,
+      featuresHeading,
+      hideFeaturesSection: formData.get("hideFeaturesSection") === "on",
+      aboutLinkModal:
+        aboutLinkModalLabel || aboutLinkModalTitle || aboutLinkModalItemRows.length > 0
+          ? {
+              label: aboutLinkModalLabel,
+              title: aboutLinkModalTitle,
+              items: aboutLinkModalItemRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: r.value })),
+            }
+          : undefined,
+      productTour,
+      productTourHeading,
+      hideProductTourSection: formData.get("hideProductTourSection") === "on",
+      eligibility: eligibilityRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: r.value })),
+      whatYoullNeed: whatYoullNeedRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: r.value })),
+      eligibilityEyebrow,
+      eligibilityHeading,
+      eligibilityWhoHeading,
+      eligibilityDocsHeading,
+      hideEligibilitySection: formData.get("hideEligibilitySection") === "on",
+      getStartedIntro,
+      getStartedSteps,
+      suppressGetStartedSteps: formData.get("suppressGetStartedSteps") === "on",
+      getStartedOutro,
+      directLinkLabel,
+      directLinkPortalLabel,
+      getStartedEyebrow,
+      getStartedHeading,
+      hideGetStartedSection: formData.get("hideGetStartedSection") === "on",
+      faqs,
+      faqsMore,
+      faqEyebrow,
+      faqHeading,
+      hideFaqSection: formData.get("hideFaqSection") === "on",
+      comingSoon: formData.get("comingSoon") === "on",
+      gatedAccess: formData.get("gatedAccess") === "on",
+      ctaLabel,
+      // The <select> is HTML `required`, so a normal browser submit
+      // always carries a value here; Payload's own required-field
+      // validation is the final backstop if it somehow doesn't.
+      typeLabel: str(formData, "typeLabel") as "Project" | "Initiative",
+      contact: contactEmail || contactPhone ? { email: contactEmail, phone: contactPhone } : undefined,
+    },
   };
 }
 
@@ -175,21 +198,38 @@ export async function createService(formData: FormData) {
 export async function updateService(id: number, formData: FormData) {
   const user = await requireSession();
   const payload = await getPayloadClient();
-  const data = await buildData(formData);
+  // buildData() sets slug: "" — correct for createService (empty slug
+  // falls through to name-derivation for a brand-new item), but here it
+  // silently re-derived the slug from the current name on every save, in
+  // a form with no slug field the admin can see or control. That broke a
+  // published item's URL (and everywhere else on the site that links to
+  // it by that slug) just from an unrelated edit like swapping a photo —
+  // `slug` is excluded from the update so it only ever changes when an
+  // admin explicitly retypes it (not available in this form today).
+  const { slug: _slug, ...data } = await buildData(formData);
   const intent = formData.get("intent");
+  const locale = formData.get("locale") === "ta" ? "ta" : "en";
+
+  // Catches a save built from a stale page load (e.g. a locale tab left
+  // open since before someone else's edit) before it can silently
+  // overwrite whatever changed in the meantime — see staleness.ts.
+  const current = await payload.findByID({ collection: "services", id, depth: 0, draft: true, overrideAccess: true });
+  if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
+    redirect(`/cms/services/${id}/edit?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
+  }
 
   if (intent === "publish") {
-    await payload.update({ collection: "services", id, data: { ...data, _status: "published" }, overrideAccess: true });
+    await payload.update({ collection: "services", id, locale, data: { ...data, _status: "published" }, overrideAccess: true });
   } else if (intent === "unpublish") {
-    await payload.update({ collection: "services", id, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
+    await payload.update({ collection: "services", id, locale, data: { ...data, _status: "draft" }, draft: false, overrideAccess: true });
   } else {
-    await payload.update({ collection: "services", id, data, draft: true, overrideAccess: true });
+    await payload.update({ collection: "services", id, locale, data, draft: true, overrideAccess: true });
   }
 
   const action = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : "updated";
   await logActivity(user, action, "Services", `${action} "${data.name}"`);
   revalidatePath("/", "layout");
-  redirect(`/cms/services/${id}/edit?saved=1`);
+  redirect(`/cms/services/${id}/edit?locale=${locale}&saved=1`);
 }
 
 export async function deleteService(id: number, name: string) {
@@ -202,40 +242,31 @@ export async function deleteService(id: number, name: string) {
   redirect("/cms/services");
 }
 
-export async function moveService(id: number, direction: "up" | "down") {
+// `orderedIds` is the full list's ids in the admin's new drag order — every
+// doc gets its `order` set to its index in that list, mirroring the
+// per-doc draft/published branch `moveService` used to need for a single
+// swap (a doc's own status decides which version this write lands on).
+export async function reorderServices(orderedIds: number[]) {
   await requireSession();
   const payload = await getPayloadClient();
   const { docs } = await payload.find({
     collection: "services",
-    sort: "order",
     limit: 200,
     depth: 0,
-    select: { order: true, _status: true },
+    select: { _status: true },
     draft: true,
     overrideAccess: true,
   });
-
-  const index = docs.findIndex((d) => d.id === id);
-  const swapIndex = direction === "up" ? index - 1 : index + 1;
-  if (index === -1 || swapIndex < 0 || swapIndex >= docs.length) {
-    revalidatePath("/", "layout");
-    redirect("/cms/services");
-  }
-
-  const current = docs[index];
-  const neighbor = docs[swapIndex];
+  const statusById = new Map(docs.map((d) => [d.id, d._status]));
 
   await Promise.all(
-    [
-      [current, neighbor.order] as const,
-      [neighbor, current.order] as const,
-    ].map(([doc, order]) =>
-      doc._status === "draft"
-        ? payload.update({ collection: "services", id: doc.id, data: { order }, draft: true, overrideAccess: true })
-        : payload.update({ collection: "services", id: doc.id, data: { order }, overrideAccess: true })
+    orderedIds.map((id, order) =>
+      statusById.get(id) === "draft"
+        ? payload.update({ collection: "services", id, data: { order }, draft: true, overrideAccess: true })
+        : payload.update({ collection: "services", id, data: { order }, overrideAccess: true })
     )
   );
 
   revalidatePath("/", "layout");
-  redirect("/cms/services");
+  revalidatePath("/cms/services");
 }

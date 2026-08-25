@@ -8,6 +8,8 @@ import { InitiativesProjectsGrid } from "@/components/services/InitiativesProjec
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getAllServiceItems } from "@/lib/cms/services";
+import { getSiteCopy } from "@/lib/cms/site-copy";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Initiatives & Projects | TNeGA",
@@ -21,25 +23,53 @@ const heroOrbs = [
   { color: "sky", className: "-right-24 bottom-0 h-[360px] w-[360px]" },
 ] as const;
 
+// Curated subset (and exact display order) for this page — not the full
+// Services collection. Slugs are stable identifiers, unlike `name` which
+// changes per locale, so filtering/ordering by slug keeps this correct
+// under both English and Tamil.
+const CURATED_SLUGS = [
+  "dbt-direct-benefit-transfer-portal",
+  "grains",
+  "nambikkai-inaiyam",
+  "interdepartmental-technical-consulting",
+  "sustainable-development-goals-sdg-monitoring",
+  "tnssp",
+  "e-gazette-portal",
+  "dipr-2-0-web-portal",
+  "e-sign",
+  "namma-arasu",
+  "aadhaar-services",
+  "tngis-tamil-nilam",
+  "e-office",
+  "tn-dbt-portal-for-pfms",
+  "sms-whatsapp-gateway",
+  "it-security-audit-framework",
+];
+
 export default async function InitiativesProjects() {
-  const allItems = await getAllServiceItems();
+  const locale = await getLocale();
+  const [allItems, siteCopy] = await Promise.all([getAllServiceItems(locale), getSiteCopy(locale)]);
+  const items = CURATED_SLUGS.map((slug) => allItems.find((item) => item.slug === slug)).filter(
+    (item): item is (typeof allItems)[number] => Boolean(item)
+  );
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Initiatives & Projects" }]} />
+        <Breadcrumb locale={locale} items={[{ label: isTa ? "முயற்சிகள் & திட்டங்கள்" : "Initiatives & Projects" }]} />
         <PageHero
-          eyebrow="Explore"
-          heading="Initiatives & Projects"
-          body="TNeGA's full portfolio of flagship platforms and digital governance projects, from statewide GIS and social security to shared infrastructure used across Government Departments."
-          cta={{ label: "View All", href: "#initiatives-projects-cards" }}
+          eyebrow={siteCopy.initiativesProjectsHero.eyebrow}
+          heading={siteCopy.initiativesProjectsHero.heading}
+          body={siteCopy.initiativesProjectsHero.body}
+          cta={{ label: isTa ? "அனைத்தையும் காண்க" : "View All", href: "#initiatives-projects-cards" }}
           orbs={heroOrbs}
           graphic={<InitiativesProjectsGraphic />}
         />
         <section id="initiatives-projects-cards" className="scroll-mt-24 bg-canvas">
           <Container className="py-xxl md:py-section">
-            <InitiativesProjectsGrid items={allItems} />
+            <InitiativesProjectsGrid items={items} locale={locale} />
           </Container>
         </section>
       </main>

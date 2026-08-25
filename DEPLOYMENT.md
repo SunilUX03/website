@@ -113,6 +113,12 @@ save directly onto this server's disk (in the `public/media` and
 `public/documents` folders from Step 3). Just make sure those folders
 are **backed up regularly** — they're the only copy of those files.
 
+**`PAYLOAD_SECRET` matters more than just the CMS login now** — it also
+signs the "prove you're not a bot" question on both login pages
+(`/cms/login` and `/career-portal/login`). If this is left unset, that
+protection silently falls back to a well-known placeholder value. Make
+sure it's a real generated secret before going live, not skipped.
+
 ## Final check — make sure everything works
 
 Go through this list after setup:
@@ -125,3 +131,14 @@ Go through this list after setup:
 - [ ] Open `/admin` and log in — this is the separate Careers/HR system
 - [ ] Fill out a test job application on the public Careers page and
       check it shows up under `/admin`
+- [ ] Load the homepage as a fresh visitor (private/incognito window) —
+      the cookie consent banner should appear at the bottom
+- [ ] Accept it, then check the browser tab shows the TNeGA icon (the
+      favicon), not a blank/default one
+- [ ] Log into the CMS and open **Analytics** in the sidebar — the page
+      should load with all-zero numbers (this is expected: analytics
+      only started counting from this deployment onward, there's no
+      history to show yet)
+- [ ] Log into the CMS and open **Site Settings → Site Identity** — logos,
+      favicon, and the organisation name should all show existing images,
+      not blank upload boxes

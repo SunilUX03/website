@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/portal/auth";
 import { TeamMemberForm } from "../../TeamMemberForm";
 import { updateTeamMember, deleteTeamMember } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 import type { Media } from "@/payload-types";
 
 export default async function EditTeamMemberPage({
@@ -11,14 +12,15 @@ export default async function EditTeamMemberPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; locale?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { locale: localeParam, error } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "team-members", id: Number(id), depth: 1, draft: true, overrideAccess: true })
+    .findByID({ collection: "team-members", id: Number(id), locale, depth: 1, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -41,12 +43,13 @@ export default async function EditTeamMemberPage({
         ) : null}
       </div>
 
-      {saved ? (
-        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+      <LocaleTabs basePath={`/cms/team-members/${id}/edit`} current={locale} />
 
       <TeamMemberForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
+        error={error}
         values={{
           name: doc.name,
           designation: doc.designation,
@@ -54,6 +57,7 @@ export default async function EditTeamMemberPage({
           order: doc.order,
           photoUrl: typeof doc.photo === "object" && doc.photo ? (doc.photo as Media).url ?? undefined : undefined,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

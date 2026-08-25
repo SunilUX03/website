@@ -12,6 +12,7 @@ import { heroOrbs } from "@/lib/careers-content";
 import { getJobOpenings } from "@/lib/cms/job-openings";
 import { getCareersContent } from "@/lib/cms/careers-content";
 import { db } from "@/lib/db";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Careers | TNeGA",
@@ -22,17 +23,25 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Careers() {
+  const locale = await getLocale();
   const [openings, careers, roles] = await Promise.all([
-    getJobOpenings(),
-    getCareersContent(),
+    getJobOpenings(locale),
+    getCareersContent(locale),
     db.jobRole.findMany({ orderBy: { order: "asc" }, select: { id: true, label: true } }),
   ]);
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "About", href: "/about" }, { label: "Careers" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "எங்களைப் பற்றி" : "About", href: "/about" },
+            { label: isTa ? "வேலைவாய்ப்புகள்" : "Careers" },
+          ]}
+        />
         <PageHero
           eyebrow={careers.hero.eyebrow}
           heading={careers.hero.heading}
@@ -41,9 +50,9 @@ export default async function Careers() {
           orbs={heroOrbs}
           graphic={<CareersGraphic />}
         />
-        <JobOpenings openings={openings} openingsNote={careers.openingsNote} />
-        <HowToApply applicationSteps={careers.applicationSteps} />
-        <ApplicationForm roles={roles} />
+        <JobOpenings openings={openings} openingsNote={careers.openingsNote} section={careers.openingsSection} locale={locale} />
+        <HowToApply applicationSteps={careers.applicationSteps} section={careers.howToApplySection} locale={locale} />
+        <ApplicationForm roles={roles} section={careers.applySection} locale={locale} />
       </main>
       <Footer />
       <ScrollToTop />

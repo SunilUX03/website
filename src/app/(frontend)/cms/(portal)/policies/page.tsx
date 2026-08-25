@@ -15,12 +15,19 @@ export default async function PoliciesListPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-2 flex items-center justify-between">
         <h1 className="type-display-sm text-ink">Policies & Guidelines ({totalDocs})</h1>
         <Link href="/cms/policies/new" className="type-button btn-primary">
           + Add policy
         </Link>
       </div>
+      <p className="type-body-sm mb-6 text-[var(--color-muted)]">
+        Looking for this page&apos;s own eyebrow/heading/description copy? That&apos;s edited under{" "}
+        <Link href="/cms/settings/site-copy" className="font-semibold text-[var(--color-primary-blue)] hover:underline">
+          Site Settings → Other Page Copy
+        </Link>
+        {" "}(&quot;Policies &amp; Guidelines page hero&quot;) — it&apos;s shared page chrome, not one specific policy.
+      </p>
 
       <div className="overflow-hidden rounded-xl border border-hairline bg-surface-card">
         <table className="w-full text-left">

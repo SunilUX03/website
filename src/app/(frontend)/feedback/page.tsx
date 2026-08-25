@@ -7,6 +7,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { FeedbackForm } from "@/components/legal/FeedbackForm";
 import { getLegalPage } from "@/lib/cms/legal-pages";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Feedback | TNeGA",
@@ -16,14 +17,16 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Feedback() {
-  const page = await getLegalPage("feedback");
+  const locale = await getLocale();
+  const page = await getLegalPage("feedback", locale);
   if (!page) notFound();
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1" id="main-content">
-        <Breadcrumb items={[{ label: "Feedback" }]} />
+        <Breadcrumb items={[{ label: isTa ? "கருத்து" : "Feedback" }]} locale={locale} />
         <section className="bg-canvas">
           <Container className="py-xl md:py-xxl">
             <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{page.eyebrow}</p>
@@ -34,7 +37,7 @@ export default async function Feedback() {
         <section className="bg-canvas-soft">
           <Container className="py-xxl md:py-section">
             <div className="mx-auto max-w-[560px]">
-              <FeedbackForm />
+              <FeedbackForm locale={locale} />
             </div>
           </Container>
         </section>

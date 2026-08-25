@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/portal/auth";
 import { AwardForm } from "../../AwardForm";
 import { updateAward, deleteAward } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 import type { Media } from "@/payload-types";
 
 export default async function EditAwardPage({
@@ -11,14 +12,15 @@ export default async function EditAwardPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; locale?: string }>;
 }) {
   const { id } = await params;
-  const { error, saved } = await searchParams;
+  const { error, locale: localeParam } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "awards", id: Number(id), depth: 1, draft: true, overrideAccess: true })
+    .findByID({ collection: "awards", id: Number(id), locale, depth: 1, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -42,12 +44,12 @@ export default async function EditAwardPage({
         ) : null}
       </div>
 
-      {saved ? (
-        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+      <LocaleTabs basePath={`/cms/awards/${id}/edit`} current={locale} />
 
       <AwardForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
         values={{
           title: doc.title,
           year: doc.year,
@@ -55,6 +57,7 @@ export default async function EditAwardPage({
           imageUrl: typeof doc.image === "object" && doc.image ? (doc.image as Media).url ?? undefined : undefined,
           status: doc._status as "draft" | "published",
           error,
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

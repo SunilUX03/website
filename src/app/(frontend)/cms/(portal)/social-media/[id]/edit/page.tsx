@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/portal/auth";
 import { SocialPostForm } from "../../SocialPostForm";
 import { updateSocialPost, deleteSocialPost } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
+import { LocaleTabs } from "@/components/portal/LocaleTabs";
 import type { Media } from "@/payload-types";
 
 export default async function EditSocialPostPage({
@@ -11,14 +12,15 @@ export default async function EditSocialPostPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ locale?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { locale: localeParam, error } = await searchParams;
+  const locale = localeParam === "ta" ? "ta" : "en";
   const user = await requireSession();
   const payload = await getPayloadClient();
   const doc = await payload
-    .findByID({ collection: "social-posts", id: Number(id), depth: 1, draft: true, overrideAccess: true })
+    .findByID({ collection: "social-posts", id: Number(id), locale, depth: 1, draft: true, overrideAccess: true })
     .catch(() => null);
   if (!doc) notFound();
 
@@ -42,12 +44,13 @@ export default async function EditSocialPostPage({
         ) : null}
       </div>
 
-      {saved ? (
-        <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
-      ) : null}
+      <LocaleTabs basePath={`/cms/social-media/${id}/edit`} current={locale} />
 
       <SocialPostForm
+        key={locale}
         action={boundUpdate}
+        locale={locale}
+        error={error}
         values={{
           platform: doc.platform ?? "facebook",
           text: doc.text,
@@ -55,6 +58,7 @@ export default async function EditSocialPostPage({
           link: doc.link ?? undefined,
           imageUrl: image?.url ?? undefined,
           status: doc._status as "draft" | "published",
+          updatedAt: doc.updatedAt ?? undefined,
         }}
       />
     </div>

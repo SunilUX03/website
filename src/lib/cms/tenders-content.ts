@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload-client";
+import type { Locale } from "@/lib/locale";
 
 export type CmsTendersContent = {
   hero: { eyebrow: string; heading: string; body: string };
@@ -12,9 +13,9 @@ export type CmsTendersContent = {
   };
 };
 
-export async function getTendersContent(): Promise<CmsTendersContent> {
+export async function getTendersContent(locale: Locale = "en"): Promise<CmsTendersContent> {
   const payload = await getPayloadClient();
-  const doc = await payload.findGlobal({ slug: "tenders-content", overrideAccess: false });
+  const doc = await payload.findGlobal({ slug: "tenders-content", locale, overrideAccess: false });
   return {
     hero: doc.hero,
     tenderPortal: doc.tenderPortal,

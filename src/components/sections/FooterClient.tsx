@@ -14,31 +14,17 @@ import {
 } from "@/components/ui/SocialIcons";
 import { useAccessibilityPrefs } from "@/lib/accessibility";
 import { WebInfoManagerModal } from "@/components/legal/WebInfoManagerModal";
-// Static imports, same reasoning as MainNav.tsx — content-hashed URLs so
-// replacing either file on disk can never be masked by a stale image cache.
-import tnEmblem from "../../../public/images/tn-emblem.png";
-import tnegaMark from "../../../public/images/logos/tnega-mark.png";
+import type { Locale } from "@/lib/locale";
+import type { CmsSiteIdentity } from "@/lib/cms/site-identity";
+import { openCookiePreferences } from "@/lib/consent";
 
-// The other two site pillars, mirrored here as static nav (not CMS
-// content) below the Citizen Services column — same reasoning as
-// BOTTOM_LINKS: structural navigation, not editorial copy. "Services to
-// Govt" is a single heading-link straight to its page (the page itself
-// already lists all of its services); "Initiatives & Projects" is the
-// same curated 5 shown in the homepage pillar card and Projects
-// Spotlight (see lib/content.ts / scripts/tmp-update-spotlight.ts),
-// linking straight to each project's own detail page.
-const FOOTER_INITIATIVES: { label: string; href: string }[] = [
-  { label: "Nambikkai Inaiyam", href: "/services/nambikkai-inaiyam" },
-  { label: "DBT", href: "/services/dbt-direct-benefit-transfer-portal" },
-  { label: "Namma Arasu", href: "/services/namma-arasu" },
-  { label: "TNSSP", href: "/services/tnssp" },
-];
-
-const BOTTOM_LINKS: { label: string; href?: string }[] = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Disclaimer", href: "/disclaimer" },
-  { label: "Terms of Use", href: "/terms-of-use" },
-  { label: "Accessibility" },
+const BOTTOM_LINKS: { label: string; labelTa: string; href?: string; action?: "accessibility" | "cookiePreferences" }[] = [
+  { label: "Privacy Policy", labelTa: "தனியுரிமைக் கொள்கை", href: "/privacy-policy" },
+  { label: "Cookie Policy", labelTa: "குக்கீக் கொள்கை", href: "/cookie-policy" },
+  { label: "Disclaimer", labelTa: "பொறுப்புத் துறப்பு", href: "/disclaimer" },
+  { label: "Terms of Use", labelTa: "பயன்பாட்டு விதிமுறைகள்", href: "/terms-of-use" },
+  { label: "Accessibility", labelTa: "அணுகல்தன்மை", action: "accessibility" },
+  { label: "Cookie Preferences", labelTa: "குக்கீ விருப்பத்தேர்வுகள்", action: "cookiePreferences" },
 ];
 
 const BUILD_DATE = new Date().toLocaleDateString("en-GB", {
@@ -55,10 +41,7 @@ const SOCIAL_ICON: Record<string, React.ComponentType<{ className?: string }>> =
   LinkedIn: LinkedInIcon,
 };
 
-function VisitorCounter() {
-  // No real analytics backend wired up yet — deterministic placeholder
-  // count so it doesn't reshuffle on every render/hydration.
-  const [count] = useState(1731316);
+function VisitorCounter({ count }: { count: number }) {
   return <span>{formatIndianNumber(count)}</span>;
 }
 
@@ -75,57 +58,81 @@ function DirectionsIcon() {
   );
 }
 
-export function FooterClient({ footer }: { footer: CmsFooterContent }) {
+export function FooterClient({
+  footer,
+  locale = "en",
+  identity,
+  visitorCount,
+}: {
+  footer: CmsFooterContent;
+  locale?: Locale;
+  /** Emblem, mark, and bilingual org name — CMS-editable via
+   * /cms/settings/site-identity, shared with MainNav so header and
+   * footer branding can never go out of sync. */
+  identity: CmsSiteIdentity;
+  /** All-time pageview count, from the real analytics pipeline — see
+   * getLifetimePageviewCount(). Replaces what used to be a hardcoded
+   * placeholder number. */
+  visitorCount: number;
+}) {
   const [year, setYear] = useState(new Date().getFullYear());
   useEffect(() => setYear(new Date().getFullYear()), []);
   const [webInfoOpen, setWebInfoOpen] = useState(false);
   const { openPanel } = useAccessibilityPrefs();
+  const isTa = locale === "ta";
 
   return (
     <footer className="border-t border-hairline bg-[#ebedee]">
-      <Container className="grid grid-cols-1 gap-10 py-xxl md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-8">
-        <div className="flex flex-col gap-4">
+      <Container className="grid grid-cols-1 gap-10 py-xxl md:grid-cols-[2.4fr_1fr_1fr_1fr] md:gap-8">
+        <div className="flex min-w-0 flex-col gap-4">
           {/* Identical mark composition to the top nav (MainNav): state
               emblem + divider + TNeGA icon + text label, so header and
               footer carry the exact same government identity rather than
-              two different TNeGA logo files. */}
-          <div className="flex items-center gap-3">
-            {/* Same reasoning as MainNav.tsx: the two logos + divider ate
-                enough width on a phone-size column that the wordmark had
-                only ~190px to work with, so the Tamil line rendered
-                half-cut and the English line (hidden below sm) didn't
-                render at all. Hiding the marks below sm and always
-                rendering both lines at a smaller mobile size fixes both —
-                the logos return once the column has room to share. */}
-            <Image
-              src={tnEmblem}
-              alt="Government of Tamil Nadu emblem"
-              className="hidden h-14 w-auto sm:block"
-            />
-            <span aria-hidden className="hidden h-11 w-px shrink-0 bg-hairline-strong sm:block" />
-            <Image
-              src={tnegaMark}
-              alt=""
-              aria-hidden
-              // Same box height as the TN emblem, and now matches the top
-              // nav's own (unscrolled) logo height exactly — see
-              // MainNav.tsx for why a CSS scale-up was tried and reverted.
-              className="hidden h-14 w-auto shrink-0 sm:block"
-            />
+              two different TNeGA logo files. Logos are always visible
+              (never hidden below a breakpoint) at a smaller size on
+              mobile, stepping up at sm/md — and the wordmark wraps
+              instead of truncating, so the full name is always readable
+              regardless of exactly how much width the column has. */}
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            {identity.emblemUrl ? (
+              <Image
+                src={identity.emblemUrl}
+                width={identity.emblemWidth}
+                height={identity.emblemHeight}
+                alt="Government of Tamil Nadu emblem"
+                className="h-9 w-auto shrink-0 sm:h-14"
+              />
+            ) : null}
+            <span aria-hidden className="h-7 w-px shrink-0 bg-hairline-strong sm:h-11" />
+            {identity.markUrl ? (
+              <Image
+                src={identity.markUrl}
+                width={identity.markWidth}
+                height={identity.markHeight}
+                alt=""
+                aria-hidden
+                // Same box height as the TN emblem, and now matches the top
+                // nav's own (unscrolled) logo height exactly — see
+                // MainNav.tsx for why a CSS scale-up was tried and reverted.
+                className="h-9 w-auto shrink-0 sm:h-14"
+              />
+            ) : null}
             {/* Same bilingual wordmark as MainNav.tsx, not a separate
                 "TNeGA" + caption treatment — header and footer now carry
-                identical branding, not just the same logo files. Both
-                lines always render; text-[12px] on mobile, stepping up at
-                sm/md once the logos return and share the row again. */}
-            <span className="flex min-w-0 flex-col gap-1">
+                identical branding, not just the same logo files. Wraps
+                rather than truncates — a fixed-width single line kept
+                clipping "Tamil Nadu e-Governance Agency" even at desktop
+                widths, since the grid column's available width is close
+                to the text's natural width. */}
+            <span className="flex min-w-0 flex-col gap-0.5">
               <span
                 lang="ta"
-                className="block truncate text-[12px] font-semibold leading-[1.6] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]"
+                className="block text-[11px] font-semibold leading-[1.5] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]"
               >
-                தமிழ்நாடு மின்-ஆளுமை முகமை
+                {identity.nameTamil}
               </span>
-              <span className="block truncate text-[12px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]">
-                Tamil Nadu e-Governance Agency
+              <span className="block text-[11px] font-semibold leading-[1.4] text-[var(--color-primary-blue)] sm:text-[15px] md:text-[16px]">
+                {identity.nameEnglish}
               </span>
             </span>
           </div>
@@ -140,7 +147,7 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
             className="type-body-sm inline-flex w-fit items-center gap-1.5 font-medium text-[var(--color-primary-blue)] hover:text-[var(--color-primary-blue-active)]"
           >
             <DirectionsIcon />
-            View Directions
+            {isTa ? "வழிகளைக் காண்க" : "View Directions"}
           </a>
 
           <p className="type-body-sm text-[var(--color-body)]">
@@ -174,11 +181,11 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
         </div>
 
         <div>
-          <p className="type-title-sm mb-4 text-ink">Quick Links</p>
+          <p className="type-title-sm mb-4 text-ink">{isTa ? "விரைவு இணைப்புகள்" : "Quick Links"}</p>
           <ul className="flex flex-col gap-2">
             {footer.quickLinks.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="type-body-sm text-[var(--color-body)] hover:text-ink">
+                <a href={link.href} data-track={`footer_${link.label}`} className="type-body-sm text-[var(--color-body)] hover:text-ink">
                   {link.label}
                 </a>
               </li>
@@ -187,16 +194,21 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
         </div>
 
         <div>
-          <p className="type-title-sm mb-4 text-ink">Citizen Services</p>
+          <p className="type-title-sm mb-4 text-ink">{isTa ? "குடிமக்கள் சேவைகள்" : "Citizen Services"}</p>
           <ul className="mb-6 flex flex-col gap-2">
-            {footer.citizenServices.map((link) => {
+            {footer.citizenServices.map((link, i) => {
               const external = link.href.startsWith("http");
               return (
-                <li key={link.href}>
+                // Index, not href — e-Sevai and UMIS now both point to
+                // /citizen-services (they're just cards on that one page,
+                // not separate detail pages), so href isn't unique here.
+                <li key={`${link.href}-${i}`}>
                   <a
                     href={link.href}
                     target={external ? "_blank" : undefined}
                     rel={external ? "noopener noreferrer" : undefined}
+                    data-track={`footer_${link.label}`}
+                    data-track-type={external ? "conversion" : undefined}
                     className="type-body-sm text-[var(--color-body)] hover:text-ink"
                   >
                     {link.label}
@@ -206,15 +218,19 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
             })}
           </ul>
 
-          <a href="/services-to-government" className="type-title-sm mb-4 block text-ink hover:text-[var(--color-primary-blue)]">
-            Services to Govt
+          <a
+            href="/services-to-government"
+            data-track="footer_Services to Govt"
+            className="type-title-sm mb-4 block text-ink hover:text-[var(--color-primary-blue)]"
+          >
+            {isTa ? "அரசுக்கான சேவைகள்" : "Services to Govt"}
           </a>
 
-          <p className="type-title-sm mb-4 text-ink">Initiatives &amp; Projects</p>
+          <p className="type-title-sm mb-4 text-ink">{isTa ? "முயற்சிகள் & திட்டங்கள்" : "Initiatives & Projects"}</p>
           <ul className="flex flex-col gap-2">
-            {FOOTER_INITIATIVES.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} className="type-body-sm text-[var(--color-body)] hover:text-ink">
+            {footer.initiativesProjects.map((link, i) => (
+              <li key={`${link.href}-${i}`}>
+                <a href={link.href} data-track={`footer_${link.label}`} className="type-body-sm text-[var(--color-body)] hover:text-ink">
                   {link.label}
                 </a>
               </li>
@@ -223,11 +239,11 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
         </div>
 
         <div>
-          <p className="type-title-sm mb-4 text-ink">Help &amp; Support</p>
+          <p className="type-title-sm mb-4 text-ink">{isTa ? "உதவி & ஆதரவு" : "Help & Support"}</p>
           <ul className="flex flex-col gap-2">
             {footer.helpSupport.map((link) => (
               <li key={link.label}>
-                <a href={link.href} className="type-body-sm text-[var(--color-body)] hover:text-ink">
+                <a href={link.href} data-track={`footer_${link.label}`} className="type-body-sm text-[var(--color-body)] hover:text-ink">
                   {link.label}
                 </a>
               </li>
@@ -239,29 +255,32 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
       <div className="border-t border-hairline">
         <Container className="flex flex-col gap-3 py-6 text-center md:flex-row md:flex-wrap md:items-center md:justify-between md:text-left">
           <p className="type-body-sm text-[var(--color-muted)]">
-            © {year} Tamil Nadu e-Governance Agency, Government of Tamil Nadu. All rights reserved.
+            {isTa
+              ? `© ${year} தமிழ்நாடு மின்-ஆளுமை முகமை, தமிழ்நாடு அரசு. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.`
+              : `© ${year} Tamil Nadu e-Governance Agency, Government of Tamil Nadu. All rights reserved.`}
           </p>
 
           <p className="type-body-sm text-[var(--color-muted)]">
-            Visitors: <VisitorCounter />
+            {isTa ? "பார்வையாளர்கள்: " : "Visitors: "}
+            <VisitorCounter count={visitorCount} />
           </p>
 
-          <p className="type-body-sm text-[var(--color-muted)]">Last Updated: {BUILD_DATE}</p>
+          <p className="type-body-sm text-[var(--color-muted)]">{isTa ? "கடைசியாகப் புதுப்பிக்கப்பட்டது: " : "Last Updated: "}{BUILD_DATE}</p>
 
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end">
             {BOTTOM_LINKS.map((link) =>
               link.href ? (
-                <a key={link.label} href={link.href} className="type-body-sm text-[var(--color-muted)] hover:text-ink">
-                  {link.label}
+                <a key={link.label} href={link.href} data-track={`footer_bottom_${link.label}`} className="type-body-sm text-[var(--color-muted)] hover:text-ink">
+                  {isTa ? link.labelTa : link.label}
                 </a>
               ) : (
                 <button
                   key={link.label}
                   type="button"
-                  onClick={(e) => openPanel(e.currentTarget)}
+                  onClick={(e) => (link.action === "cookiePreferences" ? openCookiePreferences() : openPanel(e.currentTarget))}
                   className="type-body-sm text-[var(--color-muted)] hover:text-ink"
                 >
-                  {link.label}
+                  {isTa ? link.labelTa : link.label}
                 </button>
               )
             )}
@@ -282,11 +301,11 @@ export function FooterClient({ footer }: { footer: CmsFooterContent }) {
             className="type-body-sm underline-offset-2 hover:underline"
             style={{ color: "var(--color-primary-blue)" }}
           >
-            Web Information Manager: Tamil Nadu e-Governance Agency
+            {isTa ? "இணைய தகவல் மேலாளர்: தமிழ்நாடு மின்-ஆளுமை முகமை" : "Web Information Manager: Tamil Nadu e-Governance Agency"}
           </button>
         </Container>
 
-        <WebInfoManagerModal open={webInfoOpen} onClose={() => setWebInfoOpen(false)} phone={footer.phone} email={footer.email} />
+        <WebInfoManagerModal open={webInfoOpen} onClose={() => setWebInfoOpen(false)} phone={footer.phone} email={footer.email} locale={locale} />
       </div>
     </footer>
   );

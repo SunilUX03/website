@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { FilterBar, matchesFacets } from "@/components/documents/FilterBar";
 import type { Facet } from "@/components/documents/FilterBar";
-import { filterBarLabel, noResultsText, searchAriaLabel, searchPlaceholder } from "@/lib/media-content";
+import { getFilterBarLabel, getNoResultsText, getSearchAriaLabel, getSearchPlaceholder } from "@/lib/media-content";
 import { type CmsMediaItem, yearOf } from "@/lib/cms/media-item-types";
+import type { Locale } from "@/lib/locale";
+import { getUiStrings } from "@/lib/ui-strings";
 
 /**
  * Photos / Videos toggle from the Media & Press prototype.
@@ -44,6 +45,14 @@ function PlayBadge() {
   );
 }
 
+// Pinterest-style masonry, not a uniform grid — CSS multi-column layout
+// (not JS-measured positioning) so each card keeps its own image's
+// natural aspect ratio instead of being cropped into a fixed box. A plain
+// <img> (not next/image) is required for that: next/image needs either
+// `fill` (which forces a sized, cropped parent — the exact thing being
+// removed here) or explicit width/height, neither of which the CMS
+// mapping carries for these items. `break-inside-avoid` on each card
+// stops a card from ever being split across two columns.
 function MediaGrid({
   items,
   isVideo,
@@ -52,23 +61,14 @@ function MediaGrid({
   isVideo: boolean;
 }) {
   return (
-    <ul
-      role="list"
-      className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3"
-    >
+    <ul role="list" className="columns-1 gap-lg sm:columns-2 lg:columns-3">
       {items.map((item) => (
         <li
           key={item.id}
-          className="group overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
+          className="group mb-lg break-inside-avoid overflow-hidden rounded-xl border border-hairline bg-surface-card transition-shadow hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
         >
-          <div className="relative aspect-[10/7] overflow-hidden bg-surface-strong">
-            <Image
-              src={item.src}
-              alt={item.alt}
-              fill
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className="object-cover"
-            />
+          <div className="relative overflow-hidden bg-surface-strong">
+            <img src={item.src} alt={item.alt} loading="lazy" className="block h-auto w-full" />
             {isVideo ? <PlayBadge /> : null}
           </div>
           <div className="flex flex-col gap-xxs p-base">
@@ -87,11 +87,15 @@ export function MediaTabs({
   photos,
   videos,
   facets,
+  locale = "en",
 }: {
   photos: CmsMediaItem[];
   videos: CmsMediaItem[];
   facets: Facet[];
+  locale?: Locale;
 }) {
+  const isTa = locale === "ta";
+  const t = getUiStrings(locale);
   const [panel, setPanel] = useState<PanelId>("photos");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>(() =>
@@ -125,7 +129,7 @@ export function MediaTabs({
   }[] = [
     {
       id: "photos",
-      label: "Photos",
+      label: isTa ? "புகைப்படங்கள்" : "Photos",
       count: visiblePhotos.length,
       icon: (
         <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 fill-none stroke-current stroke-[1.5]">
@@ -137,7 +141,7 @@ export function MediaTabs({
     },
     {
       id: "videos",
-      label: "Videos",
+      label: isTa ? "வீடியோக்கள்" : "Videos",
       count: visibleVideos.length,
       icon: (
         <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 fill-none stroke-current stroke-[1.5]">
@@ -160,16 +164,16 @@ export function MediaTabs({
         onFacetChange={(id, value) =>
           setSelected((prev) => ({ ...prev, [id]: value }))
         }
-        searchPlaceholder={searchPlaceholder}
-        searchAriaLabel={searchAriaLabel}
-        label={filterBarLabel}
+        searchPlaceholder={getSearchPlaceholder(locale)}
+        searchAriaLabel={getSearchAriaLabel(locale)}
+        label={getFilterBarLabel(locale)}
       />
 
-      <section id="photos-videos" className="scroll-mt-24 py-xxl md:py-section" aria-label="Media gallery">
+      <section id="photos-videos" className="scroll-mt-24 py-xxl md:py-section" aria-label={isTa ? "ஊடக தொகுப்பு" : "Media gallery"}>
         <Container>
           <div
             role="tablist"
-            aria-label="Media type"
+            aria-label={isTa ? "ஊடக வகை" : "Media type"}
             className="mb-xxl flex flex-wrap gap-xs"
           >
             {tabs.map((tab) => {
@@ -202,7 +206,7 @@ export function MediaTabs({
 
           {active.length === 0 ? (
             <p className="rounded-xl border border-hairline bg-surface-card px-lg py-xxl text-center text-sm text-[var(--color-muted)]">
-              {noResultsText}
+              {getNoResultsText(locale)}
             </p>
           ) : (
             <>
@@ -228,10 +232,8 @@ export function MediaTabs({
 
           <p className="mt-lg text-[13px] text-[var(--color-muted)]" aria-live="polite">
             {active.length === 0
-              ? "No entries found"
-              : `Showing 1 to ${active.length} of ${
-                  panel === "photos" ? photos.length : videos.length
-                } entries`}
+              ? t.noEntriesFound
+              : t.showingEntries(1, active.length, panel === "photos" ? photos.length : videos.length)}
           </p>
         </Container>
       </section>

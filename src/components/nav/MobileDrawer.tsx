@@ -4,12 +4,14 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CmsNavContent } from "@/lib/cms/nav-content";
 import { CloseIcon, ChevronDownIcon } from "./icons";
+import type { Locale } from "@/lib/locale";
 
 function MobileGroup({
   title,
   href,
   onNavigate,
   children,
+  isTa,
 }: {
   title: string;
   /** When set, the title itself navigates there — the chevron is a
@@ -17,6 +19,7 @@ function MobileGroup({
   href?: string;
   onNavigate?: () => void;
   children: React.ReactNode;
+  isTa?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -51,7 +54,7 @@ function MobileGroup({
             setOpen((v) => !v);
           }}
           aria-expanded={open}
-          aria-label={`Toggle ${title} menu`}
+          aria-label={isTa ? `${title} மெனுவை மாற்று` : `Toggle ${title} menu`}
           className="flex items-center p-1 text-ink"
         >
           <ChevronDownIcon
@@ -82,11 +85,14 @@ export function MobileDrawer({
   nav,
   open,
   onClose,
+  locale = "en",
 }: {
   nav: CmsNavContent;
   open: boolean;
   onClose: () => void;
+  locale?: Locale;
 }) {
+  const isTa = locale === "ta";
   return (
     <AnimatePresence>
       {open && (
@@ -108,11 +114,11 @@ export function MobileDrawer({
             aria-modal="true"
           >
             <div className="mb-4 flex items-center justify-between">
-              <span className="type-title-md text-ink">Menu</span>
+              <span className="type-title-md text-ink">{isTa ? "மெனு" : "Menu"}</span>
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close menu"
+                aria-label={isTa ? "மெனுவை மூடு" : "Close menu"}
                 className="flex h-9 w-9 items-center justify-center rounded-full text-ink"
               >
                 <CloseIcon className="h-5 w-5" />
@@ -122,37 +128,38 @@ export function MobileDrawer({
             <a
               href="/"
               onClick={onClose}
+              data-track="nav_mobile_Home"
               className="type-title-sm block border-b border-hairline py-3 text-ink"
             >
-              Home
+              {isTa ? "முகப்பு" : "Home"}
             </a>
 
-            <MobileGroup title="About" href="/about" onNavigate={onClose}>
+            <MobileGroup title={isTa ? "எங்களைப் பற்றி" : "About"} href="/about" onNavigate={onClose} isTa={isTa}>
               {nav.about.map((item) => (
-                <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm py-1.5 text-ink">
+                <a key={item.href} href={item.href} onClick={onClose} data-track={`nav_mobile_${item.label}`} className="type-body-sm py-1.5 text-ink">
                   {item.label}
                 </a>
               ))}
             </MobileGroup>
 
-            <MobileGroup title="Services" href="/services" onNavigate={onClose}>
+            <MobileGroup title={isTa ? "சேவைகள்" : "Services"} onNavigate={onClose} isTa={isTa}>
               {nav.services.map((item) => (
-                <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
+                <a key={item.href} href={item.href} onClick={onClose} data-track={`nav_mobile_${item.label}`} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
                 </a>
               ))}
             </MobileGroup>
 
-            <MobileGroup title="Others">
-              <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">Updates</p>
+            <MobileGroup title={isTa ? "பிற" : "Others"} isTa={isTa}>
+              <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">{isTa ? "புதுப்பிப்புகள்" : "Updates"}</p>
               {nav.notificationsUpdates.map((item) => (
-                <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
+                <a key={item.href} href={item.href} onClick={onClose} data-track={`nav_mobile_${item.label}`} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
                 </a>
               ))}
-              <p className="type-caption-uppercase mb-1 mt-2 text-[var(--color-muted)]">Documents</p>
+              <p className="type-caption-uppercase mb-1 mt-2 text-[var(--color-muted)]">{isTa ? "ஆவணங்கள்" : "Documents"}</p>
               {nav.notificationsDocuments.map((item) => (
-                <a key={item.href} href={item.href} onClick={onClose} className="type-body-sm block py-1.5 text-ink">
+                <a key={item.href} href={item.href} onClick={onClose} data-track={`nav_mobile_${item.label}`} className="type-body-sm block py-1.5 text-ink">
                   {item.label}
                 </a>
               ))}
@@ -161,9 +168,11 @@ export function MobileDrawer({
             <a
               href="/reach-us"
               onClick={onClose}
+              data-track="contact_us"
+              data-track-type="conversion"
               className="type-button btn-primary mt-6 w-full shadow-[0_4px_14px_rgba(29,63,143,0.35)]"
             >
-              Reach us
+              {isTa ? "எங்களை அணுகவும்" : "Reach us"}
             </a>
           </motion.div>
         </>

@@ -5,4 +5,11 @@ export type CmsHeroContent = {
   headlineTemplate: string;
   headlineCycleWords: string[];
   tagline: string;
+  mapImageUrl: string;
+  mapImageWidth: number;
+  mapImageHeight: number;
+  /** Optional full-bleed override for the Hero's background — empty
+   * means "keep the default colour-wash gradient" (see
+   * ATMOSPHERE_BACKGROUND in Hero.tsx). */
+  backgroundImageUrl?: string;
 };

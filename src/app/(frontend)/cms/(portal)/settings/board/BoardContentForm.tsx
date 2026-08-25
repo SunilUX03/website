@@ -11,8 +11,13 @@ export type BoardContentFormValues = {
   memberSecretaryRole: string;
   memberSecretaryName: string;
   memberSecretaryTitle: string;
-  members: { name: string; title: string; isPlaceholder: string }[];
+  members: { id?: string; name: string; title: string; isPlaceholder: string }[];
   status?: "draft" | "published";
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -35,9 +40,13 @@ function reconstructRows(fd: FormData, name: string, keys: string[]): Record<str
 export function BoardContentForm({
   action,
   values,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: BoardContentFormValues;
+  /** Which locale this save writes to — set by the page from `?locale=`
+   * and carried through as a hidden field the server action reads. */
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
@@ -63,7 +72,8 @@ export function BoardContentForm({
     text("memberSecretaryName", "Member Secretary name", values.memberSecretaryName, "section-secretary");
     text("memberSecretaryTitle", "Member Secretary title", values.memberSecretaryTitle, "section-secretary");
     const after = reconstructRows(fd, "members", ["name", "title", "isPlaceholder"]);
-    if (JSON.stringify(after) !== JSON.stringify(values.members)) {
+    const before = values.members.map((m) => ({ name: m.name, title: m.title, isPlaceholder: m.isPlaceholder }));
+    if (JSON.stringify(after) !== JSON.stringify(before)) {
       list.push({ id: "members", label: "Members", detail: `${values.members.length} → ${after.length} member${after.length === 1 ? "" : "s"}`, sectionId: "section-members" });
     }
     return list;
@@ -83,6 +93,8 @@ export function BoardContentForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[680px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       <section id="section-chairman" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
         <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Chairman</p>
@@ -103,7 +115,8 @@ export function BoardContentForm({
       </section>
 
       <section id="section-members" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Members</p>
+        <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">Members</p>
+        <p className="type-caption mb-2 text-[var(--color-muted)]">Drag the handle to reorder.</p>
         <RepeatableRows
           name="members"
           fields={[
@@ -113,26 +126,17 @@ export function BoardContentForm({
           ]}
           initialRows={values.members}
           addLabel="+ Add member"
+          reorderable
         />
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish? The Board section will revert to whatever was last published.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

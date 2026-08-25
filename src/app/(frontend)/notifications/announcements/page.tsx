@@ -24,23 +24,30 @@ export const revalidate = 60;
 
 export default async function Announcements() {
   const locale = await getLocale();
-  const [announcements, siteCopy] = await Promise.all([getAnnouncements(), getSiteCopy(locale)]);
+  const [announcements, siteCopy] = await Promise.all([getAnnouncements(locale), getSiteCopy(locale)]);
   const hero = siteCopy.announcementsHero;
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Notifications" }, { label: "Announcements" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "அறிவிப்புகள்" : "Announcements" },
+          ]}
+        />
         <PageHero
           eyebrow={hero.eyebrow}
           heading={hero.heading}
           body={hero.body}
-          cta={{ label: "View All Announcements", href: "#all-announcements" }}
+          cta={{ label: isTa ? "அனைத்து அறிவிப்புகளையும் காண்க" : "View All Announcements", href: "#all-announcements" }}
           orbs={heroOrbs}
           graphic={<AnnouncementsGraphic />}
         />
-        <AnnouncementList announcements={announcements} facets={buildFacets(announcements)} />
+        <AnnouncementList announcements={announcements} facets={buildFacets(announcements, locale)} locale={locale} />
       </main>
       <Footer />
       <ScrollToTop />

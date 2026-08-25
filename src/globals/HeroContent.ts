@@ -66,5 +66,23 @@ export const HeroContent: GlobalConfig = {
       required: true,
       localized: true,
     },
+    {
+      name: "mapImage",
+      type: "upload",
+      relationTo: "media",
+      required: true,
+      admin: {
+        description: "The citizens-over-Tamil-Nadu-map collage shown beside the headline.",
+      },
+    },
+    {
+      name: "backgroundImage",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description:
+          "Optional full-bleed background behind the whole Hero. Leave empty to keep the default colour wash — uploading an image replaces it.",
+      },
+    },
   ],
 };

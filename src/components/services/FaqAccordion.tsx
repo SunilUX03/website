@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { GeneratedFaq } from "@/lib/service-detail-generator";
+import type { Locale } from "@/lib/locale";
 
 function FaqRow({ faq, open, onToggle }: { faq: GeneratedFaq; open: boolean; onToggle: () => void }) {
   return (
@@ -30,7 +31,8 @@ function FaqRow({ faq, open, onToggle }: { faq: GeneratedFaq; open: boolean; onT
 /** `moreFaqs`, when present, renders behind a "View more questions"
  * toggle rather than all at once — for items whose real-content
  * submission distinguishes a primary set from a longer additional list. */
-export function FaqAccordion({ faqs, moreFaqs }: { faqs: GeneratedFaq[]; moreFaqs?: GeneratedFaq[] }) {
+export function FaqAccordion({ faqs, moreFaqs, locale = "en" }: { faqs: GeneratedFaq[]; moreFaqs?: GeneratedFaq[]; locale?: Locale }) {
+  const isTa = locale === "ta";
   const [showMore, setShowMore] = useState(false);
   // Keyed by question text, not array index — an index would collide
   // between `faqs` and `moreFaqs` once both are rendered.
@@ -58,7 +60,13 @@ export function FaqAccordion({ faqs, moreFaqs }: { faqs: GeneratedFaq[]; moreFaq
             onClick={() => setShowMore((v) => !v)}
             className="type-body-strong self-start py-4 text-[var(--color-primary-blue)] hover:underline"
           >
-            {showMore ? "View fewer questions" : "View more questions"}
+            {isTa
+              ? showMore
+                ? "குறைவான கேள்விகளைக் காட்டு"
+                : "மேலும் கேள்விகளைக் காண்க"
+              : showMore
+                ? "View fewer questions"
+                : "View more questions"}
           </button>
         </>
       )}

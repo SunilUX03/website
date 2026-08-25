@@ -1,14 +1,19 @@
 import type { GlobalConfig } from "payload";
 
-// Backs the top portion of the About page: Hero, Who We Are, the 3-box
-// reporting-line strip, Vision & Mission, and Connect With Us — all
-// small, mostly-text sections bundled into one global rather than five
-// separate settings screens, matching how an editor thinks of "the About
-// page" as one thing to update, not five.
+// Backs the small text chrome across the whole About page: Hero, Who We
+// Are, the 3-box reporting-line strip, Vision & Mission, Connect With Us,
+// and the eyebrow/heading pair for every other section on the page
+// (Organisation Structure, Leadership & Team, Governing Board, Awards,
+// Roll of Honour) — bundled into one global rather than a separate
+// settings screen per section, matching how an editor thinks of "the
+// About page" as one thing to update, not several. Each of those other
+// sections' own *content* (org chart boxes, team members, board seats,
+// awards, honour roll) still lives in its own collection/global; only
+// the section-level eyebrow/heading text lives here.
 export const AboutPageContent: GlobalConfig = {
   slug: "about-page-content",
   admin: {
-    description: "Hero, Who We Are, Vision & Mission, and Connect With Us on the About page.",
+    description: "Hero, Who We Are, Vision & Mission, Connect With Us, and every section heading on the About page.",
   },
   versions: {
     drafts: true,
@@ -67,6 +72,51 @@ export const AboutPageContent: GlobalConfig = {
             { name: "href", type: "text", required: true },
           ],
         },
+      ],
+    },
+    {
+      name: "orgChartSection",
+      type: "group",
+      admin: { description: 'The heading above the Organisation Structure chart, e.g. "Organisation Structure" / "How TNeGA is organised".' },
+      fields: [
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "leadershipSection",
+      type: "group",
+      admin: { description: 'The heading above the Leadership & Team cards, e.g. "Leadership & Team" / "The people behind TNeGA".' },
+      fields: [
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "boardSection",
+      type: "group",
+      admin: { description: 'The heading above the Governing Board, e.g. "Governing Board" / "Governing TNeGA\'s mission".' },
+      fields: [
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "awardsSection",
+      type: "group",
+      admin: { description: 'The heading above Awards & Recognition, e.g. "Awards & Recognition" / "Recognised for governance impact".' },
+      fields: [
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "rollOfHonourSection",
+      type: "group",
+      admin: { description: 'The heading above Roll of Honour, e.g. "Roll of Honour" / "Leading TNeGA since 2006".' },
+      fields: [
+        { name: "eyebrow", type: "text", required: true, localized: true },
+        { name: "heading", type: "text", required: true, localized: true },
       ],
     },
   ],

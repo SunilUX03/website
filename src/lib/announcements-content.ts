@@ -7,13 +7,16 @@
 
 import type { Facet } from "@/components/documents/FilterBar";
 import { type CmsAnnouncement, yearOf } from "@/lib/cms/announcement-types";
+import type { Locale } from "@/lib/locale";
 
 export const heroOrbs = [
   { color: "lavender", className: "-left-16 -top-24 h-[420px] w-[420px]" },
   { color: "mint", className: "-bottom-10 right-[60px] h-[340px] w-[340px]" },
 ] as const;
 
-export const listHeading = "Latest from TNeGA";
+export function getListHeading(locale: Locale): string {
+  return locale === "ta" ? "TNeGA-விலிருந்து சமீபத்தியவை" : "Latest from TNeGA";
+}
 
 /**
  * Year options are derived from the items themselves rather than being
@@ -23,7 +26,7 @@ export const listHeading = "Latest from TNeGA";
  * failure mode entirely — add an announcement from any year and its
  * option appears automatically.
  */
-export function buildFacets(items: CmsAnnouncement[]): Facet[] {
+export function buildFacets(items: CmsAnnouncement[], locale: Locale): Facet[] {
   const years = Array.from(new Set(items.map((a) => yearOf(a.timestamp)).filter(Boolean))).sort(
     (a, b) => Number(b) - Number(a)
   );
@@ -31,14 +34,28 @@ export function buildFacets(items: CmsAnnouncement[]): Facet[] {
     {
       id: "year",
       kind: "select",
-      ariaLabel: "Filter by year",
+      ariaLabel: locale === "ta" ? "ஆண்டு வாரியாக வடிகட்டு" : "Filter by year",
       initial: "all",
-      options: [{ value: "all", label: "All Years" }, ...years.map((y) => ({ value: y, label: y }))],
+      options: [
+        { value: "all", label: locale === "ta" ? "அனைத்து ஆண்டுகளும்" : "All Years" },
+        ...years.map((y) => ({ value: y, label: y })),
+      ],
     },
   ];
 }
 
-export const searchPlaceholder = "Search announcements...";
-export const searchAriaLabel = "Search announcements";
-export const filterBarLabel = "Filter announcements";
-export const noResultsText = "No announcements match your filters.";
+export function getSearchPlaceholder(locale: Locale): string {
+  return locale === "ta" ? "அறிவிப்புகளைத் தேடுங்கள்..." : "Search announcements...";
+}
+
+export function getSearchAriaLabel(locale: Locale): string {
+  return locale === "ta" ? "அறிவிப்புகளைத் தேடுங்கள்" : "Search announcements";
+}
+
+export function getFilterBarLabel(locale: Locale): string {
+  return locale === "ta" ? "அறிவிப்புகளை வடிகட்டு" : "Filter announcements";
+}
+
+export function getNoResultsText(locale: Locale): string {
+  return locale === "ta" ? "உங்கள் வடிகட்டிகளுடன் பொருந்தும் அறிவிப்புகள் இல்லை." : "No announcements match your filters.";
+}

@@ -1,25 +1,26 @@
 import { getPayloadClient } from "@/lib/payload-client";
 import type { Announcement, Media } from "@/payload-types";
 import { type CmsAnnouncement } from "@/lib/cms/announcement-types";
+import type { Locale } from "@/lib/locale";
 
 export type { CmsAnnouncement } from "@/lib/cms/announcement-types";
 
-function formatTimestamp(isoDate: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatTimestamp(isoDate: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "ta" ? "ta-IN" : "en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   }).format(new Date(isoDate));
 }
 
-function toCmsAnnouncement(doc: Announcement): CmsAnnouncement {
+function toCmsAnnouncement(doc: Announcement, locale: Locale): CmsAnnouncement {
   const image = typeof doc.image === "object" && doc.image !== null ? (doc.image as Media).url ?? undefined : undefined;
   return {
     id: doc.id,
     slug: doc.slug,
     heading: doc.heading,
     description: doc.description,
-    timestamp: formatTimestamp(doc.date),
+    timestamp: formatTimestamp(doc.date, locale),
     href: `/notifications/announcements/${doc.slug}`,
     image,
     category: doc.category ?? undefined,
@@ -29,31 +30,34 @@ function toCmsAnnouncement(doc: Announcement): CmsAnnouncement {
   };
 }
 
-/** Published announcements, newest first — the only ordering any page
- * on the site actually needs. */
-export async function getAnnouncements(): Promise<CmsAnnouncement[]> {
+/** Published announcements, in the admin's drag-set order (see
+ * /cms/announcements) — replaces the old fixed newest-first sort so an
+ * admin can manually curate what leads the list. */
+export async function getAnnouncements(locale: Locale = "en"): Promise<CmsAnnouncement[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "announcements",
+    locale,
     depth: 1,
-    sort: "-date",
+    sort: "order",
     limit: 200,
     overrideAccess: false,
   });
-  return result.docs.map(toCmsAnnouncement);
+  return result.docs.map((doc) => toCmsAnnouncement(doc, locale));
 }
 
-export async function getAnnouncementBySlug(slug: string): Promise<CmsAnnouncement | null> {
+export async function getAnnouncementBySlug(slug: string, locale: Locale = "en"): Promise<CmsAnnouncement | null> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "announcements",
+    locale,
     depth: 1,
     where: { slug: { equals: slug } },
     limit: 1,
     overrideAccess: false,
   });
   const doc = result.docs[0];
-  return doc ? toCmsAnnouncement(doc) : null;
+  return doc ? toCmsAnnouncement(doc, locale) : null;
 }
 
 export { yearOf, yearsOf } from "@/lib/cms/announcement-types";
@@ -62,15 +66,16 @@ export { yearOf, yearsOf } from "@/lib/cms/announcement-types";
  * priority order they set — replaces the old hand-typed `ticker` array
  * in lib/content.ts, so the ticker never needs a separate manual update
  * from the announcement it's actually about. */
-export async function getTickerAnnouncements(): Promise<CmsAnnouncement[]> {
+export async function getTickerAnnouncements(locale: Locale = "en"): Promise<CmsAnnouncement[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "announcements",
+    locale,
     depth: 0,
     where: { tickerFeatured: { equals: true } },
     sort: "tickerOrder",
     limit: 50,
     overrideAccess: false,
   });
-  return result.docs.map(toCmsAnnouncement);
+  return result.docs.map((doc) => toCmsAnnouncement(doc, locale));
 }

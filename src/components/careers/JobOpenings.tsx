@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
 import type { CmsJobOpening } from "@/lib/cms/job-openings";
+import type { Locale } from "@/lib/locale";
 
 function DownloadIcon() {
   return (
@@ -30,20 +31,35 @@ function ClockIcon() {
   );
 }
 
-export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpening[]; openingsNote: string }) {
+export function JobOpenings({
+  openings,
+  openingsNote,
+  section,
+  locale = "en",
+}: {
+  openings: CmsJobOpening[];
+  openingsNote: string;
+  section: { heading: string };
+  locale?: Locale;
+}) {
+  const isTa = locale === "ta";
   return (
     <section className="py-xxl md:py-section" id="openings">
       <Container>
-        <SectionHead heading="Current Openings" id="openings-heading" />
+        <SectionHead heading={section.heading} id="openings-heading" />
 
         {openings.length === 0 ? (
           <div className="flex flex-col items-center gap-sm rounded-xl border border-hairline bg-surface-card px-lg py-xxl text-center">
-            <p className="type-title-sm text-[var(--color-body-strong)]">No active job openings currently</p>
+            <p className="type-title-sm text-[var(--color-body-strong)]">
+              {isTa ? "தற்போது செயலில் உள்ள வேலைவாய்ப்புகள் இல்லை" : "No active job openings currently"}
+            </p>
             <p className="type-body-sm max-w-[48ch] text-[var(--color-muted)]">
-              But you can submit your resume below and we will reach out if any role that fits comes up.
+              {isTa
+                ? "ஆனால் கீழே உங்கள் விண்ணப்பத்தை சமர்ப்பிக்கலாம், பொருந்தும் பணி வந்தால் நாங்கள் தொடர்பு கொள்வோம்."
+                : "But you can submit your resume below and we will reach out if any role that fits comes up."}
             </p>
             <a href="#apply" className="type-button btn-primary mt-2">
-              Submit your resume
+              {isTa ? "உங்கள் விண்ணப்பத்தை சமர்ப்பிக்கவும்" : "Submit your resume"}
             </a>
           </div>
         ) : (
@@ -69,7 +85,7 @@ export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpenin
               <p className="flex items-center gap-xs text-[13px] text-[var(--color-body)]">
                 <ClockIcon />
                 <span>
-                  Last Date to Apply:{" "}
+                  {isTa ? "விண்ணப்பிக்க கடைசி தேதி:" : "Last Date to Apply:"}{" "}
                   <span className="font-medium text-[var(--color-body-strong)]">
                     {job.deadline}
                   </span>
@@ -81,18 +97,18 @@ export function JobOpenings({ openings, openingsNote }: { openings: CmsJobOpenin
                   <a
                     href={job.jdHref}
                     className="type-button btn-outline"
-                    aria-label={`Download job description for ${job.role}`}
+                    aria-label={isTa ? `${job.role} பணி விவரத்தைப் பதிவிறக்கவும்` : `Download job description for ${job.role}`}
                   >
                     <DownloadIcon />
-                    Download JD
+                    {isTa ? "பணி விவரத்தைப் பதிவிறக்கவும்" : "Download JD"}
                   </a>
                 ) : null}
                 <a
                   href="#apply"
                   className="type-button btn-primary"
-                  aria-label={`Apply for ${job.role}`}
+                  aria-label={isTa ? `${job.role}-க்கு விண்ணப்பிக்கவும்` : `Apply for ${job.role}`}
                 >
-                  Apply Now
+                  {isTa ? "இப்போது விண்ணப்பிக்கவும்" : "Apply Now"}
                 </a>
               </div>
             </li>

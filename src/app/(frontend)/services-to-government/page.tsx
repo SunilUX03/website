@@ -5,7 +5,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ServicesToGovernmentContent } from "@/components/services/ServicesToGovernmentContent";
 import { getServicesToGovernmentContent } from "@/lib/cms/services-to-government";
-import { getDepartmentContacts } from "@/lib/cms/department-contacts";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Services to Government | TNeGA",
@@ -16,17 +16,20 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function ServicesToGovernment() {
-  const [content, departmentContacts] = await Promise.all([
-    getServicesToGovernmentContent(),
-    getDepartmentContacts(),
-  ]);
+  const locale = await getLocale();
+  const content = await getServicesToGovernmentContent(locale);
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1" id="main-content">
-        <Breadcrumb items={[{ label: "Services to Government" }]} />
-        <ServicesToGovernmentContent heroId="main-content" content={content} departmentContacts={departmentContacts} />
+        <Breadcrumb locale={locale} items={[{ label: isTa ? "அரசுக்கான சேவைகள்" : "Services to Government" }]} />
+        <ServicesToGovernmentContent
+          heroId="main-content"
+          content={content}
+          locale={locale}
+        />
       </main>
       <Footer />
       <ScrollToTop />

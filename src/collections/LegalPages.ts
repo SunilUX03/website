@@ -38,6 +38,7 @@ export const LegalPages: CollectionConfig = {
         { label: "Disclaimer", value: "disclaimer" },
         { label: "Help", value: "help" },
         { label: "Feedback (intro only)", value: "feedback" },
+        { label: "Cookie Policy", value: "cookie-policy" },
       ],
       admin: {
         description: "Which page this content backs — matches a fixed route, not a URL you can change.",

@@ -6,8 +6,12 @@ import type { GlobalConfig } from "payload";
 // already renders (governingBoard.chairman/memberSecretary/members).
 const seatFields = (roleDefault: string) => [
   { name: "role" as const, type: "text" as const, required: true, defaultValue: roleDefault, localized: true as const },
-  // Person's own name — kept as-is across locales, not translated.
-  { name: "name" as const, type: "text" as const, required: true },
+  // Localized: in practice this usually holds the seat's ex-officio
+  // designation (no confirmed named appointee), not a person's own name —
+  // e.g. "The Secretary to Government, ... Department" — which does need
+  // translating. A real personal name is simply kept identical across
+  // locales when set.
+  { name: "name" as const, type: "text" as const, required: true, localized: true as const },
   // Optional: seats can hold just a designation (no confirmed appointee
   // name yet), in which case there's no secondary line to show.
   { name: "title" as const, type: "text" as const, required: false, localized: true as const },
@@ -43,7 +47,7 @@ export const BoardContent: GlobalConfig = {
         description: "Regular Governing Board members, shown in the carousel below the two seats above.",
       },
       fields: [
-        { name: "name", type: "text", required: true },
+        { name: "name", type: "text", required: true, localized: true },
         { name: "title", type: "text", required: false, localized: true },
         {
           name: "isPlaceholder",

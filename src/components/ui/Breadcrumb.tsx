@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import type { Locale } from "@/lib/locale";
+import { getUiStrings } from "@/lib/ui-strings";
 
 export interface BreadcrumbItem {
   label: string;
@@ -10,7 +12,8 @@ export interface BreadcrumbItem {
 
 /** Shared Home / … / Current trail, used above the hero on every page
  * except Home itself. */
-export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
+export function Breadcrumb({ items, locale = "en" }: { items: BreadcrumbItem[]; locale?: Locale }) {
+  const t = getUiStrings(locale);
   return (
     <div className="bg-canvas">
       <Container className="py-md">
@@ -19,7 +22,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
           aria-label="Breadcrumb"
         >
           <Link href="/" className="hover:text-ink">
-            Home
+            {t.home}
           </Link>
           {items.map((item) => (
             <span key={item.label} className="flex items-center gap-1.5">

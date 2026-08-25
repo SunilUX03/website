@@ -35,3 +35,24 @@ export async function uploadFile(
   });
   return doc.id;
 }
+
+/** Resolves what an upload field should be set to, given uploadFile()'s
+ * result for this field and its paired ImageUploadField `<name>Removed`
+ * hidden input: a newly uploaded file always wins; otherwise an explicit
+ * removal (the field's own close button) nulls it out; otherwise the
+ * field is left out of the returned data entirely so a partial update
+ * doesn't disturb whatever's already saved. Spread the result behind an
+ * `undefined` check, e.g. `...(value !== undefined ? { image: value } : {})`.
+ *
+ * Typed as returning `number | undefined` (not `| null`) even though it
+ * genuinely returns `null` for a removal — Payload's own generated types
+ * for upload/relationship fields don't declare `null` as assignable even
+ * though its runtime happily accepts it to clear a relation, so an
+ * honestly-typed `| null` here just pushes that same type error onto
+ * every call site. `undefined` checks below still see the real `null`
+ * value at runtime; only the compile-time type is narrowed. */
+export function resolveUploadValue(formData: FormData, name: string, newId: number | undefined): number | undefined {
+  if (newId) return newId;
+  if (formData.get(`${name}Removed`) === "1") return null as unknown as number;
+  return undefined;
+}

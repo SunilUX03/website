@@ -5,11 +5,12 @@ import type { CmsServiceItemDetail as ServiceItem } from "@/lib/cms/service-type
 import { ServiceItemCard } from "./ServiceItemCard";
 import { MobileCardStack } from "@/components/ui/MobileCardStack";
 import { useIsDesktop } from "@/lib/hooks";
+import type { Locale } from "@/lib/locale";
 
 // Desktop stays a static grid; mobile keeps the Services page's own
 // vertical card-deck scroll mechanic (MobileCardStack) — distinct from
 // the horizontal AutoCarousel used elsewhere, per standing instruction.
-export function InitiativesProjectsGrid({ items }: { items: ServiceItem[] }) {
+export function InitiativesProjectsGrid({ items, locale = "en" }: { items: ServiceItem[]; locale?: Locale }) {
   const isDesktop = useIsDesktop();
 
   // MobileCardStack sits flush below the nav and needs the nav's real,
@@ -27,7 +28,7 @@ export function InitiativesProjectsGrid({ items }: { items: ServiceItem[] }) {
     return (
       <div className="grid grid-cols-3 gap-6">
         {items.map((item) => (
-          <ServiceItemCard key={item.name + item.stats} item={item} />
+          <ServiceItemCard key={item.name + item.stats} item={item} locale={locale} />
         ))}
       </div>
     );
@@ -38,7 +39,7 @@ export function InitiativesProjectsGrid({ items }: { items: ServiceItem[] }) {
       <MobileCardStack
         items={items}
         getKey={(item) => item.name + item.stats}
-        renderCard={(item) => <ServiceItemCard item={item} />}
+        renderCard={(item) => <ServiceItemCard item={item} locale={locale} />}
         topPx={navHeight}
       />
     );

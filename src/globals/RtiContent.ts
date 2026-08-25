@@ -44,7 +44,7 @@ export const RtiContent: GlobalConfig = {
       fields: [
         { name: "badge", type: "text", required: true, localized: true },
         { name: "tone", type: "select", required: true, defaultValue: "light", options: [{ label: "Light", value: "light" }, { label: "Dark", value: "dark" }] },
-        { name: "name", type: "text", required: true },
+        { name: "name", type: "text", required: true, localized: true },
         { name: "designation", type: "text", required: true, localized: true },
         {
           name: "detailsText",

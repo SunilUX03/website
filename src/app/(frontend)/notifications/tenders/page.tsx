@@ -7,6 +7,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { TendersGraphic } from "@/components/heroes/TendersGraphic";
 import { heroOrbs } from "@/lib/tenders-content";
 import { getTendersContent } from "@/lib/cms/tenders-content";
+import { getLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Tenders & Procurement | TNeGA",
@@ -17,18 +18,26 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Tenders() {
-  const { hero, tenderPortal } = await getTendersContent();
+  const locale = await getLocale();
+  const { hero, tenderPortal } = await getTendersContent(locale);
+  const isTa = locale === "ta";
 
   return (
     <>
       <TopNav />
       <main className="flex-1">
-        <Breadcrumb items={[{ label: "Notifications" }, { label: "Tenders" }]} />
+        <Breadcrumb
+          locale={locale}
+          items={[
+            { label: isTa ? "அறிவிக்கைகள்" : "Notifications" },
+            { label: isTa ? "டெண்டர்கள்" : "Tenders" },
+          ]}
+        />
         <PageHero
           eyebrow={hero.eyebrow}
           heading={hero.heading}
           body={tenderPortal.body}
-          cta={{ label: "View Tenders", href: tenderPortal.ctaHref, external: true }}
+          cta={{ label: tenderPortal.ctaLabel, href: tenderPortal.ctaHref, external: true, analyticsLabel: "tenders_portal_redirect" }}
           orbs={heroOrbs}
           graphic={<TendersGraphic />}
         />

@@ -1,8 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
+import { ImageUploadField } from "@/components/portal/ImageUploadField";
+
+const MAX_DESCRIPTION_WORDS = 35;
+
+function countWords(value: string): number {
+  return value.trim().split(/\s+/).filter(Boolean).length;
+}
 
 export type AwardFormValues = {
   title: string;
@@ -11,6 +17,11 @@ export type AwardFormValues = {
   imageUrl?: string;
   status?: "draft" | "published";
   error?: string;
+  /** The document's `updatedAt` as of this page load — round-tripped
+   * through a hidden field so the server action can detect a save based
+   * on stale data (e.g. a locale tab left open since before someone
+   * else's edit) and refuse it instead of silently overwriting. */
+  updatedAt?: string;
 };
 
 function truncate(value: string, max = 60): string {
@@ -21,13 +32,16 @@ function truncate(value: string, max = 60): string {
 export function AwardForm({
   action,
   values,
+  locale = "en",
 }: {
   action: (formData: FormData) => void;
   values: AwardFormValues;
+  locale?: "en" | "ta";
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
   const [changes, setChanges] = useState<Change[] | null>(null);
+  const [descriptionWords, setDescriptionWords] = useState(() => countWords(values.description));
 
   function submitWithIntent(intent: "draft" | "publish" | "unpublish") {
     if (intentRef.current) intentRef.current.value = intent;
@@ -66,6 +80,8 @@ export function AwardForm({
   return (
     <form ref={formRef} action={action} className="flex max-w-[560px] flex-col gap-6">
       <input ref={intentRef} type="hidden" name="intent" defaultValue="draft" />
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="_loadedUpdatedAt" value={values.updatedAt ?? ""} />
 
       {values.error ? (
         <p className="type-body-sm rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
@@ -95,10 +111,16 @@ export function AwardForm({
         </div>
 
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Description</label>
+          <div className="mb-1.5 flex items-baseline justify-between">
+            <label className="type-caption-uppercase block text-[var(--color-muted)]">Description</label>
+            <span className={`type-caption ${descriptionWords > MAX_DESCRIPTION_WORDS ? "text-[var(--color-error)]" : "text-[var(--color-muted)]"}`}>
+              {descriptionWords}/{MAX_DESCRIPTION_WORDS} words
+            </span>
+          </div>
           <textarea
             name="description"
             defaultValue={values.description}
+            onChange={(e) => setDescriptionWords(countWords(e.target.value))}
             required
             rows={4}
             className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
@@ -107,32 +129,17 @@ export function AwardForm({
 
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Image</label>
-          {values.imageUrl ? (
-            <div className="relative mb-2 h-24 w-32 overflow-hidden rounded-lg border border-hairline">
-              <Image src={values.imageUrl} alt="" fill className="object-cover" />
-            </div>
-          ) : null}
-          <input type="file" name="image" accept="image/*" className="type-body-sm block" />
+          <ImageUploadField name="image" currentUrl={values.imageUrl} aspect="h-24 w-32" idealSize="800 × 600px (4:3)" />
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={() => submitWithIntent("draft")} className="type-button btn-outline">
-          Save draft
-        </button>
-        {values.status === "published" ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Unpublish this award? It'll disappear from the live site.")) submitWithIntent("unpublish");
-            }}
-            className="type-button btn-outline"
-          >
-            Unpublish
-          </button>
-        ) : null}
-        <button type="button" onClick={handleUpdateClick} className="type-button btn-primary">
-          {values.status === "published" ? "Update" : "Publish"}
+      <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">
+        <button
+          type="button"
+          onClick={handleUpdateClick}
+          className="type-button btn-primary !h-12 !px-6 shadow-[0_8px_24px_rgba(15,23,42,0.28)]"
+        >
+          Update
         </button>
       </div>
 

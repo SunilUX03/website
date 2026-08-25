@@ -5,6 +5,7 @@ import type { CmsTeamMember } from "@/lib/cms/team-member-types";
 import { Container } from "@/components/ui/Container";
 import { AutoCarousel } from "@/components/ui/AutoCarousel";
 import { useInViewOnce, useIsDesktop, useReducedMotion } from "@/lib/hooks";
+import type { CmsSectionHeading } from "@/lib/cms/about-types";
 
 type TeamMember = CmsTeamMember;
 
@@ -95,7 +96,7 @@ function MobileCarousel({
   );
 }
 
-export function LeadershipTeam({ members }: { members: CmsTeamMember[] }) {
+export function LeadershipTeam({ members, section }: { members: CmsTeamMember[]; section: CmsSectionHeading }) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.15 });
   const reducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
@@ -103,8 +104,8 @@ export function LeadershipTeam({ members }: { members: CmsTeamMember[] }) {
   return (
     <section id="leadership" className="scroll-mt-24 bg-canvas-soft">
       <Container className="py-xxl md:py-section">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Leadership &amp; Team</p>
-        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">The people behind TNeGA</h2>
+        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{section.eyebrow}</p>
+        <h2 className="type-display-lg mb-10 max-w-2xl text-ink">{section.heading}</h2>
 
         <div ref={ref}>
           {isDesktop === true && <DesktopGrid members={members} inView={inView} reducedMotion={reducedMotion} />}
