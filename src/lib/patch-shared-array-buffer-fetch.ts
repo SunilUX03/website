@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Vercel's Node runtime can hand back binary data (from Payload's Media
  * uploads — the original file, and the thumbnail/card sizes sharp
