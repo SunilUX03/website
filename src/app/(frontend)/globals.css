@@ -131,18 +131,18 @@
 ---------------------------------------------------------------------- */
 
 /* OpenDyslexic — the actual font (not a fallback stand-in), self-hosted
-   nowhere, loaded from its canonical open-source repo via jsdelivr's
-   GitHub CDN (CORS-enabled, publicly cacheable). */
+   under public/fonts so the site has no runtime dependency on an
+   external CDN. */
 @font-face {
   font-family: "OpenDyslexic";
-  src: url("https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Regular.woff2") format("woff2");
+  src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "OpenDyslexic";
-  src: url("https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Bold.woff2") format("woff2");
+  src: url("/fonts/OpenDyslexic-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
