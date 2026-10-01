@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
@@ -13,6 +13,10 @@ export type ApplicationRole = { id: string; label: string };
 // that's where this runs until handover — raise this once the app is
 // self-hosted on a plain Node server, which has no such limit.
 const MAX_RESUME_BYTES = 4 * 1024 * 1024;
+
+// Indian 10-digit mobile numbers only — what the OTP gateway's "91" +
+// 10-digit `to` format expects.
+const PHONE_RE = /^[6-9]\d{9}$/;
 
 type Errors = Partial<
   Record<"fullName" | "email" | "phone" | "role" | "resume", string>
@@ -105,6 +109,89 @@ export function ApplicationForm({
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [phoneValue, setPhoneValue] = useState("");
+  const [otpStage, setOtpStage] = useState<"idle" | "sent" | "verified">("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpPendingToken, setOtpPendingToken] = useState<string | null>(null);
+  const [verifiedToken, setVerifiedToken] = useState<string | null>(null);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  function resetOtp() {
+    setOtpStage("idle");
+    setOtpPendingToken(null);
+    setVerifiedToken(null);
+    setOtpCode("");
+    setOtpError(null);
+    setCooldown(0);
+  }
+
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setPhoneValue(e.target.value);
+    if (otpStage !== "idle") resetOtp();
+  }
+
+  async function handleSendOtp() {
+    setOtpError(null);
+    if (!PHONE_RE.test(phoneValue)) {
+      setOtpError(isTa ? "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்." : "Enter a valid 10-digit mobile number.");
+      return;
+    }
+    setOtpSending(true);
+    try {
+      const res = await fetch("/api/careers/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneValue }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        setOtpError(body?.error ?? (isTa ? "OTP அனுப்ப முடியவில்லை. மீண்டும் முயற்சிக்கவும்." : "Could not send OTP. Please try again."));
+        return;
+      }
+      setOtpPendingToken(body.token);
+      setOtpCode("");
+      setOtpStage("sent");
+      setCooldown(60);
+    } catch {
+      setOtpError(isTa ? "ஏதோ தவறு நடந்தது. உங்கள் இணைய இணைப்பைச் சரிபார்க்கவும்." : "Something went wrong. Please check your connection and try again.");
+    } finally {
+      setOtpSending(false);
+    }
+  }
+
+  async function handleVerifyOtp() {
+    if (!otpPendingToken) return;
+    setOtpError(null);
+    setOtpVerifying(true);
+    try {
+      const res = await fetch("/api/careers/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneValue, otp: otpCode, token: otpPendingToken }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        setOtpError(body?.error ?? (isTa ? "தவறான அல்லது காலாவதியான OTP." : "Incorrect or expired OTP."));
+        return;
+      }
+      setVerifiedToken(body.verifiedToken);
+      setOtpStage("verified");
+    } catch {
+      setOtpError(isTa ? "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்." : "Something went wrong. Please try again.");
+    } finally {
+      setOtpVerifying(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -113,14 +200,17 @@ export function ApplicationForm({
 
     const fullName = String(data.get("fullName") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
-    const phone = String(data.get("phone") ?? "").trim();
     const role = String(data.get("role") ?? "");
     const resume = fileRef.current?.files?.[0];
 
     if (!fullName) next.fullName = isTa ? "தயவுசெய்து உங்கள் முழுப்பெயரை உள்ளிடவும்." : "Please enter your full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       next.email = isTa ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்." : "Please enter a valid email address.";
-    if (!phone) next.phone = isTa ? "தயவுசெய்து உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்." : "Please enter your phone number.";
+    if (!PHONE_RE.test(phoneValue)) {
+      next.phone = isTa ? "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்." : "Enter a valid 10-digit mobile number.";
+    } else if (otpStage !== "verified" || !verifiedToken) {
+      next.phone = isTa ? "OTP மூலம் உங்கள் தொலைபேசி எண்ணைச் சரிபார்க்கவும்." : "Please verify your phone number with the OTP.";
+    }
     if (!role) next.role = isTa ? "தயவுசெய்து ஒரு பணியைத் தேர்ந்தெடுக்கவும்." : "Please select a role.";
 
     if (!resume) {
@@ -224,21 +314,88 @@ export function ApplicationForm({
                 </Field>
 
                 <Field label={isTa ? "தொலைபேசி எண்" : "Phone Number"} htmlFor="phone" error={errors.phone}>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    placeholder={isTa ? "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்" : "Enter your phone number"}
-                    aria-required
-                    aria-invalid={Boolean(errors.phone)}
-                    className={clsx(
-                      inputBase,
-                      errors.phone
-                        ? "border-[var(--color-error)]"
-                        : "border-hairline-strong"
+                  <input type="hidden" name="phoneVerifiedToken" value={verifiedToken ?? ""} />
+                  <div className="flex gap-2">
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      value={phoneValue}
+                      onChange={handlePhoneChange}
+                      disabled={otpStage === "verified"}
+                      placeholder={isTa ? "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்" : "Enter your phone number"}
+                      aria-required
+                      aria-invalid={Boolean(errors.phone)}
+                      className={clsx(
+                        inputBase,
+                        "flex-1 disabled:bg-canvas-soft disabled:text-[var(--color-muted)]",
+                        errors.phone
+                          ? "border-[var(--color-error)]"
+                          : "border-hairline-strong"
+                      )}
+                    />
+                    {otpStage === "verified" ? (
+                      <button
+                        type="button"
+                        onClick={resetOtp}
+                        className="type-button btn-outline h-11 shrink-0 px-4 text-sm"
+                      >
+                        {isTa ? "மாற்று" : "Change"}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={otpSending || cooldown > 0 || !PHONE_RE.test(phoneValue)}
+                        className="type-button btn-outline h-11 shrink-0 whitespace-nowrap px-4 text-sm disabled:opacity-60"
+                      >
+                        {otpSending
+                          ? isTa ? "அனுப்புகிறது…" : "Sending…"
+                          : cooldown > 0
+                            ? isTa ? `${cooldown} வி.` : `Resend in ${cooldown}s`
+                            : otpStage === "sent"
+                              ? isTa ? "மீண்டும் அனுப்பு" : "Resend OTP"
+                              : isTa ? "OTP அனுப்பவும்" : "Send OTP"}
+                      </button>
                     )}
-                  />
+                  </div>
+
+                  {otpStage === "verified" ? (
+                    <p className="flex items-center gap-1 text-xs font-medium text-[#15803d]">
+                      <svg viewBox="0 0 24 24" aria-hidden className="h-3.5 w-3.5 fill-none stroke-[#15803d] stroke-[2.5]">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      {isTa ? "தொலைபேசி எண் சரிபார்க்கப்பட்டது" : "Phone number verified"}
+                    </p>
+                  ) : otpStage === "sent" ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder={isTa ? "6 இலக்க OTP" : "Enter 6-digit OTP"}
+                        aria-label={isTa ? "OTP உள்ளிடவும்" : "Enter OTP"}
+                        className={clsx(inputBase, "flex-1 border-hairline-strong tracking-widest")}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        disabled={otpVerifying || otpCode.length !== 6}
+                        className="type-button btn-primary h-11 shrink-0 px-4 text-sm disabled:opacity-60"
+                      >
+                        {otpVerifying ? (isTa ? "சரிபார்க்கிறது…" : "Verifying…") : isTa ? "சரிபார்" : "Verify"}
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {otpError ? (
+                    <p role="alert" className="text-xs text-[var(--color-error)]">
+                      {otpError}
+                    </p>
+                  ) : null}
                 </Field>
 
                 <Field label={isTa ? "விண்ணப்பிக்கும் பணி" : "Role Applied For"} htmlFor="role" error={errors.role}>

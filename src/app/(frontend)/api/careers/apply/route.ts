@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getPayloadClient } from "@/lib/payload-client";
+import { verifyPhoneVerifiedToken } from "@/lib/otp";
 
 // Kept under Vercel's ~4.5MB serverless request-body ceiling — see the
 // matching note in ApplicationForm.tsx.
@@ -16,6 +17,7 @@ export async function POST(request: Request) {
   const fullName = String(form.get("fullName") ?? "").trim();
   const email = String(form.get("email") ?? "").trim();
   const phone = String(form.get("phone") ?? "").trim();
+  const phoneVerifiedToken = String(form.get("phoneVerifiedToken") ?? "");
   const roleId = String(form.get("role") ?? "");
   const coverNote = String(form.get("coverLetter") ?? "").trim();
   const resume = form.get("resume");
@@ -24,6 +26,14 @@ export async function POST(request: Request) {
 
   if (!fullName || !EMAIL_RE.test(email) || !phone || !jobRole) {
     return NextResponse.json({ error: "Missing or invalid required field." }, { status: 400 });
+  }
+
+  // The OTP step only stops an honest browser from submitting without
+  // verifying — re-checking the token here (not just trusting the client
+  // completed it) is what actually stops a direct POST from skipping
+  // phone verification entirely.
+  if (!phoneVerifiedToken || !verifyPhoneVerifiedToken(phone, phoneVerifiedToken)) {
+    return NextResponse.json({ error: "Phone number is not verified. Please verify it with the OTP sent to it." }, { status: 400 });
   }
 
   if (!(resume instanceof File) || resume.size === 0) {
