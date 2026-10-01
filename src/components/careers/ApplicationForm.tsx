@@ -60,7 +60,11 @@ function Field({
           <span className="ml-1 text-[10px] font-normal normal-case tracking-normal">
             ({optionalLabel ?? "Optional"})
           </span>
-        ) : null}
+        ) : (
+          <span className="ml-0.5 text-[var(--color-error)]" aria-hidden>
+            *
+          </span>
+        )}
       </label>
       {children}
       {helper && !error ? (

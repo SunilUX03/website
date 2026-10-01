@@ -71,7 +71,9 @@ export function JobOpeningForm({
 
       <section id="section-main" className="flex scroll-mt-6 flex-col gap-4 rounded-xl border border-hairline bg-surface-card p-5">
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Role</label>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Role <span className="text-[var(--color-error)]" aria-hidden>*</span>
+          </label>
           <input
             name="role"
             defaultValue={values.role}
@@ -82,7 +84,9 @@ export function JobOpeningForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Type</label>
+            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+              Type <span className="text-[var(--color-error)]" aria-hidden>*</span>
+            </label>
             <input
               name="type"
               defaultValue={values.type}
@@ -92,7 +96,9 @@ export function JobOpeningForm({
             />
           </div>
           <div>
-            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Department</label>
+            <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+              Department <span className="text-[var(--color-error)]" aria-hidden>*</span>
+            </label>
             <input
               name="department"
               defaultValue={values.department}
@@ -103,7 +109,9 @@ export function JobOpeningForm({
         </div>
 
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Deadline</label>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Deadline <span className="text-[var(--color-error)]" aria-hidden>*</span>
+          </label>
           <input
             type="date"
             name="deadline"
@@ -114,7 +122,9 @@ export function JobOpeningForm({
         </div>
 
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Job description</label>
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
+            Job description <span className="text-[var(--color-error)]" aria-hidden>*</span>
+          </label>
           <DocumentUploadField name="jd" currentName={values.jdName} currentUrl={values.jdUrl} required />
         </div>
       </section>
