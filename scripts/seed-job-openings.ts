@@ -5,7 +5,9 @@
 // None of these had a real JD PDF uploaded yet (see the old comment in
 // careers-content.ts — placeholder entries pending real postings), so
 // jdHref is left blank here too; the Download JD button just won't show
-// until an editor fills it in.
+// until an editor fills it in. (jd has since become a required field —
+// the `as never` casts below are specific to this already-executed,
+// historical one-off script predating that rule, not a pattern to copy.)
 //
 //   node --env-file=.env.local ./node_modules/.bin/tsx scripts/seed-job-openings.ts
 //
@@ -34,10 +36,10 @@ async function main() {
     const data = { ...seed, _status: "published" as const };
 
     if (existing.docs[0]) {
-      await payload.update({ collection: "job-openings", id: existing.docs[0].id, data, overrideAccess: true });
+      await payload.update({ collection: "job-openings", id: existing.docs[0].id, data: data as never, overrideAccess: true });
       console.log(`Updated: ${seed.role}`);
     } else {
-      await payload.create({ collection: "job-openings", data, overrideAccess: true });
+      await payload.create({ collection: "job-openings", data: data as never, draft: false, overrideAccess: true });
       console.log(`Created: ${seed.role}`);
     }
   }

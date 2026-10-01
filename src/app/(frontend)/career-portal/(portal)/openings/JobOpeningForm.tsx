@@ -87,6 +87,7 @@ export function JobOpeningForm({
               name="type"
               defaultValue={values.type}
               placeholder="Contract"
+              required
               className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
             />
           </div>
@@ -113,10 +114,8 @@ export function JobOpeningForm({
         </div>
 
         <div>
-          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">
-            Job description <span className="normal-case text-[11px]">(optional — leave blank to hide the Download JD button)</span>
-          </label>
-          <DocumentUploadField name="jd" currentName={values.jdName} currentUrl={values.jdUrl} />
+          <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Job description</label>
+          <DocumentUploadField name="jd" currentName={values.jdName} currentUrl={values.jdUrl} required />
         </div>
       </section>
 

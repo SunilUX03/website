@@ -10,10 +10,10 @@ export default async function EditJobOpeningPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { saved } = await searchParams;
+  const { saved, error } = await searchParams;
   const payload = await getPayloadClient();
   const doc = await payload
     .findByID({ collection: "job-openings", id: Number(id), depth: 1, draft: true, overrideAccess: true })
@@ -40,6 +40,11 @@ export default async function EditJobOpeningPage({
 
       {saved ? (
         <p className="type-body-sm mb-6 rounded-lg border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#15803d]">Saved.</p>
+      ) : null}
+      {error ? (
+        <p className="type-body-sm mb-6 max-w-[560px] rounded-lg border border-[var(--color-error)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-[var(--color-error)]">
+          {error}
+        </p>
       ) : null}
 
       <JobOpeningForm

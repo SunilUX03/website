@@ -62,8 +62,9 @@ export const JobOpenings: CollectionConfig = {
       name: "jd",
       type: "upload",
       relationTo: "documents",
+      required: true,
       admin: {
-        description: "Job description PDF (max 4MB). Leave blank to hide the Download JD button on the public page.",
+        description: "Job description PDF (max 4MB).",
       },
     },
   ],

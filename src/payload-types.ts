@@ -366,9 +366,9 @@ export interface JobOpening {
    */
   deadline: string;
   /**
-   * Job description PDF (max 4MB). Leave blank to hide the Download JD button on the public page.
+   * Job description PDF (max 4MB).
    */
-  jd?: (number | null) | Document;
+  jd: number | Document;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;

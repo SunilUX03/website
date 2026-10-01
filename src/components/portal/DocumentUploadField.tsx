@@ -31,10 +31,12 @@ export function DocumentUploadField({
   name,
   currentName,
   currentUrl,
+  required = false,
 }: {
   name: string;
   currentName?: string;
   currentUrl?: string;
+  required?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -95,6 +97,7 @@ export function DocumentUploadField({
         </p>
       ) : null}
       {sizeError ? <p className="type-caption font-medium text-[var(--color-error)]">{sizeError}</p> : null}
+      {required && !displayName ? <p className="type-caption font-medium text-[var(--color-error)]">Required</p> : null}
       <p className="type-caption text-[var(--color-muted)]">PDF only. Maximum file size 4MB.</p>
     </div>
   );
