@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 import { trackConversion } from "@/lib/analytics-client";
 import type { Locale } from "@/lib/locale";
 
@@ -109,6 +110,7 @@ export function ApplicationForm({
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [roleValue, setRoleValue] = useState("");
   const [phoneValue, setPhoneValue] = useState("");
   const [otpStage, setOtpStage] = useState<"idle" | "sent" | "verified">("idle");
   const [otpCode, setOtpCode] = useState("");
@@ -399,31 +401,15 @@ export function ApplicationForm({
                 </Field>
 
                 <Field label={isTa ? "விண்ணப்பிக்கும் பணி" : "Role Applied For"} htmlFor="role" error={errors.role}>
-                  <select
-                    id="role"
+                  <CustomSelect
                     name="role"
-                    defaultValue=""
-                    aria-required
-                    aria-invalid={Boolean(errors.role)}
-                    className={clsx(
-                      inputBase,
-                      "cursor-pointer appearance-none bg-[right_12px_center] bg-no-repeat pr-9",
-                      errors.role
-                        ? "border-[var(--color-error)]"
-                        : "border-hairline-strong"
-                    )}
-                    style={{
-                      backgroundImage:
-                        "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23777169' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-                    }}
-                  >
-                    <option value="">{isTa ? "ஒரு பணியைத் தேர்ந்தெடுக்கவும்" : "Select a role"}</option>
-                    {roles.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {isTa ? ROLE_LABELS_TA[r.label] ?? r.label : r.label}
-                      </option>
-                    ))}
-                  </select>
+                    value={roleValue}
+                    onChange={setRoleValue}
+                    placeholder={isTa ? "ஒரு பணியைத் தேர்ந்தெடுக்கவும்" : "Select a role"}
+                    invalid={Boolean(errors.role)}
+                    ariaLabel={isTa ? "விண்ணப்பிக்கும் பணி" : "Role Applied For"}
+                    options={roles.map((r) => ({ value: r.id, label: isTa ? ROLE_LABELS_TA[r.label] ?? r.label : r.label }))}
+                  />
                 </Field>
 
                 <Field
