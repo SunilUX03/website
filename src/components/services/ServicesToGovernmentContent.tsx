@@ -44,7 +44,18 @@ export function ServicesToGovernmentContent({
   content: CmsServicesToGovernmentContent;
   locale?: Locale;
 }) {
-  const { hero, services, tableIntro, tableColumnHeaders, raiseTicketLabel, raiseTicketHref, departmentContacts } = content;
+  const {
+    hero,
+    hideServicesSection,
+    services,
+    hideTableIntroSection,
+    tableIntro,
+    tableColumnHeaders,
+    raiseTicketLabel,
+    raiseTicketHref,
+    hideDepartmentContactsSection,
+    departmentContacts,
+  } = content;
   return (
     <>
       <PageHero
@@ -58,89 +69,101 @@ export function ServicesToGovernmentContent({
       />
 
       {/* The 4 services */}
-      <section className="bg-canvas-soft">
-        <Container className="py-xxl md:py-section">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {services.map((service, i) => (
-              <div key={service.id} id={SERVICE_ANCHOR_IDS[i] ?? `service-${service.id}`} className="card-feature scroll-mt-28">
-                <p className="type-title-sm mb-2 text-ink">{service.name}</p>
-                <p className="type-body-sm text-[var(--color-body)]">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Department contacts */}
-      <section className="bg-canvas">
-        <Container className="py-xxl md:py-section">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{tableIntro.eyebrow}</p>
-              <h2 className="type-display-sm mb-2 text-ink">{tableIntro.heading}</h2>
-              <p className="type-body-sm max-w-[64ch] text-[var(--color-muted)]">{tableIntro.body}</p>
-            </div>
-            <a href={raiseTicketHref} className="type-button btn-primary shrink-0">
-              {raiseTicketLabel}
-            </a>
-          </div>
-
-          {/* Desktop/tablet: a real table. Mobile: a horizontally-
-              scrolling 4-column table is awkward to use on a phone —
-              below md, this becomes a stacked list of cards instead,
-              one per department, so everything reads top-to-bottom
-              with no sideways scrolling. */}
-          <div className="hidden overflow-x-auto rounded-xl border border-hairline md:block">
-            <table className="w-full min-w-[720px] border-collapse text-left">
-              <thead>
-                <tr className="border-b border-hairline bg-canvas-soft">
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.serialNumber}</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.department}</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.contact}</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.email}</th>
-                  <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.phone}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {departmentContacts.map((row, i) => (
-                  <tr key={row.id} className="border-b border-hairline last:border-0 hover:bg-canvas-soft">
-                    <td className="type-body-sm px-5 py-3 text-[var(--color-muted)]">{i + 1}</td>
-                    <td className="type-body-sm px-5 py-3 text-ink">{row.department}</td>
-                    <td className="type-body-sm px-5 py-3 text-[var(--color-body)]">{row.contact}</td>
-                    <td className="px-5 py-3">
-                      <a href={`mailto:${row.email}`} className="type-body-sm text-[var(--color-primary-blue)] hover:underline">
-                        {row.email}
-                      </a>
-                    </td>
-                    <td className="px-5 py-3">
-                      <a href={`tel:${row.phone.replace(/\s/g, "")}`} className="type-body-sm text-[var(--color-primary-blue)] hover:underline">
-                        {row.phone}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex flex-col gap-3 md:hidden">
-            {departmentContacts.map((row, i) => (
-              <div key={row.id} className="rounded-xl border border-hairline p-4">
-                <p className="type-body-strong mb-2 text-ink">{i + 1}. {row.department}</p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <span className="type-caption text-[var(--color-muted)]">{row.contact}</span>
-                  <a href={`mailto:${row.email}`} className="type-caption text-[var(--color-primary-blue)] hover:underline">
-                    {row.email}
-                  </a>
-                  <a href={`tel:${row.phone.replace(/\s/g, "")}`} className="type-caption text-[var(--color-primary-blue)] hover:underline">
-                    {row.phone}
-                  </a>
+      {hideServicesSection ? null : (
+        <section className="bg-canvas-soft">
+          <Container className="py-xxl md:py-section">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {services.map((service, i) => (
+                <div key={service.id} id={SERVICE_ANCHOR_IDS[i] ?? `service-${service.id}`} className="card-feature scroll-mt-28">
+                  <p className="type-title-sm mb-2 text-ink">{service.name}</p>
+                  <p className="type-body-sm text-[var(--color-body)]">{service.description}</p>
                 </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Department contacts: intro copy and the table itself are each
+          independently toggleable — skip the whole section only if both
+          are hidden, so turning off just one still shows the other. */}
+      {hideTableIntroSection && hideDepartmentContactsSection ? null : (
+        <section className="bg-canvas">
+          <Container className="py-xxl md:py-section">
+            {hideTableIntroSection ? null : (
+              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">{tableIntro.eyebrow}</p>
+                  <h2 className="type-display-sm mb-2 text-ink">{tableIntro.heading}</h2>
+                  <p className="type-body-sm max-w-[64ch] text-[var(--color-muted)]">{tableIntro.body}</p>
+                </div>
+                <a href={raiseTicketHref} className="type-button btn-primary shrink-0">
+                  {raiseTicketLabel}
+                </a>
               </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+            )}
+
+            {hideDepartmentContactsSection ? null : (
+              <>
+                {/* Desktop/tablet: a real table. Mobile: a horizontally-
+                    scrolling 4-column table is awkward to use on a phone —
+                    below md, this becomes a stacked list of cards instead,
+                    one per department, so everything reads top-to-bottom
+                    with no sideways scrolling. */}
+                <div className="hidden overflow-x-auto rounded-xl border border-hairline md:block">
+                  <table className="w-full min-w-[720px] border-collapse text-left">
+                    <thead>
+                      <tr className="border-b border-hairline bg-canvas-soft">
+                        <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.serialNumber}</th>
+                        <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.department}</th>
+                        <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.contact}</th>
+                        <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.email}</th>
+                        <th scope="col" className="type-caption-uppercase px-5 py-3 text-[var(--color-muted)]">{tableColumnHeaders.phone}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {departmentContacts.map((row, i) => (
+                        <tr key={row.id} className="border-b border-hairline last:border-0 hover:bg-canvas-soft">
+                          <td className="type-body-sm px-5 py-3 text-[var(--color-muted)]">{i + 1}</td>
+                          <td className="type-body-sm px-5 py-3 text-ink">{row.department}</td>
+                          <td className="type-body-sm px-5 py-3 text-[var(--color-body)]">{row.contact}</td>
+                          <td className="px-5 py-3">
+                            <a href={`mailto:${row.email}`} className="type-body-sm text-[var(--color-primary-blue)] hover:underline">
+                              {row.email}
+                            </a>
+                          </td>
+                          <td className="px-5 py-3">
+                            <a href={`tel:${row.phone.replace(/\s/g, "")}`} className="type-body-sm text-[var(--color-primary-blue)] hover:underline">
+                              {row.phone}
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="flex flex-col gap-3 md:hidden">
+                  {departmentContacts.map((row, i) => (
+                    <div key={row.id} className="rounded-xl border border-hairline p-4">
+                      <p className="type-body-strong mb-2 text-ink">{i + 1}. {row.department}</p>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <span className="type-caption text-[var(--color-muted)]">{row.contact}</span>
+                        <a href={`mailto:${row.email}`} className="type-caption text-[var(--color-primary-blue)] hover:underline">
+                          {row.email}
+                        </a>
+                        <a href={`tel:${row.phone.replace(/\s/g, "")}`} className="type-caption text-[var(--color-primary-blue)] hover:underline">
+                          {row.phone}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </Container>
+        </section>
+      )}
     </>
   );
 }

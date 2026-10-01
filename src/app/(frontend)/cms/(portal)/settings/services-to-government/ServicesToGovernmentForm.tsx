@@ -11,7 +11,9 @@ export type ServicesToGovernmentFormValues = {
   heroEyebrow: string;
   heroHeading: string;
   heroBody: string;
+  hideServicesSection: boolean;
   services: ServiceValue[];
+  hideTableIntroSection: boolean;
   tableIntroEyebrow: string;
   tableIntroHeading: string;
   tableIntroBody: string;
@@ -22,6 +24,7 @@ export type ServicesToGovernmentFormValues = {
   tableHeaderPhone: string;
   raiseTicketLabel: string;
   raiseTicketHref: string;
+  hideDepartmentContactsSection: boolean;
   departmentContacts: DepartmentContactValue[];
   status?: "draft" | "published";
   /** The document's `updatedAt` as of this page load — round-tripped
@@ -76,10 +79,17 @@ export function ServicesToGovernmentForm({
         list.push({ id: key, label, detail: `"${truncate(original) || "(empty)"}" → "${truncate(after) || "(empty)"}"`, sectionId });
       }
     };
+    const checkbox = (key: string, label: string, original: boolean, sectionId: string) => {
+      const after = fd.get(key) === "on";
+      if (after !== original) {
+        list.push({ id: key, label, detail: after ? "Hidden" : "Visible", sectionId });
+      }
+    };
     text("heroEyebrow", "Hero eyebrow", values.heroEyebrow, "section-hero");
     text("heroHeading", "Hero heading", values.heroHeading, "section-hero");
     text("heroBody", "Hero body", values.heroBody, "section-hero");
 
+    checkbox("hideServicesSection", "Hide Services section", values.hideServicesSection, "section-services");
     const servicesAfter = reconstructRows(fd, "services", ["name", "description"]);
     const servicesBefore = values.services.map((s) => ({ name: s.name, description: s.description }));
     if (JSON.stringify(servicesAfter) !== JSON.stringify(servicesBefore)) {
@@ -91,6 +101,7 @@ export function ServicesToGovernmentForm({
       });
     }
 
+    checkbox("hideTableIntroSection", "Hide department-contact table intro", values.hideTableIntroSection, "section-table");
     text("tableIntroEyebrow", "Table eyebrow", values.tableIntroEyebrow, "section-table");
     text("tableIntroHeading", "Table heading", values.tableIntroHeading, "section-table");
     text("tableIntroBody", "Table body", values.tableIntroBody, "section-table");
@@ -102,6 +113,12 @@ export function ServicesToGovernmentForm({
     text("raiseTicketLabel", "Raise a Ticket label", values.raiseTicketLabel, "section-table");
     text("raiseTicketHref", "Raise a Ticket link", values.raiseTicketHref, "section-table");
 
+    checkbox(
+      "hideDepartmentContactsSection",
+      "Hide department-contact table",
+      values.hideDepartmentContactsSection,
+      "section-department-contacts"
+    );
     const contactsAfter = reconstructRows(fd, "departmentContacts", ["department", "contact", "email", "phone"]);
     const contactsBefore = values.departmentContacts.map((d) => ({
       department: d.department,
@@ -171,7 +188,13 @@ export function ServicesToGovernmentForm({
       </section>
 
       <section id="section-services" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <p className="type-caption-uppercase mb-3 text-[var(--color-muted)]">Services</p>
+        <div className="mb-3 flex items-center justify-between">
+          <p className="type-caption-uppercase text-[var(--color-muted)]">Services</p>
+          <label className="flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+            <input type="checkbox" name="hideServicesSection" defaultChecked={values.hideServicesSection} />
+            Don&apos;t show this section on the page
+          </label>
+        </div>
         <RepeatableRows
           name="services"
           fields={[
@@ -184,7 +207,13 @@ export function ServicesToGovernmentForm({
       </section>
 
       <section id="section-table" className="flex scroll-mt-6 flex-col gap-3 rounded-xl border border-hairline bg-surface-card p-5">
-        <p className="type-caption-uppercase text-[var(--color-muted)]">Department contact table intro</p>
+        <div className="flex items-center justify-between">
+          <p className="type-caption-uppercase text-[var(--color-muted)]">Department contact table intro</p>
+          <label className="flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+            <input type="checkbox" name="hideTableIntroSection" defaultChecked={values.hideTableIntroSection} />
+            Don&apos;t show this section on the page
+          </label>
+        </div>
         <div>
           <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Eyebrow</label>
           <input
@@ -288,7 +317,13 @@ export function ServicesToGovernmentForm({
       </section>
 
       <section id="section-department-contacts" className="scroll-mt-6 rounded-xl border border-hairline bg-surface-card p-5">
-        <p className="type-caption-uppercase mb-1 text-[var(--color-muted)]">Department contacts</p>
+        <div className="mb-1 flex items-center justify-between">
+          <p className="type-caption-uppercase text-[var(--color-muted)]">Department contacts</p>
+          <label className="flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+            <input type="checkbox" name="hideDepartmentContactsSection" defaultChecked={values.hideDepartmentContactsSection} />
+            Don&apos;t show this section on the page
+          </label>
+        </div>
         <p className="type-caption mb-2 text-[var(--color-muted)]">
           Which Government Department maps to which TNeGA Project Manager. Drag the handle to reorder — row order is the
           display order on the public page.

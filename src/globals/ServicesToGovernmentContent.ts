@@ -30,6 +30,7 @@ export const ServicesToGovernmentContent: GlobalConfig = {
         { name: "body", type: "textarea", required: true, localized: true },
       ],
     },
+    { name: "hideServicesSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the Services section on the page at all." } },
     {
       name: "services",
       type: "array",
@@ -38,6 +39,7 @@ export const ServicesToGovernmentContent: GlobalConfig = {
         { name: "description", type: "textarea", required: true, localized: true },
       ],
     },
+    { name: "hideTableIntroSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the department-contact table's intro (eyebrow/heading/body + Raise a Ticket button) on the page at all." } },
     {
       name: "tableIntro",
       type: "group",
@@ -59,6 +61,7 @@ export const ServicesToGovernmentContent: GlobalConfig = {
         { name: "phone", type: "text", required: true, localized: true, defaultValue: "Phone" },
       ],
     },
+    { name: "hideDepartmentContactsSection", type: "checkbox", defaultValue: false, admin: { description: "Don't show the department-contact table itself on the page at all." } },
     {
       name: "departmentContacts",
       type: "array",

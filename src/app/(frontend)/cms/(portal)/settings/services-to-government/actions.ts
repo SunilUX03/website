@@ -39,7 +39,9 @@ function buildData(formData: FormData) {
       heading: str(formData, "heroHeading"),
       body: str(formData, "heroBody"),
     },
+    hideServicesSection: formData.get("hideServicesSection") === "on",
     services,
+    hideTableIntroSection: formData.get("hideTableIntroSection") === "on",
     tableIntro: {
       eyebrow: str(formData, "tableIntroEyebrow"),
       heading: str(formData, "tableIntroHeading"),
@@ -54,6 +56,7 @@ function buildData(formData: FormData) {
     },
     raiseTicketLabel: str(formData, "raiseTicketLabel"),
     raiseTicketHref: str(formData, "raiseTicketHref"),
+    hideDepartmentContactsSection: formData.get("hideDepartmentContactsSection") === "on",
     departmentContacts,
   };
 }

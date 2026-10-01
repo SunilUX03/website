@@ -2162,6 +2162,10 @@ export interface ServicesToGovernmentContent {
     heading: string;
     body: string;
   };
+  /**
+   * Don't show the Services section on the page at all.
+   */
+  hideServicesSection?: boolean | null;
   services?:
     | {
         name: string;
@@ -2169,6 +2173,10 @@ export interface ServicesToGovernmentContent {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Don't show the department-contact table's intro (eyebrow/heading/body + Raise a Ticket button) on the page at all.
+   */
+  hideTableIntroSection?: boolean | null;
   tableIntro: {
     eyebrow: string;
     heading: string;
@@ -2184,6 +2192,10 @@ export interface ServicesToGovernmentContent {
     email: string;
     phone: string;
   };
+  /**
+   * Don't show the department-contact table itself on the page at all.
+   */
+  hideDepartmentContactsSection?: boolean | null;
   /**
    * Which Government Department maps to which TNeGA Project Manager. Drag to reorder.
    */
@@ -2789,6 +2801,7 @@ export interface ServicesToGovernmentContentSelect<T extends boolean = true> {
         heading?: T;
         body?: T;
       };
+  hideServicesSection?: T;
   services?:
     | T
     | {
@@ -2796,6 +2809,7 @@ export interface ServicesToGovernmentContentSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
+  hideTableIntroSection?: T;
   tableIntro?:
     | T
     | {
@@ -2812,6 +2826,7 @@ export interface ServicesToGovernmentContentSelect<T extends boolean = true> {
         email?: T;
         phone?: T;
       };
+  hideDepartmentContactsSection?: T;
   departmentContacts?:
     | T
     | {

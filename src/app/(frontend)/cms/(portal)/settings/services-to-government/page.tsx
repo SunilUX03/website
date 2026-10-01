@@ -39,7 +39,9 @@ export default async function ServicesToGovernmentSettingsPage({
           heroEyebrow: doc.hero.eyebrow,
           heroHeading: doc.hero.heading,
           heroBody: doc.hero.body,
+          hideServicesSection: Boolean(doc.hideServicesSection),
           services: (doc.services ?? []).map((s) => ({ id: s.id ?? undefined, name: s.name, description: s.description })),
+          hideTableIntroSection: Boolean(doc.hideTableIntroSection),
           tableIntroEyebrow: doc.tableIntro.eyebrow,
           tableIntroHeading: doc.tableIntro.heading,
           tableIntroBody: doc.tableIntro.body,
@@ -50,6 +52,7 @@ export default async function ServicesToGovernmentSettingsPage({
           tableHeaderPhone: doc.tableColumnHeaders.phone,
           raiseTicketLabel: doc.raiseTicketLabel,
           raiseTicketHref: doc.raiseTicketHref,
+          hideDepartmentContactsSection: Boolean(doc.hideDepartmentContactsSection),
           departmentContacts: (doc.departmentContacts ?? []).map((d) => ({
             id: d.id ?? undefined,
             department: d.department,
