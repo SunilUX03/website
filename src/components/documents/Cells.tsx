@@ -56,6 +56,8 @@ export function DownloadLink({
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       aria-label={ariaLabel}
       data-track={`document_download_${label}`}
       className="type-body-sm inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-hairline-strong px-2.5 py-1.5 font-medium text-[var(--color-body-strong)] transition-colors hover:border-[var(--color-body-strong)] hover:bg-canvas hover:text-ink"
