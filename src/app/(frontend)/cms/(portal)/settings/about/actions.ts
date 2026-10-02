@@ -34,7 +34,12 @@ function buildData(formData: FormData, locale: "en" | "ta") {
     // and editable on both the English and Tamil tabs (a shared checkbox,
     // not a separate Tamil value), so it's always present in the submitted
     // FormData and safe to include unconditionally here.
-    hierarchy: hierarchyRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, emphasized: r.emphasized === "true" })),
+    // A checked checkbox submits as the literal string "on" (its default
+    // value, since RepeatableRows doesn't set one explicitly) — not
+    // "true". Comparing against "true" here meant this always evaluated
+    // to false regardless of what was actually checked, so "Emphasized"
+    // could never be turned on through the form.
+    hierarchy: hierarchyRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, emphasized: r.emphasized === "on" })),
     visionMission: visionMissionRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, title: r.title, description: r.description })),
     orgChartSection: { eyebrow: str(formData, "orgChartEyebrow"), heading: str(formData, "orgChartHeading") },
     leadershipSection: { eyebrow: str(formData, "leadershipEyebrow"), heading: str(formData, "leadershipHeading") },

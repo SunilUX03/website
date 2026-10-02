@@ -91,7 +91,25 @@ export function AboutPageForm({
     text("heroDescription", "Hero description", values.heroDescription, "section-hero");
     text("whoWeAreHeading", "Who We Are heading", values.whoWeAreHeading, "section-who");
     text("whoWeAreParagraph", "Who We Are paragraph", values.whoWeAreParagraph, "section-who");
-    rows("hierarchy", ["label", "emphasized"], "Reporting-line boxes", values.hierarchy.map((r) => ({ label: r.label, emphasized: r.emphasized })), "section-hierarchy");
+    // A checked checkbox submits as "on", not the "true"/"false" string
+    // `values.hierarchy` stores its initial state as — reconstructRows()
+    // can't tell "emphasized" apart from a plain text field, so it's
+    // normalized here before comparing, otherwise this would always
+    // read as changed (and the review modal would show an incorrect
+    // diff) regardless of whether the checkbox actually moved.
+    const hierarchyAfter = reconstructRows(fd, "hierarchy", ["label", "emphasized"]).map((r) => ({
+      label: r.label,
+      emphasized: r.emphasized === "on" ? "true" : "false",
+    }));
+    const hierarchyBefore = values.hierarchy.map((r) => ({ label: r.label, emphasized: r.emphasized }));
+    if (JSON.stringify(hierarchyAfter) !== JSON.stringify(hierarchyBefore)) {
+      list.push({
+        id: "hierarchy",
+        label: "Reporting-line boxes",
+        detail: `${hierarchyBefore.length} → ${hierarchyAfter.length} item${hierarchyAfter.length === 1 ? "" : "s"}`,
+        sectionId: "section-hierarchy",
+      });
+    }
     rows("visionMission", ["label", "title", "description"], "Vision & Mission", values.visionMission.map((r) => ({ label: r.label, title: r.title, description: r.description })), "section-vision");
     if (locale === "en") {
       text("connectEmail", "Connect email", values.connectEmail, "section-connect");
