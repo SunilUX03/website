@@ -241,6 +241,8 @@ export default async function AnnouncementPage({ params }: Params) {
                         <li key={link.href}>
                           <Link
                             href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="type-body-sm group inline-flex items-center gap-xs text-[var(--color-primary-blue)] transition-colors hover:text-[var(--color-primary-blue-active)]"
                           >
                             {link.label}

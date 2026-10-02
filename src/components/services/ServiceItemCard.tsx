@@ -77,7 +77,7 @@ export function ServiceItemCard({
 
         <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
           {item.real?.ctaLabel ? (
-            <a href={item.accessPortalHref || "/reach-us"} className="type-button btn-primary">
+            <a href={item.accessPortalHref || "/reach-us"} target="_blank" rel="noopener noreferrer" className="type-button btn-primary">
               {item.real.ctaLabel}
             </a>
           ) : item.real?.comingSoon ? (
@@ -85,7 +85,7 @@ export function ServiceItemCard({
               {isTa ? "விரைவில்" : "Coming Soon"}
             </a>
           ) : item.accessPortalHref && !item.real?.gatedAccess ? (
-            <a href={item.accessPortalHref} className="type-button btn-primary">
+            <a href={item.accessPortalHref} target="_blank" rel="noopener noreferrer" className="type-button btn-primary">
               {isTa ? "போர்ட்டலை அணுகவும்" : "Access Portal"}
             </a>
           ) : (

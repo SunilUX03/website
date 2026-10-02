@@ -63,7 +63,7 @@ export function ServicesToGovernmentContent({
         eyebrow={hero.eyebrow}
         heading={hero.heading}
         body={hero.body}
-        cta={{ label: raiseTicketLabel, href: raiseTicketHref }}
+        cta={{ label: raiseTicketLabel, href: raiseTicketHref, external: true }}
         orbs={heroOrbs}
         graphic={<ServicesToGovernmentGraphic />}
       />
@@ -97,7 +97,7 @@ export function ServicesToGovernmentContent({
                   <h2 className="type-display-sm mb-2 text-ink">{tableIntro.heading}</h2>
                   <p className="type-body-sm max-w-[64ch] text-[var(--color-muted)]">{tableIntro.body}</p>
                 </div>
-                <a href={raiseTicketHref} className="type-button btn-primary shrink-0">
+                <a href={raiseTicketHref} target="_blank" rel="noopener noreferrer" className="type-button btn-primary shrink-0">
                   {raiseTicketLabel}
                 </a>
               </div>
