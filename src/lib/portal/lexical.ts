@@ -7,6 +7,12 @@ import "server-only";
  * by the original seed scripts (scripts/seed-announcements.ts). */
 export function textToLexical(text: string) {
   const paragraphs = text
+    // Browsers normalize textarea line breaks to CRLF ("\r\n") when
+    // serializing form data on submit, even though the DOM .value
+    // property itself uses bare "\n" — without this, a blank line typed
+    // in the textarea arrives here as "\r\n\r\n", which doesn't match a
+    // bare \n{2,} split and the whole body collapses into one paragraph.
+    .replace(/\r\n?/g, "\n")
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean);

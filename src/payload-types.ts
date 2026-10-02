@@ -318,12 +318,47 @@ export interface Announcement {
       }[]
     | null;
   /**
+   * Optional downloadable documents (PDFs) shown in a "Documents" section on the announcement's page.
+   */
+  documents?:
+    | {
+        /**
+         * e.g. "Notification PDF"
+         */
+        label: string;
+        file: number | Document;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Controls display order on the Announcements list page. Lower numbers show first.
    */
   order: number;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  /**
+   * Shown in the media library list — not on the public site.
+   */
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -372,28 +407,6 @@ export interface JobOpening {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents".
- */
-export interface Document {
-  id: number;
-  /**
-   * Shown in the media library list — not on the public site.
-   */
-  title: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1146,6 +1159,13 @@ export interface AnnouncementsSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        id?: T;
+      };
+  documents?:
+    | T
+    | {
+        label?: T;
+        file?: T;
         id?: T;
       };
   order?: T;

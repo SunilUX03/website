@@ -18,6 +18,7 @@ export type CmsAnnouncement = {
   category?: string;
   facts?: { label: string; value: string }[];
   links?: { label: string; href: string }[];
+  documents?: { label: string; url: string }[];
   body?: Announcement["body"];
 };
 

@@ -55,6 +55,15 @@ function BackIcon() {
   );
 }
 
+function DocIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 shrink-0 fill-none stroke-current stroke-[1.5]">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+    </svg>
+  );
+}
+
 function ArrowIcon() {
   return (
     <svg
@@ -166,7 +175,7 @@ export default async function AnnouncementPage({ params }: Params) {
             <div className="grid gap-xxl lg:grid-cols-[minmax(0,1fr)_280px]">
               <article className="max-w-[68ch]">
                 {announcement.body ? (
-                  <div className="type-body-md flex flex-col gap-lg text-[var(--color-body)] [&_p]:mb-0">
+                  <div className="type-body-md text-[var(--color-body)] [&_p]:mb-lg [&_p:last-child]:mb-0">
                     <RichText data={announcement.body} />
                   </div>
                 ) : (
@@ -196,6 +205,29 @@ export default async function AnnouncementPage({ params }: Params) {
                         </div>
                       ))}
                     </dl>
+                  </div>
+                ) : null}
+
+                {announcement.documents?.length ? (
+                  <div className="rounded-xl border border-hairline bg-surface-card p-lg">
+                    <p className="type-caption-uppercase mb-base text-[var(--color-muted)]">
+                      {isTa ? "ஆவணங்கள்" : "Documents"}
+                    </p>
+                    <ul role="list" className="flex flex-col gap-sm">
+                      {announcement.documents.map((doc) => (
+                        <li key={doc.url}>
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="type-body-sm group inline-flex items-center gap-xs text-[var(--color-primary-blue)] transition-colors hover:text-[var(--color-primary-blue-active)]"
+                          >
+                            <DocIcon />
+                            {doc.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 ) : null}
 

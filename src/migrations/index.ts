@@ -49,6 +49,7 @@ import * as migration_20260826_140000_add_analytics_events from './20260826_1400
 import * as migration_20260826_150000_legal_pages_cookie_policy from './20260826_150000_legal_pages_cookie_policy';
 import * as migration_20260826_160000_site_identity_favicon from './20260826_160000_site_identity_favicon';
 import * as migration_20261001_100000_svcgov_section_toggles from './20261001_100000_svcgov_section_toggles';
+import * as migration_20261002_100000_announcements_documents from './20261002_100000_announcements_documents';
 
 export const migrations = [
   {
@@ -305,5 +306,10 @@ export const migrations = [
     up: migration_20261001_100000_svcgov_section_toggles.up,
     down: migration_20261001_100000_svcgov_section_toggles.down,
     name: '20261001_100000_svcgov_section_toggles',
+  },
+  {
+    up: migration_20261002_100000_announcements_documents.up,
+    down: migration_20261002_100000_announcements_documents.down,
+    name: '20261002_100000_announcements_documents',
   },
 ];

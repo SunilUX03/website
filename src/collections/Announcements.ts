@@ -140,6 +140,17 @@ export const Announcements: CollectionConfig = {
       ],
     },
     {
+      name: "documents",
+      type: "array",
+      admin: {
+        description: "Optional downloadable documents (PDFs) shown in a \"Documents\" section on the announcement's page.",
+      },
+      fields: [
+        { name: "label", type: "text", required: true, admin: { description: 'e.g. "Notification PDF"' } },
+        { name: "file", type: "upload", relationTo: "documents", required: true },
+      ],
+    },
+    {
       name: "order",
       type: "number",
       required: true,

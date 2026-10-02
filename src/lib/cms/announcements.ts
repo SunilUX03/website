@@ -1,5 +1,5 @@
 import { getPayloadClient } from "@/lib/payload-client";
-import type { Announcement, Media } from "@/payload-types";
+import type { Announcement, Media, Document } from "@/payload-types";
 import { type CmsAnnouncement } from "@/lib/cms/announcement-types";
 import type { Locale } from "@/lib/locale";
 
@@ -26,6 +26,10 @@ function toCmsAnnouncement(doc: Announcement, locale: Locale): CmsAnnouncement {
     category: doc.category ?? undefined,
     facts: doc.facts?.map((f) => ({ label: f.label, value: f.value })),
     links: doc.links?.map((l) => ({ label: l.label, href: l.href })),
+    documents: doc.documents
+      ?.filter((d): d is typeof d & { file: Document } => typeof d.file === "object" && d.file !== null)
+      .map((d) => ({ label: d.label, url: d.file.url ?? "" }))
+      .filter((d) => d.url),
     body: doc.body,
   };
 }

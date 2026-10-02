@@ -15,6 +15,7 @@ export default function NewAnnouncementPage() {
           body: "",
           facts: [],
           links: [],
+          documents: [],
           tickerFeatured: false,
           tickerOrder: 0,
         }}

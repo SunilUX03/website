@@ -7,7 +7,7 @@ import { updateAnnouncement, deleteAnnouncement } from "../../actions";
 import { ConfirmSubmitButton } from "@/components/portal/ConfirmSubmitButton";
 import { LocaleTabs } from "@/components/portal/LocaleTabs";
 import type { Locale } from "@/lib/locale";
-import type { Media } from "@/payload-types";
+import type { Media, Document } from "@/payload-types";
 
 // `id` on each mapped row is a Payload internal detail: every localized
 // array field (facts) stores its Tamil and English text keyed off the
@@ -72,6 +72,14 @@ export default async function EditAnnouncementPage({
           imageUrl: typeof doc.image === "object" && doc.image ? (doc.image as Media).url ?? undefined : undefined,
           facts: doc.facts?.map((f) => ({ id: f.id ?? undefined, label: f.label, value: f.value })) ?? [],
           links: doc.links?.map((l) => ({ id: l.id ?? undefined, label: l.label, href: l.href })) ?? [],
+          documents:
+            doc.documents?.map((d) => ({
+              id: d.id ?? undefined,
+              label: d.label,
+              fileId: typeof d.file === "object" && d.file ? (d.file as Document).id : typeof d.file === "number" ? d.file : undefined,
+              fileName: typeof d.file === "object" && d.file ? (d.file as Document).filename ?? undefined : undefined,
+              fileUrl: typeof d.file === "object" && d.file ? (d.file as Document).url ?? undefined : undefined,
+            })) ?? [],
           tickerFeatured: doc.tickerFeatured ?? false,
           tickerOrder: doc.tickerOrder ?? 0,
           status: doc._status as "draft" | "published",

@@ -10,7 +10,32 @@ import { uploadFile, resolveUploadValue } from "@/lib/portal/upload";
 import { parseRepeatable, str, optionalStr } from "@/lib/portal/form-utils";
 import { isStale, STALE_CONTENT_MESSAGE } from "@/lib/portal/staleness";
 
-async function buildData(formData: FormData) {
+/** Documents rows aren't plain-text like facts/links — each one also
+ * carries a file upload, so they can't go through parseRepeatable. A row
+ * is kept only if it ends up with an actual file attached (a fresh
+ * upload, or — on edit — the id of whatever was already there); a row
+ * with a label but no file either way is silently dropped rather than
+ * saved broken, since Payload requires `file` on this field. */
+async function parseDocumentRows(formData: FormData, existingDocuments: { id: string; file?: number }[]) {
+  const existingById = new Map(existingDocuments.map((d) => [d.id, d.file]));
+  const rows: { id?: string; label: string; file: number }[] = [];
+  for (let i = 0; ; i++) {
+    const labelKey = `documents.${i}.label`;
+    const fileKey = `documents.${i}.file`;
+    if (!formData.has(labelKey) && !formData.has(fileKey)) break;
+
+    const id = String(formData.get(`documents.${i}.id`) ?? "") || undefined;
+    const label = String(formData.get(labelKey) ?? "").trim();
+    const file = formData.get(fileKey) as File | null;
+    const newFileId = await uploadFile("documents", file, label || "Announcement document");
+    const fileId = newFileId ?? (id ? existingById.get(id) : undefined);
+
+    if (fileId) rows.push({ ...(id ? { id } : {}), label, file: fileId });
+  }
+  return rows;
+}
+
+async function buildData(formData: FormData, existingDocuments: { id: string; file?: number }[] = []) {
   const heading = str(formData, "heading");
   const imageFile = formData.get("image") as File | null;
   const imageId = await uploadFile("media", imageFile, heading);
@@ -23,6 +48,7 @@ async function buildData(formData: FormData) {
   // translation on save. See RepeatableRows.tsx for the full explanation.
   const factsRows = parseRepeatable(formData, "facts", ["label", "value"]);
   const linksRows = parseRepeatable(formData, "links", ["label", "href"]);
+  const documentsRows = await parseDocumentRows(formData, existingDocuments);
 
   return {
     heading,
@@ -38,6 +64,7 @@ async function buildData(formData: FormData) {
     ...(bodyText ? { body: textToLexical(bodyText) } : {}),
     facts: factsRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, value: r.value })),
     links: linksRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, href: r.href })),
+    documents: documentsRows,
     tickerFeatured: formData.get("tickerFeatured") === "on",
     tickerOrder: Number(str(formData, "tickerOrder") || "0"),
   };
@@ -83,7 +110,6 @@ export async function createAnnouncement(formData: FormData) {
 export async function updateAnnouncement(id: number, formData: FormData) {
   const user = await requireSession();
   const payload = await getPayloadClient();
-  const data = await buildData(formData);
   const intent = formData.get("intent");
   const locale = formData.get("locale") === "ta" ? "ta" : "en";
 
@@ -94,6 +120,12 @@ export async function updateAnnouncement(id: number, formData: FormData) {
   if (isStale(current.updatedAt, formData.get("_loadedUpdatedAt") as string | null)) {
     redirect(`/cms/announcements/${id}/edit?locale=${locale}&error=${encodeURIComponent(STALE_CONTENT_MESSAGE)}`);
   }
+
+  const existingDocuments = (current.documents ?? []).map((d) => ({
+    id: d.id ?? "",
+    file: typeof d.file === "number" ? d.file : d.file?.id,
+  }));
+  const data = await buildData(formData, existingDocuments);
 
   if (intent === "publish") {
     await payload.update({ collection: "announcements", id, locale, data: { ...data, _status: "published" }, overrideAccess: true });

@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import { RepeatableRows } from "@/components/portal/RepeatableRows";
 import { UpdateReviewModal, type Change } from "@/components/portal/UpdateReviewModal";
 import { ImageUploadField } from "@/components/portal/ImageUploadField";
+import { DocumentUploadField } from "@/components/portal/DocumentUploadField";
+
+export type AnnouncementDocumentValue = { id?: string; label: string; fileId?: number; fileName?: string; fileUrl?: string };
 
 export type AnnouncementFormValues = {
   heading: string;
@@ -14,6 +17,7 @@ export type AnnouncementFormValues = {
   imageUrl?: string;
   facts: { id?: string; label: string; value: string }[];
   links: { id?: string; label: string; href: string }[];
+  documents: AnnouncementDocumentValue[];
   tickerFeatured: boolean;
   tickerOrder: number;
   status?: "draft" | "published";
@@ -58,6 +62,7 @@ export function AnnouncementForm({
   const formRef = useRef<HTMLFormElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
   const [changes, setChanges] = useState<Change[] | null>(null);
+  const [documentRows, setDocumentRows] = useState<AnnouncementDocumentValue[]>(values.documents);
 
   function submitWithIntent(intent: "draft" | "publish" | "unpublish") {
     if (intentRef.current) intentRef.current.value = intent;
@@ -96,6 +101,20 @@ export function AnnouncementForm({
     }
     rows("facts", ["label", "value"], "Facts", values.facts.map((r) => ({ label: r.label, value: r.value })));
     rows("links", ["label", "href"], "Related links", values.links.map((r) => ({ label: r.label, href: r.href })));
+    const docLabelsAfter = documentRows.map((_, i) => String(fd.get(`documents.${i}.label`) ?? "").trim());
+    const docLabelsBefore = values.documents.map((d) => d.label);
+    const anyNewDocFile = documentRows.some((_, i) => {
+      const f = fd.get(`documents.${i}.file`) as File | null;
+      return f && f.size > 0;
+    });
+    if (anyNewDocFile || JSON.stringify(docLabelsAfter) !== JSON.stringify(docLabelsBefore)) {
+      list.push({
+        id: "documents",
+        label: "Documents",
+        detail: `${values.documents.length} → ${documentRows.length} item${documentRows.length === 1 ? "" : "s"}`,
+        sectionId: "section-main",
+      });
+    }
     checkbox("tickerFeatured", "Show in homepage ticker", values.tickerFeatured);
     text("tickerOrder", "Ticker priority", String(values.tickerOrder));
 
@@ -213,6 +232,46 @@ export function AnnouncementForm({
           initialRows={values.links}
           addLabel="+ Add link"
         />
+      </section>
+
+      <section id="section-documents" className="rounded-xl border border-hairline bg-surface-card p-5">
+        <label className="type-caption-uppercase mb-2 block text-[var(--color-muted)]">
+          Documents <span className="normal-case text-[11px]">(optional — PDFs shown in a &quot;Documents&quot; box on the page)</span>
+        </label>
+        <div className="flex flex-col gap-4">
+          {documentRows.map((row, i) => (
+            <div key={row.id ?? `new-${i}`} className="flex items-end gap-3 rounded-lg border border-hairline p-3">
+              <input type="hidden" name={`documents.${i}.id`} value={row.id ?? ""} />
+              <div className="flex-1">
+                <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">Label</label>
+                <input
+                  name={`documents.${i}.label`}
+                  defaultValue={row.label}
+                  placeholder="e.g. Notification PDF"
+                  className="w-full rounded-lg border border-hairline-strong bg-canvas px-3 py-2 outline-none focus:border-[var(--color-primary-blue)]"
+                />
+              </div>
+              <div className="w-56">
+                <label className="type-caption-uppercase mb-1.5 block text-[var(--color-muted)]">File</label>
+                <DocumentUploadField name={`documents.${i}.file`} currentName={row.fileName} currentUrl={row.fileUrl} />
+              </div>
+              <button
+                type="button"
+                onClick={() => setDocumentRows((prev) => prev.filter((_, idx) => idx !== i))}
+                className="type-button btn-outline h-9 shrink-0 px-3 text-xs"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setDocumentRows((prev) => [...prev, { label: "" }])}
+          className="type-button btn-outline mt-3 h-9 px-3 text-xs"
+        >
+          + Add document
+        </button>
       </section>
 
       <section className="rounded-xl border border-hairline bg-surface-card p-5">
