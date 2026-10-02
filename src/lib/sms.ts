@@ -27,7 +27,19 @@ export async function sendOtpSms(phone: string, otp: string): Promise<void> {
   url.searchParams.set("templateid", templateId);
 
   const res = await fetch(url.toString());
+  const responseText = await res.text();
+  // This gateway (like most Indian DLT-compliant bulk SMS APIs) can
+  // return HTTP 200 even when it rejects the send — e.g. a mismatched
+  // entity/template ID, an unapproved sender, or no balance all come
+  // back as 200 with the real error described in the body. Checking
+  // only res.ok silently treated every one of those as a successful
+  // send. Logging the body (never the request URL, which carries the
+  // API key) is the only way to see the gateway's real reason.
+  console.log(`[sms] gateway response (HTTP ${res.status}):`, responseText);
   if (!res.ok) {
     throw new Error(`SMS gateway responded with HTTP ${res.status}`);
+  }
+  if (/error|invalid|fail|reject/i.test(responseText)) {
+    throw new Error(`SMS gateway rejected the request: ${responseText}`);
   }
 }
