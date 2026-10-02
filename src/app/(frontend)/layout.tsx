@@ -38,6 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Tamil Nadu e-Governance Agency designs, builds and manages large-scale digital platforms that deliver essential government services to citizens and departments, transparently, efficiently and at scale.",
     icons: identity.faviconUrl ? { icon: identity.faviconUrl } : undefined,
+    verification: { google: "T3h1q_037F3I2PRWKS6sfMH1rXIMw9UTVqndcl9nap4" },
   };
 }
 
