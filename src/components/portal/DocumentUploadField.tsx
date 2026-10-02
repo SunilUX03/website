@@ -51,7 +51,7 @@ export function DocumentUploadField({
         <div className="min-w-0 flex-1">
           {displayName ? (
             currentUrl && !fileName ? (
-              <a href={currentUrl} target="_blank" rel="noopener noreferrer" className="type-body-sm truncate text-[var(--color-primary-blue)] hover:underline">
+              <a href={currentUrl} target="_blank" rel="noopener noreferrer" className="type-body-sm block truncate text-[var(--color-primary-blue)] hover:underline">
                 {displayName}
               </a>
             ) : (
