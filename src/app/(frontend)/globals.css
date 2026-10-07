@@ -532,19 +532,40 @@
   to { transform: rotate(360deg); }
 }
 
-/* 404 page service-network illustration. Data "packets" travel along the
-   live links toward the hub; the missing page's ring slowly pulses. Both
-   only run when the visitor hasn't asked for reduced motion. */
-@keyframes nf-flow {
-  to { stroke-dashoffset: -22; }
+/* 404 page illustration: the window and badges drift gently, the magnifier
+   searches, the skeleton lines shimmer. Only when the visitor hasn't asked
+   for reduced motion. */
+@keyframes nf-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
 }
-@keyframes nf-pulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.9; }
+@keyframes nf-search {
+  0%, 100% { transform: translate(-70px, 12px); }
+  30% { transform: translate(-20px, 38px); }
+  60% { transform: translate(36px, 22px); }
+  80% { transform: translate(10px, 10px); }
 }
+@keyframes nf-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes nf-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+.nf-search, .nf-twinkle { transform-box: fill-box; transform-origin: center; }
 @media (prefers-reduced-motion: no-preference) {
-  .nf-flow { animation: nf-flow 1.6s linear infinite; }
-  .nf-missing { animation: nf-pulse 2.6s ease-in-out infinite; }
+  .nf-float { animation: nf-float 6s ease-in-out infinite; }
+  .nf-float-b { animation-duration: 5s; animation-delay: -1.2s; }
+  .nf-float-c { animation-duration: 7s; animation-delay: -2.4s; }
+  .nf-float-d { animation-duration: 5.5s; animation-delay: -3.3s; }
+  .nf-search { animation: nf-search 8s ease-in-out infinite; }
+  .nf-line { animation: nf-shimmer 2.4s ease-in-out infinite; }
+  .nf-line-b { animation-delay: -0.5s; }
+  .nf-line-c { animation-delay: -1s; }
+  .nf-twinkle { animation: nf-twinkle 3.2s ease-in-out infinite; }
+  .nf-twinkle-b { animation-delay: -1s; }
+  .nf-twinkle-c { animation-delay: -2s; }
 }
 
 /* Barely-there film-grain texture — adds tactile depth to large soft
