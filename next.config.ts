@@ -29,6 +29,21 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**/*": ["./node_modules/@img/sharp-linux-x64/**/*", "./node_modules/@img/sharp-libvips-linux-x64/**/*"],
   },
+  // CMS uploads land in public/media and public/documents while the site
+  // is running, but `next start` only statically serves public/ files that
+  // existed at boot, so a fresh upload 404s until a restart. A fallback
+  // rewrite (checked only after static files and pages miss) hands those
+  // requests to a route that reads from disk at request time.
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [],
+      fallback: [
+        { source: "/media/:filename", destination: "/api/uploads/media/:filename" },
+        { source: "/documents/:filename", destination: "/api/uploads/documents/:filename" },
+      ],
+    };
+  },
   images: {
     remotePatterns: [
       {
