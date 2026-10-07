@@ -1,5 +1,5 @@
 export type CmsProjectStat = { value: number; suffix: string; label: string };
-export type CmsProjectCta = { label: string; href: string };
+export type CmsProjectCta = { label: string; href: string; external: boolean };
 
 export type CmsProjectSpotlight = {
   id: number;

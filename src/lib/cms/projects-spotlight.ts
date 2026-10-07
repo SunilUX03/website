@@ -2,6 +2,8 @@ import { getPayloadClient } from "@/lib/payload-client";
 import type { Media, Service } from "@/payload-types";
 import type { CmsProjectSpotlight } from "@/lib/cms/projects-spotlight-types";
 import type { Locale } from "@/lib/locale";
+import { toCmsServiceItemDetail } from "@/lib/cms/services";
+import { getServiceCtas } from "@/lib/service-ctas";
 
 export type { CmsProjectSpotlight, CmsProjectStat, CmsProjectCta } from "@/lib/cms/projects-spotlight-types";
 
@@ -26,7 +28,9 @@ export async function getProjectsSpotlight(locale: Locale = "en"): Promise<CmsPr
         image: typeof service.image === "object" && service.image ? (service.image as Media).url ?? "" : "",
         badge: doc.badge ?? undefined,
         stats: (doc.stats ?? []).map((s) => ({ value: s.value, suffix: s.suffix ?? "", label: s.label })),
-        ctas: (doc.ctas ?? []).map((c) => ({ label: c.label, href: c.href })),
+        // Same buttons the Initiatives & Projects card shows for this
+        // service, not a separately maintained list.
+        ctas: getServiceCtas(toCmsServiceItemDetail(service), locale),
       };
     });
 }

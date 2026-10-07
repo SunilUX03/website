@@ -97,7 +97,7 @@ function toCmsRealContent(doc: Service): CmsRealContent | undefined {
   };
 }
 
-function toCmsServiceItemDetail(doc: Service): CmsServiceItemDetail {
+export function toCmsServiceItemDetail(doc: Service): CmsServiceItemDetail {
   return {
     name: doc.name,
     description: doc.description,

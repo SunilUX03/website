@@ -71,7 +71,6 @@ export default async function EditProjectSpotlightPage({
           badge: doc.badge ?? "",
           order: doc.order,
           stats: (doc.stats ?? []).map((s) => ({ id: s.id ?? undefined, value: String(s.value), suffix: s.suffix ?? "", label: s.label })),
-          ctas: (doc.ctas ?? []).map((c) => ({ id: c.id ?? undefined, label: c.label, href: c.href })),
           status: doc._status as "draft" | "published",
           error,
           updatedAt: doc.updatedAt ?? undefined,

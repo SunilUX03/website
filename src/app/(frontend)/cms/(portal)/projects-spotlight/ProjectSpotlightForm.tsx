@@ -12,7 +12,6 @@ export type ProjectSpotlightFormValues = {
   badge: string;
   order: number;
   stats: { id?: string; value: string; suffix: string; label: string }[];
-  ctas: { id?: string; label: string; href: string }[];
   status?: "draft" | "published";
   error?: string;
   /** The document's `updatedAt` as of this page load — round-tripped
@@ -78,7 +77,6 @@ export function ProjectSpotlightForm({
     text("badge", "Badge", values.badge);
     text("order", "Order", String(values.order));
     rows("stats", ["value", "suffix", "label"], "Stats", values.stats.map((r) => ({ value: r.value, suffix: r.suffix, label: r.label })));
-    rows("ctas", ["label", "href"], "Buttons", values.ctas.map((r) => ({ label: r.label, href: r.href })));
     return list;
   }
 
@@ -164,18 +162,11 @@ export function ProjectSpotlightForm({
       </section>
 
       <section id="section-ctas" className="rounded-xl border border-hairline bg-surface-card p-5">
-        <label className="type-caption-uppercase mb-2 block text-[var(--color-muted)]">
-          Buttons <span className="normal-case text-[11px]">(e.g. &quot;Login to Portal&quot; / &quot;Know more&quot;)</span>
-        </label>
-        <RepeatableRows
-          name="ctas"
-          fields={[
-            { key: "label", label: "Button text" },
-            { key: "href", label: "Link" },
-          ]}
-          initialRows={values.ctas}
-          addLabel="+ Add button"
-        />
+        <p className="type-caption-uppercase mb-2 text-[var(--color-muted)]">Buttons</p>
+        <p className="type-body-sm text-[var(--color-body)]">
+          The buttons on this card are the same ones shown on the Initiatives &amp; Projects page for this service
+          (Access Portal / Avail Service / Coming Soon, and Know More). To change them, edit the service itself.
+        </p>
       </section>
 
       <div className="fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8">

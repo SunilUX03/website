@@ -57,6 +57,7 @@ function SpotlightContent({ project, active }: { project: Project; active: boole
               key={cta.label}
               href={cta.href}
               className={i === 0 ? "type-button btn-primary" : "type-button btn-outline !border-white/60 !text-white hover:!bg-white/10"}
+              {...(cta.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             >
               {cta.label}
             </a>
@@ -309,7 +310,12 @@ function MobileSpotlight({ projects, locale = "en" }: { projects: Project[]; loc
 
         <div className="flex flex-wrap gap-3">
           {project.ctas.map((cta, i) => (
-            <a key={cta.label} href={cta.href} className={i === 0 ? "type-button btn-primary" : "type-button btn-outline"}>
+            <a
+              key={cta.label}
+              href={cta.href}
+              className={i === 0 ? "type-button btn-primary" : "type-button btn-outline"}
+              {...(cta.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
               {cta.label}
             </a>
           ))}

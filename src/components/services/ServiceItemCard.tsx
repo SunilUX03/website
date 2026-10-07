@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CmsServiceItem as ServiceItem } from "@/lib/cms/service-types";
 import { PhotoTile } from "@/components/ui/PhotoTile";
 import type { Locale } from "@/lib/locale";
+import { getServiceCtas } from "@/lib/service-ctas";
 
 export function ServiceItemCard({
   item,
@@ -76,29 +77,16 @@ export function ServiceItemCard({
         </p>
 
         <div className="relative z-10 mt-auto flex flex-wrap justify-center gap-3 pt-5">
-          {item.real?.ctaLabel ? (
-            <a href={item.accessPortalHref || "/reach-us"} target="_blank" rel="noopener noreferrer" className="type-button btn-primary">
-              {item.real.ctaLabel}
+          {getServiceCtas(item, locale).map((cta, i) => (
+            <a
+              key={cta.label}
+              href={cta.href}
+              className={i === 0 ? "type-button btn-primary" : "type-button btn-outline"}
+              {...(cta.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              {cta.label}
             </a>
-          ) : item.real?.comingSoon ? (
-            <a href={item.knowMoreHref} className="type-button btn-primary">
-              {isTa ? "விரைவில்" : "Coming Soon"}
-            </a>
-          ) : item.accessPortalHref && !item.real?.gatedAccess ? (
-            <a href={item.accessPortalHref} target="_blank" rel="noopener noreferrer" className="type-button btn-primary">
-              {isTa ? "போர்ட்டலை அணுகவும்" : "Access Portal"}
-            </a>
-          ) : (
-            // Service-type items (no direct self-service portal) route to
-            // Reach Us to avail the service instead — every card now has
-            // exactly 2 CTAs, matching the Project-type Access Portal pair.
-            <a href="/reach-us" className="type-button btn-primary">
-              {isTa ? "சேவையைப் பெறவும்" : "Avail Service"}
-            </a>
-          )}
-          <a href={item.knowMoreHref} className="type-button btn-outline">
-            {isTa ? "மேலும் அறிக" : "Know More"}
-          </a>
+          ))}
         </div>
       </div>
     </div>

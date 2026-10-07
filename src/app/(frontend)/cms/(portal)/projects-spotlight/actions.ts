@@ -14,11 +14,9 @@ function buildData(formData: FormData) {
   // Payload treat the row as brand new and wipes that field's Tamil
   // translation on save. See RepeatableRows.tsx for the full explanation.
   const statsRows = parseRepeatable(formData, "stats", ["value", "suffix", "label"]);
-  const ctasRows = parseRepeatable(formData, "ctas", ["label", "href"]);
   return {
     badge: optionalStr(formData, "badge"),
     stats: statsRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), value: Number(r.value || "0"), suffix: r.suffix, label: r.label })),
-    ctas: ctasRows.map((r) => ({ ...(r.id ? { id: r.id } : {}), label: r.label, href: r.href })),
     order: Number(str(formData, "order") || "0"),
   };
 }
