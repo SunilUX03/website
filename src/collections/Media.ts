@@ -39,13 +39,16 @@ export const Media: CollectionConfig = {
   // path here means every existing `doc.url` read across the codebase
   // resolves to a static asset in both environments, no server code
   // involved on either — same fix as Documents.ts.
+  // Filenames are encoded: an editor-chosen name like "Report #1 50% off.png"
+  // otherwise becomes a URL the browser cuts at "#" (or fails to decode at
+  // "%"), so the image 404s even though the file is on disk.
   hooks: {
     afterRead: [
       ({ doc }) => {
-        if (doc.filename) doc.url = `/media/${doc.filename}`;
+        if (doc.filename) doc.url = `/media/${encodeURIComponent(doc.filename)}`;
         if (doc.sizes) {
           for (const size of Object.values(doc.sizes) as { filename?: string; url?: string }[]) {
-            if (size?.filename) size.url = `/media/${size.filename}`;
+            if (size?.filename) size.url = `/media/${encodeURIComponent(size.filename)}`;
           }
         }
         return doc;

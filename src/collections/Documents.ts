@@ -23,10 +23,12 @@ export const Documents: CollectionConfig = {
   // to Payload's own API route, which can't read public/ files at
   // runtime in a Vercel serverless function. This rewrites it to a plain
   // "/documents/filename.pdf" static path instead.
+  // Filenames are encoded so names containing "#", "%" or "&" still resolve
+  // (see Media.ts).
   hooks: {
     afterRead: [
       ({ doc }) => {
-        if (doc.filename) doc.url = `/documents/${doc.filename}`;
+        if (doc.filename) doc.url = `/documents/${encodeURIComponent(doc.filename)}`;
         return doc;
       },
     ],
