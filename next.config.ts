@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   // above that is misleading — ServiceForm's own client-side size checks
   // (see MAX_TOTAL_UPLOAD_BYTES) are what actually keep uploads under it.
   experimental: {
+    // 404 page for URLs that match no route at all (see app/global-not-found.tsx).
+    globalNotFound: true,
     serverActions: {
       bodySizeLimit: "4mb",
     },

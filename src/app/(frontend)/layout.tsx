@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Noto_Sans, Noto_Sans_Tamil } from "next/font/google";
 import { AccessibilityProvider } from "@/lib/accessibility";
 import { AccessibilityPanel } from "@/components/nav/AccessibilityPanel";
 import { CookieConsentBanner } from "@/components/consent/CookieConsentBanner";
@@ -8,20 +7,7 @@ import { AnalyticsClickTracker } from "@/components/consent/AnalyticsClickTracke
 import { getLocale } from "@/lib/locale";
 import { getSiteIdentity } from "@/lib/cms/site-identity";
 import "./globals.css";
-
-const notoSans = Noto_Sans({
-  variable: "--font-noto-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-
-const notoSansTamil = Noto_Sans_Tamil({
-  variable: "--font-noto-sans-tamil",
-  subsets: ["tamil"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
+import { notoSans, notoSansTamil } from "./fonts";
 
 /** The favicon has its own CMS field (Site Identity → Favicon,
  * /cms/settings/site-identity), separate from the TNeGA mark used in the

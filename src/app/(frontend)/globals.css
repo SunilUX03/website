@@ -532,6 +532,21 @@
   to { transform: rotate(360deg); }
 }
 
+/* 404 page service-network illustration. Data "packets" travel along the
+   live links toward the hub; the missing page's ring slowly pulses. Both
+   only run when the visitor hasn't asked for reduced motion. */
+@keyframes nf-flow {
+  to { stroke-dashoffset: -22; }
+}
+@keyframes nf-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nf-flow { animation: nf-flow 1.6s linear infinite; }
+  .nf-missing { animation: nf-pulse 2.6s ease-in-out infinite; }
+}
+
 /* Barely-there film-grain texture — adds tactile depth to large soft
    gradient washes (the hero backdrop) without reading as "noisy" or
    competing with content. Self-contained SVG turbulence, no image asset. */
