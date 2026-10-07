@@ -553,7 +553,22 @@
   0%, 100% { opacity: 0.25; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1.25); }
 }
-.nf-search, .nf-twinkle { transform-box: fill-box; transform-origin: center; }
+@keyframes nf-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes nf-spin-rev {
+  to { transform: rotate(-360deg); }
+}
+@keyframes nf-wobble {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(22deg); }
+}
+@keyframes nf-progress {
+  0% { transform: scaleX(0.12); }
+  100% { transform: scaleX(0.92); }
+}
+.nf-search, .nf-twinkle, .nf-spin, .nf-spin-rev, .nf-wobble { transform-box: fill-box; transform-origin: center; }
+.nf-progress { transform-box: fill-box; transform-origin: left center; transform: scaleX(0.6); }
 @media (prefers-reduced-motion: no-preference) {
   .nf-float { animation: nf-float 6s ease-in-out infinite; }
   .nf-float-b { animation-duration: 5s; animation-delay: -1.2s; }
@@ -563,6 +578,10 @@
   .nf-line { animation: nf-shimmer 2.4s ease-in-out infinite; }
   .nf-line-b { animation-delay: -0.5s; }
   .nf-line-c { animation-delay: -1s; }
+  .nf-spin { animation: nf-spin 14s linear infinite; }
+  .nf-spin-rev { animation: nf-spin-rev 10.5s linear infinite; }
+  .nf-wobble { animation: nf-wobble 2.2s ease-in-out infinite; }
+  .nf-progress { animation: nf-progress 4.5s ease-in-out infinite alternate; }
   .nf-twinkle { animation: nf-twinkle 3.2s ease-in-out infinite; }
   .nf-twinkle-b { animation-delay: -1s; }
   .nf-twinkle-c { animation-delay: -2s; }
