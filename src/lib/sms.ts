@@ -1,4 +1,5 @@
 import "server-only";
+import { buildOtpSmsUrl } from "@/lib/sms-url";
 
 // Government SMS gateway (tmegov.onex-aura.com) for the Careers OTP
 // step. The gateway's API key lives only here, read from
@@ -16,17 +17,18 @@ export async function sendOtpSms(phone: string, otp: string): Promise<void> {
     throw new Error("SMS gateway is not configured — missing SMS_GATEWAY_* environment variables.");
   }
 
-  const body = `Dear User, ${otp} is your OTP for TNeGA Job Application submission valid for 10 minutes. Do not share this with anyone. - TNeGA`;
+  const { url, body } = buildOtpSmsUrl({ key, from: sender, entityId, templateId, phone, otp });
+  // Everything except the API key and the code, so a delivery problem can
+  // be compared against what the SMS provider has registered.
+  console.log("[sms] sending", {
+    to: `91XXXXXX${phone.slice(-4)}`,
+    from: sender,
+    entityid: entityId,
+    templateid: templateId,
+    body: body.replace(otp, "XXXXXX"),
+  });
 
-  const url = new URL("https://tmegov.onex-aura.com/api/sms");
-  url.searchParams.set("key", key);
-  url.searchParams.set("from", sender);
-  url.searchParams.set("entityid", entityId);
-  url.searchParams.set("to", `91${phone}`);
-  url.searchParams.set("body", body);
-  url.searchParams.set("templateid", templateId);
-
-  const res = await fetch(url.toString());
+  const res = await fetch(url);
   const responseText = await res.text();
   // This gateway (like most Indian DLT-compliant bulk SMS APIs) can
   // return HTTP 200 even when it rejects the send — e.g. a mismatched
