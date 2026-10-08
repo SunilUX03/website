@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { createOtpChallenge } from "@/lib/otp";
 import { sendOtpSms } from "@/lib/sms";
-
-const PHONE_RE = /^[6-9]\d{9}$/;
+import { normalizeIndianMobile } from "@/lib/phone";
 
 // Simple per-phone-number cooldown so one visitor can't spam the SMS
 // gateway (each send costs money and could also be used to harass an
@@ -14,9 +13,9 @@ const lastSentAt = new Map<string, number>();
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
-  const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
+  const phone = typeof body?.phone === "string" ? normalizeIndianMobile(body.phone) : null;
 
-  if (!PHONE_RE.test(phone)) {
+  if (!phone) {
     return NextResponse.json({ error: "Enter a valid 10-digit mobile number." }, { status: 400 });
   }
 

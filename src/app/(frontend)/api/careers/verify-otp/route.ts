@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { verifyOtpChallenge, createPhoneVerifiedToken } from "@/lib/otp";
+import { normalizeIndianMobile } from "@/lib/phone";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
-  const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
+  const phone = typeof body?.phone === "string" ? normalizeIndianMobile(body.phone) : null;
   const otp = typeof body?.otp === "string" ? body.otp.trim() : "";
   const token = typeof body?.token === "string" ? body.token : "";
 

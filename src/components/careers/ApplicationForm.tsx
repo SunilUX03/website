@@ -17,7 +17,7 @@ const MAX_RESUME_BYTES = 4 * 1024 * 1024;
 
 // Indian 10-digit mobile numbers only — what the OTP gateway's "91" +
 // 10-digit `to` format expects.
-const PHONE_RE = /^[6-9]\d{9}$/;
+import { normalizeIndianMobile } from "@/lib/phone";
 
 type Errors = Partial<
   Record<"fullName" | "email" | "phone" | "role" | "resume", string>
@@ -127,6 +127,10 @@ export function ApplicationForm({
     return () => clearInterval(timer);
   }, [cooldown]);
 
+  // The number as the gateway and the saved application use it: plain 10
+  // digits, whichever way the visitor typed it (+91, a leading 0, spaces).
+  const phone = normalizeIndianMobile(phoneValue);
+
   function resetOtp() {
     setOtpStage("idle");
     setOtpPendingToken(null);
@@ -143,7 +147,7 @@ export function ApplicationForm({
 
   async function handleSendOtp() {
     setOtpError(null);
-    if (!PHONE_RE.test(phoneValue)) {
+    if (!phone) {
       setOtpError(isTa ? "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்." : "Enter a valid 10-digit mobile number.");
       return;
     }
@@ -152,7 +156,7 @@ export function ApplicationForm({
       const res = await fetch("/api/careers/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phoneValue }),
+        body: JSON.stringify({ phone }),
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) {
@@ -178,7 +182,7 @@ export function ApplicationForm({
       const res = await fetch("/api/careers/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phoneValue, otp: otpCode, token: otpPendingToken }),
+        body: JSON.stringify({ phone, otp: otpCode, token: otpPendingToken }),
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) {
@@ -208,7 +212,7 @@ export function ApplicationForm({
     if (!fullName) next.fullName = isTa ? "தயவுசெய்து உங்கள் முழுப்பெயரை உள்ளிடவும்." : "Please enter your full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       next.email = isTa ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்." : "Please enter a valid email address.";
-    if (!PHONE_RE.test(phoneValue)) {
+    if (!phone) {
       next.phone = isTa ? "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்." : "Enter a valid 10-digit mobile number.";
     } else if (otpStage !== "verified" || !verifiedToken) {
       next.phone = isTa ? "OTP மூலம் உங்கள் தொலைபேசி எண்ணைச் சரிபார்க்கவும்." : "Please verify your phone number with the OTP.";
@@ -229,6 +233,8 @@ export function ApplicationForm({
 
     setSubmitting(true);
     try {
+      // Submit the same normalised number that was verified.
+      if (phone) data.set("phone", phone);
       const res = await fetch("/api/careers/apply", { method: "POST", body: data });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
@@ -349,7 +355,7 @@ export function ApplicationForm({
                       <button
                         type="button"
                         onClick={handleSendOtp}
-                        disabled={otpSending || cooldown > 0 || !PHONE_RE.test(phoneValue)}
+                        disabled={otpSending || cooldown > 0 || !phone}
                         className="type-button btn-outline h-11 shrink-0 whitespace-nowrap px-4 text-sm disabled:opacity-60"
                       >
                         {otpSending
@@ -396,6 +402,12 @@ export function ApplicationForm({
                   {otpError ? (
                     <p role="alert" className="text-xs text-[var(--color-error)]">
                       {otpError}
+                    </p>
+                  ) : phoneValue.trim() && !phone && otpStage !== "verified" ? (
+                    <p className="text-xs text-[var(--color-error)]">
+                      {isTa
+                        ? "10 இலக்க இந்திய மொபைல் எண்ணை உள்ளிடவும் (6 முதல் 9 வரை தொடங்கும்). +91 அல்லது 0 உடன் தட்டச்சு செய்யலாம்."
+                        : "Enter a 10-digit Indian mobile number (starting with 6 to 9). You can type it with +91 or 0 in front."}
                     </p>
                   ) : null}
                 </Field>
