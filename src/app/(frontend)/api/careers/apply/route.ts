@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getPayloadClient } from "@/lib/payload-client";
-import { verifyPhoneVerifiedToken } from "@/lib/otp";
+import { verifyPhoneVerifiedToken, phoneFromVerifiedToken } from "@/lib/otp";
 import { normalizeIndianMobile } from "@/lib/phone";
 
 // Kept under Vercel's ~4.5MB serverless request-body ceiling — see the
@@ -17,17 +17,22 @@ export async function POST(request: Request) {
 
   const fullName = String(form.get("fullName") ?? "").trim();
   const email = String(form.get("email") ?? "").trim();
-  const phone = normalizeIndianMobile(String(form.get("phone") ?? ""));
   const phoneVerifiedToken = String(form.get("phoneVerifiedToken") ?? "");
+  // Normally the form sends the number; if a browser leaves it out (a locked
+  // field is not submitted), the verified token names the number it was issued
+  // for. The token's signature is still checked below.
+  const phone = normalizeIndianMobile(String(form.get("phone") ?? "")) ?? phoneFromVerifiedToken(phoneVerifiedToken);
   const roleId = String(form.get("role") ?? "");
   const coverNote = String(form.get("coverLetter") ?? "").trim();
   const resume = form.get("resume");
 
   const jobRole = roleId ? await db.jobRole.findUnique({ where: { id: roleId } }) : null;
 
-  if (!fullName || !EMAIL_RE.test(email) || !phone || !jobRole) {
-    return NextResponse.json({ error: "Missing or invalid required field." }, { status: 400 });
-  }
+  // Say exactly which field is the problem, so a visitor can fix it.
+  if (!fullName) return NextResponse.json({ error: "Please enter your full name." }, { status: 400 });
+  if (!EMAIL_RE.test(email)) return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
+  if (!phone) return NextResponse.json({ error: "Phone number is missing. Please verify your phone number with the OTP again." }, { status: 400 });
+  if (!jobRole) return NextResponse.json({ error: "Please select a role from the list." }, { status: 400 });
 
   // The OTP step only stops an honest browser from submitting without
   // verifying — re-checking the token here (not just trusting the client

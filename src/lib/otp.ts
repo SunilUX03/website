@@ -68,6 +68,16 @@ export function verifyOtpChallenge(phone: string, otp: string, token: string): b
  * carries this into the final application submission, and the apply
  * route re-checks it (see api/careers/apply/route.ts) so a direct POST
  * can't skip verification just by not calling the verify-otp endpoint. */
+/** The phone number a verified-phone token was issued for, or null if the
+ * token is malformed. This only *reads* the number: the signature and expiry
+ * are still checked by verifyPhoneVerifiedToken, so a forged token that names
+ * someone else's number is rejected there. */
+export function phoneFromVerifiedToken(token: string): string | null {
+  const parts = decodeToken(token);
+  if (!parts || parts.length !== 3) return null;
+  return /^[6-9]\d{9}$/.test(parts[0]) ? parts[0] : null;
+}
+
 export function createPhoneVerifiedToken(phone: string): string {
   const expires = Date.now() + VERIFIED_TTL_MS;
   const sig = sign(`verified:${phone}:${expires}`);

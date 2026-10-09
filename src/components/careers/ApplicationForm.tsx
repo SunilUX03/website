@@ -331,13 +331,13 @@ export function ApplicationForm({
                       autoComplete="tel"
                       value={phoneValue}
                       onChange={handlePhoneChange}
-                      disabled={otpStage === "verified"}
+                      readOnly={otpStage === "verified"}
                       placeholder={isTa ? "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்" : "Enter your phone number"}
                       aria-required
                       aria-invalid={Boolean(errors.phone)}
                       className={clsx(
                         inputBase,
-                        "flex-1 disabled:bg-canvas-soft disabled:text-[var(--color-muted)]",
+                        "flex-1 read-only:bg-canvas-soft read-only:text-[var(--color-muted)]",
                         errors.phone
                           ? "border-[var(--color-error)]"
                           : "border-hairline-strong"
