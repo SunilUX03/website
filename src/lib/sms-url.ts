@@ -12,7 +12,9 @@ export function buildOtpSmsUrl(opts: {
   phone: string;
   otp: string;
 }): { url: string; body: string } {
-  const body = `Dear User, ${opts.otp} is your OTP for TNeGA Job Application submission valid for 10 minutes. Do not share this with anyone. - TNeGA`;
+  // Must match the approved DLT template word for word (confirmed with the
+  // SMS provider, 9 Oct 2026). Any change in wording makes carriers drop it.
+  const body = `Dear User, ${opts.otp} is your OTP for TNeGA Portal valid for 10 minutes. Do not share this with anyone. - TNeGA`;
   const params: [string, string][] = [
     ["key", opts.key],
     ["from", opts.from],
@@ -21,6 +23,7 @@ export function buildOtpSmsUrl(opts: {
     ["body", body],
     ["templateid", opts.templateId],
   ];
-  const query = params.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&");
+  // Commas are left as-is, exactly like the provider's own example address.
+  const query = params.map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%2C/g, ",")}`).join("&");
   return { url: `https://tmegov.onex-aura.com/api/sms?${query}`, body };
 }
